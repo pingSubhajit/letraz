@@ -1,0 +1,33 @@
+'use client'
+
+import {useSignIn} from '@clerk/nextjs'
+import {OAuthStrategy} from '@clerk/types'
+import {FcGoogle} from 'react-icons/fc'
+import {Button} from '@/components/ui/button'
+import {cn} from '@/lib/utils'
+import {motion} from 'framer-motion'
+
+const GoogleSignInButton = ({className}: {className?: string}) => {
+	const { signIn } = useSignIn()
+
+	if (!signIn) return null
+
+	const signInWith = (strategy: OAuthStrategy) => {
+		return signIn.authenticateWithRedirect({
+			strategy,
+			redirectUrl: '/sign-up/sso-callback',
+			redirectUrlComplete: '/app',
+		})
+	}
+
+	return (
+		<motion.div initial={{opacity: 0}} animate={{opacity: 1}}>
+			<Button onClick={() => signInWith('oauth_google')} className={cn('rounded-full bg-neutral-50 shadow-2xl text-neutral-950 hover:bg-neutral-100 text-base py-6 px-20', className)}>
+				<FcGoogle className="h-6 w-6 mr-2" />
+				Sign in with Google
+			</Button>
+		</motion.div>
+	)
+}
+
+export default GoogleSignInButton
