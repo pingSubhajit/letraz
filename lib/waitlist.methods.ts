@@ -29,9 +29,9 @@ export const signUpForWaitlist = async (email: string, referralLink?: any) => {
 	}).returning()
 
 	await resend.emails.send({
-		from: 'hello@letraz.app',
+		from: 'Letraz <hello@letraz.app>',
 		to: params.email,
-		subject: 'Welcome to Letraz!',
+		subject: 'Welcome to Letraz waitlist!',
 		react: WaitlistWelcomeEmail()
 	})
 
