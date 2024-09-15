@@ -89,6 +89,8 @@ export const modelica = localFont({
 	]
 })
 
-export const defaultUrl = process.env.VERCEL_URL ? 'https://letraz.app' : process.env.MAIN_URL || 'http://localhost:3000'
+export const defaultUrl = process.env.VERCEL_ENV === 'production'
+	? 'https://letraz.app'
+	: process.env.MAIN_URL || 'http://localhost:3000'
 export const githubRepo = 'https://github.com/pingSubhajit/letraz'
 export const portfolio = 'https://subhajit.lol'
