@@ -13,6 +13,7 @@ import {defaultUrl} from '@/config'
 import {useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
 import {Loader2} from 'lucide-react'
+import {toast} from 'sonner'
 
 const formSchema = z.object({
 	email: z.string().email({message: 'Please enter a valid email address'}),
@@ -30,9 +31,13 @@ const Waitlist = ({className}: {className?: string}) => {
 	const pathName = usePathname()
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
-		await signUpForWaitlist(values.email, `${defaultUrl}${pathName}`)
-		form.reset()
-		setSignedUp(true)
+		try {
+			await signUpForWaitlist(values.email, `${defaultUrl}${pathName}`)
+			form.reset()
+			setSignedUp(true)
+		} catch (error) {
+			toast.error('Failed to sign up, please try again')
+		}
 	}
 
 	return (
