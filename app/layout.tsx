@@ -2,6 +2,7 @@ import type {Metadata} from 'next'
 import './globals.css'
 import {ClerkProvider} from '@clerk/nextjs'
 import {defaultUrl, modelica, portfolio} from '@/config'
+import {Toaster} from '@/components/ui/sonner'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
@@ -26,6 +27,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
 			<html lang="en">
 				<body className={modelica.className}>
 					{children}
+					<Toaster />
 				</body>
 			</html>
 		</ClerkProvider>

@@ -1,4 +1,5 @@
 import {Metadata} from 'next'
+import Waitlist from '@/components/Waitlist'
 
 export const metadata: Metadata = {
 	title: 'Letraz — Craft unique resumes for each job application effortlessly',
@@ -19,7 +20,9 @@ const LandingPage = () => {
 				<source src="/letraz-intro.mp4" type="video/mp4"/>
 				Your browser does not support the video tag. You can <a href="/letraz-intro.mp4">download the video</a> instead.
 			</video>
-			<h1 className="sr-only">Craft Unique Resumes Tailored to Every Job Application</h1>
+			<h1 className="absolute top-24 text-6xl text-center max-w-[1200px] leading-snug font-medium">Craft unique résumés tailored to every job application</h1>
+
+			<Waitlist className="absolute z-10 bottom-16" />
 		</main>
 	)
 }

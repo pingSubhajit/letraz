@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.5.2",
+    "@hookform/resolvers": "^3.9.0",
     "@neondatabase/serverless": "^0.9.5",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -22,11 +24,15 @@
     "lucide-react": "^0.441.0",
     "motion": "^10.18.0",
     "next": "15.0.0-rc.0",
+    "next-themes": "^0.3.0",
     "react": "19.0.0-rc-f994737d14-20240522",
     "react-dom": "19.0.0-rc-f994737d14-20240522",
+    "react-hook-form": "^7.53.0",
     "react-icons": "^5.3.0",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
