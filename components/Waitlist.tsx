@@ -38,7 +38,12 @@ const Waitlist = ({className}: {className?: string}) => {
 	return (
 		<div className={cn('', className)}>
 			<AnimatePresence mode="wait">
-				{!signedUp && <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}} transition={{delay: 2}}>
+				{!signedUp && <motion.div
+					initial={{opacity: 0}}
+					animate={{opacity: 1}}
+					exit={{opacity: 0}}
+					transition={{delay: 6.5}}
+				>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="flex items-stretch gap-1">
 							<FormField

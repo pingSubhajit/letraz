@@ -1,5 +1,6 @@
 import {Metadata} from 'next'
 import Waitlist from '@/components/Waitlist'
+import LandingPageHeading from '@/app/page.heading'
 
 export const metadata: Metadata = {
 	title: 'Letraz — Craft unique resumes for each job application effortlessly',
@@ -16,13 +17,15 @@ export const metadata: Metadata = {
 const LandingPage = () => {
 	return (
 		<main className="h-screen overflow-hidden flex justify-center items-center">
-			<video autoPlay muted loop className="aspect-video">
+			<video autoPlay muted className="aspect-video">
 				<source src="/letraz-intro.mp4" type="video/mp4"/>
 				Your browser does not support the video tag. You can <a href="/letraz-intro.mp4">download the video</a> instead.
 			</video>
-			<h1 className="absolute top-24 text-6xl text-center max-w-[1200px] leading-snug font-medium">Craft unique résumés tailored to every job application</h1>
 
-			<Waitlist className="absolute z-10 bottom-16" />
+			<div className="absolute top-24 z-10 flex flex-col justify-center items-center gap-16">
+				<LandingPageHeading />
+				<Waitlist />
+			</div>
 		</main>
 	)
 }
