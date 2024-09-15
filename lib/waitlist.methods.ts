@@ -4,6 +4,7 @@ import {z} from 'zod'
 import {db} from '@/db/drizzle'
 import {waitlist} from '@/db/schema'
 import {Resend} from 'resend'
+import WaitlistWelcomeEmail from '@/emails/welcome'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -23,7 +24,7 @@ export const signUpForWaitlist = async (email: string, referralLink?: any) => {
 		from: 'hello@letraz.app',
 		to: params.email,
 		subject: 'Welcome to Letraz!',
-		html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
+		react: WaitlistWelcomeEmail()
 	})
 
 	return newSignUp
