@@ -59,7 +59,7 @@ const Waitlist = ({className}: {className?: string}) => {
 										<FormControl>
 											<Input
 												placeholder="Enter your email" {...field}
-												className="bg-neutral-50 peer w-72 rounded-l-full"
+												className="bg-neutral-50 peer w-64 lg:w-72 rounded-l-full"
 											/>
 										</FormControl>
 										<div className="flex items-center w-[102%] h-[110%] rounded-lg rounded-l-full
