@@ -1,1 +1,0 @@
-export const GETWAITLIST = 'https://api.getwaitlist.com/api/v1'

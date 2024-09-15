@@ -1,7 +1,11 @@
 'use server'
 
 import {z} from 'zod'
-import {GETWAITLIST} from '@/constants'
+import {db} from '@/db/drizzle'
+import {waitlist} from '@/db/schema'
+import {Resend} from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const signUpForWaitlist = async (email: string, referralLink?: any) => {
 	const parametersSchema = z.object({
@@ -10,21 +14,17 @@ export const signUpForWaitlist = async (email: string, referralLink?: any) => {
 	})
 
 	const params = parametersSchema.parse({email, referralLink})
-	const response = await (await fetch(`${GETWAITLIST}/signup`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			email: params.email,
-			referral_link: params.referralLink,
-			waitlist_id: process.env.WAITLIST_ID,
-		}),
-	})).json()
+	const newSignUp = db.insert(waitlist).values({
+		email: params.email,
+		referralLink: params.referralLink,
+	}).returning()
 
-	if (response.error) {
-		throw new Error(response.error)
-	}
+	await resend.emails.send({
+		from: 'hello@letraz.app',
+		to: params.email,
+		subject: 'Welcome to Letraz!',
+		html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
+	})
 
-	return response
+	return newSignUp
 }
