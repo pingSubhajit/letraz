@@ -23,7 +23,7 @@ const SignInPage = () => {
 			</video>
 			<div className="w-[50vw] h-screen bg-neutral-50 flex flex-col justify-center items-center">
 				<AnimatePresence>
-					<SignInPageTitle/>
+					<SignInPageTitle />
 				</AnimatePresence>
 
 				<GoogleSignInButton className="mt-16"/>
