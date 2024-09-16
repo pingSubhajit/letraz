@@ -1,5 +1,6 @@
 import type {Metadata} from 'next'
 import './globals.css'
+import 'lenis/dist/lenis.css'
 import {ClerkProvider} from '@clerk/nextjs'
 import {defaultUrl, modelica, portfolio} from '@/config'
 import {Toaster} from '@/components/ui/sonner'

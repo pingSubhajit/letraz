@@ -1,9 +1,10 @@
 import {ReactNode} from 'react'
 import AppSidebar from '@/components/AppSidebar'
+import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 
 const AppLayout = ({ children }: {children: ReactNode}) => {
 	return (
-		<div className="min-h-svh flex items-stretch relative">
+		<div className="h-svh flex items-stretch relative overflow-hidden">
 			{/* SIDEBAR */}
 			<AppSidebar />
 
@@ -13,9 +14,9 @@ const AppLayout = ({ children }: {children: ReactNode}) => {
 			<div className="h-[709px] w-[176px] absolute bg-amber-300 rounded-[50%] -z-10 -bottom-36 blur-[150px] -left-72" />
 
 			{/* MAIN CONTENT */}
-			<main className="w-full p-8">
+			<SmoothScrollProvider className="overflow-auto h-screen w-full p-8 ">
 				{children}
-			</main>
+			</SmoothScrollProvider>
 		</div>
 	)
 }

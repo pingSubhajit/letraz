@@ -1,4 +1,4 @@
-import AppSidebarContainer from '@/components/ClientContainers/AppSidebarContainer'
+import AppSidebarContainer from '@/components/clientContainers/AppSidebarContainer'
 import {UserButton} from '@clerk/nextjs'
 import {Button} from '@/components/ui/button'
 import Link from 'next/link'
