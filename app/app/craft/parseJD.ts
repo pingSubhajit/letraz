@@ -1,9 +1,8 @@
 'use server'
 
 import {generateObject} from 'ai'
-import {google} from '@ai-sdk/google'
 import {z} from 'zod'
-import {anthropic} from '@ai-sdk/anthropic'
+import {model} from '@/config'
 
 const systemPrompt = `
 You will be given a raw string of scraped content of a job listing page from a job portal. 
@@ -24,7 +23,7 @@ You need to parse the job details from the content and return the data in the st
 }
 `
 
-type Job = {
+export type Job = {
 	title: string,
 	company: string,
 	location: string,
@@ -37,16 +36,9 @@ type Job = {
 }
 
 export const parseJobFromRawJD = async (input: string): Promise<Job> => {
-	const models = [
-		google('models/gemini-1.5-flash-latest'),
-		google('models/gemini-1.0-pro-latest'),
-		google('models/gemini-1.5-pro-latest'),
-		anthropic('claude-3-haiku-20240307')
-	]
-
 	try {
 		const parsedResult = await generateObject({
-			model: models[3],
+			model,
 			system: systemPrompt,
 			prompt: JSON.stringify(input),
 			schema: z.object({
