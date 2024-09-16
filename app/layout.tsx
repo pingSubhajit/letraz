@@ -4,6 +4,7 @@ import 'lenis/dist/lenis.css'
 import {ClerkProvider} from '@clerk/nextjs'
 import {defaultUrl, modelica, portfolio} from '@/config'
 import {Toaster} from '@/components/ui/sonner'
+import {ViewTransitions} from 'next-view-transitions'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
@@ -25,12 +26,14 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<ClerkProvider>
-			<html lang="en">
-				<body className={modelica.className}>
-					{children}
-					<Toaster />
-				</body>
-			</html>
+			<ViewTransitions>
+				<html lang="en">
+					<body className={modelica.className}>
+						{children}
+						<Toaster />
+					</body>
+				</html>
+			</ViewTransitions>
 		</ClerkProvider>
 	)
 }

@@ -10,9 +10,13 @@ import {Textarea} from '@/components/ui/textarea'
 import {createPortal} from 'react-dom'
 import {useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
+import {useTransitionRouter} from 'next-view-transitions'
+import {Loader2} from 'lucide-react'
+import {parseJobFromRawJD} from '@/app/app/craft/parseJD'
+import {toast} from 'sonner'
 
 const formSchema = z.object({
-	input: z.string(),
+	input: z.string().min(1, 'Please enter a valid URL or job description').transform(input => encodeURIComponent(input))
 })
 
 const NewResumeInput = ({className}: {className?: string}) => {
@@ -23,37 +27,50 @@ const NewResumeInput = ({className}: {className?: string}) => {
 		},
 	})
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values)
-		form.reset()
+	const router = useTransitionRouter()
+
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		try {
+			const job = await parseJobFromRawJD(values.input)
+			router.push(`/app/craft?input=${JSON.stringify(job)}`)
+		} catch (error: any) {
+			toast.error(error.message || 'Could not understand the job')
+		}
 	}
 	
 	const [inputFocused, setInputFocused] = useState(false)
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className={cn('overflow-hidden bg-white p-4 pt-6 flex ' +
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className={cn('min-h-96 overflow-hidden bg-white p-4 pt-6 flex ' +
 				'flex-col justify-between gap-4 relative z-[60] hover:shadow-2xl focus-within:shadow-2xl ' +
-				'shadow-orange-300 transition', className)}>
+				'shadow-orange-300 transition', className)}
+				style={{viewTransitionName: 'craft_container'}}
+			>
 				<FormField
 					control={form.control}
 					name="input"
 					render={({ field }) => (
 						<FormItem className="h-full flex flex-col gap-4">
 							<FormLabel className="text-orange-600 uppercase tracking-widest text-xs font-semibold">Craft new resume for a job</FormLabel>
-							<FormControl>
+							{!form.formState.isSubmitted && <FormControl>
 								<Textarea
 									placeholder="Paste URL or job description" {...field}
 									className="h-full p-0 border-none resize-none"
 									onFocus={() => setInputFocused(true)}
 									onBlur={() => setInputFocused(false)}
 								/>
-							</FormControl>
+							</FormControl>}
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Submit</Button>
+				{form.formState.isValid && <Button type="submit" disabled={!form.formState.isValid}>
+					{(form.formState.isSubmitting || form.formState.isSubmitted) && <Loader2 className="w-4 h-4 animate-spin mr-2"/>}
+					Submit
+				</Button>}
 
 				{createPortal(
 					NewResumeInputOverlay({inputFocused}),

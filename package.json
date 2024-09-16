@@ -11,6 +11,8 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^0.0.50",
+    "@ai-sdk/google": "^0.0.48",
     "@clerk/nextjs": "^5.5.2",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
@@ -20,6 +22,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@react-email/components": "0.0.25",
     "@react-email/tailwind": "0.1.0",
+    "ai": "^3.3.39",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
@@ -31,6 +34,7 @@
     "motion": "^10.18.0",
     "next": "15.0.0-rc.0",
     "next-themes": "^0.3.0",
+    "next-view-transitions": "^0.3.1",
     "react": "19.0.0-rc-f994737d14-20240522",
     "react-dom": "19.0.0-rc-f994737d14-20240522",
     "react-hook-form": "^7.53.0",
