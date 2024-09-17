@@ -9,7 +9,9 @@ You will be given a raw string of scraped content of a job listing page from a j
 You need to understand the job and return the details from the job in the given structured format. 
 Jobs would have a title, the name of the company, job location, maximum and minimum salary and requirements.
 Jobs could also have job description, responsibilities, and benefits.
-You need to parse the job details from the content and return the data in the structured format as shown below, provide an empty object if no data is found.
+You need to parse the job details from the content and return the data in the structured format as shown below.
+Return empty strings and empty arrays if the data is not available.
+Format:
 {
   title: string,
   companyName: string,
