@@ -2,7 +2,7 @@
 
 import {AnimatePresence, motion} from 'framer-motion'
 import {cn} from '@/lib/utils'
-import {OnboardingStep} from '@/app/app/onboarding/page'
+import {OnboardingStep} from '@/app/app/onboarding/types'
 
 const BrainAnimation = ({className, onboardingStep}: {className?: string, onboardingStep: OnboardingStep}) => {
 	return (

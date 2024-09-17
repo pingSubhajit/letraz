@@ -1,11 +1,7 @@
 import BrainAnimation from '@/app/app/onboarding/BrainAnimation.client'
 import Welcome from '@/components/onboarding/Welcome'
 import {notFound} from 'next/navigation'
-
-export enum OnboardingStep {
-	WELCOME = 'welcome',
-	ABOUT = 'about',
-}
+import {OnboardingStep} from '@/app/app/onboarding/types'
 
 const OnboardingPage = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
 	const step = searchParams.step as OnboardingStep | undefined
