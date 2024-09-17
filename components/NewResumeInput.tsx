@@ -14,6 +14,7 @@ import {useTransitionRouter} from 'next-view-transitions'
 import {Loader2} from 'lucide-react'
 import {parseJobFromRawJD} from '@/app/app/craft/parseJD'
 import {toast} from 'sonner'
+import {addJobToDB} from '@/lib/jobs.methods'
 
 const formSchema = z.object({
 	input: z.string().min(1, 'Please enter a valid URL or job description').transform(input => encodeURIComponent(input))
@@ -31,8 +32,10 @@ const NewResumeInput = ({className}: {className?: string}) => {
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			const job = await parseJobFromRawJD(values.input)
-			router.push(`/app/craft?input=${JSON.stringify(job)}`)
+			const jobDetails = await parseJobFromRawJD(values.input)
+			const job = await addJobToDB(jobDetails)
+
+			router.push(`/app/craft?jobId=${job.id}`)
 		} catch (error: any) {
 			toast.error(error.message || 'Could not understand the job')
 		}

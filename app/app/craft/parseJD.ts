@@ -12,10 +12,10 @@ Jobs could also have job description, responsibilities, and benefits.
 You need to parse the job details from the content and return the data in the structured format as shown below, provide an empty object if no data is found.
 {
   title: string,
-  company: string,
+  companyName: string,
   location: string,
-  salary_max: string,
-  salary_min: string,
+  salaryMax: string,
+  salaryMin: string,
   requirements: string[],
   description: string,
   responsibilities: string[],
@@ -23,12 +23,12 @@ You need to parse the job details from the content and return the data in the st
 }
 `
 
-export type Job = {
+type Job = {
 	title: string,
-	company: string,
+	companyName: string,
 	location: string,
-	salary_max: string,
-	salary_min: string,
+	salaryMax: string,
+	salaryMin: string,
 	requirements: string[],
 	description: string,
 	responsibilities: string[],
@@ -43,10 +43,10 @@ export const parseJobFromRawJD = async (input: string): Promise<Job> => {
 			prompt: JSON.stringify(input),
 			schema: z.object({
 				title: z.string().describe('Title of the job'),
-				company: z.string().describe('Name of the company'),
+				companyName: z.string().describe('Name of the company'),
 				location: z.string().describe('Location of the job'),
-				salary_max: z.string().describe('Maximum salary of the job. Include currency symbol'),
-				salary_min: z.string().describe('Minimum salary of the job. Include currency symbol'),
+				salaryMax: z.string().describe('Maximum salary of the job. Include currency symbol'),
+				salaryMin: z.string().describe('Minimum salary of the job. Include currency symbol'),
 				requirements: z.array(z.string()).describe('Requirements of the job'),
 				description: z.string().describe('Description of the job'),
 				responsibilities: z.array(z.string()).describe('Responsibilities of the job'),
