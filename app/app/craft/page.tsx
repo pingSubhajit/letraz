@@ -1,22 +1,28 @@
 import {notFound} from 'next/navigation'
 import {JobSummaryFromJson} from '@/components/JobSummary'
+import {db} from '@/db/drizzle'
+import {eq} from 'drizzle-orm'
+import {jobs} from '@/db/schema'
 
 const CraftPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
-	const stringifiedJob = searchParams.input as string | undefined
+	const jobId = searchParams.jobId as string | undefined
 
-	if (!stringifiedJob) {
+	if (!jobId) {
 		notFound()
 	}
 
-	const job = JSON.parse(stringifiedJob)
+	console.log(jobId)
+
+	const job = await db.query.jobs.findFirst({
+		where: eq(jobs.id, jobId)
+	})
+
+	if (!job) {
+		notFound()
+	}
 
 	return (
 		<div className="flex gap-32">
-			{/*<video autoPlay muted loop*/}
-			{/*       className="aspect-video absolute -z-10 w-full h-full left-1/2 -translate-x-1/2 -top-96">*/}
-			{/*	<source src="/letraz-brain.webm" type="video/webm"/>*/}
-			{/*</video>*/}
-
 			<div className="w-full">
 				<JobSummaryFromJson jobDetails={job}/>
 			</div>
