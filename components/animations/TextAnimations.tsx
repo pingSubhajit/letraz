@@ -219,7 +219,7 @@ const TextAnimate: FC<Props> = ({
 	//   }, [ctrls, isInView]);
 
 	if (type === 'rollIn' || type === 'whipIn') {
-		return (
+		return ( // @ts-ignore
 			<h2 {...props}>
 				{text.split(' ').map((word, index) => {
 					return (
