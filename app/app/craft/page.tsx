@@ -11,8 +11,6 @@ const CraftPage = async ({ searchParams }: { searchParams: { [key: string]: stri
 		notFound()
 	}
 
-	console.log(jobId)
-
 	const job = await db.query.jobs.findFirst({
 		where: eq(jobs.id, jobId)
 	})

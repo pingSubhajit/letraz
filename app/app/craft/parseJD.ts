@@ -56,7 +56,6 @@ export const parseJobFromRawJD = async (input: string): Promise<Job> => {
 
 		return parsedResult.object
 	} catch (error) {
-		console.log(error)
-		throw new Error('Failed to parse words from the input string')
+		throw new Error('Failed to understand job details')
 	}
 }
