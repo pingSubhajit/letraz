@@ -2,6 +2,7 @@ import BrainAnimation from '@/app/app/onboarding/BrainAnimation.client'
 import Welcome from '@/components/onboarding/Welcome'
 import {notFound} from 'next/navigation'
 import {OnboardingStep} from '@/app/app/onboarding/types'
+import About from '@/components/onboarding/About'
 
 const OnboardingPage = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
 	const step = searchParams.step as OnboardingStep | undefined
@@ -15,6 +16,7 @@ const OnboardingPage = ({ searchParams }: { searchParams: { [key: string]: strin
 			<BrainAnimation onboardingStep={step} />
 
 			{step === OnboardingStep.WELCOME && <Welcome />}
+			{step === OnboardingStep.ABOUT && <About />}
 		</div>
 	)
 }
