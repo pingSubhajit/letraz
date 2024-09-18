@@ -5,47 +5,11 @@ import {cn} from '@/lib/utils'
 import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useFormField} from '@/components/ui/form'
-import {Input, InputProps} from '@/components/ui/input'
-import {useState} from 'react'
+import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {Button} from '@/components/ui/button'
-import {Link} from 'next-view-transitions'
-import {ChevronLeft, ChevronRight} from 'lucide-react'
-
-const FormInput = ({ className, type, ...props }: InputProps) => {
-	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
-	const { error } = useFormField()
-
-	return (
-		<div className={cn('relative mb-2', className)}>
-			<FormControl>
-				<Input
-					className="text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2"
-					{...props}
-					onFocus={() => setFieldState('focus')}
-					onBlur={() => setFieldState('idle')}
-					onMouseEnter={() => {
-						if (fieldState !== 'focus') setFieldState('hover')
-					}}
-					onMouseLeave={() => {
-						if (fieldState !== 'focus') setFieldState('idle')
-					}}
-				/>
-			</FormControl>
-
-			<motion.div
-				initial={{width: 0}} animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
-			/>
-
-			<motion.div
-				initial={{width: 0}}
-				animate={{width: error ? '100%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
-			/>
-		</div>
-	)
-}
+import {Link, useTransitionRouter} from 'next-view-transitions'
+import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
+import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
 
 const formSchema = z.object({
 	firstName: z.string()
@@ -62,6 +26,8 @@ const formSchema = z.object({
 })
 
 const PersonalDetailsForm = ({className}: { className?: string }) => {
+	const router = useTransitionRouter()
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -73,7 +39,7 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 	})
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values)
+		router.push('/app/onboarding?step=education')
 	}
 
 	return (
@@ -99,7 +65,7 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 							name="firstName"
 							render={({field}) => (
 								<FormItem>
-									<FormInput placeholder="first name" {...field} />
+									<OnboardingFormInput placeholder="first name" {...field} autoFocus />
 									<FormLabel className="transition">First name</FormLabel>
 									<FormMessage/>
 								</FormItem>
@@ -111,7 +77,7 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 							name="lastName"
 							render={({field}) => (
 								<FormItem>
-									<FormInput placeholder="last name" {...field} />
+									<OnboardingFormInput placeholder="last name" {...field} />
 									<FormLabel className="transition">Last name</FormLabel>
 									<FormMessage/>
 								</FormItem>
@@ -128,7 +94,7 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 							name="email"
 							render={({field}) => (
 								<FormItem>
-									<FormInput placeholder="email address" {...field} />
+									<OnboardingFormInput placeholder="email address" {...field} />
 									<FormLabel className="transition">Email</FormLabel>
 									<FormMessage/>
 								</FormItem>
@@ -140,7 +106,7 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 							name="phone"
 							render={({field}) => (
 								<FormItem>
-									<FormInput placeholder="phone no." {...field} />
+									<OnboardingFormInput placeholder="phone no." {...field} />
 									<FormLabel className="transition">Phone (optional)</FormLabel>
 									<FormMessage/>
 								</FormItem>
@@ -157,6 +123,7 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 							<Button
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
 								variant="secondary"
+								type="button"
 							>
 								<ChevronLeft className="w-5 h-5 mr-1"/>
 								Overview
@@ -169,8 +136,11 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 							variant="secondary"
 							type="submit"
 						>
-								Looks good
-							<ChevronRight className="w-5 h-5 ml-1"/>
+							Looks good
+							{form.formState.isSubmitting
+								? <Loader2 className="w-4 h-4 ml-1 animate-spin"/>
+								: <ChevronRight className="w-5 h-5 ml-1"/>
+							}
 						</Button>
 					</div>
 				</form>
