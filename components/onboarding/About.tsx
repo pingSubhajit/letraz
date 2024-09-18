@@ -37,7 +37,7 @@ const About = () => {
 				</Link>
 
 				{/* NEXT STEP BUTTON */}
-				<Link href={'/app/onboarding?step=about'}>
+				<Link href={'/app/onboarding?step=personal-details'}>
 					<Button
 						className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 						variant="secondary"
