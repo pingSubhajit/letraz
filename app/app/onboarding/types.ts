@@ -3,4 +3,5 @@ export enum OnboardingStep {
 	ABOUT = 'about',
 	PERSONAL_DETAILS = 'personal-details',
 	EDUCATION = 'education',
+	EXPERIENCE = 'experience'
 }

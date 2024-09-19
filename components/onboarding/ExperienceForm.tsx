@@ -16,35 +16,35 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 
-export const educationFormSchema = z.object({
-	institutionName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
+export const experienceFormSchema = z.object({
+	companyName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
 	country: z.string().optional(),
-	fieldOfStudy: z.string().optional(),
-	degree: z.string().optional(),
+	jobTitle: z.string().optional(),
+	city: z.string().optional(),
 	startedFromMonth: z.string().optional(),
 	startedFromYear: z.string().optional(),
 	finishedAtMonth: z.string().optional(),
 	finishedAtYear: z.string().optional(),
 	current: z.boolean().optional(),
-	description: z.string().optional(),
+	description: z.string().optional()
 })
 
-type EducationFormProps = {
+type ExperienceFormProps = {
 	className?: string,
-	educations: z.infer<typeof educationFormSchema>[],
-	setEducations: (educations: z.infer<typeof educationFormSchema>[]) => void
+	experiences: z.infer<typeof experienceFormSchema>[],
+	setExperiences: (educations: z.infer<typeof experienceFormSchema>[]) => void
 }
 
-const EducationForm = ({className, educations, setEducations}: EducationFormProps) => {
+const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps) => {
 	const router = useTransitionRouter()
 
-	const form = useForm<z.infer<typeof educationFormSchema>>({
-		resolver: zodResolver(educationFormSchema),
+	const form = useForm<z.infer<typeof experienceFormSchema>>({
+		resolver: zodResolver(experienceFormSchema),
 		defaultValues: {
-			institutionName: '',
+			companyName: '',
 			country: '',
-			fieldOfStudy: '',
-			degree: '',
+			jobTitle: '',
+			city: '',
 			startedFromMonth: '',
 			startedFromYear: '',
 			finishedAtMonth: '',
@@ -54,13 +54,13 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 		},
 	})
 
-	function onSubmit(values: z.infer<typeof educationFormSchema>) {
-		setEducations([...educations, values])
+	function onSubmit(values: z.infer<typeof experienceFormSchema>) {
+		setExperiences([...experiences, values])
 		form.reset()
 	}
 
-	function submitWithRedirect(values: z.infer<typeof educationFormSchema>) {
-		router.push('/app/onboarding?step=experience')
+	function submitWithRedirect(values: z.infer<typeof experienceFormSchema>) {
+		router.push('/app/onboarding?step=resume')
 	}
 
 	return (
@@ -84,11 +84,11 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 					>
 						<FormField
 							control={form.control}
-							name="institutionName"
+							name="companyName"
 							render={({field}) => (
 								<FormItem className="w-[95%]">
-									<OnboardingFormInput placeholder="institution" {...field} autoFocus/>
-									<FormLabel className="transition">Name of the institution</FormLabel>
+									<OnboardingFormInput placeholder="company" {...field} autoFocus/>
+									<FormLabel className="transition">Name of the company</FormLabel>
 									<FormMessage/>
 								</FormItem>
 							)}
@@ -114,11 +114,11 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 					>
 						<FormField
 							control={form.control}
-							name="fieldOfStudy"
+							name="jobTitle"
 							render={({field}) => (
 								<FormItem className="w-[95%]">
-									<OnboardingFormInput placeholder="field" {...field} />
-									<FormLabel className="transition">Field of study</FormLabel>
+									<OnboardingFormInput placeholder="job title" {...field} />
+									<FormLabel className="transition">Designation or job title</FormLabel>
 									<FormMessage/>
 								</FormItem>
 							)}
@@ -126,11 +126,11 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 
 						<FormField
 							control={form.control}
-							name="degree"
+							name="city"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="degree" {...field} />
-									<FormLabel className="transition">Degree earned</FormLabel>
+									<OnboardingFormInput placeholder="city" {...field} />
+									<FormLabel className="transition">City of work</FormLabel>
 									<FormMessage/>
 								</FormItem>
 							)}
@@ -222,7 +222,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormTextArea
-										placeholder="write a fiew things about what you learnt, the things you've build etc."
+										placeholder="write a fiew things about what you did, the skills you've gained etc."
 										{...field}
 									/>
 									<FormLabel className="transition">Description (optional)</FormLabel>
@@ -237,14 +237,14 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 						bottom-16 px-16"
 					>
 						{/* PREVIOUS STEP BUTTON */}
-						<Link href={'/app/onboarding?step=personal-details'}>
+						<Link href={'/app/onboarding?step=education'}>
 							<Button
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
 								variant="secondary"
 								type="button"
 							>
 								<ChevronLeft className="w-5 h-5 mr-1"/>
-								Personal details
+								Educations
 							</Button>
 						</Link>
 
@@ -269,7 +269,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								type="button"
 								onClick={form.handleSubmit(submitWithRedirect)}
 							>
-								What's next
+								Create my base résumé
 								{form.formState.isSubmitting
 									? <Loader2 className="w-4 h-4 ml-1 animate-spin"/>
 									: <ChevronRight className="w-5 h-5 ml-1"/>
@@ -283,4 +283,4 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 	)
 }
 
-export default EducationForm
+export default ExperienceForm

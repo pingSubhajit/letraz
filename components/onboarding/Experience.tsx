@@ -1,14 +1,14 @@
 'use client'
 
 import TextAnimate from '@/components/animations/TextAnimations'
-import EducationForm, {educationFormSchema} from '@/components/onboarding/EducationForm'
 import {z} from 'zod'
 import {useState} from 'react'
 import {motion} from 'framer-motion'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
+import ExperienceForm, {experienceFormSchema} from '@/components/onboarding/ExperienceForm'
 
-const Education = () => {
-	const [educations, setEducations] = useState<z.infer<typeof educationFormSchema>[]>([])
+const Experience = () => {
+	const [experiences, setExperiences] = useState<z.infer<typeof experienceFormSchema>[]>([])
 	const [parent] = useAutoAnimate()
 
 	return (
@@ -16,39 +16,38 @@ const Education = () => {
 			{/* HEADING TEXT */}
 			<div>
 				<TextAnimate
-					text="Tell us more"
+					text="What about"
 					type="calmInUp"
 					className="text-5xl leading-snug"
 				/>
 				<TextAnimate
-					text="about your education"
+					text="your past experiences"
 					type="calmInUp"
 					className="text-5xl leading-snug"
 				/>
 			</div>
 
 			{/* FORM */}
-			<EducationForm educations={educations} setEducations={setEducations} />
+			<ExperienceForm experiences={experiences} setExperiences={setExperiences} />
+
 
 			{/* EDUCATIONS */}
 			<motion.div
 				initial={{opacity: 0, y: '-30%'}}
-				animate={{opacity: educations.length > 0 ? 1 : 0, y: educations.length > 0 ? '-50%' : '-30%'}} transition={{
+				animate={{opacity: experiences.length > 0 ? 1 : 0, y: experiences.length > 0 ? '-50%' : '-30%'}} transition={{
 					type: 'tween',
 					ease: 'easeInOut'
 				}}
 				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
 			>
-				<h3 className="text-center text-3xl font-medium">Educations</h3>
+				<h3 className="text-center text-3xl font-medium">Experiences</h3>
 
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
-					{educations.map(
+					{experiences.map(
 						(education, index) => <li key={index} className="bg-white rounded-xl py-4 px-6 shadow-lg">
 							<p className="truncate font-medium text-xl">
-								{education.degree + ' '}
-								{education.degree && education.fieldOfStudy && 'in'} {education.fieldOfStudy + ' '}
-								{(education.fieldOfStudy || education.degree) && education.institutionName && 'from '}
-								{education.institutionName}
+								{education.jobTitle && education.jobTitle + ' '}
+								{education.jobTitle && 'in'} {education.companyName}
 							</p>
 							<p className="mt-1 text-sm">
 								{education.startedFromMonth && education.startedFromYear && 'From '}
@@ -65,4 +64,4 @@ const Education = () => {
 	)
 }
 
-export default Education
+export default Experience

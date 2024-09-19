@@ -135,6 +135,7 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 							className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 							variant="secondary"
 							type="submit"
+							disabled={form.formState.isSubmitting || !form.formState.isValid}
 						>
 							Looks good
 							{form.formState.isSubmitting
