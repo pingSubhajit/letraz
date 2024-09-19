@@ -47,10 +47,9 @@ const Waitlist = ({className}: {className?: string}) => {
 					initial={{opacity: 0}}
 					animate={{opacity: 1}}
 					exit={{opacity: 0}}
-					transition={{delay: 6.5}}
 				>
 					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="flex items-stretch gap-1">
+						<form onSubmit={form.handleSubmit(onSubmit)} className="flex items-stretch gap-1 justify-between">
 							<FormField
 								control={form.control}
 								name="email"
@@ -59,13 +58,9 @@ const Waitlist = ({className}: {className?: string}) => {
 										<FormControl>
 											<Input
 												placeholder="Enter your email" {...field}
-												className="bg-neutral-50 peer w-64 lg:w-72 rounded-l-full"
+												className="bg-neutral-50 peer w-full lg:w-96 rounded-l-full py-3 lg:py-4 h-auto"
 											/>
 										</FormControl>
-										<div className="flex items-center w-[102%] h-[110%] rounded-lg rounded-l-full
-										bg-gradient-to-r from-orange-600 via-rose-600 to-amber-500
-										absolute top-1/2 left-1/2 -z-10 -translate-x-1/2 -translate-y-1/2
-										scale-0 peer-focus-visible:scale-100 transition"/>
 									</FormItem>
 								)}
 							/>
@@ -73,7 +68,7 @@ const Waitlist = ({className}: {className?: string}) => {
 							<Button
 								type="submit"
 								disabled={!form.formState.isValid || form.formState.isSubmitting}
-								className="rounded-r-full"
+								className="rounded-r-full h-auto px-4 lg:px-8"
 							>
 								{form.formState.isSubmitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
 								Join waitlist
@@ -81,6 +76,13 @@ const Waitlist = ({className}: {className?: string}) => {
 						</form>
 					</Form>
 				</motion.div>}
+
+				{!signedUp && <motion.p
+					initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
+					className="mt-4 text-xs text-primary/60"
+				>
+                    Your email will not be shared with any third parties.
+				</motion.p>}
 
 				{signedUp && <motion.p initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
 					Thanks for signing up! We'll notify you when we launch.
