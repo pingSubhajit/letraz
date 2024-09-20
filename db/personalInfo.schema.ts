@@ -19,7 +19,7 @@ export const personalInfo = pgTable('personal_info', {
 	website: varchar('website'),
 	profileText: varchar('profile_text'),
 	createdAt: timestamp('created_at').defaultNow(),
-	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => sql`now()`),
+	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()),
 })
 
 export const PersonalInfoInsert = createInsertSchema(personalInfo)
