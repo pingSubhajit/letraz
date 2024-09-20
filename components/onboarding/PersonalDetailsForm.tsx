@@ -17,7 +17,8 @@ const formSchema = z.object({
 		.max(50, {message: 'That\'s a long name! We can\'t handle that'}),
 	lastName: z.string()
 		.min(2, {message: 'You don\'t have a name shorter than two letters do you?'})
-		.max(50, {message: 'That\'s a long name! We can\'t handle that'}),
+		.max(50, {message: 'That\'s a long name! We can\'t handle that'})
+		.optional(),
 	email: z.string().email({message: 'Please enter a valid email address'}),
 	phone: z.string()
 		.min(10, {message: 'That phone number doesn\'t look right'})
