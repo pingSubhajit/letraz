@@ -16,14 +16,16 @@ export const metadata: Metadata = {
 	}
 }
 
-const LandingPage = () => {
+const LandingPage = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+	const referrer = searchParams.ref as string | undefined
+
 	return (
 		<main className="h-svh overflow-hidden flex flex-col lg:flex-row justify-stretch lg:justify-center items-stretch bg-white">
 			<div className="flex flex-col justify-center items-start gap-8 p-8 lg:p-16 relative">
 				<LandingPageLogo className="relative z-30" />
 				<LandingPageHeading className="relative z-30" />
 				<LandingPageDescription className="lg:py-2 relative z-30" />
-				<Waitlist className="relative z-30" />
+				<Waitlist className="relative z-30" referrer={referrer} />
 
 				<div className="absolute w-full h-full inset-0 bg-neutral-100 z-20 shadow-2xl" />
 

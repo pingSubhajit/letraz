@@ -9,13 +9,13 @@ import {eq} from 'drizzle-orm'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-export const signUpForWaitlist = async (email: string, referralLink?: any) => {
+export const signUpForWaitlist = async (email: string, referrer?: any) => {
 	const parametersSchema = z.object({
 		email: z.string().email(),
-		referralLink: z.string().optional(),
+		referrer: z.string().optional(),
 	})
 
-	const params = parametersSchema.parse({email, referralLink})
+	const params = parametersSchema.parse({email, referrer})
 
 	const existingSignUp = await db.query.waitlist.findFirst({
 		where: eq(waitlist.email, params.email)
@@ -25,10 +25,10 @@ export const signUpForWaitlist = async (email: string, referralLink?: any) => {
 
 	const newSignUp = db.insert(waitlist).values({
 		email: params.email,
-		referralLink: params.referralLink,
+		referrer: params.referrer || 'website',
 	}).returning()
 
-	await resend.emails.send({
+	resend.emails.send({
 		from: 'Letraz <hello@letraz.app>',
 		to: params.email,
 		subject: 'Welcome to Letraz waitlist!',

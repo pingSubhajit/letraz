@@ -9,7 +9,6 @@ import {Button} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
 import {usePathname} from 'next/navigation'
 import {signUpForWaitlist} from '@/lib/waitlist.methods'
-import {defaultUrl} from '@/config'
 import {useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
 import {Loader2} from 'lucide-react'
@@ -19,7 +18,7 @@ const formSchema = z.object({
 	email: z.string().email({message: 'Please enter a valid email address'}),
 })
 
-const Waitlist = ({className}: {className?: string}) => {
+const Waitlist = ({className, referrer}: {className?: string, referrer: string | undefined}) => {
 	const [signedUp, setSignedUp] = useState(false)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -32,7 +31,7 @@ const Waitlist = ({className}: {className?: string}) => {
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
-			await signUpForWaitlist(values.email, `${defaultUrl}${pathName}`)
+			await signUpForWaitlist(values.email, referrer)
 			form.reset()
 			setSignedUp(true)
 		} catch (error) {
