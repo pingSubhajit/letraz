@@ -29,17 +29,24 @@ const formSchema = z.object({
 		.optional(),
 })
 
-const PersonalDetailsForm = ({className}: { className?: string }) => {
+type DefaultValues = {
+	firstName: string
+	lastName: string
+	email: string
+	phone?: string
+}
+
+const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }) => {
 	const router = useTransitionRouter()
-	const { isLoaded, user } = useUser()
+	const { user } = useUser()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			firstName: '',
-			lastName: '',
-			email: '',
-			phone: undefined,
+			firstName: defaultValues.firstName,
+			lastName: defaultValues.lastName,
+			email: defaultValues.email,
+			phone: defaultValues.phone || undefined,
 		},
 	})
 
