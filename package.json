@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
+    "drizzle-zod": "^0.5.1",
     "framer": "^2.4.1",
     "framer-motion": "^11.5.4",
     "lenis": "^1.1.13",

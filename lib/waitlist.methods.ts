@@ -1,8 +1,7 @@
 'use server'
 
-import {z} from 'zod'
 import {db} from '@/db/drizzle'
-import {waitlist} from '@/db/schema'
+import {waitlist, WaitlistInsert} from '@/db/schema'
 import {Resend} from 'resend'
 import WaitlistWelcomeEmail from '@/emails/welcome'
 import {eq} from 'drizzle-orm'
@@ -10,12 +9,7 @@ import {eq} from 'drizzle-orm'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const signUpForWaitlist = async (email: string, referrer?: any) => {
-	const parametersSchema = z.object({
-		email: z.string().email(),
-		referrer: z.string().optional(),
-	})
-
-	const params = parametersSchema.parse({email, referrer})
+	const params = WaitlistInsert.parse({email, referrer})
 
 	const existingSignUp = await db.query.waitlist.findFirst({
 		where: eq(waitlist.email, params.email)

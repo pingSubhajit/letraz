@@ -1,9 +1,10 @@
 import {date, pgTable, timestamp, uuid, varchar} from 'drizzle-orm/pg-core'
 import {sql} from 'drizzle-orm'
+import {createInsertSchema, createSelectSchema} from 'drizzle-zod'
 
 export const personalInfo = pgTable('personal_info', {
 	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
-	userID: uuid('user_id').notNull(),
+	userId: varchar('user_id').notNull().unique(),
 	title: varchar('title'),
 	firstName: varchar('first_name').notNull(),
 	lastName: varchar('last_name'),
@@ -17,6 +18,9 @@ export const personalInfo = pgTable('personal_info', {
 	country: varchar('country'),
 	website: varchar('website'),
 	profileText: varchar('profile_text'),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	updatedAt: timestamp('updated_at').notNull().defaultNow().$onUpdate(() => sql`now()`),
+	createdAt: timestamp('created_at').defaultNow(),
+	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => sql`now()`),
 })
+
+export const PersonalInfoInsert = createInsertSchema(personalInfo)
+export const PersonalInfoSelect = createSelectSchema(personalInfo)

@@ -43,6 +43,20 @@
       "when": 1726806287295,
       "tag": "0005_salty_snowbird",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1726809976764,
+      "tag": "0006_grey_wendell_rand",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1726810349624,
+      "tag": "0007_lying_captain_america",
+      "breakpoints": true
     }
   ]
 }

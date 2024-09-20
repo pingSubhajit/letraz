@@ -10,6 +10,9 @@ import {Button} from '@/components/ui/button'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
+import {useUser} from '@clerk/nextjs'
+import {toast} from 'sonner'
+import {addPersonalInfoToDB} from '@/lib/personalInfo.methods'
 
 const formSchema = z.object({
 	firstName: z.string()
@@ -28,6 +31,7 @@ const formSchema = z.object({
 
 const PersonalDetailsForm = ({className}: { className?: string }) => {
 	const router = useTransitionRouter()
+	const { isLoaded, user } = useUser()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -39,8 +43,16 @@ const PersonalDetailsForm = ({className}: { className?: string }) => {
 		},
 	})
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		router.push('/app/onboarding?step=education')
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		try {
+			await addPersonalInfoToDB({
+				...values,
+				userId: user!.id,
+			})
+			router.push('/app/onboarding?step=education')
+		} catch (error) {
+			toast.error('Failed to update information, please try again')
+		}
 	}
 
 	return (

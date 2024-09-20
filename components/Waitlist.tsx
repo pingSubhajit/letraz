@@ -7,7 +7,6 @@ import {Form, FormControl, FormField, FormItem} from '@/components/ui/form'
 import {Input} from '@/components/ui/input'
 import {Button} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
-import {usePathname} from 'next/navigation'
 import {signUpForWaitlist} from '@/lib/waitlist.methods'
 import {useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
@@ -26,8 +25,6 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 			email: '',
 		},
 	})
-
-	const pathName = usePathname()
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
