@@ -15,6 +15,9 @@ import {
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
+import {toast} from 'sonner'
+import {addEducationToDB} from '@/lib/education.methods'
+import {useUser} from '@clerk/nextjs'
 
 export const educationFormSchema = z.object({
 	institutionName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
@@ -37,6 +40,7 @@ type EducationFormProps = {
 
 const EducationForm = ({className, educations, setEducations}: EducationFormProps) => {
 	const router = useTransitionRouter()
+	const { isLoaded, user } = useUser()
 
 	const form = useForm<z.infer<typeof educationFormSchema>>({
 		resolver: zodResolver(educationFormSchema),
@@ -54,13 +58,37 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 		},
 	})
 
-	function onSubmit(values: z.infer<typeof educationFormSchema>) {
-		setEducations([...educations, values])
-		form.reset()
+	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
+		await addEducationToDB({
+			...values,
+			startedFromMonth: months.findIndex(month => month === values.startedFromMonth) + 1,
+			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
+			finishedAtMonth: months.findIndex(month => month === values.finishedAtMonth) + 1,
+			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
+			current: !values.finishedAtYear,
+			userId: user!.id,
+		})
 	}
 
-	function submitWithRedirect(values: z.infer<typeof educationFormSchema>) {
-		router.push('/app/onboarding?step=experience')
+	const onSubmit = async (values: z.infer<typeof educationFormSchema>) => {
+		try {
+			await insertEducation(values)
+			setEducations([...educations, values])
+			form.reset()
+		} catch (error) {
+			toast.error('Failed to update education, please try again')
+		}
+	}
+
+	const submitWithRedirect = async (values: z.infer<typeof educationFormSchema>) => {
+		try {
+			if (form.formState.isDirty) {
+				await insertEducation(values)
+			}
+			router.push('/app/onboarding?step=experience')
+		} catch (error) {
+			toast.error('Failed to update education, please try again')
+		}
 	}
 
 	return (

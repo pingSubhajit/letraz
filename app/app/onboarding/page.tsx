@@ -6,9 +6,13 @@ import About from '@/components/onboarding/About'
 import PersonalDetails from '@/components/onboarding/PersonalDetails'
 import Education from '@/components/onboarding/Education'
 import Experience from '@/components/onboarding/Experience'
+import {getEducationsFromDB} from '@/lib/education.methods'
+import {auth} from '@clerk/nextjs/server'
 
-const OnboardingPage = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const OnboardingPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+	const {userId} = auth()
 	const step = searchParams.step as OnboardingStep | undefined
+	const educations = await getEducationsFromDB(userId!)
 
 	if (!step) {
 		return notFound()
@@ -21,7 +25,7 @@ const OnboardingPage = ({ searchParams }: { searchParams: { [key: string]: strin
 			{step === OnboardingStep.WELCOME && <Welcome />}
 			{step === OnboardingStep.ABOUT && <About />}
 			{step === OnboardingStep.PERSONAL_DETAILS && <PersonalDetails />}
-			{step === OnboardingStep.EDUCATION && <Education />}
+			{step === OnboardingStep.EDUCATION && <Education allEducations={educations} />}
 			{step === OnboardingStep.EXPERIENCE && <Experience />}
 		</div>
 	)

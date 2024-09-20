@@ -6,9 +6,22 @@ import {z} from 'zod'
 import {useState} from 'react'
 import {motion} from 'framer-motion'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
+import {educations} from '@/db/schema'
+import {months} from '@/constants'
 
-const Education = () => {
-	const [educations, setEducations] = useState<z.infer<typeof educationFormSchema>[]>([])
+const Education = ({allEducations}: {allEducations: (typeof educations.$inferSelect)[]}) => {
+	const [currentEducations, setCurrentEducations] = useState<z.infer<typeof educationFormSchema>[]>(allEducations.map(education => ({
+		institutionName: education.institutionName as string | undefined,
+		country: education.country as string | undefined,
+		fieldOfStudy: education.fieldOfStudy as string | undefined,
+		degree: education.degree as string | undefined,
+		startedFromMonth: education.startedFromMonth ? months[education.startedFromMonth - 1] : undefined,
+		startedFromYear: education.startedFromYear? education.startedFromYear.toString() : undefined,
+		finishedAtMonth: education.finishedAtMonth ? months[education.finishedAtMonth - 1] : undefined,
+		finishedAtYear: education.finishedAtYear ? education.finishedAtYear.toString() : undefined,
+		current: education.current as boolean | undefined,
+		description: education.description as string | undefined
+	})))
 	const [parent] = useAutoAnimate()
 
 	return (
@@ -28,12 +41,12 @@ const Education = () => {
 			</div>
 
 			{/* FORM */}
-			<EducationForm educations={educations} setEducations={setEducations} />
+			<EducationForm educations={currentEducations} setEducations={setCurrentEducations} />
 
 			{/* EDUCATIONS */}
 			<motion.div
 				initial={{opacity: 0, y: '-30%'}}
-				animate={{opacity: educations.length > 0 ? 1 : 0, y: educations.length > 0 ? '-50%' : '-30%'}} transition={{
+				animate={{opacity: currentEducations.length > 0 ? 1 : 0, y: currentEducations.length > 0 ? '-50%' : '-30%'}} transition={{
 					type: 'tween',
 					ease: 'easeInOut'
 				}}
@@ -42,7 +55,7 @@ const Education = () => {
 				<h3 className="text-center text-3xl font-medium">Educations</h3>
 
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
-					{educations.map(
+					{currentEducations.map(
 						(education, index) => <li key={index} className="bg-white rounded-xl py-4 px-6 shadow-lg">
 							<p className="truncate font-medium text-xl">
 								{education.degree + ' '}
