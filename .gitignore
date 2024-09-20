@@ -42,5 +42,3 @@ next-env.d.ts
 # IDE
 /.idea
 /.zed
-/migrations/
-/lib/test.repo.ts

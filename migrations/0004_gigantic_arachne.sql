@@ -1,0 +1,1 @@
+ALTER TABLE "waitlist" RENAME COLUMN "referral_link" TO "referrer";
