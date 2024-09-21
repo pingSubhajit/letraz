@@ -40,7 +40,7 @@ type EducationFormProps = {
 
 const EducationForm = ({className, educations, setEducations}: EducationFormProps) => {
 	const router = useTransitionRouter()
-	const { isLoaded, user } = useUser()
+	const { user } = useUser()
 
 	const form = useForm<z.infer<typeof educationFormSchema>>({
 		resolver: zodResolver(educationFormSchema),

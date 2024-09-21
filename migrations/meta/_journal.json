@@ -78,6 +78,13 @@
       "when": 1726896706949,
       "tag": "0010_peaceful_chronomancer",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1726897661475,
+      "tag": "0011_fluffy_lightspeed",
+      "breakpoints": true
     }
   ]
 }

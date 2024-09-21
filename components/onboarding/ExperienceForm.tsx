@@ -15,6 +15,9 @@ import {
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
+import {toast} from 'sonner'
+import {addExperienceToDB} from '@/lib/experience.methods'
+import {useUser} from '@clerk/nextjs'
 
 export const experienceFormSchema = z.object({
 	companyName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
@@ -37,6 +40,7 @@ type ExperienceFormProps = {
 
 const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps) => {
 	const router = useTransitionRouter()
+	const { user } = useUser()
 
 	const form = useForm<z.infer<typeof experienceFormSchema>>({
 		resolver: zodResolver(experienceFormSchema),
@@ -51,16 +55,40 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 			finishedAtYear: '',
 			current: false,
 			description: ''
-		},
+		}
 	})
 
-	function onSubmit(values: z.infer<typeof experienceFormSchema>) {
-		setExperiences([...experiences, values])
-		form.reset()
+	const insertExperience = async (values: z.infer<typeof experienceFormSchema>) => {
+		await addExperienceToDB({
+			...values,
+			startedFromMonth: months.findIndex(month => month === values.startedFromMonth) + 1,
+			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
+			finishedAtMonth: months.findIndex(month => month === values.finishedAtMonth) + 1,
+			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
+			current: !values.finishedAtYear,
+			userId: user!.id,
+		})
 	}
 
-	function submitWithRedirect(values: z.infer<typeof experienceFormSchema>) {
-		router.push('/app/onboarding?step=resume')
+	const onSubmit = async (values: z.infer<typeof experienceFormSchema>) => {
+		try {
+			await insertExperience(values)
+			setExperiences([...experiences, values])
+			form.reset()
+		} catch (error) {
+			toast.error('Failed to update experience, please try again')
+		}
+	}
+
+	const submitWithRedirect = async (values: z.infer<typeof experienceFormSchema>) => {
+		try {
+			if (form.formState.isDirty) {
+				await insertExperience(values)
+			}
+			router.push('/app/onboarding?step=resume')
+		} catch (error) {
+			toast.error('Failed to update experience, please try again')
+		}
 	}
 
 	return (

@@ -6,9 +6,22 @@ import {useState} from 'react'
 import {motion} from 'framer-motion'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import ExperienceForm, {experienceFormSchema} from '@/components/onboarding/ExperienceForm'
+import {experiences} from '@/db/schema'
+import {months} from '@/constants'
 
-const Experience = () => {
-	const [experiences, setExperiences] = useState<z.infer<typeof experienceFormSchema>[]>([])
+const Experience = ({allExperiences}: {allExperiences: (typeof experiences.$inferSelect)[]}) => {
+	const [experiences, setExperiences] = useState<z.infer<typeof experienceFormSchema>[]>(allExperiences.map(experience => ({
+		companyName: experience.companyName as string | undefined,
+		country: experience.country as string | undefined,
+		jobTitle: experience.jobTitle as string | undefined,
+		city: experience.city as string | undefined,
+		startedFromMonth: experience.startedFromMonth ? months[experience.startedFromMonth - 1] : undefined,
+		startedFromYear: experience.startedFromYear? experience.startedFromYear.toString() : undefined,
+		finishedAtMonth: experience.finishedAtMonth ? months[experience.finishedAtMonth - 1] : undefined,
+		finishedAtYear: experience.finishedAtYear ? experience.finishedAtYear.toString() : undefined,
+		current: experience.current as boolean | undefined,
+		description: experience.description as string | undefined
+	})))
 	const [parent] = useAutoAnimate()
 
 	return (
