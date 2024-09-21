@@ -64,6 +64,13 @@
       "when": 1726818175516,
       "tag": "0008_gifted_jocasta",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1726886862837,
+      "tag": "0009_omniscient_kingpin",
+      "breakpoints": true
     }
   ]
 }

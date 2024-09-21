@@ -69,7 +69,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 				className="text-xl mt-8 max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
-				<p>Having 2 or more educational details can increase the chance of your résumé getting selected upto 15%</p>
+				<p>Mentioning your past employment details can increase the chance of your résumé getting selected upto 75%</p>
 			</motion.div>
 
 			<Form {...form}>
