@@ -4,7 +4,7 @@ import {db} from '@/db/drizzle'
 import {waitlist, WaitlistInsert} from '@/db/schema'
 import {Resend} from 'resend'
 import WaitlistWelcomeEmail from '@/emails/welcome'
-import {eq} from 'drizzle-orm'
+import {count, eq} from 'drizzle-orm'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -20,6 +20,7 @@ export const signUpForWaitlist = async (email: string, referrer?: any) => {
 	const newSignUp = db.insert(waitlist).values({
 		email: params.email,
 		referrer: params.referrer || 'website',
+		waitingNumber: (await db.select({count: count() }).from(waitlist))[0].count + 1
 	}).returning()
 
 	resend.emails.send({
