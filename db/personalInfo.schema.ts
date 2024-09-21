@@ -1,6 +1,7 @@
 import {date, pgTable, timestamp, uuid, varchar} from 'drizzle-orm/pg-core'
-import {sql} from 'drizzle-orm'
+import {relations, sql} from 'drizzle-orm'
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod'
+import {resumes} from '@/db/schema'
 
 export const personalInfo = pgTable('personal_info', {
 	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
@@ -21,6 +22,10 @@ export const personalInfo = pgTable('personal_info', {
 	createdAt: timestamp('created_at').defaultNow(),
 	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()),
 })
+
+export const personalInfoRelations = relations(personalInfo, ({ many }) => ({
+	resumes: many(resumes)
+}))
 
 export const PersonalInfoInsert = createInsertSchema(personalInfo)
 export const PersonalInfoSelect = createSelectSchema(personalInfo)

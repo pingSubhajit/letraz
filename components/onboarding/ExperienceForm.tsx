@@ -18,6 +18,7 @@ import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {addExperienceToDB} from '@/lib/experience.methods'
 import {useUser} from '@clerk/nextjs'
+import {createBaseResume} from '@/lib/resume.methods'
 
 export const experienceFormSchema = z.object({
 	companyName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
@@ -85,7 +86,9 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 			if (form.formState.isDirty) {
 				await insertExperience(values)
 			}
-			router.push('/app/onboarding?step=resume')
+
+			const resume = await createBaseResume(user!.id)
+			// router.push('/app/onboarding?step=resume')
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
 		}
