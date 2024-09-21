@@ -71,6 +71,13 @@
       "when": 1726886862837,
       "tag": "0009_omniscient_kingpin",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1726896706949,
+      "tag": "0010_peaceful_chronomancer",
+      "breakpoints": true
     }
   ]
 }

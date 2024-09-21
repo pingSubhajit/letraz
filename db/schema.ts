@@ -2,24 +2,32 @@ import {waitlist, WaitlistInsert, WaitlistSelect} from '@/db/waitlist.schema'
 import {jobs} from '@/db/jobs.schema'
 import {personalInfo, PersonalInfoInsert, PersonalInfoSelect} from '@/db/personalInfo.schema'
 import {educations, EducationsInsert, EducationsSelect} from '@/db/education.schema'
+import {experiences, ExperiencesInsert, ExperiencesSelect} from '@/db/experience.schema'
 import {
 	resumes,
 	resumeSections,
+	ResumeSectionsInsert,
 	resumeSectionsRelations,
+	ResumeSectionsSelect,
 	resumeSectionTypeEnum,
-	resumesRelations
+	ResumesInsert,
+	resumesRelations,
+	ResumesSelect
 } from '@/db/resumes.schema'
 
 export {
 	waitlist,
 	jobs,
 	personalInfo,
-	educations
+	educations,
+	experiences,
+	resumes, resumeSections, resumesRelations, resumeSectionsRelations, resumeSectionTypeEnum
 }
 
 export {
 	WaitlistInsert, WaitlistSelect,
 	PersonalInfoInsert, PersonalInfoSelect,
 	EducationsInsert, EducationsSelect,
-	resumes, resumeSections, resumesRelations, resumeSectionsRelations, resumeSectionTypeEnum
+	ExperiencesInsert, ExperiencesSelect,
+	ResumesInsert, ResumesSelect, ResumeSectionsInsert, ResumeSectionsSelect
 }
