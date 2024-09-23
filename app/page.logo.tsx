@@ -6,7 +6,7 @@ import {cn} from '@/lib/utils'
 
 const LandingPageLogo = ({className}: {className?: string}) => {
 	return (
-		<Link href="/app">
+		<Link href="/">
 			<motion.img
 				initial={{opacity: 0}}
 				animate={{opacity: 1}}
