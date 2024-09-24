@@ -5,6 +5,7 @@ import {ClerkProvider} from '@clerk/nextjs'
 import {defaultUrl, modelica, portfolio} from '@/config'
 import {Toaster} from '@/components/ui/sonner'
 import {ViewTransitions} from 'next-view-transitions'
+import PosthogProvider from '@/components/providers/PosthogProvider'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
@@ -28,10 +29,12 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
 		<ClerkProvider>
 			<ViewTransitions>
 				<html lang="en">
-					<body className={modelica.className}>
-						{children}
-						<Toaster />
-					</body>
+					<PosthogProvider>
+						<body className={modelica.className}>
+							{children}
+							<Toaster />
+						</body>
+					</PosthogProvider>
 				</html>
 			</ViewTransitions>
 		</ClerkProvider>
