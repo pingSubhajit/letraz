@@ -1,4 +1,4 @@
-import {boolean, pgEnum, pgTable, uuid, varchar} from 'drizzle-orm/pg-core'
+import {boolean, pgEnum, pgTable, unique, uuid, varchar} from 'drizzle-orm/pg-core'
 import {relations, sql} from 'drizzle-orm'
 import {educations, experiences, personalInfo} from '@/db/schema'
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod'
@@ -59,7 +59,9 @@ export const resumes = pgTable('resumes', {
 	userId: varchar('user_id').notNull(),
 	jobId: uuid('job_id'),
 	base: boolean('base').default(false),
-})
+}, (table) => ({
+	unq: unique().on(table.userId, table.base),
+}))
 
 export const resumesRelations = relations(resumes, ({ many, one }) => ({
 	sections: many(resumeSections),

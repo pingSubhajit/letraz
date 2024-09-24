@@ -15,7 +15,7 @@ const AppHome = () => {
 				<div className="h-96 w-full bg-purple-200 rounded-lg" />
 				<div className="h-96 w-full bg-violet-200 rounded-lg" />
 				<div className="h-96 w-full bg-yellow-200 rounded-lg" />
-				<div className="h-96 w-full bg-orange-200 rounded-lg" />
+				<div className="h-96 w-full bg-flame-200 rounded-lg" />
 				<div className="h-96 w-full bg-lime-200 rounded-lg" />
 				<div className="h-96 w-full bg-sky-200 rounded-lg" />
 				<div className="h-96 w-full bg-emerald-200 rounded-lg" />

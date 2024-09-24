@@ -28,8 +28,8 @@ const Welcome = () => {
 
 			{/* PLAY VIDEO BUTTON */}
 			<button className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-6">
-				<div className="absolute w-full h-full inset-0 bg-orange-600 animate-ping rounded-full"/>
-				<div className="absolute w-full h-full inset-0 bg-orange-600 rounded-full"/>
+				<div className="absolute w-full h-full inset-0 bg-flame-500 animate-ping rounded-full"/>
+				<div className="absolute w-full h-full inset-0 bg-flame-500 rounded-full"/>
 				<PlayIcon className="w-8 h-8 fill-white z-10 relative"/>
 			</button>
 

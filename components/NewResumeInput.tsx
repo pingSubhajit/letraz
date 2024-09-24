@@ -49,7 +49,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 				onSubmit={form.handleSubmit(onSubmit)}
 				className={cn('min-h-96 overflow-hidden bg-white p-4 pt-6 flex ' +
 				'flex-col justify-between gap-4 relative z-[60] hover:shadow-2xl focus-within:shadow-2xl ' +
-				'shadow-orange-300 transition', className)}
+				'shadow-flame-300 transition', className)}
 				style={{viewTransitionName: 'craft_container'}}
 			>
 				<FormField
@@ -57,7 +57,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 					name="input"
 					render={({ field }) => (
 						<FormItem className="h-full flex flex-col gap-4">
-							<FormLabel className="text-orange-600 uppercase tracking-widest text-xs font-semibold">Craft new resume for a job</FormLabel>
+							<FormLabel className="text-flame-500 uppercase tracking-widest text-xs font-semibold">Craft new resume for a job</FormLabel>
 							{!form.formState.isSubmitted && <FormControl>
 								<Textarea
 									placeholder="Paste URL or job description" {...field}

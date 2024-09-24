@@ -76,4 +76,17 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  img {
+    display: initial;
+  }
+}
+
+.size-a4 {
+  @apply h-[297mm] aspect-[210/297];
+}
+
+.resume {
+  * {
+    all: initial;
+  }
 }

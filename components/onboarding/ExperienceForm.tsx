@@ -87,7 +87,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 				await insertExperience(values)
 			}
 
-			const resume = await createBaseResume(user!.id)
+			await createBaseResume(user!.id)
 			router.push('/app/onboarding?step=resume')
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
@@ -299,6 +299,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								variant="secondary"
 								type="button"
 								onClick={form.handleSubmit(submitWithRedirect)}
+								disabled={form.formState.isSubmitting}
 							>
 								Create my base résumé
 								{form.formState.isSubmitting

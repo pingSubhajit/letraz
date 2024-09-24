@@ -296,6 +296,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								variant="secondary"
 								type="button"
 								onClick={form.handleSubmit(submitWithRedirect)}
+								disabled={form.formState.isSubmitting}
 							>
 								What's next
 								{form.formState.isSubmitting

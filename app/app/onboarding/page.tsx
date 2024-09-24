@@ -9,6 +9,7 @@ import Experience from '@/components/onboarding/Experience'
 import {getEducationsFromDB} from '@/lib/education.methods'
 import {auth} from '@clerk/nextjs/server'
 import {getExperiencesFromDB} from '@/lib/experience.methods'
+import BaseResume from '@/components/onboarding/BaseResume'
 
 const OnboardingPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
 	const {userId} = auth()
@@ -29,6 +30,7 @@ const OnboardingPage = async ({ searchParams }: { searchParams: { [key: string]:
 			{step === OnboardingStep.PERSONAL_DETAILS && <PersonalDetails />}
 			{step === OnboardingStep.EDUCATION && <Education allEducations={educations} />}
 			{step === OnboardingStep.EXPERIENCE && <Experience allExperiences={experiences} />}
+			{step === OnboardingStep.RESUME && <BaseResume />}
 		</div>
 	)
 }

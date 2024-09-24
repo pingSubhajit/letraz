@@ -53,6 +53,10 @@ export const createBaseResume = async (userId: string) => {
 		dataId: experience.id,
 	})))
 
-	const resumeFromDB = await db.query.resumes.findFirst({where: eq(resumes.id, resume[0].id), with: {sections: true, personalInfo: true}})
+	await db.query.resumes.findFirst({where: eq(resumes.id, resume[0].id), with: {sections: true, personalInfo: true}})
+}
+
+export const getBaseResumeFromDB = async (userId: string) => {
+	const resumeFromDB = await db.query.resumes.findFirst({where: eq(resumes.userId, userId), with: {sections: true, personalInfo: true}})
 	return await constructResume(resumeFromDB as Resume)
 }

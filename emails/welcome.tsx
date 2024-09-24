@@ -34,7 +34,7 @@ export default function WaitlistWelcomeEmail() {
 				</Head>
 				<Preview>Letraz — Signed up for waitlist</Preview>
 				<Body>
-					<Container className="shadow-2xl shadow-orange-300 mt-16 rounded-2xl p-8 border-t-4 border-orange-600 border-solid bg-neutral-50">
+					<Container className="shadow-2xl shadow-flame-300 mt-16 rounded-2xl p-8 border-t-4 border-flame-500 border-solid bg-neutral-50">
 						<Img src="https://letraz.app/logo_mono.png" alt="Letraz logo" width="327.24" height="48" className="h-4 w-auto mx-auto" />
 
 						<Heading className="mt-6 mx-auto text-center text-2xl mb-12">Welcome to Letraz waitlist</Heading>
