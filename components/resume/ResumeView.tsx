@@ -2,10 +2,12 @@
 
 import {Resume} from '@/db/resumes.schema'
 import ResumeEditor from '@/components/resume/ResumeEditor'
-import ResumeViewer from '@/components/resume/ResumeViewer'
 import {useRef, useState} from 'react'
 import {Printer} from 'lucide-react'
 import {Button} from '@/components/ui/button'
+import dynamic from 'next/dynamic'
+
+const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
 const ResumeView = ({resume}: {resume: Resume}) => {
 	const resumeRef = useRef()
