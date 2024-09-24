@@ -12,7 +12,7 @@ import MapPinPDF from '@/components/resume/icons/MapPinPDF'
 import CalendarPDF from '@/components/resume/icons/CalendarPDF'
 import GlobePDF from '@/components/resume/icons/GlobePDF'
 import {LegacyRef} from 'react'
-import {educations} from '@/db/schema'
+import {educations, experiences} from '@/db/schema'
 
 const tw = createTw(tailwindConfig) as (input: string) => Style | Style[] | undefined
 
@@ -28,6 +28,11 @@ const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 				{sections?.map((section, index) => (
 					<View key={section.id} style={tw('mb-6')}>
 						{section.type === ResumeSections.EDUCATION && <EducationSection
+							section={section as any}
+							previousSectionType={sections[index - 1]?.type}
+						/>}
+
+						{section.type === ResumeSections.EXPERIENCE && <ExperienceSection
 							section={section as any}
 							previousSectionType={sections[index - 1]?.type}
 						/>}
@@ -110,7 +115,7 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 		<View style={tw('flex flex-col items-stretch')}>
 			{/* TITLE */}
 			{previousSectionType !== ResumeSections.EDUCATION && <View style={tw('mt-8 mb-3')}>
-				<Text style={tw('text-2xl font-bold leading-normal')}>Education</Text>
+				<Text style={tw('text-xl font-bold leading-normal')}>Education</Text>
 
 				{/* DIVIDER */}
 				<Divider />
@@ -141,6 +146,53 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 
 			{/* DESCRIPTION */}
 			{education.description && <Text style={tw('text-sm leading-snug mt-2 pl-6')}>{education.description}</Text>}
+		</View>
+	)
+}
+
+type ExperienceSectionProps = {
+	section: ResumeSection & {type: ResumeSections.EXPERIENCE, data: typeof experiences.$inferSelect}
+	previousSectionType?: ResumeSections
+}
+
+const ExperienceSection = ({section, previousSectionType}: ExperienceSectionProps) => {
+	const {data: experience} = section
+
+	return (
+		<View style={tw('flex flex-col items-stretch')}>
+			{/* TITLE */}
+			{previousSectionType !== ResumeSections.EXPERIENCE && <View style={tw('mt-8 mb-3')}>
+				<Text style={tw('text-xl font-bold leading-normal')}>Experience</Text>
+
+				{/* DIVIDER */}
+				<Divider />
+			</View>}
+
+			{/* COMPANY & DATES */}
+			<View style={tw('w-full flex flex-row items-center justify-between gap-4')}>
+				{/* COMPANY */}
+				<Text>
+					{experience?.companyName && <Text style={tw('text-lg leading-normal')}>{experience.companyName}</Text>}
+					{experience?.companyName && experience?.country && <Text style={tw('text-lg leading-normal')}>, </Text>}
+					{experience?.country && <Text style={tw('text-lg leading-normal')}>{experience.country}</Text>}
+				</Text>
+
+				<Text style={tw('text-sm')}>
+					{experience.startedFromMonth && experience.startedFromYear && <Text>From {experience.startedFromMonth}/{experience.startedFromYear}</Text>}
+					{experience.startedFromMonth && experience.startedFromYear && experience.finishedAtMonth && experience.finishedAtYear && <Text>    </Text>}
+					{experience.finishedAtMonth && experience.finishedAtYear && <Text>To {experience.finishedAtMonth}/{experience.finishedAtYear}</Text>}
+				</Text>
+			</View>
+
+			{/* DEGREE */}
+			<Text style={tw('text-sm')}>
+				{experience.jobTitle && <Text>{experience.jobTitle}</Text>}
+				{experience.jobTitle && experience.employmentType && <Text>, </Text>}
+				{experience.jobTitle && <Text>{experience.employmentType}</Text>}
+			</Text>
+
+			{/* DESCRIPTION */}
+			{experience.description && <Text style={tw('text-sm leading-snug mt-2 pl-6')}>{experience.description}</Text>}
 		</View>
 	)
 }
