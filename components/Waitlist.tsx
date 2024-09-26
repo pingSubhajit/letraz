@@ -38,7 +38,7 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 
 	return (
 		<div className={cn('', className)}>
-			<AnimatePresence mode="wait">
+			<AnimatePresence>
 				{!signedUp && <motion.div
 					initial={{opacity: 0}}
 					animate={{opacity: 1}}

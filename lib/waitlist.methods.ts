@@ -23,7 +23,7 @@ export const signUpForWaitlist = async (email: string, referrer?: any) => {
 		waitingNumber: (await db.select({count: count() }).from(waitlist))[0].count + 1
 	}).returning()
 
-	resend.emails.send({
+	await resend.emails.send({
 		from: 'Subhajit from Letraz <subhajit@letraz.app>',
 		replyTo: 'Subhajit from Letraz <subhajit@letraz.app>',
 		to: params.email,
