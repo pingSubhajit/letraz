@@ -2,19 +2,10 @@
 
 import {personalInfo} from '@/db/personalInfo.schema'
 import {ResumeSection, ResumeSections} from '@/db/resumes.schema'
-import {createTw} from 'react-pdf-tailwind'
-import tailwindConfig from '@/tailwind.config'
-import {Document, Page, Text, View} from '@react-pdf/renderer'
-import {Style} from '@react-pdf/types'
-import PhonePDF from '@/components/resume/icons/PhonePDF'
-import MailPDF from '@/components/resume/icons/MailPDF'
-import MapPinPDF from '@/components/resume/icons/MapPinPDF'
-import CalendarPDF from '@/components/resume/icons/CalendarPDF'
-import GlobePDF from '@/components/resume/icons/GlobePDF'
 import {LegacyRef} from 'react'
 import {educations, experiences} from '@/db/schema'
-
-const tw = createTw(tailwindConfig) as (input: string) => Style | Style[] | undefined
+import {Calendar, Globe, Mail, MapPin, Phone} from 'lucide-react'
+import {cn} from '@/lib/utils'
 
 const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 	sections?: ResumeSection[],
@@ -22,11 +13,11 @@ const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 	resumeRef?: LegacyRef<any>
 }) => {
 	return (
-		<Document ref={resumeRef}>
-			<Page style={tw('absolute p-12')}>
+		<div ref={resumeRef}>
+			<div className="p-12">
 				<PersonalInfo personalInfoData={personalInfoData} />
 				{sections?.map((section, index) => (
-					<View key={section.id} style={tw('mb-6')}>
+					<div key={section.id} className="space-y-4">
 						{section.type === ResumeSections.EDUCATION && <EducationSection
 							section={section as any}
 							previousSectionType={sections[index - 1]?.type}
@@ -36,70 +27,70 @@ const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 							section={section as any}
 							previousSectionType={sections[index - 1]?.type}
 						/>}
-					</View>
+					</div>
 				))}
-			</Page>
-		</Document>
+			</div>
+		</div>
 	)
 }
 
 export default DefaultTheme
 
-const Divider = () => <View style={tw('h-[0.5px] bg-primary w-full bg-black')} />
+const Divider = ({className}: {className?: string}) => <div className={cn('h-[0.5px] bg-primary w-full', className)} />
 
 const PersonalInfo = ({personalInfoData}: { personalInfoData?: typeof personalInfo.$inferSelect }) => {
 	return (
-		<View style={tw('flex flex-col gap-6 items-center')}>
+		<div className="flex flex-col gap-6 items-center">
 			{/* NAME */}
-			<Text style={tw('text-3xl font-bold leading-none')}>{personalInfoData?.firstName} {personalInfoData?.lastName}</Text>
+			<p className="text-3xl font-bold">{personalInfoData?.firstName} {personalInfoData?.lastName}</p>
 
 			{/* CONTACT INFO */}
-			<View style={tw('w-full flex flex-row flex-wrap m-0 gap-x-4 gap-y-2 flex-wrap justify-center')}>
+			<div className="w-full flex flex-wrap gap-x-4 gap-y-2 justify-center text-sm">
 				{/* EMAIL */}
-				{personalInfoData?.email && <View style={tw('flex items-center flex-row')}>
-					<MailPDF style={tw('w-4 h-4 m-0 mr-1')} />
-					<Text style={tw('text-sm leading-none')}>{personalInfoData.email}</Text>
-				</View>}
+				{personalInfoData?.email && <div className="flex items-center">
+					<Mail className="w-4 h-4 mr-1" />
+					<p>{personalInfoData.email}</p>
+				</div>}
 
 				{/* PHONE */}
-				{personalInfoData?.phone && <View style={tw('flex items-center flex-row')}>
-					<PhonePDF style={tw('w-3.5 h-3.5 m-0 mr-1')} />
-					<Text style={tw('text-sm leading-none')}>{personalInfoData?.phone}</Text>
-				</View>}
+				{personalInfoData?.phone && <div className="flex items-center">
+					<Phone className="w-4 h-4 mr-1" />
+					<p>{personalInfoData?.phone}</p>
+				</div>}
 
 				{/* LOCATION */}
-				<View style={tw('flex flex-row items-center gap-1 whitespace-nowrap leading-none')}>
+				<div className="flex items-center gap-1">
 					{/* ICON */}
-					{/*{(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) &&*/}
-					    <MapPinPDF style={tw('w-4 h-4 m-0')} />
-					{/*}*/}
+					{(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) &&
+						<MapPin className="w-4 h-4" />
+					}
 
 					{/* LOCATION INFO */}
-					{personalInfoData?.address && <Text style={tw('text-sm leading-none')}>{personalInfoData?.address}, </Text>}
-					{personalInfoData?.city && <Text style={tw('text-sm leading-none')}>{personalInfoData?.city}, </Text>}
-					{personalInfoData?.postal && <Text style={tw('text-sm leading-none')}>{personalInfoData?.postal}, </Text>}
-					{personalInfoData?.country && <Text style={tw('text-sm leading-none')}>{personalInfoData?.country}</Text>}
-				</View>
+					{personalInfoData?.address && <p>{personalInfoData?.address}, </p>}
+					{personalInfoData?.city && <p>{personalInfoData?.city}, </p>}
+					{personalInfoData?.postal && <p>{personalInfoData?.postal}, </p>}
+					{personalInfoData?.country && <p>{personalInfoData?.country}</p>}
+				</div>
 
 				{/* DOB */}
-				{personalInfoData?.dob && <View style={tw('flex items-center flex-row')}>
-					<CalendarPDF style={tw('w-4 h-4 m-0 mr-1')} />
-					<Text style={tw('text-sm leading-none')}>{personalInfoData?.dob}</Text>
-				</View>}
+				{personalInfoData?.dob && <div className="flex items-center">
+					<Calendar className="'w-4 h-4 mr-1" />
+					<p>{personalInfoData?.dob}</p>
+				</div>}
 
 				{/* WEBSITE */}
-				{personalInfoData?.website && <View style={tw('flex items-center flex-row')}>
-					<GlobePDF style={tw('w-4 h-4 m-0 mr-1')} />
-					<Text style={tw('text-sm leading-none')}>{personalInfoData?.website}</Text>
-				</View>}
-			</View>
+				{personalInfoData?.website && <div className="flex items-center">
+					<Globe className="'w-4 h-4 mr-1" />
+					<p>{personalInfoData?.website}</p>
+				</div>}
+			</div>
 
 			{/* PROFILE */}
-			{personalInfoData?.profileText && <Text style={tw('w-full text-justify text-sm leading-snug')}>{personalInfoData?.profileText}</Text>}
+			{personalInfoData?.profileText && <p className="w-full text-justify leading-snug">{personalInfoData?.profileText}</p>}
 
 			{/* DIVIDER */}
 			<Divider />
-		</View>
+		</div>
 	)
 }
 
@@ -112,41 +103,44 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 	const {data: education} = section
 
 	return (
-		<View style={tw('flex flex-col items-stretch')}>
+		<div className="flex flex-col items-stretch">
 			{/* TITLE */}
-			{previousSectionType !== ResumeSections.EDUCATION && <View style={tw('mt-8 mb-3')}>
-				<Text style={tw('text-xl font-bold leading-normal')}>Education</Text>
+			{previousSectionType !== ResumeSections.EDUCATION && <div className="mt-8 -mb-2">
+				<p className="text-xl font-bold">Education</p>
 
 				{/* DIVIDER */}
 				<Divider />
-			</View>}
+			</div>}
+
+			{/* DIVISION */}
+			<div className="h-4 w-full" />
 
 			{/* INSTITUTION & DATES */}
-			<View style={tw('w-full flex flex-row items-center justify-between gap-4')}>
+			<div className="w-full flex flex-row items-center justify-between gap-4">
 				{/* INSTITUTION */}
-				<Text>
-					{education?.institutionName && <Text style={tw('text-lg leading-normal')}>{education.institutionName}</Text>}
-					{education?.institutionName && education?.country && <Text style={tw('text-lg leading-normal')}>, </Text>}
-					{education?.country && <Text style={tw('text-lg leading-normal')}>{education.country}</Text>}
-				</Text>
+				<p className="text-lg leading-normal">
+					{education?.institutionName && <span className="font-semibold">{education.institutionName}</span>}
+					{education?.institutionName && education?.country && <span>, </span>}
+					{education?.country && <span>{education.country}</span>}
+				</p>
 
-				<Text style={tw('text-sm')}>
-					{education.startedFromMonth && education.startedFromYear && <Text>From {education.startedFromMonth}/{education.startedFromYear}</Text>}
-					{education.startedFromMonth && education.startedFromYear && education.finishedAtMonth && education.finishedAtYear && <Text>    </Text>}
-					{education.finishedAtMonth && education.finishedAtYear && <Text>To {education.finishedAtMonth}/{education.finishedAtYear}</Text>}
-				</Text>
-			</View>
+				<p className="text-sm">
+					{education.startedFromMonth && education.startedFromYear && <span>From {education.startedFromMonth}/{education.startedFromYear}</span>}
+					{education.startedFromMonth && education.startedFromYear && education.finishedAtMonth && education.finishedAtYear && <span>&nbsp; &nbsp;</span>}
+					{education.finishedAtMonth && education.finishedAtYear && <span>To {education.finishedAtMonth}/{education.finishedAtYear}</span>}
+				</p>
+			</div>
 
 			{/* DEGREE */}
-			<Text style={tw('text-sm')}>
-				{education.degree && <Text>{education.degree}</Text>}
-				{education.degree && education.fieldOfStudy && <Text> in </Text>}
-				{education.fieldOfStudy && <Text>{education.fieldOfStudy}</Text>}
-			</Text>
+			<p className="text-sm italic">
+				{education.degree && <span>{education.degree}</span>}
+				{education.degree && education.fieldOfStudy && <span> in </span>}
+				{education.fieldOfStudy && <span>{education.fieldOfStudy}</span>}
+			</p>
 
 			{/* DESCRIPTION */}
-			{education.description && <Text style={tw('text-sm leading-snug mt-2 pl-6')}>{education.description}</Text>}
-		</View>
+			{education.description && <p className="text-sm leading-snug mt-2 pl-6">{education.description}</p>}
+		</div>
 	)
 }
 
@@ -159,40 +153,43 @@ const ExperienceSection = ({section, previousSectionType}: ExperienceSectionProp
 	const {data: experience} = section
 
 	return (
-		<View style={tw('flex flex-col items-stretch')}>
+		<div className="flex flex-col items-stretch">
 			{/* TITLE */}
-			{previousSectionType !== ResumeSections.EXPERIENCE && <View style={tw('mt-8 mb-3')}>
-				<Text style={tw('text-xl font-bold leading-normal')}>Experience</Text>
+			{previousSectionType !== ResumeSections.EXPERIENCE && <div className="mt-8 -mb-2">
+				<p className="text-xl font-bold leading-normal">Experience</p>
 
 				{/* DIVIDER */}
 				<Divider />
-			</View>}
+			</div>}
+
+			{/* DIVISION */}
+			<div className="h-4 w-full" />
 
 			{/* COMPANY & DATES */}
-			<View style={tw('w-full flex flex-row items-center justify-between gap-4')}>
+			<div className="w-full flex flex-row items-center justify-between gap-4">
 				{/* COMPANY */}
-				<Text>
-					{experience?.companyName && <Text style={tw('text-lg leading-normal')}>{experience.companyName}</Text>}
-					{experience?.companyName && experience?.country && <Text style={tw('text-lg leading-normal')}>, </Text>}
-					{experience?.country && <Text style={tw('text-lg leading-normal')}>{experience.country}</Text>}
-				</Text>
+				<p className="text-lg leading-normal">
+					{experience?.companyName && <span className="font-semibold">{experience.companyName}</span>}
+					{experience?.companyName && experience?.country && <span>, </span>}
+					{experience?.country && <span>{experience.country}</span>}
+				</p>
 
-				<Text style={tw('text-sm')}>
-					{experience.startedFromMonth && experience.startedFromYear && <Text>From {experience.startedFromMonth}/{experience.startedFromYear}</Text>}
-					{experience.startedFromMonth && experience.startedFromYear && experience.finishedAtMonth && experience.finishedAtYear && <Text>    </Text>}
-					{experience.finishedAtMonth && experience.finishedAtYear && <Text>To {experience.finishedAtMonth}/{experience.finishedAtYear}</Text>}
-				</Text>
-			</View>
+				<p className="text-sm">
+					{experience.startedFromMonth && experience.startedFromYear && <span>From {experience.startedFromMonth}/{experience.startedFromYear}</span>}
+					{experience.startedFromMonth && experience.startedFromYear && experience.finishedAtMonth && experience.finishedAtYear && <span>    </span>}
+					{experience.finishedAtMonth && experience.finishedAtYear && <span>To {experience.finishedAtMonth}/{experience.finishedAtYear}</span>}
+				</p>
+			</div>
 
-			{/* DEGREE */}
-			<Text style={tw('text-sm')}>
-				{experience.jobTitle && <Text>{experience.jobTitle}</Text>}
-				{experience.jobTitle && experience.employmentType && <Text>, </Text>}
-				{experience.jobTitle && <Text>{experience.employmentType}</Text>}
-			</Text>
+			{/* Role */}
+			<p className="text-sm italic">
+				{experience.jobTitle && <span>{experience.jobTitle}</span>}
+				{experience.jobTitle && experience.employmentType && <span>, </span>}
+				{experience.jobTitle && <span>{experience.employmentType}</span>}
+			</p>
 
 			{/* DESCRIPTION */}
-			{experience.description && <Text style={tw('text-sm leading-snug mt-2 pl-6')}>{experience.description}</Text>}
-		</View>
+			{experience.description && <p className="text-sm leading-snug mt-2 pl-6">{experience.description}</p>}
+		</div>
 	)
 }
