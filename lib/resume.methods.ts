@@ -36,21 +36,21 @@ export const createBaseResume = async (userId: string) => {
 
 	const resume = await db.insert(resumes).values({
 		userId,
-		base: true,
+		base: true
 	}).returning()
 
 	const baseEducations = await db.query.educations.findMany({where: eq(educations.userId, userId)})
 	await db.insert(resumeSections).values(baseEducations.map(education => ({
 		resumeId: resume[0].id,
 		type: ResumeSections.EDUCATION,
-		dataId: education.id,
+		dataId: education.id
 	})))
 
 	const baseExperiences = await db.query.experiences.findMany({where: eq(experiences.userId, userId)})
 	await db.insert(resumeSections).values(baseExperiences.map(experience => ({
 		resumeId: resume[0].id,
 		type: ResumeSections.EXPERIENCE,
-		dataId: experience.id,
+		dataId: experience.id
 	})))
 
 	await db.query.resumes.findFirst({where: eq(resumes.id, resume[0].id), with: {sections: true, personalInfo: true}})

@@ -22,7 +22,7 @@ const PersonalDetails = async () => {
 				firstName: personalDetailsFromDB?.firstName || user?.firstName || '',
 				lastName: personalDetailsFromDB?.lastName || user?.lastName || '',
 				email: personalDetailsFromDB?.email || user?.emailAddresses[0].emailAddress || '',
-				phone: personalDetailsFromDB?.phone || user?.primaryPhoneNumber?.phoneNumber || '',
+				phone: personalDetailsFromDB?.phone || user?.primaryPhoneNumber?.phoneNumber || ''
 			}} />
 		</div>
 	)

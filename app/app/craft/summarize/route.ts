@@ -9,8 +9,8 @@ Your job is to very briefly summarize the job and return the output in a semanti
 `
 }
 
-export async function POST(request: Request) {
-	const { prompt }: { prompt: string } = await request.json()
+export const POST = async (request: Request) => {
+	const {prompt}: { prompt: string } = await request.json()
 
 	const result = await streamText({
 		model,

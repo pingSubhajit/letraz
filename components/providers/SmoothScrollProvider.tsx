@@ -3,7 +3,7 @@
 import Lenis from 'lenis'
 import {ReactNode, useEffect, useRef} from 'react'
 
-const SmoothScrollProvider = ({ children, className }: { children: ReactNode, className?: string }) => {
+const SmoothScrollProvider = ({children, className}: { children: ReactNode, className?: string }) => {
 	const wrapper = useRef<HTMLDivElement>(null)
 	const content = useRef<HTMLDivElement>(null)
 
@@ -14,10 +14,10 @@ const SmoothScrollProvider = ({ children, className }: { children: ReactNode, cl
 				content: content.current,
 				lerp: 0.12,
 				smoothWheel: true, // @ts-ignore
-				smoothTouch: false,
+				smoothTouch: false
 			})
 
-			function raf(time: any) {
+			const raf = (time: any) => {
 				lenis.raf(time)
 				requestAnimationFrame(raf)
 			}

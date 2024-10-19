@@ -8,7 +8,7 @@ import {cn} from '@/lib/utils'
 import {motion} from 'framer-motion'
 
 const GoogleSignInButton = ({className}: {className?: string}) => {
-	const { signIn } = useSignIn()
+	const {signIn} = useSignIn()
 
 	if (!signIn) return null
 
@@ -16,7 +16,7 @@ const GoogleSignInButton = ({className}: {className?: string}) => {
 		return signIn.authenticateWithRedirect({
 			strategy,
 			redirectUrl: '/signup/sso-callback',
-			redirectUrlComplete: '/app',
+			redirectUrlComplete: '/app'
 		})
 	}
 

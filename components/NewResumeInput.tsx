@@ -15,22 +15,25 @@ import {Loader2} from 'lucide-react'
 import {parseJobFromRawJD} from '@/app/app/craft/parseJD'
 import {toast} from 'sonner'
 import {addJobToDB} from '@/lib/jobs.methods'
+import useDOMMounted from '@/hooks/useDOMMounted'
 
 const formSchema = z.object({
 	input: z.string().min(1, 'Please enter a valid URL or job description').transform(input => encodeURIComponent(input))
 })
 
 const NewResumeInput = ({className}: {className?: string}) => {
+	const mounted = useDOMMounted()
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			input: '',
-		},
+			input: ''
+		}
 	})
 
 	const router = useTransitionRouter()
 
-	async function onSubmit(values: z.infer<typeof formSchema>) {
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
 			const jobDetails = await parseJobFromRawJD(values.input)
 			const job = await addJobToDB(jobDetails)
@@ -40,7 +43,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 			toast.error(error.message || 'Could not understand the job')
 		}
 	}
-	
+
 	const [inputFocused, setInputFocused] = useState(false)
 
 	return (
@@ -55,7 +58,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 				<FormField
 					control={form.control}
 					name="input"
-					render={({ field }) => (
+					render={({field}) => (
 						<FormItem className="h-full flex flex-col gap-4">
 							<FormLabel className="text-flame-500 uppercase tracking-widest text-xs font-semibold">Craft new resume for a job</FormLabel>
 							{!form.formState.isSubmitted && <FormControl>
@@ -75,7 +78,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 					Submit
 				</Button>}
 
-				{createPortal(
+				{mounted && createPortal(
 					NewResumeInputOverlay({inputFocused}),
 					document?.body
 				)}

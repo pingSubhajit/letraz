@@ -9,9 +9,9 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {SelectValueProps} from '@radix-ui/react-select'
 import {Textarea, TextareaProps} from '@/components/ui/textarea'
 
-const OnboardingFormInput = ({ className, type, ...props }: InputProps) => {
+const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
-	const { error } = useFormField()
+	const {error} = useFormField()
 
 	return (
 		<div className={cn('relative mb-2', className)}>
@@ -44,9 +44,9 @@ const OnboardingFormInput = ({ className, type, ...props }: InputProps) => {
 	)
 }
 
-const OnboardingFormTextArea = ({ className, ...props }: TextareaProps) => {
+const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
-	const { error } = useFormField()
+	const {error} = useFormField()
 
 	return (
 		<div className="relative mb-2">
@@ -86,7 +86,7 @@ type OnboardingFormSelectProps = {
 	className?: string
 } & SelectValueProps
 
-const OnboardingFormSelect = ({ className, value, onChange, options, ...props }: OnboardingFormSelectProps) => {
+const OnboardingFormSelect = ({className, value, onChange, options, ...props}: OnboardingFormSelectProps) => {
 	return (
 		<Select onValueChange={onChange} defaultValue={value}>
 			<FormControl>

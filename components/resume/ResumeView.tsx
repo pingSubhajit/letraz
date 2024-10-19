@@ -13,7 +13,7 @@ const ResumeView = ({resume}: {resume: Resume}) => {
 	const resumeRef = useRef()
 
 	const [resumeData, setResumeData] = useState<Resume>(resume)
-	
+
 	return (
 		<div className="flex relative pb-8">
 			<Button variant="secondary" size="icon" className="absolute top-2 left-2 z-20 h-8 w-8">

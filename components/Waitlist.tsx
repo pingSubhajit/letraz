@@ -14,7 +14,7 @@ import {Loader2} from 'lucide-react'
 import {toast} from 'sonner'
 
 const formSchema = z.object({
-	email: z.string().email({message: 'Please enter a valid email address'}),
+	email: z.string().email({message: 'Please enter a valid email address'})
 })
 
 const Waitlist = ({className, referrer}: {className?: string, referrer: string | undefined}) => {
@@ -22,8 +22,8 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			email: '',
-		},
+			email: ''
+		}
 	})
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -49,7 +49,7 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 							<FormField
 								control={form.control}
 								name="email"
-								render={({ field }) => (
+								render={({field}) => (
 									<FormItem className="relative">
 										<FormControl>
 											<Input
@@ -77,7 +77,7 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 					initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
 					className="mt-4 text-xs text-primary/60"
 				>
-                    Your email will not be shared with any third parties.
+					Your email will not be shared with any third parties.
 				</motion.p>}
 
 				{signedUp && <motion.p initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>

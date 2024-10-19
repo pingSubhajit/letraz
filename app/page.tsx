@@ -12,11 +12,11 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'Letraz — Effortless, Tailored Resumes for Every Job Application',
 		description: 'Letraz automates resume creation to match every job\'s requirements, giving job seekers a ' +
-			'higher chance of being noticed by ATS and recruiters. Customize your resume with ease!',
+			'higher chance of being noticed by ATS and recruiters. Customize your resume with ease!'
 	}
 }
 
-const LandingPage = ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const LandingPage = ({searchParams}: { searchParams: { [key: string]: string | string[] | undefined } }) => {
 	const referrer = searchParams.ref as string | undefined
 
 	return (

@@ -2,7 +2,7 @@ import {ReactNode} from 'react'
 import AppSidebar from '@/components/AppSidebar'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 
-const AppLayout = ({ children }: {children: ReactNode}) => {
+const AppLayout = ({children}: {children: ReactNode}) => {
 	return (
 		<div className="h-svh flex items-stretch relative overflow-hidden">
 			{/* SIDEBAR */}

@@ -3,11 +3,13 @@ import {UserButton} from '@clerk/nextjs'
 import {Button} from '@/components/ui/button'
 import {Link} from 'next-view-transitions'
 import {Cog6ToothIcon} from '@heroicons/react/20/solid'
+import Image from 'next/image'
+import logo from '@/public/logo_mono_rotated.svg'
 
 const AppSidebar = () => {
 	return (
 		<AppSidebarContainer className="h-full px-4 pt-24 pb-8 flex flex-col items-center justify-between bg-primary-foreground/90">
-			<Link href="/app"><img src='/logo_mono_rotated.svg' alt="Letraz logo" className=""/></Link>
+			<Link href="/app"><Image src={logo} alt="Letraz logo" className=""/></Link>
 			<div className="flex flex-col items-center justify-end gap-4">
 				<Link href="/app/settings">
 					<Button variant="ghost" className="p-1 aspect-square w-full">

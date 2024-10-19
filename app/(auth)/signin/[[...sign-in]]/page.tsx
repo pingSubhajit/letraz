@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'Login to Letraz | Access Your Personalized Resume Builder',
 		description: 'Log in to Letraz and continue building or customizing resumes tailored to each job ' +
-			'application. Improve your job search with tailored resumes.',
+			'application. Improve your job search with tailored resumes.'
 	}
 }
 

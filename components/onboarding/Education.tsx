@@ -16,7 +16,7 @@ const Education = ({allEducations}: {allEducations: (typeof educations.$inferSel
 		fieldOfStudy: education.fieldOfStudy as string | undefined,
 		degree: education.degree as string | undefined,
 		startedFromMonth: education.startedFromMonth ? months[education.startedFromMonth - 1] : undefined,
-		startedFromYear: education.startedFromYear? education.startedFromYear.toString() : undefined,
+		startedFromYear: education.startedFromYear ? education.startedFromYear.toString() : undefined,
 		finishedAtMonth: education.finishedAtMonth ? months[education.finishedAtMonth - 1] : undefined,
 		finishedAtYear: education.finishedAtYear ? education.finishedAtYear.toString() : undefined,
 		current: education.current as boolean | undefined,

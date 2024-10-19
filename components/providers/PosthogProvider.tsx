@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
 	})
 }
 
-const CSPostHogProvider = ({ children }: { children: ReactNode }) => {
+const CSPostHogProvider = ({children}: { children: ReactNode }) => {
 	return <PostHogProvider client={posthog}>{children}</PostHogProvider>
 }
 

@@ -70,9 +70,9 @@ const PersonalInfo = ({personalInfoData}: { personalInfoData?: typeof personalIn
 				{/* LOCATION */}
 				<View style={tw('flex flex-row items-center gap-1 whitespace-nowrap leading-none')}>
 					{/* ICON */}
-					{/*{(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) &&*/}
-					    <MapPinPDF style={tw('w-4 h-4 m-0')} />
-					{/*}*/}
+					{/* {(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) &&*/}
+					<MapPinPDF style={tw('w-4 h-4 m-0')} />
+					{/* }*/}
 
 					{/* LOCATION INFO */}
 					{personalInfoData?.address && <Text style={tw('text-sm leading-none')}>{personalInfoData?.address}, </Text>}

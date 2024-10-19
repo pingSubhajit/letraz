@@ -20,7 +20,7 @@ export const signUpForWaitlist = async (email: string, referrer?: any) => {
 	const newSignUp = db.insert(waitlist).values({
 		email: params.email,
 		referrer: params.referrer || 'website',
-		waitingNumber: (await db.select({count: count() }).from(waitlist))[0].count + 1
+		waitingNumber: (await db.select({count: count()}).from(waitlist))[0].count + 1
 	}).returning()
 
 	await resend.emails.send({

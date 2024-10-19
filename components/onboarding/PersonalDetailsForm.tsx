@@ -26,7 +26,7 @@ const formSchema = z.object({
 	phone: z.string()
 		.min(10, {message: 'That phone number doesn\'t look right'})
 		.max(15, {message: 'That phone number doesn\'t look right'})
-		.optional(),
+		.optional()
 })
 
 type DefaultValues = {
@@ -38,7 +38,7 @@ type DefaultValues = {
 
 const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }) => {
 	const router = useTransitionRouter()
-	const { user } = useUser()
+	const {user} = useUser()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -46,15 +46,15 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 			firstName: defaultValues.firstName,
 			lastName: defaultValues.lastName,
 			email: defaultValues.email,
-			phone: defaultValues.phone || undefined,
-		},
+			phone: defaultValues.phone || undefined
+		}
 	})
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
 			await addPersonalInfoToDB({
 				...values,
-				userId: user!.id,
+				userId: user!.id
 			})
 			router.push('/app/onboarding?step=education')
 		} catch (error) {

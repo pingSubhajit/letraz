@@ -41,7 +41,7 @@ type ExperienceFormProps = {
 
 const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps) => {
 	const router = useTransitionRouter()
-	const { user } = useUser()
+	const {user} = useUser()
 
 	const form = useForm<z.infer<typeof experienceFormSchema>>({
 		resolver: zodResolver(experienceFormSchema),
@@ -67,7 +67,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 			finishedAtMonth: months.findIndex(month => month === values.finishedAtMonth) + 1,
 			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
 			current: !values.finishedAtYear,
-			userId: user!.id,
+			userId: user!.id
 		})
 	}
 

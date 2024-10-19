@@ -11,7 +11,7 @@ import {auth} from '@clerk/nextjs/server'
 import {getExperiencesFromDB} from '@/lib/experience.methods'
 import BaseResume from '@/components/onboarding/BaseResume'
 
-const OnboardingPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const OnboardingPage = async ({searchParams}: { searchParams: { [key: string]: string | string[] | undefined } }) => {
 	const {userId} = auth()
 	const step = searchParams.step as OnboardingStep | undefined
 	const educations = await getEducationsFromDB(userId!)

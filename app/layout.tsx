@@ -18,25 +18,24 @@ export const metadata: Metadata = {
 	},
 	generator: 'Next.js',
 	icons: [
-		{ rel: 'apple-touch-icon', url: 'logo.png' },
-		{ rel: 'icon', url: 'logo.png' },
+		{rel: 'apple-touch-icon', url: 'logo.png'},
+		{rel: 'icon', url: 'logo.png'}
 	],
-	authors: [{ name: 'Subhajit Kundu', url: portfolio }]
+	authors: [{name: 'Subhajit Kundu', url: portfolio}]
 }
 
-export default function RootLayout({children}: Readonly<{ children: React.ReactNode }>) {
-	return (
-		<ClerkProvider>
-			<ViewTransitions>
-				<html lang="en">
-					<PosthogProvider>
-						<body className={modelica.className}>
-							{children}
-							<Toaster />
-						</body>
-					</PosthogProvider>
-				</html>
-			</ViewTransitions>
-		</ClerkProvider>
-	)
-}
+const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <ClerkProvider>
+	<ViewTransitions>
+		<html lang="en">
+			<PosthogProvider>
+				<body className={modelica.className}>
+					{children}
+					<Toaster/>
+				</body>
+			</PosthogProvider>
+		</html>
+	</ViewTransitions>
+</ClerkProvider>
+
+
+export default RootLayout

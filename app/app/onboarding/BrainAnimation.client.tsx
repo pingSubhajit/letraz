@@ -13,12 +13,12 @@ const BrainAnimation = ({className, onboardingStep}: {className?: string, onboar
 				initial={{scale: 0}} animate={{
 					scale: onboardingStep === OnboardingStep.WELCOME || onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? 1 : 1.2,
 					top: onboardingStep === OnboardingStep.WELCOME || onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? '0' : '-50%',
-					right: onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? '-25%' : '0',
+					right: onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? '-25%' : '0'
 				}} exit={{scale: 0}}
 				transition={{
 					type: 'spring',
 					duration: 1,
-					ease: 'easeInOut',
+					ease: 'easeInOut'
 				}}
 			>
 				<source src="/letraz-brain.webm" type="video/webm"/>

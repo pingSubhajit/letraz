@@ -29,7 +29,7 @@ export const educationFormSchema = z.object({
 	finishedAtMonth: z.string().optional(),
 	finishedAtYear: z.string().optional(),
 	current: z.boolean().optional(),
-	description: z.string().optional(),
+	description: z.string().optional()
 })
 
 type EducationFormProps = {
@@ -40,7 +40,7 @@ type EducationFormProps = {
 
 const EducationForm = ({className, educations, setEducations}: EducationFormProps) => {
 	const router = useTransitionRouter()
-	const { user } = useUser()
+	const {user} = useUser()
 
 	const form = useForm<z.infer<typeof educationFormSchema>>({
 		resolver: zodResolver(educationFormSchema),
@@ -55,7 +55,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 			finishedAtYear: '',
 			current: false,
 			description: ''
-		},
+		}
 	})
 
 	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
@@ -66,7 +66,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 			finishedAtMonth: months.findIndex(month => month === values.finishedAtMonth) + 1,
 			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
 			current: !values.finishedAtYear,
-			userId: user!.id,
+			userId: user!.id
 		})
 	}
 

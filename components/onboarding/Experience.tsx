@@ -16,7 +16,7 @@ const Experience = ({allExperiences}: {allExperiences: (typeof experiences.$infe
 		jobTitle: experience.jobTitle as string | undefined,
 		city: experience.city as string | undefined,
 		startedFromMonth: experience.startedFromMonth ? months[experience.startedFromMonth - 1] : undefined,
-		startedFromYear: experience.startedFromYear? experience.startedFromYear.toString() : undefined,
+		startedFromYear: experience.startedFromYear ? experience.startedFromYear.toString() : undefined,
 		finishedAtMonth: experience.finishedAtMonth ? months[experience.finishedAtMonth - 1] : undefined,
 		finishedAtYear: experience.finishedAtYear ? experience.finishedAtYear.toString() : undefined,
 		current: experience.current as boolean | undefined,
