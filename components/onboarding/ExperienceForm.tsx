@@ -98,6 +98,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 		<div className={cn('max-w-2xl flex flex-col', className)}>
 			<motion.div
 				className="text-xl mt-8 max-w-xl"
+				{...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>Mentioning your past employment details can increase the chance of your résumé getting selected upto 75%</p>
@@ -112,6 +114,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between w-full"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -142,6 +146,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-8"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -172,6 +178,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -245,7 +253,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between"
+						className="flex items-center gap-8 justify-between" {...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
