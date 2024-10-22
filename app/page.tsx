@@ -16,7 +16,10 @@ export const metadata: Metadata = {
 	}
 }
 
-const LandingPage = ({searchParams}: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const LandingPage = async (
+	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+) => {
+	const searchParams = await props.searchParams
 	const referrer = searchParams.ref as string | undefined
 
 	return (
