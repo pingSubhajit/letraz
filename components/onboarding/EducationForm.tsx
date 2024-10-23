@@ -6,11 +6,16 @@ import {Link, useTransitionRouter} from 'next-view-transitions'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {cn} from '@/lib/utils'
-import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
+import {
+	Form,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage
+} from '@/components/ui/form'
 import {
 	OnboardingFormInput,
-	OnboardingFormSelect,
-	OnboardingFormTextArea
+	OnboardingFormSelect
 } from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
@@ -18,9 +23,13 @@ import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {addEducationToDB} from '@/lib/education.methods'
 import {useUser} from '@clerk/nextjs'
+import RichTextEditor from './RichTextEditor'
 
 export const educationFormSchema = z.object({
-	institutionName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
+	institutionName: z
+		.string()
+		.max(100, {message: 'That\'s a long name! We can\'t handle that'})
+		.optional(),
 	country: z.string().optional(),
 	fieldOfStudy: z.string().optional(),
 	degree: z.string().optional(),
@@ -33,12 +42,16 @@ export const educationFormSchema = z.object({
 })
 
 type EducationFormProps = {
-	className?: string,
-	educations: z.infer<typeof educationFormSchema>[],
-	setEducations: (educations: z.infer<typeof educationFormSchema>[]) => void
-}
+  className?: string;
+  educations: z.infer<typeof educationFormSchema>[];
+  setEducations: (educations: z.infer<typeof educationFormSchema>[]) => void;
+};
 
-const EducationForm = ({className, educations, setEducations}: EducationFormProps) => {
+const EducationForm = ({
+	className,
+	educations,
+	setEducations
+}: EducationFormProps) => {
 	const router = useTransitionRouter()
 	const {user} = useUser()
 
@@ -58,13 +71,21 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 		}
 	})
 
-	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
+	const insertEducation = async (
+		values: z.infer<typeof educationFormSchema>
+	) => {
 		await addEducationToDB({
 			...values,
-			startedFromMonth: months.findIndex(month => month === values.startedFromMonth) + 1,
-			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
-			finishedAtMonth: months.findIndex(month => month === values.finishedAtMonth) + 1,
-			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
+			startedFromMonth:
+        months.findIndex((month) => month === values.startedFromMonth) + 1,
+			startedFromYear: values.startedFromYear
+				? parseInt(values.startedFromYear)
+				: null,
+			finishedAtMonth:
+        months.findIndex((month) => month === values.finishedAtMonth) + 1,
+			finishedAtYear: values.finishedAtYear
+				? parseInt(values.finishedAtYear)
+				: null,
 			current: !values.finishedAtYear,
 			userId: user!.id
 		})
@@ -80,7 +101,9 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 		}
 	}
 
-	const submitWithRedirect = async (values: z.infer<typeof educationFormSchema>) => {
+	const submitWithRedirect = async (
+		values: z.infer<typeof educationFormSchema>
+	) => {
 		try {
 			if (form.formState.isDirty) {
 				await insertEducation(values)
@@ -95,18 +118,21 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 		<div className={cn('max-w-2xl flex flex-col', className)}>
 			<motion.div
 				className="text-xl mt-8 max-w-xl"
-				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
+				initial={{opacity: 0, y: 20}}
+				animate={{opacity: 1, y: 0}}
+				transition={{delay: 0.2, duration: 0.7}}
 			>
-				<p>Having 2 or more educational details can increase the chance of your résumé getting selected upto 15%</p>
+				<p>
+					Having 2 or more educational details can increase the chance of your
+					résumé getting selected upto 15%
+				</p>
 			</motion.div>
 
 			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(onSubmit)}
-					className="mt-12"
-				>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12">
 					<motion.div
-						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}}
+						animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between w-full"
 					>
@@ -115,9 +141,15 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 							name="institutionName"
 							render={({field}) => (
 								<FormItem className="w-[95%]">
-									<OnboardingFormInput placeholder="institution" {...field} autoFocus/>
-									<FormLabel className="transition">Name of the institution</FormLabel>
-									<FormMessage/>
+									<OnboardingFormInput
+										placeholder="institution"
+										{...field}
+										autoFocus
+									/>
+									<FormLabel className="transition">
+										Name of the institution
+									</FormLabel>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -129,14 +161,15 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								<FormItem>
 									<OnboardingFormInput placeholder="country" {...field} />
 									<FormLabel className="transition">Country</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
 					</motion.div>
 
 					<motion.div
-						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}}
+						animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-8"
 					>
@@ -147,7 +180,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								<FormItem className="w-[95%]">
 									<OnboardingFormInput placeholder="field" {...field} />
 									<FormLabel className="transition">Field of study</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -159,14 +192,15 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								<FormItem>
 									<OnboardingFormInput placeholder="degree" {...field} />
 									<FormLabel className="transition">Degree earned</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
 					</motion.div>
 
 					<motion.div
-						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}}
+						animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
 					>
@@ -181,8 +215,10 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 										options={months}
 										placeholder="Start month"
 									/>
-									<FormLabel className="transition">Month of starting</FormLabel>
-									<FormMessage/>
+									<FormLabel className="transition">
+										Month of starting
+									</FormLabel>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -199,7 +235,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 										placeholder="Start year"
 									/>
 									<FormLabel className="transition">Year of starting</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -216,7 +252,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 										placeholder="End month"
 									/>
 									<FormLabel className="transition">Month of end</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -233,14 +269,15 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 										placeholder="End year"
 									/>
 									<FormLabel className="transition">Year of end</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
 					</motion.div>
 
 					<motion.div
-						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}}
+						animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between"
 					>
@@ -249,12 +286,14 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 							name="description"
 							render={({field}) => (
 								<FormItem className="w-full">
-									<OnboardingFormTextArea
+									<FormLabel className="transition">
+										Description (optional)
+									</FormLabel>
+									<RichTextEditor
 										placeholder="write a fiew things about what you learnt, the things you've build etc."
 										{...field}
 									/>
-									<FormLabel className="transition">Description (optional)</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -271,7 +310,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								variant="secondary"
 								type="button"
 							>
-								<ChevronLeft className="w-5 h-5 mr-1"/>
+								<ChevronLeft className="w-5 h-5 mr-1" />
 								Personal details
 							</Button>
 						</Link>
@@ -282,13 +321,16 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 								variant="secondary"
 								type="submit"
-								disabled={form.formState.isSubmitting || !form.formState.isDirty}
+								disabled={
+									form.formState.isSubmitting || !form.formState.isDirty
+								}
 							>
 								Add another
-								{form.formState.isSubmitting
-									? <Loader2 className="w-4 h-4 ml-1 animate-spin"/>
-									: <ChevronRight className="w-5 h-5 ml-1"/>
-								}
+								{form.formState.isSubmitting ? (
+									<Loader2 className="w-4 h-4 ml-1 animate-spin" />
+								) : (
+									<ChevronRight className="w-5 h-5 ml-1" />
+								)}
 							</Button>
 
 							<Button
@@ -299,10 +341,11 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 								disabled={form.formState.isSubmitting}
 							>
 								What's next
-								{form.formState.isSubmitting
-									? <Loader2 className="w-4 h-4 ml-1 animate-spin"/>
-									: <ChevronRight className="w-5 h-5 ml-1"/>
-								}
+								{form.formState.isSubmitting ? (
+									<Loader2 className="w-4 h-4 ml-1 animate-spin" />
+								) : (
+									<ChevronRight className="w-5 h-5 ml-1" />
+								)}
 							</Button>
 						</div>
 					</div>
