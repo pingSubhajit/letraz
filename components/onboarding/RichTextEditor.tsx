@@ -1,6 +1,6 @@
 'use client'
 
-import {useEditor, EditorContent} from '@tiptap/react'
+import {EditorContent, useEditor} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import UnderlineExtension from '@tiptap/extension-underline'
@@ -8,22 +8,10 @@ import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
 import ListItem from '@tiptap/extension-list-item'
 import {Button} from '@/components/ui/button'
-import {
-	Bold,
-	Italic,
-	Underline,
-	List,
-	ListOrdered,
-	Link as LinkIcon
-} from 'lucide-react'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger
-} from '@/components/ui/popover'
+import {Bold, Italic, Link as LinkIcon, List, ListOrdered, Underline} from 'lucide-react'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import {Input, InputProps} from '@/components/ui/input'
 import {cn} from '@/lib/utils'
-
 
 const RichTextEditor: React.FC<Omit<InputProps, 'onChange'> & { onChange?: (value: string) => void }> = ({value = '<p></p>', onChange, className = '', placeholder = 'Start typing ...'}) => {
 	const editor = useEditor({
@@ -58,10 +46,10 @@ const RichTextEditor: React.FC<Omit<InputProps, 'onChange'> & { onChange?: (valu
 	})
 
 	if (!editor) {
-		return null
+		return null // TODO: Use a simple textarea as a fallback
 	}
 
-	return (
+	return ( // TODO: Update the design of the editor to match the provided design
 		<div className={cn('border rounded-md p-4', className)}>
 			<div className="flex gap-2 mb-4">
 				<Button
@@ -138,8 +126,7 @@ const RichTextEditor: React.FC<Omit<InputProps, 'onChange'> & { onChange?: (valu
 					</PopoverContent>
 				</Popover>
 			</div>
-			<EditorContent
-				editor={editor} placeholder={placeholder} className="border rounded-md" />
+			<EditorContent editor={editor} placeholder={placeholder} className="border rounded-md" />
 		</div>
 	)
 }

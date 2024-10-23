@@ -6,17 +6,8 @@ import {Link, useTransitionRouter} from 'next-view-transitions'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {cn} from '@/lib/utils'
-import {
-	Form,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage
-} from '@/components/ui/form'
-import {
-	OnboardingFormInput,
-	OnboardingFormSelect
-} from '@/components/onboarding/OnboardingFormInput'
+import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
+import {OnboardingFormInput, OnboardingFormSelect} from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
@@ -42,10 +33,10 @@ export const educationFormSchema = z.object({
 })
 
 type EducationFormProps = {
-  className?: string;
-  educations: z.infer<typeof educationFormSchema>[];
-  setEducations: (educations: z.infer<typeof educationFormSchema>[]) => void;
-};
+	className?: string
+	educations: z.infer<typeof educationFormSchema>[]
+	setEducations: (educations: z.infer<typeof educationFormSchema>[]) => void
+}
 
 const EducationForm = ({
 	className,
@@ -91,6 +82,7 @@ const EducationForm = ({
 		})
 	}
 
+	// TODO: Disable form submission on enter pressed from description field
 	const onSubmit = async (values: z.infer<typeof educationFormSchema>) => {
 		try {
 			await insertEducation(values)
@@ -341,11 +333,9 @@ const EducationForm = ({
 								disabled={form.formState.isSubmitting}
 							>
 								What's next
-								{form.formState.isSubmitting ? (
-									<Loader2 className="w-4 h-4 ml-1 animate-spin" />
-								) : (
-									<ChevronRight className="w-5 h-5 ml-1" />
-								)}
+								{form.formState.isSubmitting
+									? (<Loader2 className="w-4 h-4 ml-1 animate-spin" />)
+									: (<ChevronRight className="w-5 h-5 ml-1" />)}
 							</Button>
 						</div>
 					</div>
