@@ -21,6 +21,7 @@ import {useUser} from '@clerk/nextjs'
 import {createBaseResume} from '@/lib/resume.methods'
 
 export const experienceFormSchema = z.object({
+	id: z.string().optional(),
 	companyName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
 	country: z.string().optional(),
 	jobTitle: z.string().optional(),
@@ -60,7 +61,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	})
 
 	const insertExperience = async (values: z.infer<typeof experienceFormSchema>) => {
-		await addExperienceToDB({
+		return await addExperienceToDB({
 			...values,
 			startedFromMonth: months.findIndex(month => month === values.startedFromMonth) + 1,
 			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
@@ -73,9 +74,13 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 
 	const onSubmit = async (values: z.infer<typeof experienceFormSchema>) => {
 		try {
-			await insertExperience(values)
-			setExperiences([...experiences, values])
-			form.reset()
+			const newExperience = await insertExperience(values)
+			if (newExperience && newExperience[0]){
+				setExperiences([...experiences, {...values, id: newExperience[0].id}])
+				form.reset()
+			} else {
+				toast.error('Failed to update experience')
+			}
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
 		}

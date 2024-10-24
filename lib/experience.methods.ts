@@ -14,3 +14,7 @@ export const getExperiencesFromDB = async (userId: string) => {
 		where: eq(experiences.userId, userId)
 	})
 }
+
+export const deleteExperienceFromDB = async (experienceId: string) => {
+	return db.delete(experiences).where(eq(experiences.id, experienceId)).returning()
+}
