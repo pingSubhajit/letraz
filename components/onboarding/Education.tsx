@@ -9,7 +9,7 @@ import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {educations} from '@/db/schema'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
-import PopConfirm from '../utilities/PopConfirm'
+import PopConfirm from '../ui/pop-confirm'
 
 const Education = ({allEducations}: {allEducations: (typeof educations.$inferSelect)[]}) => {
 	const [currentEducations, setCurrentEducations] = useState<z.infer<typeof educationFormSchema>[]>(allEducations.map(education => ({
