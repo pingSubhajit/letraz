@@ -9,9 +9,9 @@ import ExperienceForm, {experienceFormSchema} from '@/components/onboarding/Expe
 import {experiences} from '@/db/schema'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
-import PopConfirm from '../utilities/PopConfirm'
 import {deleteExperienceFromDB} from '@/lib/experience.methods'
 import {toast} from 'sonner'
+import PopConfirm from '../ui/pop-confirm'
 
 const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inferSelect)[] }) => {
 	const [currentExperiences, setCurrentExperiences] = useState<z.infer<typeof experienceFormSchema>[]>(allExperiences.map(experience => ({
