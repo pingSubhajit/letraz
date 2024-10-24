@@ -20,6 +20,7 @@ import {addEducationToDB} from '@/lib/education.methods'
 import {useUser} from '@clerk/nextjs'
 
 export const educationFormSchema = z.object({
+	id: z.string().optional(),
 	institutionName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
 	country: z.string().optional(),
 	fieldOfStudy: z.string().optional(),
@@ -59,7 +60,7 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 	})
 
 	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
-		await addEducationToDB({
+		return await addEducationToDB({
 			...values,
 			startedFromMonth: months.findIndex(month => month === values.startedFromMonth) + 1,
 			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
@@ -72,11 +73,15 @@ const EducationForm = ({className, educations, setEducations}: EducationFormProp
 
 	const onSubmit = async (values: z.infer<typeof educationFormSchema>) => {
 		try {
-			await insertEducation(values)
-			setEducations([...educations, values])
-			form.reset()
+			const newEducation = await insertEducation(values)
+			if (newEducation && newEducation[0]) {
+				setEducations([...educations, {...values, id: newEducation[0].id}])
+				form.reset()
+			} else {
+				throw new Error('Failed to add education')
+			}
 		} catch (error) {
-			toast.error('Failed to update education, please try again')
+			toast.error('Failed to add education, please try again')
 		}
 	}
 
