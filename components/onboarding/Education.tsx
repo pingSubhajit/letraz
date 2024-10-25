@@ -83,7 +83,7 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 					{currentEducations.map(
 						(education, index) => (
-							<li key={education.id || index} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
+							<li key={index} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
 								<PopConfirm
 									triggerElement={
 										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
