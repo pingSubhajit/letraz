@@ -9,7 +9,7 @@ import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {educations} from '@/db/schema'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
-import PopConfirm from '../ui/pop-confirm'
+import PopConfirm from '@/components/ui/pop-confirm'
 import {toast} from 'sonner'
 import {deleteEducationFromDB} from '@/lib/education.methods'
 
