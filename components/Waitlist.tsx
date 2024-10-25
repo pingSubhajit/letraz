@@ -75,7 +75,8 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 
 				{!signedUp && <motion.p
 					initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
-					className="mt-4 text-xs text-primary/60"
+					className="mt-4 text-xs text-primary/60" {...({} as any)}
+					// Framer-motion types are broken as of 22/10/2024
 				>
 					Your email will not be shared with any third parties.
 				</motion.p>}

@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic'
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
 const ResumeView = ({resume}: {resume: Resume}) => {
-	const resumeRef = useRef()
+	const resumeRef = useRef(null)
 
 	const [resumeData, setResumeData] = useState<Resume>(resume)
 
