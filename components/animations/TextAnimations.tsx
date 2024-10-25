@@ -1,6 +1,6 @@
 'use client'
 
-import {FC, RefObject, useRef} from 'react'
+import {FC, HTMLAttributes, RefObject, useRef} from 'react'
 import {HTMLMotionProps, motion, useAnimation, useInView} from 'framer-motion'
 
 type AnimationType =
@@ -230,8 +230,7 @@ const TextAnimate: FC<Props> = ({
 
 	if (type === 'rollIn' || type === 'whipIn') {
 		return (
-			// @ts-ignore
-			(<h2 {...props}>
+			(<h2 {...(props as HTMLAttributes<HTMLHeadingElement> & Props)}>
 				{text.split(' ').map((word, index) => {
 					return (
 						<motion.span
