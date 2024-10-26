@@ -3,7 +3,7 @@ import {auth} from '@clerk/nextjs/server'
 import ResumeView from '@/components/resume/ResumeView'
 
 const BaseResume = async () => {
-	const {userId} = auth()
+	const {userId} = await auth()
 	const baseResume = await getBaseResumeFromDB(userId!)
 
 	return (

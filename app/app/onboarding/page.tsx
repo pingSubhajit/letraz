@@ -15,7 +15,7 @@ const OnboardingPage = async (
 	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 ) => {
 	const searchParams = await props.searchParams
-	const {userId} = auth()
+	const {userId} = await auth()
 	const step = searchParams.step as OnboardingStep | undefined
 	const educations = await getEducationsFromDB(userId!)
 	const experiences = await getExperiencesFromDB(userId!)
