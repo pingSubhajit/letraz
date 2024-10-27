@@ -18,7 +18,7 @@ import {OnboardingFormInput} from './OnboardingFormInput'
 import {useCallback, useState} from 'react'
 import {useFormField} from '../ui/form'
 import {ScrollArea} from '../ui/scroll-area'
-import {Toggle} from "@/components/ui/toggle";
+import {Toggle} from '@/components/ui/toggle'
 
 const RichTextEditor: React.FC<
 	Omit<InputProps, 'onChange'> & { onChange?: (value: string) => void }
