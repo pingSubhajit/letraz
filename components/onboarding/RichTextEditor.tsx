@@ -18,6 +18,7 @@ import {OnboardingFormInput} from './OnboardingFormInput'
 import {useCallback, useState} from 'react'
 import {useFormField} from '../ui/form'
 import {ScrollArea} from '../ui/scroll-area'
+import {Toggle} from "@/components/ui/toggle";
 
 const RichTextEditor: React.FC<
 	Omit<InputProps, 'onChange'> & { onChange?: (value: string) => void }
@@ -150,16 +151,15 @@ const RichTextEditor: React.FC<
 
 			<div className="flex gap-2">
 				{EditorButtons.map(({icon: Icon, action, isActive}, index) => (
-					<Button
+					<Toggle
 						key={index}
 						type="button"
-						variant={isActive ? 'default' : 'ghost'}
-						size="icon"
-						onClick={action}
+						pressed={isActive}
+						onPressedChange={action}
 						disabled={!editor.can().chain().focus().run()}
 					>
 						<Icon className="h-4 w-4" />
-					</Button>
+					</Toggle>
 				))}
 				<Popover>
 					<PopoverTrigger asChild>
