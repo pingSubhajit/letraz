@@ -13,7 +13,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.50",
     "@ai-sdk/google": "^0.0.48",
-    "@clerk/nextjs": "^5.5.2",
+    "@clerk/nextjs": "^6.0.2",
     "@formkit/auto-animate": "^0.8.2",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
@@ -37,7 +37,7 @@
     "lenis": "^1.1.13",
     "lucide-react": "^0.441.0",
     "motion": "^10.18.0",
-    "next": "15.0.0",
+    "next": "^15.0.1",
     "next-themes": "^0.3.0",
     "next-view-transitions": "^0.3.1",
     "posthog-js": "^1.164.1",
@@ -71,5 +71,6 @@
   "resolutions": {
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
