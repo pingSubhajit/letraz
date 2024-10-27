@@ -10,28 +10,17 @@ import ListItem from '@tiptap/extension-list-item'
 import Placeholder from '@tiptap/extension-placeholder'
 import {Button} from '@/components/ui/button'
 import {motion} from 'framer-motion'
-import {
-	Bold,
-	Italic,
-	Link as LinkIcon,
-	List,
-	ListOrdered,
-	Underline
-} from 'lucide-react'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger
-} from '@/components/ui/popover'
+import {Bold, Italic, Link as LinkIcon, List, ListOrdered, Underline} from 'lucide-react'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import {Input, InputProps} from '@/components/ui/input'
 import {cn} from '@/lib/utils'
 import {OnboardingFormInput} from './OnboardingFormInput'
-import {useState, useCallback} from 'react'
+import {useCallback, useState} from 'react'
 import {useFormField} from '../ui/form'
 import {ScrollArea} from '../ui/scroll-area'
 
 const RichTextEditor: React.FC<
-  Omit<InputProps, 'onChange'> & { onChange?: (value: string) => void }
+	Omit<InputProps, 'onChange'> & { onChange?: (value: string) => void }
 > = ({
 	value = '<p></p>',
 	onChange,
@@ -39,9 +28,7 @@ const RichTextEditor: React.FC<
 	placeholder = 'Start typing ...',
 	...props
 }) => {
-	const [fieldState, setFieldState] = useState<
-    'idle' | 'hover' | 'focus' | 'error'
-  >('idle')
+	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
 
 	const {error} = useFormField()
 
@@ -79,14 +66,15 @@ const RichTextEditor: React.FC<
 			ListItem,
 			Placeholder.configure({
 				placeholder,
-				emptyEditorClass:
-          'before:content-[attr(data-placeholder)] before:float-left before:text-muted-foreground before:h-0 before:pointer-events-none text-3xl font-bold italic px-0 py-2 h-auto'
+				emptyEditorClass: 'before:content-[attr(data-placeholder)] before:float-left ' +
+				'before:text-muted-foreground before:h-0 before:pointer-events-none text-3xl font-bold ' +
+				'italic px-0 py-2 h-auto'
 			})
 		],
 		editorProps: {
 			attributes: {
-				class:
-          'text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 outline-none min-h-40 ring-offset-background'
+				class: 'text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 ' +
+				'outline-none min-h-40 ring-offset-background'
 			}
 		},
 		content: value as string,
@@ -143,11 +131,11 @@ const RichTextEditor: React.FC<
 						initial={{width: 0}}
 						animate={{
 							width:
-                fieldState === 'focus'
-                	? '100%'
-                	: fieldState === 'hover'
-                		? '50%'
-                		: 0
+                			fieldState === 'focus'
+                				? '100%'
+                				: fieldState === 'hover'
+                					? '50%'
+                					: 0
 						}}
 						className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
 					/>
@@ -179,9 +167,7 @@ const RichTextEditor: React.FC<
 							type="button"
 							variant="ghost"
 							size="icon"
-							disabled={
-								!editor.can().chain().focus().setLink({href: ''}).run()
-							}
+							disabled={!editor.can().chain().focus().setLink({href: ''}).run()}
 							className={editor.isActive('link') ? 'bg-muted' : ''}
 						>
 							<LinkIcon className="h-4 w-4" />
