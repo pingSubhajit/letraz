@@ -5,12 +5,22 @@ import {useState} from 'react'
 import {FormControl, useFormField} from '@/components/ui/form'
 import {cn} from '@/lib/utils'
 import {motion} from 'framer-motion'
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from '@/components/ui/select'
 import {SelectValueProps} from '@radix-ui/react-select'
 import {Textarea, TextareaProps} from '@/components/ui/textarea'
+import {Content} from '@tiptap/react'
+import RichTextEditor from '../richTextEditor'
 
 const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
-	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
+	const [fieldState, setFieldState] = useState<
+    'idle' | 'hover' | 'focus' | 'error'
+  >('idle')
 	const {error} = useFormField()
 
 	return (
@@ -31,7 +41,15 @@ const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 			</FormControl>
 
 			<motion.div
-				initial={{width: 0}} animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
+				initial={{width: 0}}
+				animate={{
+					width:
+            fieldState === 'focus'
+            	? '100%'
+            	: fieldState === 'hover'
+            		? '50%'
+            		: 0
+				}}
 				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
 			/>
 
@@ -45,14 +63,19 @@ const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 }
 
 const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
-	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
+	const [fieldState, setFieldState] = useState<
+    'idle' | 'hover' | 'focus' | 'error'
+  >('idle')
 	const {error} = useFormField()
 
 	return (
 		<div className="relative mb-2">
 			<FormControl>
 				<Textarea
-					className={cn('text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg', className)}
+					className={cn(
+						'text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg',
+						className
+					)}
 					{...props}
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
@@ -66,7 +89,15 @@ const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 			</FormControl>
 
 			<motion.div
-				initial={{width: 0}} animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
+				initial={{width: 0}}
+				animate={{
+					width:
+            fieldState === 'focus'
+            	? '100%'
+            	: fieldState === 'hover'
+            		? '50%'
+            		: 0
+				}}
 				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
 			/>
 
@@ -80,27 +111,111 @@ const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 }
 
 type OnboardingFormSelectProps = {
-	value: string | undefined
-	onChange: (value: string) => void
-	options: string[]
-	className?: string
-} & SelectValueProps
+  value: string | undefined;
+  onChange: (value: string) => void;
+  options: string[];
+  className?: string;
+} & SelectValueProps;
 
-const OnboardingFormSelect = ({className, value, onChange, options, ...props}: OnboardingFormSelectProps) => {
+const OnboardingFormSelect = ({
+	className,
+	value,
+	onChange,
+	options,
+	...props
+}: OnboardingFormSelectProps) => {
 	return (
 		<Select onValueChange={onChange} defaultValue={value}>
 			<FormControl>
-				<SelectTrigger className={cn('text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground')}>
+				<SelectTrigger
+					className={cn(
+						'text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground'
+					)}
+				>
 					<SelectValue {...props} />
 				</SelectTrigger>
 			</FormControl>
 			<SelectContent>
-				{options.map(option => (
-					<SelectItem key={option} value={option}>{option}</SelectItem>
+				{options.map((option) => (
+					<SelectItem key={option} value={option}>
+						{option}
+					</SelectItem>
 				))}
 			</SelectContent>
 		</Select>
 	)
 }
 
-export {OnboardingFormInput, OnboardingFormTextArea, OnboardingFormSelect}
+interface OnboardingRichTextInputProps {
+  className?: string;
+  value?: string;
+  onChange?: (value: Content) => void;
+  placeholder: string;
+}
+
+const OnboardingRichTextInput: React.FC<OnboardingRichTextInputProps> = ({
+	className,
+	value,
+	onChange,
+	placeholder
+}) => {
+	const [fieldState, setFieldState] = useState<
+    'idle' | 'hover' | 'focus' | 'error'
+  >('idle')
+	const {error} = useFormField()
+
+	return (
+		<div className={cn('relative mb-2', className)}>
+			<FormControl>
+				<div
+					onFocus={() => setFieldState('focus')}
+					onBlur={() => setFieldState('idle')}
+					onMouseEnter={() => {
+						if (fieldState !== 'focus') setFieldState('hover')
+					}}
+					onMouseLeave={() => {
+						if (fieldState !== 'focus') setFieldState('idle')
+					}}
+				>
+					<RichTextEditor
+						throttleDelay={2000}
+						className={cn('h-full min-h-56 w-full rounded-xl')}
+						editorContentClassName="overflow-auto h-full text-2xl font-bold italic [&_.ProseMirror]:min-h-[200px]"
+						output="html"
+						value={value as Content}
+						onChange={onChange}
+						placeholder={placeholder}
+						editable={true}
+						editorClassName="focus:outline-none h-full"
+					/>
+				</div>
+			</FormControl>
+
+			<motion.div
+				initial={{width: 0}}
+				animate={{
+					width:
+            fieldState === 'focus'
+            	? '100%'
+            	: fieldState === 'hover'
+            		? '50%'
+            		: 0
+				}}
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
+			/>
+
+			<motion.div
+				initial={{width: 0}}
+				animate={{width: error ? '100%' : 0}}
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
+			/>
+		</div>
+	)
+}
+
+export {
+	OnboardingFormInput,
+	OnboardingFormTextArea,
+	OnboardingFormSelect,
+	OnboardingRichTextInput
+}
