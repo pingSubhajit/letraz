@@ -168,6 +168,8 @@ const OnboardingRichTextInput: React.FC<OnboardingRichTextInputProps> = ({
 		<div className={cn('relative mb-2', className)}>
 			<FormControl>
 				<div
+					className=
+						"font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-2xl"
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
 					onMouseEnter={() => {
@@ -180,7 +182,7 @@ const OnboardingRichTextInput: React.FC<OnboardingRichTextInputProps> = ({
 					<RichTextEditor
 						throttleDelay={2000}
 						className={cn('h-full min-h-56 w-full rounded-xl')}
-						editorContentClassName="overflow-auto h-full text-2xl font-bold italic [&_.ProseMirror]:min-h-[200px]"
+						editorContentClassName="overflow-auto h-full [&_.ProseMirror]:min-h-[200px]"
 						output="html"
 						value={value as Content}
 						onChange={onChange}
