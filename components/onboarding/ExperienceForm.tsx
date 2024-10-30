@@ -9,7 +9,8 @@ import {cn} from '@/lib/utils'
 import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {
 	OnboardingFormInput,
-	OnboardingFormSelect
+	OnboardingFormSelect,
+	OnboardingRichTextInput
 } from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
@@ -18,7 +19,7 @@ import {toast} from 'sonner'
 import {addExperienceToDB} from '@/lib/experience.methods'
 import {useUser} from '@clerk/nextjs'
 import {createBaseResume} from '@/lib/resume.methods'
-import RichTextEditor from './RichTextEditor'
+// import RichTextEditor from './RichTextEditor'
 
 export const experienceFormSchema = z.object({
 	companyName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
@@ -252,9 +253,9 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							name="description"
 							render={({field}) => (
 								<FormItem className="w-full">
-									<RichTextEditor
-										placeholder="write a fiew things about what you learnt, the things you've build etc."
-										{...field}
+									<OnboardingRichTextInput placeholder="write a few things about what you learnt, the things you've build etc."
+										value={field?.value}
+										onChange={field?.onChange}
 									/>
 									<FormLabel className="transition">Description (optional)</FormLabel>
 									<FormMessage/>
