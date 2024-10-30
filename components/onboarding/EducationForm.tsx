@@ -7,14 +7,14 @@ import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {cn} from '@/lib/utils'
 import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
-import {OnboardingFormInput, OnboardingFormSelect} from '@/components/onboarding/OnboardingFormInput'
+import {OnboardingFormInput, OnboardingFormSelect, OnboardingRichTextInput} from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {addEducationToDB} from '@/lib/education.methods'
 import {useUser} from '@clerk/nextjs'
-import RichTextEditor from './RichTextEditor'
+
 
 export const educationFormSchema = z.object({
 	institutionName: z
@@ -281,10 +281,11 @@ const EducationForm = ({
 									<FormLabel className="transition">
 										Description (optional)
 									</FormLabel>
-									<RichTextEditor
-										placeholder="write a fiew things about what you learnt, the things you've build etc."
-										{...field}
+									<OnboardingRichTextInput placeholder="write a few things about what you learnt, the things you've build etc."
+										value={field?.value}
+										onChange={field?.onChange}
 									/>
+									<FormLabel className="transition">Description (optional)</FormLabel>
 									<FormMessage />
 								</FormItem>
 							)}
