@@ -73,7 +73,7 @@ const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 			<FormControl>
 				<Textarea
 					className={cn(
-						'text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg',
+						'font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg',
 						className
 					)}
 					{...props}
