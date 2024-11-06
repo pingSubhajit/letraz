@@ -1,17 +1,11 @@
 'use client'
 
 import {Input, InputProps} from '@/components/ui/input'
-import {useState} from 'react'
+import {FC, useState} from 'react'
 import {FormControl, useFormField} from '@/components/ui/form'
 import {cn} from '@/lib/utils'
 import {motion} from 'framer-motion'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue
-} from '@/components/ui/select'
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {SelectValueProps} from '@radix-ui/react-select'
 import {Textarea, TextareaProps} from '@/components/ui/textarea'
 import {Content} from '@tiptap/react'
@@ -153,23 +147,20 @@ interface OnboardingRichTextInputProps {
   placeholder: string;
 }
 
-const OnboardingRichTextInput: React.FC<OnboardingRichTextInputProps> = ({
+const OnboardingRichTextInput: FC<OnboardingRichTextInputProps> = ({
 	className,
 	value,
 	onChange,
 	placeholder
 }) => {
-	const [fieldState, setFieldState] = useState<
-    'idle' | 'hover' | 'focus' | 'error'
-  >('idle')
+	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
 	const {error} = useFormField()
 
 	return (
 		<div className={cn('relative mb-2', className)}>
 			<FormControl>
 				<div
-					className=
-						"font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-2xl"
+					className="font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg"
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
 					onMouseEnter={() => {
@@ -196,12 +187,11 @@ const OnboardingRichTextInput: React.FC<OnboardingRichTextInputProps> = ({
 			<motion.div
 				initial={{width: 0}}
 				animate={{
-					width:
-            fieldState === 'focus'
-            	? '100%'
-            	: fieldState === 'hover'
-            		? '50%'
-            		: 0
+					width: fieldState === 'focus'
+						? '100%'
+						: fieldState === 'hover'
+							? '50%'
+							: 0
 				}}
 				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
 			/>
