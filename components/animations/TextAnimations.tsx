@@ -1,6 +1,6 @@
 'use client'
 
-import {FC, useRef} from 'react'
+import {FC, HTMLAttributes, RefObject, useRef} from 'react'
 import {HTMLMotionProps, motion, useAnimation, useInView} from 'framer-motion'
 
 type AnimationType =
@@ -209,8 +209,8 @@ const TextAnimate: FC<Props> = ({
 	 *   });
 	 */
 
-	const ref = useRef(null)
-	const isInView = useInView(ref, {once: true})
+	const ref = useRef<Element>(null)
+	const isInView = useInView(ref as RefObject<Element>, {once: true})
 
 	const letters = Array.from(text)
 	const {container, child} = animationVariants[type]
@@ -229,13 +229,15 @@ const TextAnimate: FC<Props> = ({
 	 */
 
 	if (type === 'rollIn' || type === 'whipIn') {
-		return ( // @ts-ignore
-			<h2 {...props}>
+		return (
+			(<h2 {...(props as HTMLAttributes<HTMLHeadingElement> & Props)}>
 				{text.split(' ').map((word, index) => {
 					return (
 						<motion.span
 							ref={ref}
 							className="inline-block mr-[0.25em] whitespace-nowrap"
+							{...({} as any)}
+							// Framer-motion types are broken as of 22/10/2024
 							aria-hidden="true"
 							key={index}
 							initial="hidden"
@@ -255,6 +257,8 @@ const TextAnimate: FC<Props> = ({
 										key={index}
 										variants={child}
 										className="inline-block -mr-[0.01em]"
+										{...({} as any)}
+										// Framer-motion types are broken as of 22/10/2024
 									>
 										{character}
 									</motion.span>
@@ -263,7 +267,7 @@ const TextAnimate: FC<Props> = ({
 						</motion.span>
 					)
 				})}
-			</h2>
+			</h2>)
 		)
 	}
 
@@ -271,6 +275,8 @@ const TextAnimate: FC<Props> = ({
 		<motion.h2
 			style={{display: 'flex', overflow: 'hidden'}}
 			role="heading"
+			{...({} as any)}
+			// Framer-motion types are broken as of 22/10/2024
 			variants={container}
 			initial="hidden"
 			animate="visible"

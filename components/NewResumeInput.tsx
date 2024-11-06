@@ -95,5 +95,7 @@ const NewResumeInputOverlay = ({inputFocused}: {inputFocused: boolean}) => <Anim
 		animate={{opacity: inputFocused ? 1 : 0}}
 		exit={{opacity: 0}}
 		className="fixed inset-0 z-50 bg-white/70"
+		{...({} as any)}
+		// Framer-motion types are broken as of 22/10/2024
 	/>}
 </AnimatePresence>

@@ -12,9 +12,7 @@ import {Content} from '@tiptap/react'
 import RichTextEditor from '../richTextEditor'
 
 const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
-	const [fieldState, setFieldState] = useState<
-    'idle' | 'hover' | 'focus' | 'error'
-  >('idle')
+	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
 	const {error} = useFormField()
 
 	return (
@@ -35,41 +33,30 @@ const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 			</FormControl>
 
 			<motion.div
-				initial={{width: 0}}
-				animate={{
-					width:
-            fieldState === 'focus'
-            	? '100%'
-            	: fieldState === 'hover'
-            		? '50%'
-            		: 0
-				}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
+				initial={{width: 0}} animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left" {...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 			/>
 
 			<motion.div
 				initial={{width: 0}}
 				animate={{width: error ? '100%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left" {...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 			/>
 		</div>
 	)
 }
 
 const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
-	const [fieldState, setFieldState] = useState<
-    'idle' | 'hover' | 'focus' | 'error'
-  >('idle')
+	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
 	const {error} = useFormField()
 
 	return (
 		<div className="relative mb-2">
 			<FormControl>
 				<Textarea
-					className={cn(
-						'font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg',
-						className
-					)}
+					className={cn('font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg', className)}
 					{...props}
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
@@ -83,57 +70,39 @@ const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 			</FormControl>
 
 			<motion.div
-				initial={{width: 0}}
-				animate={{
-					width:
-            fieldState === 'focus'
-            	? '100%'
-            	: fieldState === 'hover'
-            		? '50%'
-            		: 0
-				}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
+				initial={{width: 0}} animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left" {...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 			/>
 
 			<motion.div
 				initial={{width: 0}}
 				animate={{width: error ? '100%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left" {...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 			/>
 		</div>
 	)
 }
 
 type OnboardingFormSelectProps = {
-  value: string | undefined;
-  onChange: (value: string) => void;
-  options: string[];
-  className?: string;
-} & SelectValueProps;
+	value: string | undefined
+	onChange: (value: string) => void
+	options: string[]
+	className?: string
+} & SelectValueProps
 
-const OnboardingFormSelect = ({
-	className,
-	value,
-	onChange,
-	options,
-	...props
-}: OnboardingFormSelectProps) => {
+const OnboardingFormSelect = ({className, value, onChange, options, ...props}: OnboardingFormSelectProps) => {
 	return (
 		<Select onValueChange={onChange} defaultValue={value}>
 			<FormControl>
-				<SelectTrigger
-					className={cn(
-						'text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground'
-					)}
-				>
+				<SelectTrigger className={cn('text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground')}>
 					<SelectValue {...props} />
 				</SelectTrigger>
 			</FormControl>
 			<SelectContent>
-				{options.map((option) => (
-					<SelectItem key={option} value={option}>
-						{option}
-					</SelectItem>
+				{options.map(option => (
+					<SelectItem key={option} value={option}>{option}</SelectItem>
 				))}
 			</SelectContent>
 		</Select>

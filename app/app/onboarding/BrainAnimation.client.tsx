@@ -10,6 +10,8 @@ const BrainAnimation = ({className, onboardingStep}: {className?: string, onboar
 			<motion.video
 				autoPlay muted loop
 				className={cn('aspect-video absolute -z-10 w-full h-full scale-150', className)}
+				{...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 				initial={{scale: 0}} animate={{
 					scale: onboardingStep === OnboardingStep.WELCOME || onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? 1 : 1.2,
 					top: onboardingStep === OnboardingStep.WELCOME || onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? '0' : '-50%',

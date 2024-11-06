@@ -14,3 +14,7 @@ export const getEducationsFromDB = async (userId: string) => {
 		where: eq(educations.userId, userId)
 	})
 }
+
+export const deleteEducationFromDB = async (educationId: string) => {
+	return db.delete(educations).where(eq(educations.id, educationId)).returning()
+}

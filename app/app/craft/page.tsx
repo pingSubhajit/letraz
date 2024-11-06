@@ -4,7 +4,10 @@ import {db} from '@/db/drizzle'
 import {eq} from 'drizzle-orm'
 import {jobs} from '@/db/schema'
 
-const CraftPage = async ({searchParams}: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const CraftPage = async (
+	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+) => {
+	const searchParams = await props.searchParams
 	const jobId = searchParams.jobId as string | undefined
 
 	if (!jobId) {

@@ -22,6 +22,7 @@ import {createBaseResume} from '@/lib/resume.methods'
 // import RichTextEditor from './RichTextEditor'
 
 export const experienceFormSchema = z.object({
+	id: z.string().optional(),
 	companyName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
 	country: z.string().optional(),
 	jobTitle: z.string().optional(),
@@ -61,7 +62,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	})
 
 	const insertExperience = async (values: z.infer<typeof experienceFormSchema>) => {
-		await addExperienceToDB({
+		return await addExperienceToDB({
 			...values,
 			startedFromMonth: months.findIndex(month => month === values.startedFromMonth) + 1,
 			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
@@ -74,9 +75,13 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 
 	const onSubmit = async (values: z.infer<typeof experienceFormSchema>) => {
 		try {
-			await insertExperience(values)
-			setExperiences([...experiences, values])
-			form.reset()
+			const newExperience = await insertExperience(values)
+			if (newExperience && newExperience[0]){
+				setExperiences([...experiences, {...values, id: newExperience[0].id}])
+				form.reset()
+			} else {
+				toast.error('Failed to update experience')
+			}
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
 		}
@@ -99,6 +104,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 		<div className={cn('max-w-2xl flex flex-col', className)}>
 			<motion.div
 				className="text-xl mt-8 max-w-xl"
+				{...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>Mentioning your past employment details can increase the chance of your résumé getting selected upto 75%</p>
@@ -113,6 +120,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between w-full"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -143,6 +152,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-8"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -173,6 +184,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -246,7 +259,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between"
+						className="flex items-center gap-8 justify-between" {...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}

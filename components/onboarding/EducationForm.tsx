@@ -15,8 +15,8 @@ import {toast} from 'sonner'
 import {addEducationToDB} from '@/lib/education.methods'
 import {useUser} from '@clerk/nextjs'
 
-
 export const educationFormSchema = z.object({
+	id: z.string().optional(),
 	institutionName: z
 		.string()
 		.max(100, {message: 'That\'s a long name! We can\'t handle that'})
@@ -62,21 +62,13 @@ const EducationForm = ({
 		}
 	})
 
-	const insertEducation = async (
-		values: z.infer<typeof educationFormSchema>
-	) => {
-		await addEducationToDB({
+	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
+		return await addEducationToDB({
 			...values,
-			startedFromMonth:
-        months.findIndex((month) => month === values.startedFromMonth) + 1,
-			startedFromYear: values.startedFromYear
-				? parseInt(values.startedFromYear)
-				: null,
-			finishedAtMonth:
-        months.findIndex((month) => month === values.finishedAtMonth) + 1,
-			finishedAtYear: values.finishedAtYear
-				? parseInt(values.finishedAtYear)
-				: null,
+			startedFromMonth: months.findIndex((month) => month === values.startedFromMonth) + 1,
+			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
+			finishedAtMonth: months.findIndex((month) => month === values.finishedAtMonth) + 1,
+			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
 			current: !values.finishedAtYear,
 			userId: user!.id
 		})
@@ -85,17 +77,19 @@ const EducationForm = ({
 	// TODO: Disable form submission on enter pressed from description field
 	const onSubmit = async (values: z.infer<typeof educationFormSchema>) => {
 		try {
-			await insertEducation(values)
-			setEducations([...educations, values])
-			form.reset()
+			const newEducation = await insertEducation(values)
+			if (newEducation && newEducation[0]) {
+				setEducations([...educations, {...values, id: newEducation[0].id}])
+				form.reset()
+			} else {
+				throw new Error('Failed to add education')
+			}
 		} catch (error) {
-			toast.error('Failed to update education, please try again')
+			toast.error('Failed to add education, please try again')
 		}
 	}
 
-	const submitWithRedirect = async (
-		values: z.infer<typeof educationFormSchema>
-	) => {
+	const submitWithRedirect = async (values: z.infer<typeof educationFormSchema>) => {
 		try {
 			if (form.formState.isDirty) {
 				await insertEducation(values)
@@ -110,9 +104,9 @@ const EducationForm = ({
 		<div className={cn('max-w-2xl flex flex-col', className)}>
 			<motion.div
 				className="text-xl mt-8 max-w-xl"
-				initial={{opacity: 0, y: 20}}
-				animate={{opacity: 1, y: 0}}
-				transition={{delay: 0.2, duration: 0.7}}
+				{...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
+				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>
 					Having 2 or more educational details can increase the chance of your
@@ -123,10 +117,11 @@ const EducationForm = ({
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12">
 					<motion.div
-						initial={{opacity: 0, y: 20}}
-						animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between w-full"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -160,10 +155,11 @@ const EducationForm = ({
 					</motion.div>
 
 					<motion.div
-						initial={{opacity: 0, y: 20}}
-						animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-8"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -191,10 +187,11 @@ const EducationForm = ({
 					</motion.div>
 
 					<motion.div
-						initial={{opacity: 0, y: 20}}
-						animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -268,10 +265,11 @@ const EducationForm = ({
 					</motion.div>
 
 					<motion.div
-						initial={{opacity: 0, y: 20}}
-						animate={{opacity: 1, y: 0}}
+						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between"
+						{...({} as any)}
+						// Framer-motion types are broken as of 22/10/2024
 					>
 						<FormField
 							control={form.control}
@@ -314,16 +312,13 @@ const EducationForm = ({
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 								variant="secondary"
 								type="submit"
-								disabled={
-									form.formState.isSubmitting || !form.formState.isDirty
-								}
+								disabled={form.formState.isSubmitting || !form.formState.isDirty}
 							>
 								Add another
-								{form.formState.isSubmitting ? (
-									<Loader2 className="w-4 h-4 ml-1 animate-spin" />
-								) : (
-									<ChevronRight className="w-5 h-5 ml-1" />
-								)}
+								{form.formState.isSubmitting
+									? <Loader2 className="w-4 h-4 ml-1 animate-spin"/>
+									: <ChevronRight className="w-5 h-5 ml-1"/>
+								}
 							</Button>
 
 							<Button
@@ -335,8 +330,9 @@ const EducationForm = ({
 							>
 								What's next
 								{form.formState.isSubmitting
-									? (<Loader2 className="w-4 h-4 ml-1 animate-spin" />)
-									: (<ChevronRight className="w-5 h-5 ml-1" />)}
+									? <Loader2 className="w-4 h-4 ml-1 animate-spin" />
+									: <ChevronRight className="w-5 h-5 ml-1" />
+								}
 							</Button>
 						</div>
 					</div>
