@@ -1,11 +1,10 @@
 'use client'
 
 import './styles/index.css'
-
 import {Content, EditorContent} from '@tiptap/react'
 import useMinimalTiptapEditor, {UseMinimalTiptapEditorProps} from './hooks/use-minimal-tiptap'
 import {MeasuredContainer} from './components/measured-container'
-import {ChangeEventHandler, forwardRef} from 'react'
+import {forwardRef} from 'react'
 import {cn} from '@/lib/utils'
 import {LinkBubbleMenu} from './components/bubble-menu/link-bubble-menu'
 import Toolbar from './components/toolbar'
@@ -16,7 +15,6 @@ export interface RichTextEditorProps extends Omit<UseMinimalTiptapEditorProps, '
     className?: string
     editorContentClassName?: string
   }
-
 
 const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
 	({value, onChange, className, editorContentClassName, ...props}, ref) => {

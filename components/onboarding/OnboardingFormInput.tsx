@@ -163,12 +163,16 @@ const OnboardingRichTextInput: FC<OnboardingRichTextInputProps> = ({
 							: 0
 				}}
 				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
+				{...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 			/>
 
 			<motion.div
 				initial={{width: 0}}
 				animate={{width: error ? '100%' : 0}}
 				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
+				{...({} as any)}
+				// Framer-motion types are broken as of 22/10/2024
 			/>
 		</div>
 	)
