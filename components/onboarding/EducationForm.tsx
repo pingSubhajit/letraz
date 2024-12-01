@@ -291,8 +291,9 @@ const EducationForm = ({
 					</motion.div>
 
 					<div
-						className="w-full flex items-center justify-between absolute left-1/2 -translate-x-1/2
-						bottom-16 px-16"
+						className="w-full max-w-[95rem] flex items-center justify-between fixed left-1/2 -translate-x-1/2 z-10 bottom-16 px-16"
+
+
 					>
 						{/* PREVIOUS STEP BUTTON */}
 						<Link href={'/app/onboarding?step=personal-details'}>
@@ -307,7 +308,7 @@ const EducationForm = ({
 						</Link>
 
 						{/* NEXT STEP BUTTONS */}
-						<div className="flex items-center gap-4">
+						<div className=" flex items-center gap-4">
 							<Button
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 								variant="secondary"

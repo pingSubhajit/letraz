@@ -28,7 +28,10 @@ const About = () => {
 			{/* DESCRIPTION TEXT */}
 			<AboutDescription />
 
-			<div className="w-full flex items-center justify-between absolute left-1/2 -translate-x-1/2 bottom-16 px-16">
+			<div
+				className="w-full max-w-[95rem] flex items-center justify-between fixed left-1/2 -translate-x-1/2 z-10 bottom-16 px-16"
+
+			>
 				{/* PREVIOUS STEP BUTTON */}
 				<Link href={'/app/onboarding?step=welcome'}>
 					<Button
