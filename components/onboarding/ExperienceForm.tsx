@@ -101,7 +101,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	}
 
 	return (
-		<div className={cn('max-w-2xl flex flex-col', className)}>
+		<div className={cn('max-w-2xl flex flex-col', className)}
+		>
 			<motion.div
 				className="text-xl mt-8 max-w-xl"
 				{...({} as any)}
@@ -279,8 +280,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					</motion.div>
 
 					<div
-						className="w-full flex items-center justify-between absolute left-1/2 -translate-x-1/2
-						bottom-16 px-16"
+						className="w-[calc(100%-4.7rem)] flex items-center justify-between fixed left-[4.7rem] z-10 bottom-16 px-16"
+
 					>
 						{/* PREVIOUS STEP BUTTON */}
 						<Link href={'/app/onboarding?step=education'}>
