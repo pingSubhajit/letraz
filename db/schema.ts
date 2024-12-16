@@ -14,6 +14,7 @@ import {
 	resumesRelations,
 	ResumesSelect
 } from '@/db/resumes.schema'
+import {projects, ProjectsInsert, ProjectsSelect} from '@/db/projects.schema'
 
 export {
 	waitlist,
@@ -21,7 +22,8 @@ export {
 	personalInfo, personalInfoRelations,
 	educations,
 	experiences, employmentType,
-	resumes, resumeSections, resumesRelations, resumeSectionsRelations, resumeSectionTypeEnum
+	resumes, resumeSections, resumesRelations, resumeSectionsRelations, resumeSectionTypeEnum,
+	projects
 }
 
 export {
@@ -29,5 +31,6 @@ export {
 	PersonalInfoInsert, PersonalInfoSelect,
 	EducationsInsert, EducationsSelect,
 	ExperiencesInsert, ExperiencesSelect,
-	ResumesInsert, ResumesSelect, ResumeSectionsInsert, ResumeSectionsSelect
+	ResumesInsert, ResumesSelect, ResumeSectionsInsert, ResumeSectionsSelect,
+	ProjectsInsert, ProjectsSelect
 }

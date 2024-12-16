@@ -2,20 +2,22 @@ import {boolean, pgEnum, pgTable, unique, uuid, varchar} from 'drizzle-orm/pg-co
 import {relations, sql} from 'drizzle-orm'
 import {educations, experiences, personalInfo} from '@/db/schema'
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod'
+import {projects} from '@/db/projects.schema'
 
 export enum ResumeSections {
 	EDUCATION = 'education',
 	EXPERIENCE = 'experience',
 	SKILLS = 'skills',
-	PROJECTS = 'projects', // TODO: Implement this section
+	PROJECTS = 'projects',
 	STRENGTHS = 'strengths',
-	CERTIFICATIONS = 'certifications', // TODO: Implement this section
-	LANGUAGES = 'languages', // TODO: Implement this section
+	CERTIFICATIONS = 'certifications',
+	LANGUAGES = 'languages',
 }
 
 export const typeToModel = {
 	education: educations,
 	experience: experiences,
+	projects: projects
 }
 
 export const resumeSectionTypeEnum = pgEnum('resume_section_type', Object.keys(typeToModel) as [string, ...string[]])
@@ -24,10 +26,10 @@ export const resumeSections = pgTable('resume_sections', {
 	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
 	resumeId: uuid('resume_id').notNull(),
 	type: resumeSectionTypeEnum('type').notNull(),
-	dataId: uuid('data_id').notNull(),
+	dataId: uuid('data_id').notNull()
 })
 
-export const resumeSectionsRelations = relations(resumeSections, ({ one }) => ({
+export const resumeSectionsRelations = relations(resumeSections, ({one}) => ({
 	resume: one(resumes, {
 		fields: [resumeSections.resumeId],
 		references: [resumes.id]
@@ -58,12 +60,12 @@ export const resumes = pgTable('resumes', {
 	id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
 	userId: varchar('user_id').notNull(),
 	jobId: uuid('job_id'),
-	base: boolean('base').default(false),
+	base: boolean('base').default(false)
 }, (table) => ({
-	unq: unique().on(table.userId, table.base),
+	unq: unique().on(table.userId, table.base)
 }))
 
-export const resumesRelations = relations(resumes, ({ many, one }) => ({
+export const resumesRelations = relations(resumes, ({many, one}) => ({
 	sections: many(resumeSections),
 	personalInfo: one(personalInfo, {
 		fields: [resumes.userId],

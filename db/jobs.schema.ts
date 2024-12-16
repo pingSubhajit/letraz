@@ -12,5 +12,5 @@ export const jobs = pgTable('jobs', {
 	requirements: varchar('requirements').array(),
 	description: varchar('description'),
 	responsibilities: varchar('responsibilities').array(),
-	benefits: varchar('benefits').array(),
+	benefits: varchar('benefits').array()
 })

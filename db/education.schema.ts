@@ -16,7 +16,7 @@ export const educations = pgTable('educations', {
 	current: boolean('current'),
 	description: varchar('description'),
 	createdAt: timestamp('created_at').defaultNow(),
-	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => sql`now()`),
+	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => sql`now()`)
 })
 
 export const EducationsInsert = createInsertSchema(educations)

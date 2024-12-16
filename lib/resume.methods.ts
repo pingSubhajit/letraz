@@ -2,7 +2,7 @@
 
 import {db} from '@/db/drizzle'
 import {eq} from 'drizzle-orm'
-import {educations, experiences, personalInfo, resumes, resumeSections} from '@/db/schema'
+import {educations, experiences, personalInfo, resumes, resumeSections, projects} from '@/db/schema'
 import {Resume, ResumeSections, typeToModel} from '@/db/resumes.schema'
 import {deepCopy} from '@/lib/utils'
 
@@ -18,7 +18,7 @@ export const constructResume = async (resumeFromDB: Resume): Promise<Resume> => 
 				throw new Error('Couldn\'t find section data')
 			}
 
-			section.data = data[0] as (typeof educations.$inferSelect) | (typeof experiences.$inferSelect)
+			section.data = data[0] as (typeof educations.$inferSelect) | (typeof experiences.$inferSelect) | (typeof projects.$inferSelect)
 		}
 
 		return resume
