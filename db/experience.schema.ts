@@ -33,7 +33,7 @@ export const experiences = pgTable('experiences', {
 	current: boolean('current'),
 	description: varchar('description'),
 	createdAt: timestamp('created_at').defaultNow(),
-	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => sql`now()`),
+	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => sql`now()`)
 })
 
 export const ExperiencesInsert = createInsertSchema(experiences)
