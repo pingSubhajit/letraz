@@ -51,7 +51,7 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 	}
 
 	return (
-		<div className="w-full h-full flex flex-col justify-start pl-16 pb-40 pt-16">
+		<div className="w-full h-full flex flex-col justify-start pl-16 mb-40 pt-16">
 			<ScrollArea>
 				{/* HEADING TEXT */}
 				<div>
