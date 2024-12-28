@@ -28,7 +28,7 @@ const SmoothScrollProvider = ({children, className}: { children: ReactNode, clas
 
 	return (
 		<div className={className} ref={wrapper}>
-			<main ref={content}>
+			<main ref={content} >
 				{children}
 			</main>
 		</div>
