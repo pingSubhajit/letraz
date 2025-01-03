@@ -43,8 +43,8 @@ export type Post = {
 const PostCard = ({post, className}: {post: Post, className?: string}) => {
 	return (
 		<div className={cn('', className)}>
-			<div className="flex items-center gap-2">
-				<span className="bg-flame-500 px-2 py-1 text-xs text-neutral-50 rounded-full font-light">New</span>
+			<div className="flex items-start gap-2">
+				<span className="mt-2 bg-flame-500 px-2 py-1 text-xs text-neutral-50 rounded-full font-light">New</span>
 				<h2 className="text-3xl tracking-tight">{post.title}</h2>
 			</div>
 
