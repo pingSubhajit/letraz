@@ -3,6 +3,7 @@ import Waitlist from '@/components/Waitlist'
 import LandingPageHeading from '@/app/page.heading'
 import LandingPageLogo from '@/app/page.logo'
 import LandingPageDescription from '@/app/page.description'
+import LandingPageFooter from '@/app/page-footer'
 
 export const metadata: Metadata = {
 	title: 'Letraz — Craft unique resumes for each job application effortlessly',
@@ -29,6 +30,8 @@ const LandingPage = async (
 				<LandingPageHeading className="relative z-30" />
 				<LandingPageDescription className="lg:py-2 relative z-30" />
 				<Waitlist className="relative z-30" referrer={referrer} />
+
+				<LandingPageFooter className="absolute bottom-8 lg:bottom-16 left-8 lg:left-16 z-30" />
 
 				<div className="absolute w-full h-full inset-0 bg-neutral-100 z-20 shadow-2xl" />
 
