@@ -12,6 +12,7 @@ import {useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
 import {Loader2} from 'lucide-react'
 import {toast} from 'sonner'
+import {discordHandle} from '@/constants'
 
 const formSchema = z.object({
 	email: z.string().email({message: 'Please enter a valid email address'})
@@ -81,8 +82,12 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 					Your email will not be shared with any third parties.
 				</motion.p>}
 
-				{signedUp && <motion.p initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
-					Thanks for signing up! We'll notify you when we launch.
+				{signedUp && <motion.p
+					initial={{opacity: 0}}
+					animate={{opacity: 1}}
+					exit={{opacity: 0}}
+				>
+					Thanks for signing up! Join our <a href={discordHandle} target="_blank" className="text-flame-500 font-medium hover:underline focus-visible:underline">Discord</a> to stay connected.
 				</motion.p>}
 			</AnimatePresence>
 		</div>
