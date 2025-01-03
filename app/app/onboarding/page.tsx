@@ -25,7 +25,7 @@ const OnboardingPage = async (
 	}
 
 	return (
-		<div className="h-full w-full relative">
+		<div className="h-full min-h-dvh w-full relative">
 			<BrainAnimation onboardingStep={step} />
 
 			{step === OnboardingStep.WELCOME && <Welcome />}
