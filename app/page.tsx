@@ -31,7 +31,7 @@ const LandingPage = async (
 				<LandingPageDescription className="lg:py-2 relative z-30" />
 				<Waitlist className="relative z-30" referrer={referrer} />
 
-				<LandingPageFooter className="absolute bottom-8 lg:bottom-16 left-8 lg:left-16 z-30" />
+				<LandingPageFooter className="absolute bottom-8 lg:bottom-16 left-8 lg:left-16 z-30 w-[calc(100%-128px)]" />
 
 				<div className="absolute w-full h-full inset-0 bg-neutral-100 z-20 shadow-2xl" />
 
