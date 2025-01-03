@@ -44,14 +44,14 @@ const PostCard = ({post, className}: {post: Post, className?: string}) => {
 	return (
 		<div className={cn('', className)}>
 			<div className="flex items-start gap-2">
-				<span className="mt-2 bg-flame-500 px-2 py-1 text-xs text-neutral-50 rounded-full font-light">New</span>
-				<h2 className="text-3xl tracking-tight">{post.title}</h2>
+				<span className="mt-2 bg-flame-500 px-1.5 lg:px-2 py-0.5 lg:py-1 text-xs text-neutral-50 rounded-full font-light">New</span>
+				<h2 className="text-lg lg:text-3xl tracking-tight">{post.title}</h2>
 			</div>
 
 			<img src={post.feature_image} alt={post.title} className="max-w-full mt-8 rounded-md" />
 
 			<div
-				className="mt-8 opacity-80 prose-lg prose-orange prose-a:text-flame-500 max-w-none tracking-tight"
+				className="mt-8 opacity-80 prose-sm lg:prose xl:prose-lg prose-orange prose-a:text-flame-500 max-w-none tracking-tight"
 				dangerouslySetInnerHTML={{__html: post.html}}
 			/>
 			<p className="mt-4 opacity-60 text-neutral-800 text-sm">
