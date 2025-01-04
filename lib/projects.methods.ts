@@ -8,10 +8,17 @@ import {z} from 'zod'
 
 export const createProject = async (userId: string, data: z.infer<typeof ProjectsInsert>) => {
 	try {
-		const project = await db.insert(projects).values({
+		const formattedData = {
 			...data,
-			userId
-		}).returning()
+			userId,
+			technologies: data.technologies ? `{${data.technologies.split(',').map(t => `"${t.trim()}"`).join(',')}}` : null,
+			accomplishments: data.accomplishments ? `{${data.accomplishments.split(',').map(a => `"${a.trim()}"`).join(',')}}` : null,
+			links: data.links ? `{${data.links.split(',').map(l => `"${l.trim()}"`).join(',')}}` : null
+		}
+
+		const project = await db.insert(projects)
+			.values(formattedData)
+			.returning()
 
 		return project[0]
 	} catch (error) {
@@ -31,9 +38,21 @@ export const getProjects = async (userId: string) => {
 
 export const updateProject = async (projectId: string, userId: string, data: Partial<z.infer<typeof ProjectsInsert>>) => {
 	try {
+		const formattedData = {
+			...data,
+			technologies: data.technologies ? `{${data.technologies.split(',').map(t => `"${t.trim()}"`).join(',')}}` : undefined,
+			accomplishments: data.accomplishments ? `{${data.accomplishments.split(',').map(a => `"${a.trim()}"`).join(',')}}` : undefined,
+			links: data.links ? `{${data.links.split(',').map(l => `"${l.trim()}"`).join(',')}}` : undefined
+		}
+
 		const project = await db.update(projects)
-			.set(data)
-			.where(eq(projects.id, projectId) && eq(projects.userId, userId))
+			.set(formattedData)
+			.where(
+				and(
+					eq(projects.id, projectId),
+					eq(projects.userId, userId)
+				)
+			)
 			.returning()
 
 		if (!project.length) {
