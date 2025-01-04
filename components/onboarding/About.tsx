@@ -8,7 +8,7 @@ const About = () => {
 	return (
 		<div className="w-full h-full flex flex-col justify-center items-center">
 			{/* HEADING TEXT */}
-			<div className="">
+			<div className="pt-48">
 				<TextAnimate
 					text="Here's"
 					type="calmInUp"
