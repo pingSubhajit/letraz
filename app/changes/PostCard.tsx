@@ -2,6 +2,7 @@
 
 import {cn} from '@/lib/utils'
 import {DateTime} from 'luxon'
+import {motion} from 'framer-motion'
 
 export type Post = {
 	id: string,
@@ -42,7 +43,15 @@ export type Post = {
 
 const PostCard = ({post, className}: {post: Post, className?: string}) => {
 	return (
-		<div className={cn('', className)}>
+		<motion.div
+			className={cn('', className)}
+			{...({} as any)}
+			// Framer-motion types are broken as of 22/10/2024
+			initial={{opacity: 0}}
+			whileInView={{opacity: 1}}
+			exit={{opacity: 0}}
+			transition={{duration: 0.5}}
+		>
 			<div className="flex items-start gap-2">
 				<span className="mt-2 bg-flame-500 px-1.5 lg:px-2 py-0.5 lg:py-1 text-xs text-neutral-50 rounded-full font-light">New</span>
 				<h2 className="text-lg lg:text-3xl tracking-tight">{post.title}</h2>
@@ -57,7 +66,7 @@ const PostCard = ({post, className}: {post: Post, className?: string}) => {
 			<p className="mt-4 opacity-60 text-neutral-800 text-sm">
 				on {DateTime.fromISO(post.published_at).setZone('gmt').setLocale('en-US').toLocaleString({weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'})}
 			</p>
-		</div>
+		</motion.div>
 	)
 }
 
