@@ -22,7 +22,7 @@ const ChangelogPage = async () => {
 	return (
 		<div className="min-h-screen py-16 lg:py-32 px-8 relative">
 			{/* TOP GRADIENT ACCEnT */}
-			<div className="fixed inset-x-0 top-0">
+			<div className="fixed inset-x-0 top-0 pointer-events-none">
 				<div className="bg-flame-500 w-full absolute inset-x-0 top-0 h-1 z-20"/>
 				<div className="w-[700px] h-[118px] absolute bg-rose-500/70 rounded-[50%] z-20 -top-20 right-16 blur-[150px]"/>
 				<div className="w-[700px] h-[228px] absolute bg-flame-500/70 rounded-[50%] z-20 -top-64 left-16 blur-[150px]"/>
