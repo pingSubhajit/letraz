@@ -11,11 +11,15 @@ const LandingPageFooter = ({className}: {className?: string}) => {
 	return (
 		<AnimatePresence>
 			<motion.div
-				className={cn('w-full flex flex-row-reverse items-center justify-between', className)}
+				className={cn('w-full flex items-center justify-between', className)}
 				{...({} as any)}
 				// Framer-motion types are broken as of 22/10/2024
 				initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.7}}
 			>
+				<Link href="/changes">
+					<Button variant="link" className="pl-0 text-flame-500 font-semibold">Development updates</Button>
+				</Link>
+
 				<div className="flex items-center gap-5">
 					<a href={discordHandle} target="_blank">
 						<Button variant="ghost" size="icon" className="w-min h-min opacity-80 focus-visible:opacity-100 hover:opacity-100">
@@ -35,10 +39,6 @@ const LandingPageFooter = ({className}: {className?: string}) => {
 						</Button>
 					</a>
 				</div>
-
-				<Link href="/changes">
-					<Button variant="link" className="text-flame-500 font-semibold">Development updates</Button>
-				</Link>
 			</motion.div>
 		</AnimatePresence>
 	)

@@ -13,7 +13,7 @@ const LandingPageLogo = ({className}: {className?: string}) => {
 				exit={{opacity: 0}}
 				src="/logo_mono.svg"
 				alt="Letraz logo"
-				className={cn('w-32 md:w-36 lg:w-40 xl:w-44', className)}
+				className={cn('w-24 md:w-28 lg:w-36 xl:w-40 2xl:w-44', className)}
 				{...({} as any)}
 				// Framer-motion types are broken as of 22/10/2024
 			/>
