@@ -119,8 +119,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between w-full"
-						{...({} as any)}
-							>
+					>
 						<FormField
 							control={form.control}
 							name="companyName"
@@ -150,8 +149,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-8"
-						{...({} as any)}
-							>
+					>
 						<FormField
 							control={form.control}
 							name="jobTitle"
@@ -181,8 +179,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
-						{...({} as any)}
-							>
+					>
 						<FormField
 							control={form.control}
 							name="startedFromMonth"
@@ -255,8 +252,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between" {...({} as any)}
-							>
+						className="flex items-center gap-8 justify-between" >
 						<FormField
 							control={form.control}
 							name="description"

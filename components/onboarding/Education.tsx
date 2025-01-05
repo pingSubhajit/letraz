@@ -57,14 +57,12 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 					text="Tell us more"
 					type="calmInUp"
 					className="text-5xl leading-snug"
-					{...({} as any)}
-					/>
+				/>
 				<TextAnimate
 					text="about your education"
 					type="calmInUp"
 					className="text-5xl leading-snug"
-					{...({} as any)}
-					/>
+				/>
 			</div>
 
 			{/* FORM */}

@@ -14,8 +14,7 @@ const PersonalDetails = async () => {
 				<TextAnimate
 					text="Let’s get to know you better"
 					type="calmInUp"
-					className="text-5xl leading-snug flex justify-center" {...({} as any)}
-					/>
+					className="text-5xl leading-snug flex justify-center" />
 			</div>
 
 			<PersonalDetailsForm defaultValues={{

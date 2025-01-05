@@ -13,14 +13,12 @@ const About = () => {
 					text="Here's"
 					type="calmInUp"
 					className="text-[5rem] leading-snug flex justify-center"
-					{...({} as any)}
-					/>
+				/>
 				<TextAnimate
 					text="how it will work"
 					type="calmInUp"
 					className="text-[5rem] leading-snug flex justify-center"
-					{...({} as any)}
-					/>
+				/>
 			</div>
 
 			{/* DESCRIPTION TEXT */}

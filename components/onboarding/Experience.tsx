@@ -57,14 +57,12 @@ const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inf
 					text="What about"
 					type="calmInUp"
 					className="text-5xl leading-snug"
-					{...({} as any)}
-					/>
+				/>
 				<TextAnimate
 					text="your past experiences"
 					type="calmInUp"
 					className="text-5xl leading-snug"
-					{...({} as any)}
-					/>
+				/>
 			</div>
 
 			{/* FORM */}

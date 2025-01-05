@@ -78,8 +78,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 				>
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between" {...({} as any)}
-							>
+						className="flex items-center gap-8 justify-between" >
 						<FormField
 							control={form.control}
 							name="firstName"
@@ -107,8 +106,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between" {...({} as any)}
-							>
+						className="flex items-center gap-8 justify-between" >
 						<FormField
 							control={form.control}
 							name="email"

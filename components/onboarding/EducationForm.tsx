@@ -119,8 +119,7 @@ const EducationForm = ({
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between w-full"
-						{...({} as any)}
-							>
+					>
 						<FormField
 							control={form.control}
 							name="institutionName"
@@ -156,8 +155,7 @@ const EducationForm = ({
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-8"
-						{...({} as any)}
-							>
+					>
 						<FormField
 							control={form.control}
 							name="fieldOfStudy"
@@ -187,8 +185,7 @@ const EducationForm = ({
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
-						{...({} as any)}
-							>
+					>
 						<FormField
 							control={form.control}
 							name="startedFromMonth"
@@ -264,8 +261,7 @@ const EducationForm = ({
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between"
-						{...({} as any)}
-							>
+					>
 						<FormField
 							control={form.control}
 							name="description"

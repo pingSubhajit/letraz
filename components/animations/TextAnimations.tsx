@@ -236,8 +236,7 @@ const TextAnimate: FC<Props> = ({
 						<motion.span
 							ref={ref}
 							className="inline-block mr-[0.25em] whitespace-nowrap"
-							{...({} as any)}
-										aria-hidden="true"
+							aria-hidden="true"
 							key={index}
 							initial="hidden"
 							animate="visible"
@@ -256,8 +255,7 @@ const TextAnimate: FC<Props> = ({
 										key={index}
 										variants={child}
 										className="inline-block -mr-[0.01em]"
-										{...({} as any)}
-															>
+									>
 										{character}
 									</motion.span>
 								)

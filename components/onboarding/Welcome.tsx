@@ -12,18 +12,15 @@ const Welcome = () => {
 				<TextAnimate
 					text="Welcome"
 					type="calmInUp"
-					className="text-[5.5rem] leading-normal" {...({} as any)}
-					/>
+					className="text-[5.5rem] leading-normal" />
 				<TextAnimate
 					text="to the new way"
 					type="calmInUp"
-					className="text-[5.5rem] leading-normal" {...({} as any)}
-					/>
+					className="text-[5.5rem] leading-normal" />
 				<TextAnimate
 					text="of applying for jobs"
 					type="calmInUp"
-					className="text-[5.5rem] leading-normal" {...({} as any)}
-					/>
+					className="text-[5.5rem] leading-normal" />
 			</div>
 
 			{/* PLAY VIDEO BUTTON */}
