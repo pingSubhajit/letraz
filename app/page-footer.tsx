@@ -1,6 +1,6 @@
 'use client'
 
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion} from 'motion/react'
 import {cn} from '@/lib/utils'
 import {SiDiscord, SiGithub, SiX} from 'react-icons/si'
 import {Button} from '@/components/ui/button'
@@ -13,7 +13,6 @@ const LandingPageFooter = ({className}: {className?: string}) => {
 			<motion.div
 				className={cn('w-full flex items-center justify-between', className)}
 				{...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 				initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.7}}
 			>
 				<Link href="/changes">

@@ -1,6 +1,6 @@
 'use client'
 
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion} from 'motion/react'
 import {cn} from '@/lib/utils'
 
 const AiLoading = ({
@@ -21,7 +21,6 @@ const AiLoading = ({
 			{loading && <motion.div
 				className={cn('absolute inset-0 left-1/2 -translate-x-1/2', className)}
 				{...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 				initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
 			>
 				<video

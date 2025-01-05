@@ -14,15 +14,13 @@ const About = () => {
 					type="calmInUp"
 					className="text-[5rem] leading-snug flex justify-center"
 					{...({} as any)}
-					// Framer-motion types are broken as of 22/10/2024
-				/>
+					/>
 				<TextAnimate
 					text="how it will work"
 					type="calmInUp"
 					className="text-[5rem] leading-snug flex justify-center"
 					{...({} as any)}
-					// Framer-motion types are broken as of 22/10/2024
-				/>
+					/>
 			</div>
 
 			{/* DESCRIPTION TEXT */}

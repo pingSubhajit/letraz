@@ -9,7 +9,7 @@ import {Button} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
 import {signUpForWaitlist} from '@/lib/waitlist.methods'
 import {useState} from 'react'
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion} from 'motion/react'
 import {Loader2} from 'lucide-react'
 import {toast} from 'sonner'
 import {discordHandle} from '@/constants'
@@ -77,8 +77,7 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 				{!signedUp && <motion.p
 					initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
 					className="mt-4 text-xs text-primary/60" {...({} as any)}
-					// Framer-motion types are broken as of 22/10/2024
-				>
+					>
 					Your email will not be shared with any third parties.
 				</motion.p>}
 

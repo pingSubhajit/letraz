@@ -1,6 +1,6 @@
 'use client'
 
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 import {cn} from '@/lib/utils'
 import {z} from 'zod'
 import {useForm} from 'react-hook-form'
@@ -66,7 +66,6 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 		<div className={cn('max-w-4xl mx-auto flex flex-col items-center', className)}>
 			<motion.div
 				className="text-xl text-center mt-8 max-w-xl" {...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>We need a few details about you to craft the perfect resume for you</p>
@@ -80,8 +79,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between" {...({} as any)}
-						// Framer-motion types are broken as of 22/10/2024
-					>
+							>
 						<FormField
 							control={form.control}
 							name="firstName"
@@ -110,8 +108,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between" {...({} as any)}
-						// Framer-motion types are broken as of 22/10/2024
-					>
+							>
 						<FormField
 							control={form.control}
 							name="email"

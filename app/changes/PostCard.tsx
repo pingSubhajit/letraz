@@ -2,7 +2,7 @@
 
 import {cn} from '@/lib/utils'
 import {DateTime} from 'luxon'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 
 export type Post = {
 	id: string,

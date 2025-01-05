@@ -1,6 +1,6 @@
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
 import SignInPageTitle from '@/app/(auth)/signin/[[...sign-in]]/SignInPage.title'
-import {AnimatePresence} from 'framer-motion'
+import {AnimatePresence} from 'motion/react'
 import GithubSignInButton from '@/components/auth/GithubSignInButton'
 import {Metadata} from 'next'
 

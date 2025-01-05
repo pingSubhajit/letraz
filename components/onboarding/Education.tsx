@@ -4,7 +4,7 @@ import TextAnimate from '@/components/animations/TextAnimations'
 import EducationForm, {educationFormSchema} from '@/components/onboarding/EducationForm'
 import {z} from 'zod'
 import {useState} from 'react'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {educations} from '@/db/schema'
 import {months} from '@/constants'
@@ -58,15 +58,13 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 					type="calmInUp"
 					className="text-5xl leading-snug"
 					{...({} as any)}
-					// Framer-motion types are broken as of 22/10/2024
-				/>
+					/>
 				<TextAnimate
 					text="about your education"
 					type="calmInUp"
 					className="text-5xl leading-snug"
 					{...({} as any)}
-					// Framer-motion types are broken as of 22/10/2024
-				/>
+					/>
 			</div>
 
 			{/* FORM */}

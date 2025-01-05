@@ -5,7 +5,7 @@ import {OAuthStrategy} from '@clerk/types'
 import {BsGithub} from 'react-icons/bs'
 import {Button} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 
 const GithubSignInButton = ({className}: {className?: string}) => {
 	const {signIn} = useSignIn()

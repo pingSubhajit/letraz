@@ -1,7 +1,7 @@
 'use client'
 
 import {FC, HTMLAttributes, RefObject, useRef} from 'react'
-import {HTMLMotionProps, motion, useAnimation, useInView} from 'framer-motion'
+import {HTMLMotionProps, motion, useAnimation, useInView} from 'motion/react'
 
 type AnimationType =
 	| 'fadeIn'
@@ -237,8 +237,7 @@ const TextAnimate: FC<Props> = ({
 							ref={ref}
 							className="inline-block mr-[0.25em] whitespace-nowrap"
 							{...({} as any)}
-							// Framer-motion types are broken as of 22/10/2024
-							aria-hidden="true"
+										aria-hidden="true"
 							key={index}
 							initial="hidden"
 							animate="visible"
@@ -258,8 +257,7 @@ const TextAnimate: FC<Props> = ({
 										variants={child}
 										className="inline-block -mr-[0.01em]"
 										{...({} as any)}
-										// Framer-motion types are broken as of 22/10/2024
-									>
+															>
 										{character}
 									</motion.span>
 								)

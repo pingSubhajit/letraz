@@ -1,7 +1,7 @@
 'use client'
 
 import {discordHandle} from '@/constants'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 
 const ChangesPageHeading = () => {
 	return (

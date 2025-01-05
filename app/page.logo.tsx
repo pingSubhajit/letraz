@@ -1,7 +1,7 @@
 'use client'
 
 import {Link} from 'next-view-transitions'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 import {cn} from '@/lib/utils'
 
 const LandingPageLogo = ({className}: {className?: string}) => {
