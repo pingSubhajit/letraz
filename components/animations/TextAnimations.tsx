@@ -209,7 +209,7 @@ const TextAnimate: FC<Props> = ({
 	 *   });
 	 */
 
-	const ref = useRef<Element>(null)
+	const ref = useRef<HTMLSpanElement>(null)
 	const isInView = useInView(ref as RefObject<Element>, {once: true})
 
 	const letters = Array.from(text)
