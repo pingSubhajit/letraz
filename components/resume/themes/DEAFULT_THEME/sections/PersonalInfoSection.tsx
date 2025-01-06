@@ -1,6 +1,6 @@
 import {personalInfo} from '@/db/personalInfo.schema'
 import {Calendar, Globe, Mail, MapPin, Phone} from 'lucide-react'
-import {Divider, SectionTitle} from '../shared/Components'
+import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 
 const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: typeof personalInfo.$inferSelect }) => {
 	return (

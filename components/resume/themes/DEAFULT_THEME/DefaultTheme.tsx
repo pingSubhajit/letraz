@@ -3,9 +3,9 @@
 import {personalInfo} from '@/db/personalInfo.schema'
 import {ResumeSection, ResumeSections} from '@/db/resumes.schema'
 import {LegacyRef} from 'react'
-import PersonalInfoSection from './sections/PersonalInfoSection'
-import EducationSection from './sections/EducationSection'
-import ExperienceSection from './sections/ExperienceSection'
+import PersonalInfoSection from '@/components/resume/themes/DEAFULT_THEME/sections/PersonalInfoSection'
+import EducationSection from '@/components/resume/themes/DEAFULT_THEME/sections/EducationSection'
+import ExperienceSection from '@/components/resume/themes/DEAFULT_THEME/sections/ExperienceSection'
 
 const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 	sections?: ResumeSection[],

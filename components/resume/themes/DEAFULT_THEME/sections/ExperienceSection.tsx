@@ -1,7 +1,7 @@
 import {ResumeSection, ResumeSections} from '@/db/resumes.schema'
 import {experiences} from '@/db/schema'
 import {cn} from '@/lib/utils'
-import {Divider, SectionTitle} from '../shared/Components'
+import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 
 type ExperienceSectionProps = {
   section: ResumeSection & { type: ResumeSections.EXPERIENCE, data: typeof experiences.$inferSelect }
