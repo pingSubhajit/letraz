@@ -12,6 +12,7 @@ import {X} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {toast} from 'sonner'
 import {deleteEducationFromDB} from '@/lib/education.methods'
+import {ScrollArea} from '../ui/scroll-area'
 
 const Education = ({allEducations}: { allEducations: (typeof educations.$inferSelect)[] }) => {
 	const [currentEducations, setCurrentEducations] = useState<z.infer<typeof educationFormSchema>[]>(allEducations.map(education => ({
@@ -50,24 +51,26 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 	}
 
 	return (
-		<div className="w-full h-full flex flex-col justify-start pl-16 pt-16">
-			{/* HEADING TEXT */}
-			<div>
-				<TextAnimate
-					text="Tell us more"
-					type="calmInUp"
-					className="text-5xl leading-snug"
-				/>
-				<TextAnimate
-					text="about your education"
-					type="calmInUp"
-					className="text-5xl leading-snug"
-				/>
-			</div>
+		<div className="w-full h-full flex flex-col justify-start pl-16 mb-40 pt-16">
+			<ScrollArea>
+				{/* HEADING TEXT */}
+				<div>
+					<TextAnimate
+						text="Tell us more"
+						type="calmInUp"
+						className="text-5xl leading-snug"
+					/>
+					<TextAnimate
+						text="about your education"
+						type="calmInUp"
+						className="text-5xl leading-snug"
+					/>
+				</div>
 
-			{/* FORM */}
-			<EducationForm educations={currentEducations} setEducations={setCurrentEducations} />
+				{/* FORM */}
+				<EducationForm educations={currentEducations} setEducations={setCurrentEducations} />
 
+			</ScrollArea>
 			{/* EDUCATIONS */}
 			<motion.div
 				initial={{opacity: 0, y: '-30%'}}

@@ -6,7 +6,7 @@ import {Link} from 'next-view-transitions'
 
 const Welcome = () => {
 	return (
-		<>
+		<div className="min-h-dvh">
 			{/* HEADING TEXT */}
 			<div className="absolute top-8 left-8">
 				<TextAnimate
@@ -40,7 +40,7 @@ const Welcome = () => {
 					<ChevronRight className="w-5 h-5 ml-1" />
 				</Button>
 			</Link>
-		</>
+		</div>
 	)
 }
 
