@@ -3,7 +3,7 @@
 import {Resume} from '@/db/resumes.schema'
 import {cn} from '@/lib/utils'
 import {LegacyRef} from 'react'
-import DefaultTheme from '@/components/resume/themes/DefaultTheme'
+import DefaultTheme from '@/components/resume/themes/DEAFULT_THEME/DefaultTheme'
 
 type ResumeViewerProps = {
 	resume: Resume
