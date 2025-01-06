@@ -8,7 +8,7 @@ const About = () => {
 	return (
 		<div className="w-full h-full flex flex-col justify-center items-center">
 			{/* HEADING TEXT */}
-			<div className="">
+			<div className="pt-48">
 				<TextAnimate
 					text="Here's"
 					type="calmInUp"
@@ -28,7 +28,9 @@ const About = () => {
 			{/* DESCRIPTION TEXT */}
 			<AboutDescription />
 
-			<div className="w-full flex items-center justify-between absolute left-1/2 -translate-x-1/2 bottom-16 px-16">
+			<div
+				className="w-[calc(100%-4.7rem)] flex items-center justify-between fixed left-[4.7rem] z-10 bottom-16 px-16"
+			>
 				{/* PREVIOUS STEP BUTTON */}
 				<Link href={'/app/onboarding?step=welcome'}>
 					<Button

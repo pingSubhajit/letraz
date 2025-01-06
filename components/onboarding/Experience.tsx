@@ -50,7 +50,7 @@ const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inf
 	}
 
 	return (
-		<div className="w-full h-full flex flex-col justify-start pl-16 pt-16">
+		<div className="w-full h-full flex flex-col justify-start pl-16 mb-40 pt-16">
 			{/* HEADING TEXT */}
 			<div>
 				<TextAnimate
