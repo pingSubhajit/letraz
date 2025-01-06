@@ -7,8 +7,6 @@ const AppSidebarContainer = ({children, className}: {children: ReactNode, classN
 	return (
 		<motion.aside
 			className="w-20 shadow-xl"
-			{...({} as any)}
-			// Framer-motion types are broken as of 22/10/2024
 			initial={{width: '0px'}} animate={{width: '80px'}} transition={{
 				type: 'tween',
 				ease: 'easeInOut'
@@ -20,8 +18,6 @@ const AppSidebarContainer = ({children, className}: {children: ReactNode, classN
 					ease: 'easeInOut'
 				}}
 				className={className}
-				{...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 			>
 				{children}
 			</motion.div>

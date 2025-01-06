@@ -77,8 +77,6 @@ const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inf
 					ease: 'easeInOut'
 				}}
 				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
-				{...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 			>
 				<h3 className="text-center text-3xl font-medium">Experiences</h3>
 

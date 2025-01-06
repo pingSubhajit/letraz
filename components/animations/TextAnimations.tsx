@@ -271,8 +271,6 @@ const TextAnimate: FC<Props> = ({
 		<motion.h2
 			style={{display: 'flex', overflow: 'hidden'}}
 			role="heading"
-			{...({} as any)}
-			// Framer-motion types are broken as of 22/10/2024
 			variants={container}
 			initial="hidden"
 			animate="visible"
