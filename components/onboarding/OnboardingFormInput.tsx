@@ -4,7 +4,7 @@ import {Input, InputProps} from '@/components/ui/input'
 import {FC, useState} from 'react'
 import {FormControl, useFormField} from '@/components/ui/form'
 import {cn} from '@/lib/utils'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {SelectValueProps} from '@radix-ui/react-select'
 import {Textarea, TextareaProps} from '@/components/ui/textarea'
@@ -34,15 +34,13 @@ const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 
 			<motion.div
 				initial={{width: 0}} animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left" {...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
 			/>
 
 			<motion.div
 				initial={{width: 0}}
 				animate={{width: error ? '100%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left" {...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
 			/>
 		</div>
 	)
@@ -71,15 +69,13 @@ const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 
 			<motion.div
 				initial={{width: 0}} animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left" {...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
 			/>
 
 			<motion.div
 				initial={{width: 0}}
 				animate={{width: error ? '100%' : 0}}
-				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left" {...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
+				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
 			/>
 		</div>
 	)
@@ -163,16 +159,12 @@ const OnboardingRichTextInput: FC<OnboardingRichTextInputProps> = ({
 							: 0
 				}}
 				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
-				{...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 			/>
 
 			<motion.div
 				initial={{width: 0}}
 				animate={{width: error ? '100%' : 0}}
 				className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-red-500 origin-left"
-				{...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 			/>
 		</div>
 	)

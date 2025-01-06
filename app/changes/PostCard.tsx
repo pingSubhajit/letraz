@@ -2,7 +2,7 @@
 
 import {cn} from '@/lib/utils'
 import {DateTime} from 'luxon'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 
 export type Post = {
 	id: string,
@@ -45,8 +45,6 @@ const PostCard = ({post, className}: {post: Post, className?: string}) => {
 	return (
 		<motion.div
 			className={cn('', className)}
-			{...({} as any)}
-			// Framer-motion types are broken as of 22/10/2024
 			initial={{opacity: 0}}
 			whileInView={{opacity: 1}}
 			exit={{opacity: 0}}

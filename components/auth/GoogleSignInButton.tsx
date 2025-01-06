@@ -5,7 +5,7 @@ import {OAuthStrategy} from '@clerk/types'
 import {FcGoogle} from 'react-icons/fc'
 import {Button} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 
 const GoogleSignInButton = ({className}: {className?: string}) => {
 	const {signIn} = useSignIn()

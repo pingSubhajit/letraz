@@ -3,7 +3,7 @@
 import TextAnimate from '@/components/animations/TextAnimations'
 import {z} from 'zod'
 import {useState} from 'react'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import ExperienceForm, {experienceFormSchema} from '@/components/onboarding/ExperienceForm'
 import {experiences} from '@/db/schema'
@@ -57,15 +57,11 @@ const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inf
 					text="What about"
 					type="calmInUp"
 					className="text-5xl leading-snug"
-					{...({} as any)}
-					// Framer-motion types are broken as of 22/10/2024
 				/>
 				<TextAnimate
 					text="your past experiences"
 					type="calmInUp"
 					className="text-5xl leading-snug"
-					{...({} as any)}
-					// Framer-motion types are broken as of 22/10/2024
 				/>
 			</div>
 
@@ -81,8 +77,6 @@ const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inf
 					ease: 'easeInOut'
 				}}
 				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
-				{...({} as any)}
-				// Framer-motion types are broken as of 22/10/2024
 			>
 				<h3 className="text-center text-3xl font-medium">Experiences</h3>
 

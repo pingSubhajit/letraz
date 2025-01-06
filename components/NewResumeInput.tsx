@@ -9,7 +9,7 @@ import {cn} from '@/lib/utils'
 import {Textarea} from '@/components/ui/textarea'
 import {createPortal} from 'react-dom'
 import {useState} from 'react'
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion} from 'motion/react'
 import {useTransitionRouter} from 'next-view-transitions'
 import {Loader2} from 'lucide-react'
 import {parseJobFromRawJD} from '@/app/app/craft/parseJD'
@@ -95,7 +95,5 @@ const NewResumeInputOverlay = ({inputFocused}: {inputFocused: boolean}) => <Anim
 		animate={{opacity: inputFocused ? 1 : 0}}
 		exit={{opacity: 0}}
 		className="fixed inset-0 z-50 bg-white/70"
-		{...({} as any)}
-		// Framer-motion types are broken as of 22/10/2024
 	/>}
 </AnimatePresence>

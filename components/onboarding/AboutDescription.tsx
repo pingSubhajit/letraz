@@ -1,14 +1,12 @@
 'use client'
 
 import {cn} from '@/lib/utils'
-import {motion} from 'framer-motion'
+import {motion} from 'motion/react'
 
 const AboutDescription = ({className}: {className?: string}) => {
 	return (
 		<motion.div
 			className={cn('max-w-3xl text-2xl text-center mt-16', className)}
-			{...({} as any)}
-			// Framer-motion types are broken as of 22/10/2024
 			initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 		>
 			<p>

@@ -1,7 +1,7 @@
 'use client'
 
 import {FC, HTMLAttributes, RefObject, useRef} from 'react'
-import {HTMLMotionProps, motion, useAnimation, useInView} from 'framer-motion'
+import {HTMLMotionProps, motion, useAnimation, useInView} from 'motion/react'
 
 type AnimationType =
 	| 'fadeIn'
@@ -209,7 +209,7 @@ const TextAnimate: FC<Props> = ({
 	 *   });
 	 */
 
-	const ref = useRef<Element>(null)
+	const ref = useRef<HTMLSpanElement>(null)
 	const isInView = useInView(ref as RefObject<Element>, {once: true})
 
 	const letters = Array.from(text)
@@ -236,8 +236,6 @@ const TextAnimate: FC<Props> = ({
 						<motion.span
 							ref={ref}
 							className="inline-block mr-[0.25em] whitespace-nowrap"
-							{...({} as any)}
-							// Framer-motion types are broken as of 22/10/2024
 							aria-hidden="true"
 							key={index}
 							initial="hidden"
@@ -257,8 +255,6 @@ const TextAnimate: FC<Props> = ({
 										key={index}
 										variants={child}
 										className="inline-block -mr-[0.01em]"
-										{...({} as any)}
-										// Framer-motion types are broken as of 22/10/2024
 									>
 										{character}
 									</motion.span>
@@ -275,8 +271,6 @@ const TextAnimate: FC<Props> = ({
 		<motion.h2
 			style={{display: 'flex', overflow: 'hidden'}}
 			role="heading"
-			{...({} as any)}
-			// Framer-motion types are broken as of 22/10/2024
 			variants={container}
 			initial="hidden"
 			animate="visible"

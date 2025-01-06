@@ -1,7 +1,7 @@
 'use client'
 
 import PostCard, {Post} from '@/app/changes/PostCard'
-import {AnimatePresence} from 'framer-motion'
+import {AnimatePresence} from 'motion/react'
 import {cn} from '@/lib/utils'
 
 const PostsList = ({posts, className}: {posts: Post[], className?: string}) => {
