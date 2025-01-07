@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 const LetrazStoryPage = async () => {
 	return (
-		<div className="min-h-screen py-16 lg:py-32 px-8 relative">
+		<div className="min-h-screen py-16 lg:py-36 px-8 relative">
 			{/* TOP GRADIENT ACCEnT */}
 			<div className="fixed inset-x-0 top-0 pointer-events-none">
 				<div className="bg-flame-500 w-full absolute inset-x-0 top-0 h-1 z-20"/>
@@ -29,10 +29,10 @@ const LetrazStoryPage = async () => {
 				<div className="absolute inset-0 bg-gradient-to-b from-white to-transparent h-[50px] lg:h-[150px] z-10" />
 			</div>
 
-			<div className="max-w-[720px] mx-auto font-bold flex flex-col items-center">
-				<LandingPageLogo className="w-24 md:w-28 lg:w-32 xl:w-36"/>
+			<div className="max-w-[650px] 2xl:max-w-[720px] mx-auto font-bold flex flex-col items-center">
+				<LandingPageLogo className="w-24 md:w-28 lg:w-32 xl:w-36 mb-4"/>
 				<LetrazStoryPageHeading />
-				<LetrazStoryPageContent className="mt-36" />
+				<LetrazStoryPageContent className="mt-28 2xl:mt-36" />
 			</div>
 		</div>
 	)

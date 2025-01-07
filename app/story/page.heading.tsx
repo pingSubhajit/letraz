@@ -6,7 +6,7 @@ const LetrazStoryPageHeading = () => {
 	return (
 		<>
 			<motion.h1
-				className="mt-8 text-7xl xl:text-8xl 2xl:text-9xl tracking-tight text-center"
+				className="mt-8 text-7xl lg:text-6xl xl:text-7xl 2xl:text-8xl tracking-tight text-center"
 				initial={{opacity: 0}}
 				animate={{opacity: 1}}
 				exit={{opacity: 0}}
