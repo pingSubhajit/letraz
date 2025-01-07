@@ -6,6 +6,6 @@ export const ghostBlogUrl = 'https://blog.letraz.app'
 export const defaultUrl = 'https://letraz.com'
 
 // Socials
-export const discordHandle = 'https://discord.gg/m9WpJA4w6d'
+export const discordHandle = 'https://discord.gg/letraz'
 export const githubHandle = 'https://github.com/pingSubhajit/letraz'
 export const twitterHandle = 'https://x.com/LetrazApp'
