@@ -41,8 +41,13 @@ const LandingPage = async (
 				<div className="hidden lg:block h-[709px] w-[176px] absolute bg-amber-300/70 rounded-[50%] z-10 -bottom-36 blur-[200px] right-16" />
 			</div>
 
-			<div className="w-full lg:w-[80%] h-full lg:h-auto flex justify-center items-center overflow-hidden">
-				<video loop autoPlay muted className="aspect-video h-full scale-150">
+			<div className="w-full lg:w-[80%] h-svh flex justify-center items-center overflow-hidden">
+				<video
+					loop
+					autoPlay
+					muted
+					className="w-full h-full object-cover"
+				>
 					<source src="/letraz-intro.mp4" type="video/mp4"/>
 				</video>
 			</div>
