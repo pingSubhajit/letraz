@@ -1,8 +1,8 @@
 import {getPosts} from '@/lib/posts.method'
-import PostsList from '@/app/changes/PostsList'
-import LandingPageLogo from '@/app/page.logo'
+import PostsList from '@/app/(website)/changes/PostsList'
+import LandingPageLogo from '@/app/(website)/page.logo'
 import {Metadata} from 'next'
-import ChangesPageHeading from '@/app/changes/page.heading'
+import ChangesPageHeading from '@/app/(website)/changes/page.heading'
 
 export const metadata: Metadata = {
 	title: 'Development updates — Letraz',
@@ -22,15 +22,15 @@ const ChangelogPage = async () => {
 	return (
 		<div className="min-h-screen py-16 lg:py-32 px-8 relative">
 			{/* TOP GRADIENT ACCEnT */}
-			<div className="fixed inset-x-0 top-0 pointer-events-none">
-				<div className="bg-flame-500 w-full absolute inset-x-0 top-0 h-1 z-20"/>
+			{/* <div className="fixed inset-x-0 top-0 pointer-events-none">*/}
+			{/*	<div className="bg-flame-500 w-full absolute inset-x-0 top-0 h-1 z-20"/>*/}
 
-				<div className="w-[200px] lg:w-[700px] h-[48px] lg:h-[118px] absolute bg-rose-500/70 rounded-[50%] z-20 -top-20 right-16 blur-[150px]"/>
-				<div className="w-[200px] lg:w-[700px] h-[68px] lg:h-[228px] absolute bg-flame-500/70 rounded-[50%] z-20 -top-64 left-16 blur-[150px]"/>
-				<div className="w-[200px] lg:w-[700px] h-[56px] lg:h-[176px] absolute bg-amber-300/70 rounded-[50%] z-20 -top-48 left-1/2 -translate-x-1/2 blur-[150px]"/>
+			{/*	<div className="w-[200px] lg:w-[700px] h-[48px] lg:h-[118px] absolute bg-rose-500/70 rounded-[50%] z-20 -top-20 right-16 blur-[150px]"/>*/}
+			{/*	<div className="w-[200px] lg:w-[700px] h-[68px] lg:h-[228px] absolute bg-flame-500/70 rounded-[50%] z-20 -top-64 left-16 blur-[150px]"/>*/}
+			{/*	<div className="w-[200px] lg:w-[700px] h-[56px] lg:h-[176px] absolute bg-amber-300/70 rounded-[50%] z-20 -top-48 left-1/2 -translate-x-1/2 blur-[150px]"/>*/}
 
-				<div className="absolute inset-0 bg-gradient-to-b from-white to-transparent h-[50px] lg:h-[150px] z-10" />
-			</div>
+			{/*	<div className="absolute inset-0 bg-gradient-to-b from-white to-transparent h-[50px] lg:h-[150px] z-10" />*/}
+			{/* </div>*/}
 
 			<div className="max-w-[720px] mx-auto font-bold">
 				<LandingPageLogo className="w-24 md:w-28 lg:w-32 xl:w-36"/>

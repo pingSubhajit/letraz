@@ -1,9 +1,9 @@
 import {Metadata} from 'next'
 import Waitlist from '@/components/Waitlist'
-import LandingPageHeading from '@/app/page.heading'
-import LandingPageLogo from '@/app/page.logo'
-import LandingPageDescription from '@/app/page.description'
-import LandingPageFooter from '@/app/page-footer'
+import LandingPageHeading from '@/app/(website)/page.heading'
+import LandingPageLogo from '@/app/(website)/page.logo'
+import LandingPageDescription from '@/app/(website)/page.description'
+import LandingPageFooter from '@/app/(website)/page-footer'
 
 export const metadata: Metadata = {
 	title: 'Letraz — Craft unique resumes for each job application effortlessly',
