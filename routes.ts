@@ -20,7 +20,7 @@ const routes: Record<'website' | 'app', Record<string, Route>> = {
 			mainNav: true
 		},
 		changes: {
-			title: 'Development Updates',
+			title: 'Progress Updates',
 			segment: 'changes',
 			route: '/changes',
 			mainNav: true

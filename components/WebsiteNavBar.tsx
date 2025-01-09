@@ -4,86 +4,109 @@ import {cn} from '@/lib/utils'
 import routes, {Route} from '@/routes'
 import {useSelectedLayoutSegment} from 'next/navigation'
 import {Link} from 'next-view-transitions'
-import {motion} from 'motion/react'
-import {Sheet, SheetContent, SheetTrigger, SheetTitle} from '@/components/ui/sheet'
-import {Menu} from 'lucide-react'
-import {useState, useEffect} from 'react'
+import {AnimatePresence, motion} from 'motion/react'
+import {useId, useState} from 'react'
+import {Button} from '@/components/ui/button'
+import LandingPageLogo from '@/app/(website)/page.logo'
+import useDOMMounted from '@/hooks/useDOMMounted'
+import {MenuIcon} from '@/components/ui/menu'
 
 const WebsiteNavBar = ({className}: {className?: string}) => {
 	const currentSegment = useSelectedLayoutSegment()
-	const [mounted, setMounted] = useState(false)
 	const [isOpen, setIsOpen] = useState(false)
 	const links: Route[] = Object.keys(routes.website).filter(route => routes.website[route].mainNav).map((route) => routes.website[route])
 
-	const currentRoute = Object.values(routes.website).find(route => route.segment === currentSegment)
-	const shouldShowHamburger = !currentRoute?.mainNav
+	const mounted = useDOMMounted()
+	const indicatorId = useId()
 
-	useEffect(() => {
-		setMounted(true)
-	}, [])
-
-	const NavLinks = ({mobile = false}: {mobile?: boolean}) => (
-		<>
-			{links.map((link) => (
-				<div key={link.route} className={cn('relative', mobile && 'w-full')}>
-					{currentSegment && currentSegment === link.segment && (
-						<motion.div
-							layout
-							layoutId={mobile ? undefined : '123'}
-							className={cn(
-								'absolute bg-flame-500',
-								mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-4 rounded-b-[50%] -top-2'
+	const NavLinks = ({mobile = false}: {mobile?: boolean}) => {
+		return (
+			<>
+				{links.map((link) => (
+					<div key={link.route} className="relative">
+						{!mobile && <div>
+							{/* Current Route Indicator */}
+							{currentSegment && currentSegment === link.segment && (
+								<motion.div
+									layout layoutId={indicatorId}
+									className={cn(
+										'absolute bg-flame-500',
+										mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-4 rounded-b-[50%] -top-2'
+									)}
+								/>
 							)}
-						/>
-					)}
-					<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
-						<p className={cn(
-							'font-medium opacity-70 transition hover:opacity-100 focus-visible:opacity-100',
-							!mobile && 'mt-4',
-							currentSegment && currentSegment === link.segment && 'opacity-100',
-							mobile && 'text-lg py-4 pl-4'
-						)}>
-							{link.title}
-						</p>
-					</Link>
-				</div>
-			))}
-		</>
-	)
+
+							{/* Link Text */}
+							<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
+								<p className={cn(
+									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4',
+									currentSegment && currentSegment === link.segment && 'opacity-100'
+								)}>
+									{link.title}
+								</p>
+							</Link>
+						</div>}
+
+						{mobile && <div className="mt-4">
+							{/* Link Text */}
+							<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
+								<p className={cn(
+									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-3xl flex items-center gap-4',
+									currentSegment && currentSegment === link.segment && 'opacity-100'
+								)}>
+									<div className="w-2 h-2 rounded-full bg-flame-500" />
+									{link.title}
+								</p>
+							</Link>
+						</div>}
+					</div>
+				))}
+			</>
+		)
+	}
 
 	return (
-		<div className={className}>
+		<div className={cn('relative', className)}>
 			{/* Desktop Navigation */}
-			<div className="hidden lg:flex gap-12">
+			<div className="hidden lg:flex gap-12 justify-end">
 				<NavLinks />
 			</div>
 
 			{/* Mobile Navigation */}
-			{shouldShowHamburger && mounted && (
-				<div className="lg:hidden flex items-center h-full mt-6">
-					<Sheet open={isOpen} onOpenChange={setIsOpen}>
-						<SheetTrigger className="group">
-							<div className={cn(
-								'p-2.5 rounded-xl transition-all duration-200',
-								'bg-white/70 backdrop-blur-md shadow-sm',
-								'active:bg-white/90',
+			{mounted && (
+				<>
+					<div className="lg:hidden flex items-center h-full mt-6 w-full justify-between bg-white shadow rounded-full pr-2 pl-6 py-1.5 z-50 relative">
+						<div onClick={() => setIsOpen(false)}>
+							<LandingPageLogo className="mb-1" />
+						</div>
+
+						<Button
+							className={cn(
+								'p-2 rounded-full transition-all duration-200',
+								'bg-neutral-100 backdrop-blur-md shadow-sm',
+								'active:bg-neutral-200 hover:bg-neutral-200',
 								'focus-visible:ring-2 focus-visible:ring-flame-500/20 focus-visible:outline-none',
-								isOpen && 'bg-white shadow-md'
-							)}>
-								<Menu className={cn(
-									'w-5 h-5 transition-colors duration-200',
-									'text-neutral-800'
-								)} />
-							</div>
-						</SheetTrigger>
-						<SheetContent side="right" className="w-[300px] sm:w-[400px] bg-white/95 backdrop-blur-xl border-l border-neutral-200">
-							<SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-							<nav className="flex flex-col mt-12">
-								<NavLinks mobile />
-							</nav>
-						</SheetContent>
-					</Sheet>
-				</div>
+								isOpen && 'bg-neutral-100 shadow-md'
+							)}
+							size="sm"
+							onClick={() => setIsOpen(!isOpen)}
+						>
+							<MenuIcon className="[&>svg]:stroke-primary" openState={isOpen}/>
+						</Button>
+					</div>
+
+					<AnimatePresence>
+						{isOpen && <motion.div
+							className="absolute lg:hidden w-screen h-dvh top-0 -left-7 bg-white z-40 pt-32 px-8 flex flex-col gap-8"
+							initial={{opacity: 0, filter: 'blur(20px)'}}
+							animate={{opacity: 1, filter: 'blur(0)'}}
+							exit={{opacity: 0, filter: 'blur(20px)'}}
+							transition={{duration: 0.2}}
+						>
+							<NavLinks mobile={true} />
+						</motion.div>}
+					</AnimatePresence>
+				</>
 			)}
 		</div>
 	)

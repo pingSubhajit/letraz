@@ -25,8 +25,8 @@ const LandingPage = async (
 
 	return (
 		<main className="h-svh overflow-hidden flex flex-col lg:flex-row justify-stretch lg:justify-center items-stretch bg-white">
-			<div className="flex flex-col justify-center items-start gap-8 p-8 lg:p-16 relative">
-				<LandingPageLogo className="relative z-30" />
+			<div className="flex flex-col justify-center items-start gap-8 p-8 lg:p-16 relative z-10">
+				<LandingPageLogo className="relative z-30 mt-8 lg:mt-0" hideOnMobile={true} />
 				<LandingPageHeading className="relative z-30" />
 				<LandingPageDescription className="lg:py-2 relative z-30" />
 				<Waitlist className="relative z-30" referrer={referrer} />
