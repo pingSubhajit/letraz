@@ -10,6 +10,8 @@ import {Button} from '@/components/ui/button'
 import LandingPageLogo from '@/app/(website)/page.logo'
 import useDOMMounted from '@/hooks/useDOMMounted'
 import {MenuIcon} from '@/components/ui/menu'
+import NavMenuBg from '@/public/nav_menu_bg.png'
+import Image from 'next/image'
 
 const WebsiteNavBar = ({className}: {className?: string}) => {
 	const currentSegment = useSelectedLayoutSegment()
@@ -22,7 +24,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 	const NavLinks = ({mobile = false}: {mobile?: boolean}) => {
 		return (
 			<>
-				{links.map((link) => (
+				{links.map((link, index) => (
 					<div key={link.route} className="relative">
 						{!mobile && <div>
 							{/* Current Route Indicator */}
@@ -31,7 +33,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 									layout layoutId={indicatorId}
 									className={cn(
 										'absolute bg-flame-500',
-										mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-4 rounded-b-[50%] -top-2'
+										mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-4 rounded-b-full -top-2'
 									)}
 								/>
 							)}
@@ -39,7 +41,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 							{/* Link Text */}
 							<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
 								<p className={cn(
-									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4',
+									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-3',
 									currentSegment && currentSegment === link.segment && 'opacity-100'
 								)}>
 									{link.title}
@@ -49,15 +51,21 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 
 						{mobile && <div className="mt-4">
 							{/* Link Text */}
-							<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
-								<p className={cn(
-									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-3xl flex items-center gap-4',
-									currentSegment && currentSegment === link.segment && 'opacity-100'
-								)}>
-									<div className="w-2 h-2 rounded-full bg-flame-500" />
-									{link.title}
-								</p>
-							</Link>
+							<motion.div
+								initial={{y: 35, opacity: 0}}
+								animate={{y: 0, opacity: 1}}
+								transition={{duration: 0.5, delay: index * 0.1, ease: 'easeInOut'}}
+							>
+								<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
+									<p className={cn(
+										'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-3xl flex items-center gap-4',
+										currentSegment && currentSegment === link.segment && 'opacity-100'
+									)}>
+										<div className="w-2 h-2 rounded-full bg-flame-500" />
+										{link.title}
+									</p>
+								</Link>
+							</motion.div>
 						</div>}
 					</div>
 				))}
@@ -98,12 +106,20 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 					<AnimatePresence>
 						{isOpen && <motion.div
 							className="absolute lg:hidden w-screen h-dvh top-0 -left-7 bg-white z-40 pt-32 px-8 flex flex-col gap-8"
-							initial={{opacity: 0, filter: 'blur(20px)'}}
-							animate={{opacity: 1, filter: 'blur(0)'}}
-							exit={{opacity: 0, filter: 'blur(20px)'}}
+							initial={{opacity: 0}}
+							animate={{opacity: 1}}
+							exit={{opacity: 0}}
 							transition={{duration: 0.2}}
 						>
 							<NavLinks mobile={true} />
+
+							{/* Background Image */}
+							<Image
+								priority={true}
+								src={NavMenuBg}
+								alt="Background Image"
+								className="absolute bottom-0 left-0 w-full"
+							/>
 						</motion.div>}
 					</AnimatePresence>
 				</>
