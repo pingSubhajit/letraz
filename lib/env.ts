@@ -3,7 +3,7 @@ import {z} from 'zod'
 const envSchema = z.object({
 	// Optional
 	VERCEL_ENV: z.enum(['development', 'production', 'preview'], {
-		errorMap: () => ({message: 'Environment must be either "development" or "production"'})
+		errorMap: () => ({message: 'Environment must be either "development", "preview" or "production"'})
 	}).optional().default('development'),
 
 	MAIN_URL: z.string().url({
