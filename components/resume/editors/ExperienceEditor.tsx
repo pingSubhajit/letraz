@@ -16,11 +16,12 @@ import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Checkbox} from '@/components/ui/checkbox'
 
-const educationFormSchema = z.object({
-	institutionName: z.string().min(1, 'Institution name is required'),
+const experienceFormSchema = z.object({
+	companyName: z.string().min(1, 'Company name is required'),
+	jobTitle: z.string().min(1, 'Job title is required'),
+	employmentType: z.string().min(1, 'Employment type is required'),
+	city: z.string().min(1, 'City is required'),
 	country: z.string().min(1, 'Country is required'),
-	fieldOfStudy: z.string().min(1, 'Field of study is required'),
-	degree: z.string().min(1, 'Degree is required'),
 	startedFromMonth: z.string().min(1, 'Start month is required'),
 	startedFromYear: z.string().min(1, 'Start year is required'),
 	finishedAtMonth: z.string().optional(),
@@ -29,23 +30,33 @@ const educationFormSchema = z.object({
 	description: z.string().optional()
 })
 
-type Education = z.infer<typeof educationFormSchema>
+type Experience = z.infer<typeof experienceFormSchema>
 
 type ViewState = 'list' | 'form'
 
-const EducationEditor = ({className}: {className?: string}) => {
+const employmentTypes = [
+	'Full-time',
+	'Part-time',
+	'Self-employed',
+	'Freelance',
+	'Contract',
+	'Internship'
+]
+
+const ExperienceEditor = ({className}: {className?: string}) => {
 	const [view, setView] = useState<ViewState>('list')
-	const [educations, setEducations] = useState<Education[]>([])
+	const [experiences, setExperiences] = useState<Experience[]>([])
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
-	const form = useForm<Education>({
-		resolver: zodResolver(educationFormSchema),
+	const form = useForm<Experience>({
+		resolver: zodResolver(experienceFormSchema),
 		defaultValues: {
-			institutionName: '',
+			companyName: '',
+			jobTitle: '',
+			employmentType: '',
+			city: '',
 			country: '',
-			fieldOfStudy: '',
-			degree: '',
 			startedFromMonth: '',
 			startedFromYear: '',
 			finishedAtMonth: '',
@@ -55,42 +66,31 @@ const EducationEditor = ({className}: {className?: string}) => {
 		}
 	})
 
-	const onSubmit = (values: Education) => {
+	const onSubmit = (values: Experience) => {
 		if (editingIndex !== null) {
-			setEducations(prev => {
+			setExperiences(prev => {
 				const updated = [...prev]
 				updated[editingIndex] = values
 				return updated
 			})
 			setEditingIndex(null)
 		} else {
-			setEducations(prev => [...prev, values])
+			setExperiences(prev => [...prev, values])
 		}
 
-		form.reset({
-			institutionName: '',
-			country: '',
-			fieldOfStudy: '',
-			degree: '',
-			startedFromMonth: '',
-			startedFromYear: '',
-			finishedAtMonth: '',
-			finishedAtYear: '',
-			current: false,
-			description: ''
-		})
+		form.reset()
 		setView('list')
 	}
 
 	const handleEdit = (index: number) => {
-		const education = educations[index]
-		form.reset(education)
+		const experience = experiences[index]
+		form.reset(experience)
 		setEditingIndex(index)
 		setView('form')
 	}
 
 	const handleDelete = (index: number) => {
-		setEducations(prev => prev.filter((_, i) => i !== index))
+		setExperiences(prev => prev.filter((_, i) => i !== index))
 		if (editingIndex === index) {
 			setEditingIndex(null)
 			form.reset()
@@ -114,7 +114,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 			<div className={cn('space-y-6', className)}>
 				<div className="mb-6">
 					<h2 className="text-lg font-medium">
-						{editingIndex !== null ? 'Update Education' : 'Add New Education'}
+						{editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
 					</h2>
 				</div>
 
@@ -123,16 +123,73 @@ const EducationEditor = ({className}: {className?: string}) => {
 						<div className="grid grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
-								name="institutionName"
+								name="companyName"
 								render={({field}) => (
 									<FormItem>
-										<FormLabel className="text-foreground">Institution Name</FormLabel>
+										<FormLabel className="text-foreground">Company Name</FormLabel>
 										<FormControl>
 											<Input
 												{...field}
-												placeholder="e.g. Harvard University"
+												placeholder="e.g. Google"
 												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
 											/>
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="jobTitle"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Job Title</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												placeholder="e.g. Software Engineer"
+												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
+											/>
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<div className="grid grid-cols-3 gap-4">
+							<FormField
+								control={form.control}
+								name="employmentType"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Employment Type</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Select type" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{employmentTypes.map(type => (
+													<SelectItem key={type} value={type}>
+														{type}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="city"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">City</FormLabel>
+										<FormControl>
+											<Input {...field} placeholder="e.g. San Francisco" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
 										</FormControl>
 										<FormMessage className="text-xs" />
 									</FormItem>
@@ -153,35 +210,6 @@ const EducationEditor = ({className}: {className?: string}) => {
 							/>
 						</div>
 
-						<div className="grid grid-cols-2 gap-4">
-							<FormField
-								control={form.control}
-								name="degree"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">Degree</FormLabel>
-										<FormControl>
-											<Input {...field} placeholder="e.g. Bachelor of Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
-										</FormControl>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="fieldOfStudy"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">Field of Study</FormLabel>
-										<FormControl>
-											<Input {...field} placeholder="e.g. Computer Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
-										</FormControl>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
-						</div>
-
 						<div className="grid grid-cols-4 gap-4">
 							<FormField
 								control={form.control}
@@ -192,7 +220,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 										<Select onValueChange={field.onChange} value={field.value}>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="Choose start month" />
+													<SelectValue placeholder="Choose month" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
@@ -216,7 +244,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 										<Select onValueChange={field.onChange} value={field.value}>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="Choose start year" />
+													<SelectValue placeholder="Choose year" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
@@ -241,7 +269,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 										<Select onValueChange={field.onChange} value={field.value}>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="Choose end month" />
+													<SelectValue placeholder="Choose month" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
@@ -266,7 +294,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 										<Select onValueChange={field.onChange} value={field.value}>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="Choose end year" />
+													<SelectValue placeholder="Choose year" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
@@ -296,7 +324,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 									</FormControl>
 									<div className="space-y-1 leading-none">
 										<FormLabel>
-											I currently study here
+											I currently work here
 										</FormLabel>
 									</div>
 								</FormItem>
@@ -314,7 +342,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 											value={field.value}
 											onChange={field.onChange}
 											className="h-60 mt-4"
-											placeholder="Describe your academic achievements, relevant coursework, thesis, or any notable projects completed during your studies..."
+											placeholder="Describe your role, responsibilities, and key achievements..."
 											editorContentClassName="flex-1 h-[200px] overflow-y-auto"
 										/>
 									</FormControl>
@@ -325,7 +353,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 
 						<div className="flex gap-4">
 							<Button type="submit" className="flex-1">
-								{editingIndex !== null ? 'Update Education' : 'Add Education'}
+								{editingIndex !== null ? 'Update Experience' : 'Add Experience'}
 							</Button>
 							<Button type="button" variant="outline" onClick={handleCancel}>
 								Cancel
@@ -340,18 +368,19 @@ const EducationEditor = ({className}: {className?: string}) => {
 	return (
 		<div className={cn('space-y-6', className)}>
 			<div ref={parent} className="space-y-4">
-				{educations.map((education, index) => (
+				{experiences.map((experience, index) => (
 					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
 						<div className="space-y-1">
-							<h3 className="font-medium">
-								{education.degree} in {education.fieldOfStudy}
-							</h3>
+							<h3 className="font-medium">{experience.jobTitle}</h3>
 							<p className="text-sm text-muted-foreground">
-								{education.institutionName}, {education.country}
+								{experience.companyName} • {experience.employmentType}
+							</p>
+							<p className="text-sm text-muted-foreground">
+								{experience.city}, {experience.country}
 							</p>
 							<p className="text-sm">
-								{education.startedFromMonth} {education.startedFromYear} -{' '}
-								{education.current ? 'Present' : `${education.finishedAtMonth} ${education.finishedAtYear}`}
+								{experience.startedFromMonth} {experience.startedFromYear} -{' '}
+								{experience.current ? 'Present' : `${experience.finishedAtMonth} ${experience.finishedAtYear}`}
 							</p>
 						</div>
 						<div className="flex gap-2">
@@ -360,17 +389,17 @@ const EducationEditor = ({className}: {className?: string}) => {
 								size="icon"
 								onClick={() => handleEdit(index)}
 							>
-								<span className="sr-only">Edit education</span>
+								<span className="sr-only">Edit experience</span>
 								<Pencil className="h-4 w-4" />
 							</Button>
 							<PopConfirm
 								triggerElement={
 									<Button variant="ghost" size="icon">
-										<span className="sr-only">Delete education</span>
+										<span className="sr-only">Delete experience</span>
 										<X className="h-4 w-4" />
 									</Button>
 								}
-								message="Are you sure you want to delete this education?"
+								message="Are you sure you want to delete this experience?"
 								onYes={() => handleDelete(index)}
 							/>
 						</div>
@@ -384,10 +413,10 @@ const EducationEditor = ({className}: {className?: string}) => {
 				variant="outline"
 			>
 				<Plus className="h-4 w-4 mr-2" />
-				Add New Education
+				Add New Experience
 			</Button>
 		</div>
 	)
 }
 
-export default EducationEditor
+export default ExperienceEditor
