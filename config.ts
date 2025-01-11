@@ -1,6 +1,6 @@
 import localFont from 'next/font/local'
 import {anthropic} from '@ai-sdk/anthropic'
-import { env } from './lib/env'
+import {env} from '@/lib/env'
 
 export const modelica = localFont({
 	src: [
