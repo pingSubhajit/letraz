@@ -1,9 +1,9 @@
-import {NextRequest, NextResponse} from 'next/server'
+import {NextResponse} from 'next/server'
 import {getPosts} from '@/lib/posts.method'
 import {defaultUrl, discordBlogUrl} from '@/config'
 import TurndownService from 'turndown'
 
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const POST = async () => {
 	try {
 		const post = (await getPosts())[0]
 		const turndownService = new TurndownService()
