@@ -1,6 +1,6 @@
 'use client'
 
-import PostCard, {Post} from '@/app/changes/PostCard'
+import PostCard, {Post} from '@/app/(website)/changes/PostCard'
 import {AnimatePresence} from 'motion/react'
 import {cn} from '@/lib/utils'
 
