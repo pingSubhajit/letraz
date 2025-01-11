@@ -5,7 +5,8 @@ import {waitlist, WaitlistInsert} from '@/db/schema'
 import {Resend} from 'resend'
 import WaitlistWelcomeEmail from '@/emails/welcome'
 import {count, eq} from 'drizzle-orm'
-import {env} from './env'
+import {env} from '@/lib/env'
+
 
 const resend = new Resend(env.RESEND_API_KEY)
 

@@ -2,7 +2,7 @@
 
 import posthog from 'posthog-js'
 import {PostHogProvider} from 'posthog-js/react'
-import {env} from 'process'
+import {env} from '@/lib/env'
 import {ReactNode} from 'react'
 
 if (typeof window !== 'undefined') {
