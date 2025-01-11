@@ -1,5 +1,0 @@
-User-Agent: *
-Allow: /
-Disallow: /app/
-
-Sitemap: https://letraz.app/sitemap
