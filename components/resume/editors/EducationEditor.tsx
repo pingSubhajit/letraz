@@ -30,7 +30,10 @@ const educationFormSchema = z.object({
 
 type Education = z.infer<typeof educationFormSchema>
 
+type ViewState = 'list' | 'form'
+
 const EducationEditor = ({className}: {className?: string}) => {
+	const [view, setView] = useState<ViewState>('list')
 	const [educations, setEducations] = useState<Education[]>([])
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -62,13 +65,27 @@ const EducationEditor = ({className}: {className?: string}) => {
 		} else {
 			setEducations(prev => [...prev, values])
 		}
-		form.reset()
+
+		form.reset({
+			institutionName: '',
+			country: '',
+			fieldOfStudy: '',
+			degree: '',
+			startedFromMonth: '',
+			startedFromYear: '',
+			finishedAtMonth: '',
+			finishedAtYear: '',
+			current: false,
+			description: ''
+		})
+		setView('list')
 	}
 
 	const handleEdit = (index: number) => {
 		const education = educations[index]
 		form.reset(education)
 		setEditingIndex(index)
+		setView('form')
 	}
 
 	const handleDelete = (index: number) => {
@@ -79,9 +96,228 @@ const EducationEditor = ({className}: {className?: string}) => {
 		}
 	}
 
+	const handleAddNew = () => {
+		form.reset()
+		setEditingIndex(null)
+		setView('form')
+	}
+
+	const handleCancel = () => {
+		form.reset()
+		setEditingIndex(null)
+		setView('list')
+	}
+
+	if (view === 'form') {
+		return (
+			<div className={cn('space-y-6', className)}>
+				<div className="mb-6">
+					<h2 className="text-lg font-medium">
+						{editingIndex !== null ? 'Update Education' : 'Add New Education'}
+					</h2>
+				</div>
+
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="institutionName"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Institution Name</FormLabel>
+										<FormControl>
+											<Input
+												{...field}
+												placeholder="e.g. Harvard University"
+												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
+											/>
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="country"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Country</FormLabel>
+										<FormControl>
+											<Input {...field} placeholder="e.g. United States" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="degree"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Degree</FormLabel>
+										<FormControl>
+											<Input {...field} placeholder="e.g. Bachelor of Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="fieldOfStudy"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Field of Study</FormLabel>
+										<FormControl>
+											<Input {...field} placeholder="e.g. Computer Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<div className="grid grid-cols-4 gap-4">
+							<FormField
+								control={form.control}
+								name="startedFromMonth"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Start Month</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Choose start month" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{months.map(month => (
+													<SelectItem key={month} value={month}>
+														{month}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="startedFromYear"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Start Year</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Choose start year" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{years.map(year => (
+													<SelectItem key={year} value={year}>
+														{year}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="finishedAtMonth"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">End Month</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Choose end month" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{months.map(month => (
+													<SelectItem key={month} value={month}>
+														{month}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="finishedAtYear"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">End Year</FormLabel>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Choose end year" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{years.map(year => (
+													<SelectItem key={year} value={year}>
+														{year}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<FormField
+							control={form.control}
+							name="description"
+							render={({field}) => (
+								<FormItem className="flex-1">
+									<FormLabel className="text-foreground">Description</FormLabel>
+									<FormControl>
+										<RichTextEditor
+											value={field.value}
+											onChange={field.onChange}
+											className="h-60 mt-4"
+											placeholder="Describe your academic achievements, relevant coursework, thesis, or any notable projects completed during your studies..."
+											editorContentClassName="flex-1 h-[200px] overflow-y-auto"
+										/>
+									</FormControl>
+									<FormMessage className="text-xs" />
+								</FormItem>
+							)}
+						/>
+
+						<div className="flex gap-4">
+							<Button type="submit" className="flex-1">
+								{editingIndex !== null ? 'Update Education' : 'Add Education'}
+							</Button>
+							<Button type="button" variant="outline" onClick={handleCancel}>
+								Cancel
+							</Button>
+						</div>
+					</form>
+				</Form>
+			</div>
+		)
+	}
+
 	return (
 		<div className={cn('space-y-6', className)}>
-			{/* Education List */}
 			<div ref={parent} className="space-y-4">
 				{educations.map((education, index) => (
 					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
@@ -121,192 +357,14 @@ const EducationEditor = ({className}: {className?: string}) => {
 				))}
 			</div>
 
-			{/* Education Form */}
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-					<div className="grid grid-cols-2 gap-4">
-						<FormField
-							control={form.control}
-							name="institutionName"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Institution Name</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="country"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Country</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-
-					<div className="grid grid-cols-2 gap-4">
-						<FormField
-							control={form.control}
-							name="degree"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Degree</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="fieldOfStudy"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Field of Study</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-
-					<div className="grid grid-cols-4 gap-4">
-						<FormField
-							control={form.control}
-							name="startedFromMonth"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Start Month</FormLabel>
-									<Select onValueChange={field.onChange} value={field.value}>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue placeholder="Select month" />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{months.map(month => (
-												<SelectItem key={month} value={month}>
-													{month}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="startedFromYear"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Start Year</FormLabel>
-									<Select onValueChange={field.onChange} value={field.value}>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue placeholder="Select year" />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{years.map(year => (
-												<SelectItem key={year} value={year}>
-													{year}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="finishedAtMonth"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>End Month</FormLabel>
-									<Select onValueChange={field.onChange} value={field.value}>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue placeholder="Select month" />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{months.map(month => (
-												<SelectItem key={month} value={month}>
-													{month}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="finishedAtYear"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>End Year</FormLabel>
-									<Select onValueChange={field.onChange} value={field.value}>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue placeholder="Select year" />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{years.map(year => (
-												<SelectItem key={year} value={year}>
-													{year}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-
-					<FormField
-						control={form.control}
-						name="description"
-						render={({field}) => (
-							<FormItem className="flex-1">
-								<FormLabel>Description</FormLabel>
-								<FormControl>
-									<RichTextEditor
-										value={field.value}
-										onChange={field.onChange}
-										className="min-h-[200px]"
-										editorContentClassName="flex-1 h-[200px] overflow-y-auto"
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					<Button type="submit" className="w-full">
-						{editingIndex !== null ? 'Update Education' : 'Add Education'}
-					</Button>
-				</form>
-			</Form>
+			<Button
+				onClick={handleAddNew}
+				className="w-full"
+				variant="outline"
+			>
+				<Plus className="h-4 w-4 mr-2" />
+				Add New Education
+			</Button>
 		</div>
 	)
 }

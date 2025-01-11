@@ -9,10 +9,25 @@ const ResumeEditor = ({resume, className}: {resume: Resume, className?: string})
 	return (
 		<div className={cn('p-6', className)}>
 			<Tabs defaultValue="education" className="w-full">
-				<TabsList className="grid w-full grid-cols-3">
-					<TabsTrigger value="education">Education</TabsTrigger>
-					<TabsTrigger value="experience">Experience</TabsTrigger>
-					<TabsTrigger value="skills">Skills</TabsTrigger>
+				<TabsList className="grid w-full grid-cols-3 bg-neutral-100 p-1">
+					<TabsTrigger
+						value="education"
+						className="data-[state=active]:bg-white"
+					>
+						Education
+					</TabsTrigger>
+					<TabsTrigger
+						value="experience"
+						className="data-[state=active]:bg-white"
+					>
+						Experience
+					</TabsTrigger>
+					<TabsTrigger
+						value="skills"
+						className="data-[state=active]:bg-white"
+					>
+						Skills
+					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="education">
 					<EducationEditor className="mt-6" />
