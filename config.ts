@@ -95,5 +95,12 @@ export const defaultUrl = process.env.VERCEL_ENV === 'production'
 	: process.env.MAIN_URL || 'http://localhost:3000'
 export const githubRepo = 'https://github.com/pingSubhajit/letraz'
 export const portfolio = 'https://subhajit.lol'
+export const ghostBlogUrl = 'https://blog.letraz.app'
+export const discordBlogUrl = '64.227.146.129:4000'
+
+// Socials
+export const discordHandle = 'https://discord.gg/letraz'
+export const githubHandle = 'https://github.com/pingSubhajit/letraz'
+export const twitterHandle = 'https://x.com/LetrazApp'
 
 export const model = anthropic('claude-3-haiku-20240307')

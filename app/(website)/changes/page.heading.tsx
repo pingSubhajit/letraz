@@ -1,6 +1,6 @@
 'use client'
 
-import {discordHandle} from '@/constants'
+import {discordHandle} from '@/config'
 import {motion} from 'motion/react'
 
 const ChangesPageHeading = () => {
