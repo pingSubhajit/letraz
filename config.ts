@@ -1,6 +1,7 @@
 import localFont from 'next/font/local'
 import {anthropic} from '@ai-sdk/anthropic'
 
+// Fonts
 export const modelica = localFont({
 	src: [
 		// Regular fonts
@@ -90,10 +91,22 @@ export const modelica = localFont({
 	]
 })
 
+// Supporting services
 export const defaultUrl = process.env.VERCEL_ENV === 'production'
 	? 'https://letraz.app'
 	: process.env.MAIN_URL || 'http://localhost:3000'
 export const githubRepo = 'https://github.com/pingSubhajit/letraz'
 export const portfolio = 'https://subhajit.lol'
+export const ghostBlogUrl = 'https://blog.letraz.app'
+export const discordBlogUrl = 'http://64.227.146.129:4000'
 
+// Socials
+export const discordHandle = 'https://discord.gg/letraz'
+export const githubHandle = 'https://github.com/pingSubhajit/letraz'
+export const twitterHandle = 'https://x.com/LetrazApp'
+
+// AI
 export const model = anthropic('claude-3-haiku-20240307')
+
+// Misc.
+export const discordAnnouncementChannelId = '1325855779126902884'

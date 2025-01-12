@@ -16,6 +16,8 @@ export const metadata: Metadata = {
 	}
 }
 
+export const revalidate = 300
+
 const ChangelogPage = async () => {
 	const posts = await getPosts()
 

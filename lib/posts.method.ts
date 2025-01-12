@@ -1,6 +1,6 @@
 'use server'
 
-import {ghostBlogUrl} from '@/constants'
+import {ghostBlogUrl} from '@/config'
 
 export const getPosts = async () => {
 	const response = await fetch(`${ghostBlogUrl}/ghost/api/content/posts/?key=${process.env.GHOST_API_KEY!}&limit=all`)
