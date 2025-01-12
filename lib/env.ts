@@ -55,6 +55,12 @@ const envSchema = z.object({
 
 	NEXT_PUBLIC_POSTHOG_HOST: z.string().url({
 		message: 'PostHog host must be a valid URL (e.g., https://us.i.posthog.com)'
+	}),
+
+	// Discord Bot Token
+	DISCORD_BOD_TOKEN: z.string({
+		required_error: 'Discord bot token is required',
+		invalid_type_error: 'Discord bot token must be a string'
 	})
 })
 
