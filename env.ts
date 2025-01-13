@@ -67,27 +67,19 @@ const envSchema = z.object({
 // Create a type from the schema
 type Env = z.infer<typeof envSchema>
 
-/*
- * Validate environment variables
- * const validateEnv = (): Env => {
- * 	try {
- * 		return envSchema.parse(process.env)
- * 	} catch (error) {
- * 		if (error instanceof z.ZodError) {
- * 			const errorMessages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join('\n')
- * 			throw new Error(`❌ Invalid environment variables:\n${errorMessages}`)
- * 		}
- * 		throw error
- * 	}
- * }
- */
 
-const validateEnv = () => envSchema.safeParse(process.env)
-
-/*
- * Usage example
- * const env = validateEnv()
- */
+// Validate environment variables
+const validateEnv = (): Env => {
+	try {
+		return envSchema.parse(process.env)
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			const errorMessages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join('\n')
+			throw new Error(`❌ Invalid environment variables:\n${errorMessages}`)
+		}
+		throw error
+	}
+}
 
 declare global {
 	namespace NodeJS {
