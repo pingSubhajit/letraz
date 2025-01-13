@@ -1,6 +1,5 @@
 import localFont from 'next/font/local'
 import {anthropic} from '@ai-sdk/anthropic'
-import {env} from '@/lib/env'
 
 // Fonts
 export const modelica = localFont({
@@ -93,9 +92,9 @@ export const modelica = localFont({
 })
 
 // Supporting services
-export const defaultUrl = env.VERCEL_ENV === 'production'
+export const defaultUrl = process.env.VERCEL_ENV === 'production'
 	? 'https://letraz.app'
-	: env.MAIN_URL || 'http://localhost:3000'
+	: process.env.MAIN_URL || 'http://localhost:3000'
 export const githubRepo = 'https://github.com/pingSubhajit/letraz'
 export const portfolio = 'https://subhajit.lol'
 export const ghostBlogUrl = 'https://blog.letraz.app'
