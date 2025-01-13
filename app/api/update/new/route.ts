@@ -2,9 +2,11 @@ import {NextRequest, NextResponse} from 'next/server'
 import {getPosts} from '@/lib/posts.method'
 import {defaultUrl, discordAnnouncementChannelId, discordBlogUrl} from '@/config'
 import TurndownService from 'turndown'
+import {revalidatePath} from 'next/cache'
 
 export const POST = async (req: NextRequest) => {
 	try {
+		revalidatePath('/changes')
 		const post = (await getPosts()).posts[0]
 		const turndownService = new TurndownService()
 		const response = await fetch(`${discordBlogUrl}/main/announcement`, {
