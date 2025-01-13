@@ -5,10 +5,9 @@ import {waitlist, WaitlistInsert} from '@/db/schema'
 import {Resend} from 'resend'
 import WaitlistWelcomeEmail from '@/emails/welcome'
 import {count, eq} from 'drizzle-orm'
-import {env} from '@/lib/env'
 
 
-const resend = new Resend(env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const signUpForWaitlist = async (email: string, referrer?: any) => {
 	const params = WaitlistInsert.parse({email, referrer})

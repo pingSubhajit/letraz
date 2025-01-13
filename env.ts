@@ -58,7 +58,7 @@ const envSchema = z.object({
 	}),
 
 	// Discord Bot Token
-	DISCORD_BOD_TOKEN: z.string({
+	DISCORD_BOT_TOKEN: z.string({
 		required_error: 'Discord bot token is required',
 		invalid_type_error: 'Discord bot token must be a string'
 	})
@@ -66,6 +66,7 @@ const envSchema = z.object({
 
 // Create a type from the schema
 type Env = z.infer<typeof envSchema>
+
 
 // Validate environment variables
 const validateEnv = (): Env => {
@@ -80,7 +81,10 @@ const validateEnv = (): Env => {
 	}
 }
 
-// Usage example
-const env = validateEnv()
+declare global {
+	namespace NodeJS {
+		interface ProcessEnv extends z.infer<typeof envSchema> {}
+	}
+}
 
-export {env, validateEnv, envSchema}
+export {validateEnv, envSchema}
