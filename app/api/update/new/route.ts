@@ -11,7 +11,7 @@ export const POST = async (req: NextRequest) => {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${process.env.DISCORD_BOD_TOKEN}`
+				'Authorization': `Bearer ${process.env.DISCORD_BOT_TOKEN}`
 			},
 			body: JSON.stringify({
 				image_url: post.feature_image,

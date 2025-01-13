@@ -58,7 +58,7 @@ const envSchema = z.object({
 	}),
 
 	// Discord Bot Token
-	DISCORD_BOD_TOKEN: z.string({
+	DISCORD_BOT_TOKEN: z.string({
 		required_error: 'Discord bot token is required',
 		invalid_type_error: 'Discord bot token must be a string'
 	})
