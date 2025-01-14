@@ -12,7 +12,7 @@ import {useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import {Loader2} from 'lucide-react'
 import {toast} from 'sonner'
-import {discordHandle} from '@/constants'
+import {discordHandle} from '@/config'
 
 const formSchema = z.object({
 	email: z.string().email({message: 'Please enter a valid email address'})
