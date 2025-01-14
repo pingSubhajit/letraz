@@ -20,6 +20,7 @@ const formSchema = z.object({
 
 const Waitlist = ({className, referrer}: {className?: string, referrer: string | undefined}) => {
 	const [signedUp, setSignedUp] = useState(false)
+	const [email, setEmail] = useState('')
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -28,18 +29,22 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 	})
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		setEmail(values.email)
+		form.reset()
+		setSignedUp(true)
+
 		try {
 			await signUpForWaitlist(values.email, referrer)
-			form.reset()
-			setSignedUp(true)
 		} catch (error) {
+			setSignedUp(false)
+			form.setValue('email', email)
 			toast.error('Failed to sign up, please try again')
 		}
 	}
 
 	return (
 		<div className={cn('', className)}>
-			<AnimatePresence>
+			<AnimatePresence mode="wait">
 				{!signedUp && <motion.div
 					initial={{opacity: 0}}
 					animate={{opacity: 1}}
@@ -67,7 +72,6 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 								disabled={!form.formState.isValid || form.formState.isSubmitting}
 								className="rounded-r-full h-auto px-4 lg:px-8"
 							>
-								{form.formState.isSubmitting && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
 								Join waitlist
 							</Button>
 						</form>
