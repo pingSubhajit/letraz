@@ -257,7 +257,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 								)}
 							/>
 
-							<div ref={endDateFieldsParent} className='col-span-2 grid grid-cols-2 gap-4'>
+							<div ref={endDateFieldsParent} className="col-span-2 grid grid-cols-2 gap-4">
 								{!form.watch('current') && (
 									<>
 										<FormField
