@@ -15,6 +15,7 @@ import RichTextEditor from '@/components/richTextEditor'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Checkbox} from '@/components/ui/checkbox'
+import {countries} from '@/lib/constants'
 
 const experienceFormSchema = z.object({
 	companyName: z.string().min(1, 'Company name is required'),
@@ -40,7 +41,9 @@ const employmentTypes = [
 	'Self-employed',
 	'Freelance',
 	'Contract',
-	'Internship'
+	'Internship',
+	'Trainee',
+	'Volunteer'
 ]
 
 const ExperienceEditor = ({className}: {className?: string}) => {
@@ -48,6 +51,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 	const [experiences, setExperiences] = useState<Experience[]>([])
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
+	const [headerParent] = useAutoAnimate()
+	const [endDateFieldsParent] = useAutoAnimate()
 
 	const form = useForm<Experience>({
 		resolver: zodResolver(experienceFormSchema),
@@ -112,8 +117,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 	if (view === 'form') {
 		return (
 			<div className={cn('space-y-6', className)}>
-				<div className="mb-6">
-					<h2 className="text-lg font-medium">
+				<div className="mb-6 flex items-center justify-between">
+					<h2 className="text-lg font-medium min-w-[16rem]">
 						{editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
 					</h2>
 				</div>
@@ -201,9 +206,32 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Country</FormLabel>
-										<FormControl>
-											<Input {...field} placeholder="e.g. United States" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
-										</FormControl>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0">
+													<SelectValue placeholder="Select country">
+														{field.value && (
+															<span className="flex items-center">
+																<span className="mr-2">{countries.find(c => c.name === field.value)?.flag}</span>
+																{field.value}
+															</span>
+														)}
+													</SelectValue>
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent className="max-h-[300px]">
+												{countries.map(country => (
+													<SelectItem
+														key={country.code}
+														value={country.name}
+														className="flex items-center"
+													>
+														<span className="mr-2">{country.flag || '🏳️'}</span>
+														{country.name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
 										<FormMessage className="text-xs" />
 									</FormItem>
 								)}
@@ -260,55 +288,60 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								)}
 							/>
 
-							<FormField
-								control={form.control}
-								name="finishedAtMonth"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">End Month</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Choose month" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{months.map(month => (
-													<SelectItem key={month} value={month}>
-														{month}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage className="text-xs" />
-									</FormItem>
+							<div ref={endDateFieldsParent} className="col-span-2 grid grid-cols-2 gap-4">
+								{!form.watch('current') && (
+									<>
+										<FormField
+											control={form.control}
+											name="finishedAtMonth"
+											render={({field}) => (
+												<FormItem>
+													<FormLabel className="text-foreground">End Month</FormLabel>
+													<Select onValueChange={field.onChange} value={field.value}>
+														<FormControl>
+															<SelectTrigger>
+																<SelectValue placeholder="Choose month" />
+															</SelectTrigger>
+														</FormControl>
+														<SelectContent>
+															{months.map(month => (
+																<SelectItem key={month} value={month}>
+																	{month}
+																</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+													<FormMessage className="text-xs" />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name="finishedAtYear"
+											render={({field}) => (
+												<FormItem>
+													<FormLabel className="text-foreground">End Year</FormLabel>
+													<Select onValueChange={field.onChange} value={field.value}>
+														<FormControl>
+															<SelectTrigger>
+																<SelectValue placeholder="Choose year" />
+															</SelectTrigger>
+														</FormControl>
+														<SelectContent>
+															{years.map(year => (
+																<SelectItem key={year} value={year}>
+																	{year}
+																</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+													<FormMessage className="text-xs" />
+												</FormItem>
+											)}
+										/>
+									</>
 								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name="finishedAtYear"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">End Year</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Choose year" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{years.map(year => (
-													<SelectItem key={year} value={year}>
-														{year}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
+							</div>
 						</div>
 
 						<FormField
@@ -341,7 +374,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 										<RichTextEditor
 											value={field.value}
 											onChange={field.onChange}
-											className="h-60 mt-4"
+											className="h-60 mt-3"
 											placeholder="Describe your role, responsibilities, and key achievements..."
 											editorContentClassName="flex-1 h-[200px] overflow-y-auto"
 										/>
@@ -351,12 +384,12 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 							)}
 						/>
 
-						<div className="flex gap-4">
-							<Button type="submit" className="flex-1">
-								{editingIndex !== null ? 'Update Experience' : 'Add Experience'}
-							</Button>
-							<Button type="button" variant="outline" onClick={handleCancel}>
+						<div className="flex gap-4 justify-end">
+							<Button type="button" variant="outline" size="sm" onClick={handleCancel}>
 								Cancel
+							</Button>
+							<Button type="submit" size="sm">
+								{editingIndex !== null ? 'Update Experience' : 'Add Experience'}
 							</Button>
 						</div>
 					</form>
@@ -367,6 +400,20 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 
 	return (
 		<div className={cn('space-y-6', className)}>
+			<div ref={headerParent} className="mb-6 flex items-center justify-between">
+				<h2 className="text-lg font-medium">Experience</h2>
+				{experiences.length > 0 && (
+					<Button
+						onClick={handleAddNew}
+						variant="outline"
+						size="sm"
+					>
+						<Plus className="h-4 w-4 mr-2" />
+						Add New Experience
+					</Button>
+				)}
+			</div>
+
 			<div ref={parent} className="space-y-4">
 				{experiences.map((experience, index) => (
 					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
@@ -406,15 +453,16 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 					</div>
 				))}
 			</div>
-
-			<Button
-				onClick={handleAddNew}
-				className="w-full"
-				variant="outline"
-			>
-				<Plus className="h-4 w-4 mr-2" />
-				Add New Experience
-			</Button>
+			{experiences.length === 0 && (
+				<Button
+					onClick={handleAddNew}
+					className="w-full"
+					variant="outline"
+				>
+					<Plus className="h-4 w-4 mr-2" />
+					Add New Experience
+				</Button>
+			)}
 		</div>
 	)
 }

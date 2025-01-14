@@ -167,7 +167,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 														value={country.name}
 														className="flex items-center"
 													>
-														<span className="mr-2">{country.flag}</span>
+														<span className="mr-2">{country.flag || '🏳️'}</span>
 														{country.name}
 													</SelectItem>
 												))}
@@ -313,6 +313,26 @@ const EducationEditor = ({className}: {className?: string}) => {
 								)}
 							</div>
 						</div>
+
+						<FormField
+							control={form.control}
+							name="current"
+							render={({field}) => (
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none">
+										<FormLabel>
+											I currently study here
+										</FormLabel>
+									</div>
+								</FormItem>
+							)}
+						/>
 
 						<FormField
 							control={form.control}
