@@ -10,7 +10,6 @@ import {cn} from '@/lib/utils'
 import {signUpForWaitlist} from '@/lib/waitlist.methods'
 import {useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
-import {Loader2} from 'lucide-react'
 import {toast} from 'sonner'
 import {discordHandle} from '@/config'
 
@@ -20,7 +19,6 @@ const formSchema = z.object({
 
 const Waitlist = ({className, referrer}: {className?: string, referrer: string | undefined}) => {
 	const [signedUp, setSignedUp] = useState(false)
-	const [email, setEmail] = useState('')
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -29,15 +27,12 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 	})
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
-		setEmail(values.email)
-		form.reset()
-		setSignedUp(true)
-
 		try {
+			setSignedUp(true)
 			await signUpForWaitlist(values.email, referrer)
+			form.reset()
 		} catch (error) {
 			setSignedUp(false)
-			form.setValue('email', email)
 			toast.error('Failed to sign up, please try again')
 		}
 	}
