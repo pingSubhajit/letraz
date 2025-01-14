@@ -4,7 +4,7 @@ import {AnimatePresence, motion} from 'motion/react'
 import {cn} from '@/lib/utils'
 import {SiDiscord, SiGithub, SiX} from 'react-icons/si'
 import {Button} from '@/components/ui/button'
-import {discordHandle, githubHandle, twitterHandle} from '@/constants'
+import {discordHandle, githubHandle, twitterHandle} from '@/config'
 import {Link} from 'next-view-transitions'
 
 const LandingPageFooter = ({className}: {className?: string}) => {

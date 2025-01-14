@@ -8,6 +8,7 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {months, years} from '@/constants'
+import {countries} from '@/lib/constants'
 import {Pencil, Plus, X} from 'lucide-react'
 import {Input} from '@/components/ui/input'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
@@ -38,6 +39,8 @@ const EducationEditor = ({className}: {className?: string}) => {
 	const [educations, setEducations] = useState<Education[]>([])
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
+	const [headerParent] = useAutoAnimate()
+	const [endDateFieldsParent] = useAutoAnimate()
 
 	const form = useForm<Education>({
 		resolver: zodResolver(educationFormSchema),
@@ -112,8 +115,8 @@ const EducationEditor = ({className}: {className?: string}) => {
 	if (view === 'form') {
 		return (
 			<div className={cn('space-y-6', className)}>
-				<div className="mb-6">
-					<h2 className="text-lg font-medium">
+				<div ref={headerParent} className="mb-6 flex items-center justify-between">
+					<h2 className="text-lg font-medium min-w-[16rem]">
 						{editingIndex !== null ? 'Update Education' : 'Add New Education'}
 					</h2>
 				</div>
@@ -144,9 +147,32 @@ const EducationEditor = ({className}: {className?: string}) => {
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Country</FormLabel>
-										<FormControl>
-											<Input {...field} placeholder="e.g. United States" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
-										</FormControl>
+										<Select onValueChange={field.onChange} value={field.value}>
+											<FormControl>
+												<SelectTrigger className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0">
+													<SelectValue placeholder="Select country">
+														{field.value && (
+															<span className="flex items-center">
+																<span className="mr-2">{countries.find(c => c.name === field.value)?.flag}</span>
+																{field.value}
+															</span>
+														)}
+													</SelectValue>
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent className="max-h-[300px]">
+												{countries.map(country => (
+													<SelectItem
+														key={country.code}
+														value={country.name}
+														className="flex items-center"
+													>
+														<span className="mr-2">{country.flag}</span>
+														{country.name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
 										<FormMessage className="text-xs" />
 									</FormItem>
 								)}
@@ -232,88 +258,73 @@ const EducationEditor = ({className}: {className?: string}) => {
 								)}
 							/>
 
-							<FormField
-								control={form.control}
-								name="finishedAtMonth"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">End Month</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Choose end month" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{months.map(month => (
-													<SelectItem key={month} value={month}>
-														{month}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name="finishedAtYear"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">End Year</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Choose end year" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{years.map(year => (
-													<SelectItem key={year} value={year}>
-														{year}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
-						</div>
-
-						<FormField
-							control={form.control}
-							name="current"
-							render={({field}) => (
-								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
-									<FormControl>
-										<Checkbox
-											checked={field.value}
-											onCheckedChange={field.onChange}
+							<div ref={endDateFieldsParent} className="col-span-2 grid grid-cols-2 gap-4">
+								{!form.watch('current') && (
+									<>
+										<FormField
+											control={form.control}
+											name="finishedAtMonth"
+											render={({field}) => (
+												<FormItem>
+													<FormLabel className="text-foreground">End Month</FormLabel>
+													<Select onValueChange={field.onChange} value={field.value}>
+														<FormControl>
+															<SelectTrigger>
+																<SelectValue placeholder="Choose end month" />
+															</SelectTrigger>
+														</FormControl>
+														<SelectContent>
+															{months.map(month => (
+																<SelectItem key={month} value={month}>
+																	{month}
+																</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+													<FormMessage className="text-xs" />
+												</FormItem>
+											)}
 										/>
-									</FormControl>
-									<div className="space-y-1 leading-none">
-										<FormLabel>
-											I currently study here
-										</FormLabel>
-									</div>
-								</FormItem>
-							)}
-						/>
+										<FormField
+											control={form.control}
+											name="finishedAtYear"
+											render={({field}) => (
+												<FormItem>
+													<FormLabel className="text-foreground">End Year</FormLabel>
+													<Select onValueChange={field.onChange} value={field.value}>
+														<FormControl>
+															<SelectTrigger>
+																<SelectValue placeholder="Choose end year" />
+															</SelectTrigger>
+														</FormControl>
+														<SelectContent>
+															{years.map(year => (
+																<SelectItem key={year} value={year}>
+																	{year}
+																</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+													<FormMessage className="text-xs" />
+												</FormItem>
+											)}
+										/>
+									</>
+								)}
+							</div>
+						</div>
 
 						<FormField
 							control={form.control}
 							name="description"
 							render={({field}) => (
 								<FormItem className="flex-1">
-									<FormLabel className="text-foreground">Description</FormLabel>
+									<FormLabel className="text-foreground ">Description</FormLabel>
 									<FormControl>
 										<RichTextEditor
 											value={field.value}
 											onChange={field.onChange}
-											className="h-60 mt-4"
+											className="h-60 mt-3 "
 											placeholder="Describe your academic achievements, relevant coursework, thesis, or any notable projects completed during your studies..."
 											editorContentClassName="flex-1 h-[200px] overflow-y-auto"
 										/>
@@ -323,12 +334,12 @@ const EducationEditor = ({className}: {className?: string}) => {
 							)}
 						/>
 
-						<div className="flex gap-4">
-							<Button type="submit" className="flex-1">
-								{editingIndex !== null ? 'Update Education' : 'Add Education'}
-							</Button>
-							<Button type="button" variant="outline" onClick={handleCancel}>
+						<div className="flex gap-4 justify-end">
+							<Button type="button" variant="outline" size="sm" onClick={handleCancel}>
 								Cancel
+							</Button>
+							<Button type="submit" size="sm">
+								{editingIndex !== null ? 'Update Education' : 'Add Education'}
 							</Button>
 						</div>
 					</form>
@@ -339,6 +350,19 @@ const EducationEditor = ({className}: {className?: string}) => {
 
 	return (
 		<div className={cn('space-y-6', className)}>
+			<div ref={headerParent} className="mb-6 flex items-center justify-between">
+				<h2 className="text-lg font-medium">Education</h2>
+				{educations.length > 0 && (
+					<Button
+						onClick={handleAddNew}
+						variant="outline"
+						size="sm"
+					>
+						<Plus className="h-4 w-4 mr-2" />
+						Add New Education
+					</Button>)}
+			</div>
+
 			<div ref={parent} className="space-y-4">
 				{educations.map((education, index) => (
 					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
@@ -347,7 +371,14 @@ const EducationEditor = ({className}: {className?: string}) => {
 								{education.degree} in {education.fieldOfStudy}
 							</h3>
 							<p className="text-sm text-muted-foreground">
-								{education.institutionName}, {education.country}
+								{education.institutionName}
+								{education.country && (
+									<span className="inline-flex items-center gap-1">
+										{', '}
+										{countries.find(c => c.name === education.country)?.flag}
+										{education.country}
+									</span>
+								)}
 							</p>
 							<p className="text-sm">
 								{education.startedFromMonth} {education.startedFromYear} -{' '}
@@ -377,15 +408,16 @@ const EducationEditor = ({className}: {className?: string}) => {
 					</div>
 				))}
 			</div>
-
-			<Button
-				onClick={handleAddNew}
-				className="w-full"
-				variant="outline"
-			>
-				<Plus className="h-4 w-4 mr-2" />
-				Add New Education
-			</Button>
+			{educations.length === 0 && (
+				<Button
+					onClick={handleAddNew}
+					className="w-full"
+					variant="outline"
+				>
+					<Plus className="h-4 w-4 mr-2" />
+					Add New Education
+				</Button>
+			)}
 		</div>
 	)
 }
