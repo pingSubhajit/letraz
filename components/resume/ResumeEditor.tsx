@@ -4,6 +4,7 @@ import {Resume} from '@/db/resumes.schema'
 import {cn} from '@/lib/utils'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
+import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
 
 const ResumeEditor = ({resume, className}: {resume: Resume, className?: string}) => {
 	return (
@@ -33,9 +34,7 @@ const ResumeEditor = ({resume, className}: {resume: Resume, className?: string})
 					<EducationEditor className="mt-6" />
 				</TabsContent>
 				<TabsContent value="experience">
-					<div className="text-center py-4 text-muted-foreground">
-						Experience editor coming soon...
-					</div>
+					<ExperienceEditor className="mt-6" />
 				</TabsContent>
 				<TabsContent value="skills">
 					<div className="text-center py-4 text-muted-foreground">
