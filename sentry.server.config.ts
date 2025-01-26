@@ -11,7 +11,7 @@ if (process.env.VERCEL_ENV === 'production') {
 		dsn: process.env.SENTRY_DSN,
 
 		// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-		tracesSampleRate: 1,
+		tracesSampleRate: 0.2, // Or use a function-based tracesSampler for more granular control.
 
 		// Setting this option to true will print useful information to the console while you're setting up Sentry.
 		debug: false
