@@ -1,6 +1,6 @@
-import {z} from 'zod'
+import {Schema, z} from 'zod'
 
-const envSchema = z.object({
+const envSchema: Schema = z.object({
 	// Optional
 	VERCEL_ENV: z.enum(['development', 'production', 'preview'], {
 		errorMap: () => ({message: 'Environment must be either "development", "preview" or "production"'})
@@ -65,13 +65,13 @@ const envSchema = z.object({
 
 	// Sentry Configuration
 	SENTRY_AUTH_TOKEN: z.string()
-		.regex(/^sntrys_[a-zA-Z0-9]+$/, {
+		.regex(/^sntrys_/, {
 			message: 'Sentry auth token must start with "sntrys_"'
 		})
 		.optional(),
 	SENTRY_DSN: z.string()
 		.url({message: 'SENTRY_DSN must be a valid URL'})
-		.regex(/^https:\/\/[a-zA-Z0-9]+@[a-zA-Z0-9]+\.ingest\.sentry\.io\/[0-9]+$/, {
+		.regex(/^https:\/\/[a-zA-Z0-9]+@[a-zA-Z0-9]+\.ingest\.(us|uk)\.sentry\.io\/[0-9]+$/, {
 			message: 'Invalid Sentry DSN format'
 		})
 		.transform(url => url.toString())
