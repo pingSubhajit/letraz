@@ -11,7 +11,15 @@ Sentry.init({
 
 	// Add optional integrations for additional features
 	integrations: [
-		Sentry.replayIntegration()
+		Sentry.replayIntegration({
+			// Mask user input and sensitive elements
+			maskAllText: true,
+			blockAllMedia: true,
+			// Define specific elements to mask
+			mask: ['input[type="password"]', '[data-mask]'],
+			// Define specific elements to block
+			block: ['[data-private]']
+		})
 	],
 
 	// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
@@ -28,5 +36,6 @@ Sentry.init({
 	replaysOnErrorSampleRate: 1.0,
 
 	// Setting this option to true will print useful information to the console while you're setting up Sentry.
-	debug: false
+	debug: process.env.VERCEL_ENV !== 'production',
+	environment: process.env.VERCEL_ENV
 })
