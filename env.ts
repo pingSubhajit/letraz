@@ -65,7 +65,7 @@ const envSchema: Schema = z.object({
 
 	// Sentry Configuration
 	SENTRY_AUTH_TOKEN: z.string()
-		.regex(/^sntrys_/, {
+		.regex(/^sntrys_.*/, {
 			message: 'Sentry auth token must start with "sntrys_"'
 		})
 		.optional(),
