@@ -23,7 +23,7 @@ Sentry.init({
 	],
 
 	// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-	tracesSampleRate: 1,
+	tracesSampleRate: process.env.VERCEL_ENV === 'production' ? 0.1 : 1.0,
 
 	/*
 	 * Define how likely Replay events are sampled.
