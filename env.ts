@@ -61,7 +61,20 @@ const envSchema = z.object({
 	DISCORD_BOT_TOKEN: z.string({
 		required_error: 'Discord bot token is required',
 		invalid_type_error: 'Discord bot token must be a string'
-	})
+	}),
+
+	// Sentry Configuration
+	SENTRY_AUTH_TOKEN: z.string()
+		.regex(/^sntrys_.*/, {
+			message: 'Sentry auth token must start with "sntrys_"'
+		})
+		.optional(),
+	SENTRY_DSN: z.string()
+		.url({message: 'SENTRY_DSN must be a valid URL'})
+		.regex(/^https:\/\/[a-zA-Z0-9]+@[a-zA-Z0-9]+\.ingest\.(us|uk)\.sentry\.io\/[0-9]+$/, {
+			message: 'Invalid Sentry DSN format'
+		})
+		.transform(url => url.toString())
 })
 
 // Create a type from the schema

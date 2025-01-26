@@ -42,3 +42,6 @@ next-env.d.ts
 # IDE
 /.idea
 /.zed
+
+# Sentry Config File
+.env.sentry-build-plugin
