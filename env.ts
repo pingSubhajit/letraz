@@ -1,6 +1,6 @@
-import {Schema, z} from 'zod'
+import {z} from 'zod'
 
-const envSchema: Schema = z.object({
+const envSchema = z.object({
 	// Optional
 	VERCEL_ENV: z.enum(['development', 'production', 'preview'], {
 		errorMap: () => ({message: 'Environment must be either "development", "preview" or "production"'})
@@ -75,13 +75,6 @@ const envSchema: Schema = z.object({
 			message: 'Invalid Sentry DSN format'
 		})
 		.transform(url => url.toString())
-		// Make required in production
-		.pipe(
-			z.string().refine(
-				val => process.env.VERCEL_ENV !== 'production' || val,
-				{message: 'SENTRY_DSN is required in production'}
-			)
-		)
 })
 
 // Create a type from the schema
