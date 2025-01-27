@@ -23,6 +23,11 @@ export default withSentryConfig(nextConfig, {
 	// An auth token is required for uploading source maps.
 	authToken: process.env.SENTRY_AUTH_TOKEN,
 
+	// Delete source maps after upload
+	sourcemaps: {
+		deleteSourcemapsAfterUpload: true
+	},
+
 	/*
 	 * For all available options, see:
 	 * https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
