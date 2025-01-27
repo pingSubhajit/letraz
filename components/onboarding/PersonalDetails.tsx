@@ -5,7 +5,7 @@ import {getPersonalInfoFromDB} from '@/lib/personalInfo.methods'
 
 const PersonalDetails = async () => {
 	const user = await currentUser()
-	const personalDetailsFromDB = await getPersonalInfoFromDB(user!.id)
+	const personalDetailsFromDB = await getPersonalInfoFromDB()
 
 	return (
 		<div className="w-full h-full flex flex-col">
@@ -18,8 +18,8 @@ const PersonalDetails = async () => {
 			</div>
 
 			<PersonalDetailsForm defaultValues={{
-				firstName: personalDetailsFromDB?.firstName || user?.firstName || '',
-				lastName: personalDetailsFromDB?.lastName || user?.lastName || '',
+				first_name: personalDetailsFromDB?.first_name || user?.firstName || '',
+				last_name: personalDetailsFromDB?.last_name || user?.lastName || '',
 				email: personalDetailsFromDB?.email || user?.emailAddresses[0].emailAddress || '',
 				phone: personalDetailsFromDB?.phone || user?.primaryPhoneNumber?.phoneNumber || ''
 			}} />

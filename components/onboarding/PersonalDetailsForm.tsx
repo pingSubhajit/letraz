@@ -12,13 +12,13 @@ import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
 import {useUser} from '@clerk/nextjs'
 import {toast} from 'sonner'
-import {addPersonalInfoToDB} from '@/lib/personalInfo.methods'
+import {addOrUpdateUserInfoToDB} from '@/lib/personalInfo.methods'
 
 const formSchema = z.object({
-	firstName: z.string()
+	first_name: z.string()
 		.min(2, {message: 'You don\'t have a name shorter than two letters do you?'})
 		.max(50, {message: 'That\'s a long name! We can\'t handle that'}),
-	lastName: z.string()
+	last_name: z.string()
 		.min(2, {message: 'You don\'t have a name shorter than two letters do you?'})
 		.max(50, {message: 'That\'s a long name! We can\'t handle that'})
 		.optional(),
@@ -30,8 +30,8 @@ const formSchema = z.object({
 })
 
 type DefaultValues = {
-	firstName: string
-	lastName: string
+	first_name: string
+	last_name: string
 	email: string
 	phone?: string
 }
@@ -43,8 +43,8 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			firstName: defaultValues.firstName,
-			lastName: defaultValues.lastName,
+			first_name: defaultValues.first_name,
+			last_name: defaultValues.last_name,
 			email: defaultValues.email,
 			phone: defaultValues.phone || undefined
 		}
@@ -52,9 +52,8 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
-			await addPersonalInfoToDB({
-				...values,
-				userId: user!.id
+			await addOrUpdateUserInfoToDB({
+				...values
 			})
 			router.push('/app/onboarding?step=education')
 		} catch (error) {
@@ -65,7 +64,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	return (
 		<div className={cn('max-w-4xl mx-auto flex flex-col items-center', className)}>
 			<motion.div
-				className="text-xl text-center mt-8 max-w-xl" {...({} as any)}
+				className="text-xl text-center mt-8 max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>We need a few details about you to craft the perfect resume for you</p>
@@ -81,7 +80,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						className="flex items-center gap-8 justify-between" >
 						<FormField
 							control={form.control}
-							name="firstName"
+							name="first_name"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="first name" {...field} autoFocus />
@@ -93,7 +92,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 
 						<FormField
 							control={form.control}
-							name="lastName"
+							name="last_name"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="last name" {...field} />
