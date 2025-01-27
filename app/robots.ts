@@ -1,6 +1,6 @@
 import type {MetadataRoute} from 'next'
 
-export default (): MetadataRoute.Robots => ({
+const robots = (): MetadataRoute.Robots => ({
 	rules: {
 		userAgent: '*',
 		allow: '/',
@@ -8,3 +8,5 @@ export default (): MetadataRoute.Robots => ({
 	},
 	sitemap: 'https://letraz.app/sitemap.xml'
 })
+
+export default robots
