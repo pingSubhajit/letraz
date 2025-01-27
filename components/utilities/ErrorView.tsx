@@ -20,11 +20,14 @@ const ErrorView = ({title, description, buttonText, buttonFn, className}: Props)
 
 	return (
 		<motion.div
+			role="alert"
+			aria-live="assertive"
 			className={cn('absolute top-1/2 left-1/2 -translate-x-[48%] -translate-y-1/2 flex flex-col justify-center items-center max-w-md gap-4', className)}>
 			<Image
 				priority
 				src={errorBanner}
 				alt="A visually appealing banner signifying an error has occured"
+				role="presentation"
 			/>
 			<h1 className="mt-2 text-center font-bold text-red-600 text-lg">{title || 'An unexpected error happened'}</h1>
 			<p className="text-sm text-center px-8">
