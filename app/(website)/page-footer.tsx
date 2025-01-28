@@ -12,7 +12,6 @@ const LandingPageFooter = ({className}: {className?: string}) => {
 		<AnimatePresence>
 			<motion.div
 				className={cn('w-full flex items-center justify-between', className)}
-				{...({} as any)}
 				initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.7}}
 			>
 				<Link href="/changes">
