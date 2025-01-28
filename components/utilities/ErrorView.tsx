@@ -20,7 +20,11 @@ const ErrorView = ({title, description, buttonText, buttonFn, className}: Props)
 
 	return (
 		<motion.div
-			className={cn('absolute top-1/2 left-1/2 -translate-x-[48%] -translate-y-1/2 flex flex-col justify-center items-center max-w-md gap-4', className)}>
+			initial={{opacity: 0}}
+			animate={{opacity: 1}}
+			transition={{duration: 1.5, delay: 0.3}}
+			className={cn('absolute top-1/2 left-1/2 -translate-x-[48%] -translate-y-1/2 flex flex-col justify-center items-center max-w-md gap-4', className)}
+		>
 			<Image
 				priority
 				src={errorBanner}
