@@ -5,7 +5,9 @@ import {validateEnv} from '@/env'
 validateEnv()
 
 const nextConfig: NextConfig = {
-	/* config options here */
+	experimental: {
+		reactCompiler: true
+	}
 }
 
 export default withSentryConfig(nextConfig, {
