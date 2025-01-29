@@ -1,9 +1,11 @@
+import {Suspense} from 'react'
 import {Metadata} from 'next'
 import Waitlist from '@/components/Waitlist'
 import LandingPageHeading from '@/app/(website)/page.heading'
 import LandingPageLogo from '@/app/(website)/page.logo'
 import LandingPageDescription from '@/app/(website)/page.description'
 import LandingPageFooter from '@/app/(website)/page-footer'
+import LandingPageVideo from '@/app/(website)/page.video'
 
 export const metadata: Metadata = {
 	title: 'Letraz — Craft unique resumes for each job application effortlessly',
@@ -42,14 +44,9 @@ const LandingPage = async (
 			</div>
 
 			<div className="w-full lg:w-[80%] h-svh flex justify-center items-center overflow-hidden">
-				<video
-					loop
-					autoPlay
-					muted
-					className="w-full h-full object-cover"
-				>
-					<source src="/letraz-intro.mp4" type="video/mp4"/>
-				</video>
+				<Suspense fallback={<div className="w-full h-full bg-neutral-100 animate-pulse"/>}>
+					<LandingPageVideo />
+				</Suspense>
 			</div>
 		</main>
 	)

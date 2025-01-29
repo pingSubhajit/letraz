@@ -19,20 +19,20 @@ const LandingPageFooter = ({className}: {className?: string}) => {
 				</Link>
 
 				<div className="flex items-center gap-5">
-					<a href={discordHandle} target="_blank">
-						<Button variant="ghost" size="icon" className="w-min h-min opacity-80 focus-visible:opacity-100 hover:opacity-100">
+					<a href={discordHandle} target="_blank" aria-label="Discord community">
+						<Button asChild variant="ghost" size="icon" className="w-min h-min opacity-80 focus-visible:opacity-100 hover:opacity-100">
 							<SiDiscord className="w-4 h-4"/>
 						</Button>
 					</a>
 
-					<a href={twitterHandle} target="_blank">
-						<Button variant="ghost" size="icon" className="w-min h-min opacity-80 focus-visible:opacity-100 hover:opacity-100">
+					<a href={twitterHandle} target="_blank" aria-label="X (Twitter) handle">
+						<Button asChild variant="ghost" size="icon" className="w-min h-min opacity-80 focus-visible:opacity-100 hover:opacity-100">
 							<SiX className="w-4 h-4"/>
 						</Button>
 					</a>
 
-					<a href={githubHandle} target="_blank">
-						<Button variant="ghost" size="icon" className="w-min h-min opacity-80 focus-visible:opacity-100 hover:opacity-100">
+					<a href={githubHandle} target="_blank" aria-label="Github page">
+						<Button asChild variant="ghost" size="icon" className="w-min h-min opacity-80 focus-visible:opacity-100 hover:opacity-100">
 							<SiGithub className="w-4 h-4"/>
 						</Button>
 					</a>
