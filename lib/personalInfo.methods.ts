@@ -2,27 +2,26 @@
 
 import {z} from 'zod'
 import {auth} from '@clerk/nextjs/server'
-import {stripNullFields} from '@/lib/utils'
 
 // Base schema for UserInfo
 const UserInfoSchema = z.object({
 	id: z.string(),
-	title: z.string().optional(),
+	title: z.string().nullable().optional(),
 	first_name: z.string(),
 	last_name: z.string(),
 	email: z.string().email(),
-	phone: z.string().optional(),
-	dob: z.date().optional(),
-	nationality: z.string().optional(),
-	address: z.string().optional(),
-	city: z.string().optional(),
-	postal: z.string().optional(),
+	phone: z.string().nullable().optional(),
+	dob: z.date().nullable().optional(),
+	nationality: z.string().nullable().optional(),
+	address: z.string().nullable().optional(),
+	city: z.string().nullable().optional(),
+	postal: z.string().nullable().optional(),
 	country: z.object({
 		code: z.string(),
 		name: z.string()
-	}).optional(),
-	website: z.string().url().optional(),
-	profile_text: z.string().optional(),
+	}).nullable().optional(),
+	website: z.string().url().nullable().optional(),
+	profile_text: z.string().nullable().optional(),
 	created_at: z.string(),
 	updated_at: z.string()
 })
@@ -45,17 +44,17 @@ export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation) 
 
 	const params = UserInfoMutationSchema.parse(userInfoValues)
 	const response = await fetch(`${process.env.API_URL}/user/`, {
-		method: 'POST',
+		method: 'PATCH',
 		headers: {
-			Authorization: `Bearer ${token}`
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
 			...params
 		})
 	})
 
-	const data = stripNullFields(await response.json())
-	return UserInfoSchema.parse(data)
+	return UserInfoSchema.parse(await response.json())
 }
 
 export const getPersonalInfoFromDB = async (): Promise<UserInfo> => {
@@ -68,6 +67,5 @@ export const getPersonalInfoFromDB = async (): Promise<UserInfo> => {
 		}
 	})
 
-	const data = stripNullFields(await response.json())
-	return UserInfoSchema.parse(data)
+	return UserInfoSchema.parse(await response.json())
 }
