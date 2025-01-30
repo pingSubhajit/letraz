@@ -3,7 +3,10 @@
 import {z} from 'zod'
 import {auth} from '@clerk/nextjs/server'
 
-// Base schema for UserInfo
+/*
+ * Base schema for UserInfo
+ * Check https://outline.letraz.app/api-reference/user/get-user-info for more information
+ */
 const UserInfoSchema = z.object({
 	id: z.string(),
 	title: z.string().nullable().optional(),
@@ -27,17 +30,25 @@ const UserInfoSchema = z.object({
 })
 
 
-// Derive MutationParams schema by omitting read-only fields
+/**
+ * Schema for UserInfoMutation
+ * Derived by omitting read-only fields from UserInfoSchema
+ */
 const UserInfoMutationSchema = UserInfoSchema.omit({
 	id: true,
 	created_at: true,
 	updated_at: true
 }).partial()
 
-// Infer TypeScript types
+// Infer TypeScript types from the schema
 export type UserInfo = z.infer<typeof UserInfoSchema>
 export type UserInfoMutation = z.infer<typeof UserInfoMutationSchema>
 
+/**
+ * Adds or updates user information in the database
+ * @param {UserInfoMutation} userInfoValues - The user information to add or update
+ * @returns {Promise<UserInfo>} - The updated user information
+ */
 export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation) => {
 	const session = await auth()
 	const token = await session.getToken()
@@ -57,6 +68,10 @@ export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation) 
 	return UserInfoSchema.parse(await response.json())
 }
 
+/**
+ * Retrieves personal information from the database
+ * @returns {Promise<UserInfo>} - The retrieved user information
+ */
 export const getPersonalInfoFromDB = async (): Promise<UserInfo> => {
 	const session = await auth()
 	const token = await session.getToken()
