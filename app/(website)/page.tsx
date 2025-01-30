@@ -6,6 +6,7 @@ import LandingPageLogo from '@/app/(website)/page.logo'
 import LandingPageDescription from '@/app/(website)/page.description'
 import LandingPageFooter from '@/app/(website)/page-footer'
 import LandingPageVideo from '@/app/(website)/page.video'
+import LandingPageGradientShadows from '@/app/(website)/page.gradientShadows'
 
 export const metadata: Metadata = {
 	title: 'Letraz — Craft unique resumes for each job application effortlessly',
@@ -38,9 +39,9 @@ const LandingPage = async (
 				<div className="absolute w-full h-full inset-0 bg-neutral-100 z-20 shadow-2xl" />
 
 				{/* SIDEBAR GRADIENT SHADOWS */}
-				<div className="hidden lg:block h-[674px] w-[118px] absolute bg-rose-500/70 rounded-[50%] blur-[200px] z-10 -top-48 right-16" />
-				<div className="hidden lg:block h-[669px] w-[228px] absolute bg-flame-500/70 rounded-[50%] z-10 top-[25%] blur-[200px] right-16" />
-				<div className="hidden lg:block h-[709px] w-[176px] absolute bg-amber-300/70 rounded-[50%] z-10 -bottom-36 blur-[200px] right-16" />
+				<Suspense>
+					<LandingPageGradientShadows />
+				</Suspense>
 			</div>
 
 			<div className="w-full lg:w-[80%] h-svh flex justify-center items-center overflow-hidden">
