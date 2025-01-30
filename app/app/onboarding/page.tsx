@@ -7,6 +7,8 @@ import PersonalDetails from '@/components/onboarding/PersonalDetails'
 import {getEducationsFromDB} from '@/lib/education.methods'
 import Education from '@/components/onboarding/Education'
 import {JSX} from 'react'
+import {getExperiencesFromDB} from '@/lib/experience.methods'
+import Experience from '@/components/onboarding/Experience'
 
 /**
  * OnboardingPage component handles the rendering of different onboarding steps.
@@ -31,7 +33,7 @@ const OnboardingPage = async (
 
 	// Fetch the educations from the database
 	const educations = await getEducationsFromDB('base')
-	// const experiences = await getExperiencesFromDB(userId!)
+	const experiences = await getExperiencesFromDB('base')
 
 	// Render the appropriate component based on the current onboarding step
 	return (
@@ -42,7 +44,7 @@ const OnboardingPage = async (
 			{step === OnboardingStep.ABOUT && <About />}
 			{step === OnboardingStep.PERSONAL_DETAILS && <PersonalDetails />}
 			{step === OnboardingStep.EDUCATION && <Education allEducations={educations} />}
-			{/* {step === OnboardingStep.EXPERIENCE && <Experience allExperiences={experiences} />}*/}
+			{step === OnboardingStep.EXPERIENCE && <Experience allExperiences={experiences} />}
 			{/* {step === OnboardingStep.RESUME && <BaseResume />}*/}
 		</div>
 	)

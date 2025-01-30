@@ -17,7 +17,6 @@ import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {addEducationToDB, Education} from '@/lib/education.methods'
-import {useUser} from '@clerk/nextjs'
 import {JSX} from 'react'
 
 // Define the schema for the education form using zod
@@ -60,7 +59,6 @@ const EducationForm = ({
 	setEducations
 }: EducationFormProps): JSX.Element => {
 	const router = useTransitionRouter()
-	const {user} = useUser()
 
 	// Initialize the form with default values and validation schema
 	const form = useForm<z.infer<typeof educationFormSchema>>({

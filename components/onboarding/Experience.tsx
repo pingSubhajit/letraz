@@ -1,49 +1,45 @@
 'use client'
 
 import TextAnimate from '@/components/animations/TextAnimations'
-import {z} from 'zod'
-import {useState} from 'react'
+import {JSX, useState} from 'react'
 import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
-import ExperienceForm, {experienceFormSchema} from '@/components/onboarding/ExperienceForm'
-import {experiences} from '@/db/schema'
+import ExperienceForm from '@/components/onboarding/ExperienceForm'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
-import {deleteExperienceFromDB} from '@/lib/experience.methods'
+import {deleteExperienceFromDB, Experience as ExperienceType} from '@/lib/experience.methods'
 import {toast} from 'sonner'
 import PopConfirm from '@/components/ui/pop-confirm'
 
-const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inferSelect)[] }) => {
-	const [currentExperiences, setCurrentExperiences] = useState<z.infer<typeof experienceFormSchema>[]>(allExperiences.map(experience => ({
-		id: experience.id,
-		companyName: experience.companyName as string | undefined,
-		country: experience.country as string | undefined,
-		jobTitle: experience.jobTitle as string | undefined,
-		city: experience.city as string | undefined,
-		startedFromMonth: experience.startedFromMonth ? months[experience.startedFromMonth - 1] : undefined,
-		startedFromYear: experience.startedFromYear ? experience.startedFromYear.toString() : undefined,
-		finishedAtMonth: experience.finishedAtMonth ? months[experience.finishedAtMonth - 1] : undefined,
-		finishedAtYear: experience.finishedAtYear ? experience.finishedAtYear.toString() : undefined,
-		current: experience.current as boolean | undefined,
-		description: experience.description as string | undefined
-	})))
+/**
+ * Experience component to display and manage user's experience details.
+ *
+ * @param {Object} props - Component props
+ * @param {ExperienceType[]} props.allExperiences - Array of experience details
+ * @returns {JSX.Element} The Experience component
+ */
+const Experience = ({allExperiences}: { allExperiences: ExperienceType[] }): JSX.Element => {
+	// State to manage the current list of experiences
+	const [currentExperiences, setCurrentExperiences] = useState<ExperienceType[]>(allExperiences)
 	const [parent] = useAutoAnimate()
 
+	/**
+	 * Handles the deletion of an experience entry.
+	 * @param {number} index - Index of the experience entry to delete
+	 */
 	const handleDeleteExperience = async (index: number) => {
 		const experienceToDelete = currentExperiences[index]
+		// Check if the experience has an ID
 		if (!experienceToDelete.id) {
 			toast.error('Cannot delete experience without an ID')
 			return
 		}
 
+		// Delete the experience from the database
 		try {
 			const result = await deleteExperienceFromDB(experienceToDelete.id)
-			if (result && result.length > 0) {
-				setCurrentExperiences(prev => prev.filter((_, i) => i !== index))
-				toast.success('Experience deleted successfully')
-			} else {
-				throw new Error('Failed to delete experience')
-			}
+			setCurrentExperiences(prev => prev.filter((_, i) => i !== index))
+			toast.success('Experience deleted successfully')
 		} catch (error) {
 			toast.error('Failed to delete experience. Please try again.')
 		}
@@ -94,15 +90,15 @@ const Experience = ({allExperiences}: { allExperiences: (typeof experiences.$inf
 									onYes={() => handleDeleteExperience(index)}
 								/>
 								<p className="truncate font-medium text-xl">
-									{experience.jobTitle && experience.jobTitle + ' '}
-									{experience.jobTitle && 'in'} {experience.companyName}
+									{experience.job_title && experience.job_title + ' '}
+									{experience.job_title && 'in'} {experience.company_name}
 								</p>
 								<p className="mt-1 text-sm">
-									{experience.startedFromMonth && experience.startedFromYear && 'From '}
-									{experience.startedFromMonth} {experience.startedFromYear}
+									{experience.started_from_month && experience.started_from_year && 'From '}
+									{experience.started_from_month && months[experience.started_from_month - 1]} {experience.started_from_year}
 
-									{experience.finishedAtMonth && experience.finishedAtYear && ' until '}
-									{experience.finishedAtMonth} {experience.finishedAtYear}
+									{experience.finished_at_month && experience.finished_at_year && ' until '}
+									{experience.finished_at_month && months[experience.finished_at_month - 1]} {experience.finished_at_year}
 								</p>
 							</li>
 						)

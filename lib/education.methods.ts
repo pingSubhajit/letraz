@@ -5,7 +5,7 @@ import {auth} from '@clerk/nextjs/server'
 
 /*
  * Base schema for Education
- * Check http://localhost:3001/api-reference/education-object/get-education-by-id for more information
+ * Check https://outline.letraz.app/api-reference/education-object/get-education-by-id for more information
  */
 const EducationSchema = z.object({
 	id: z.string().uuid().describe('The unique identifier for the education entry.').readonly(),
@@ -30,7 +30,7 @@ const EducationSchema = z.object({
 
 /**
  * Schema for EducationMutation
- * Derived by omitting read-only fields from UserInfoSchema
+ * Derived by omitting read-only fields from EducationSchema
  */
 const EducationMutationSchema = EducationSchema.omit({
 	id: true,

@@ -16,77 +16,104 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-import {addExperienceToDB} from '@/lib/experience.methods'
+import {addExperienceToDB, Experience} from '@/lib/experience.methods'
 import {useUser} from '@clerk/nextjs'
 import {createBaseResume} from '@/lib/resume.methods'
-// import RichTextEditor from './RichTextEditor'
+import {JSX} from 'react'
 
+// Define the schema for the experience form using zod
 export const experienceFormSchema = z.object({
 	id: z.string().optional(),
-	companyName: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
+	company_name: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
 	country: z.string().optional(),
-	jobTitle: z.string().optional(),
+	job_title: z.string().optional(),
 	city: z.string().optional(),
-	startedFromMonth: z.string().optional(),
-	startedFromYear: z.string().optional(),
-	finishedAtMonth: z.string().optional(),
-	finishedAtYear: z.string().optional(),
+	employment_type: z.string(),
+	started_from_month: z.string().optional(),
+	started_from_year: z.string().optional(),
+	finished_at_month: z.string().optional(),
+	finished_at_year: z.string().optional(),
 	current: z.boolean().optional(),
 	description: z.string().optional()
 })
 
+// Define the props for the EducationForm component
 type ExperienceFormProps = {
 	className?: string,
-	experiences: z.infer<typeof experienceFormSchema>[],
-	setExperiences: (educations: z.infer<typeof experienceFormSchema>[]) => void
+	experiences: Experience[],
+	setExperiences: (educations: Experience[]) => void
 }
 
-const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps) => {
+/**
+ * EducationForm component handles the form for adding educational details.
+ *
+ * @param {ExperienceFormProps} props - The properties object.
+ * @param {string} [props.className] - Additional class names for styling.
+ * @param {Education[]} props.experiences - The list of current experience entries.
+ * @param {function} props.setExperiences - Function to update the list of experiences entries.
+ * @returns {JSX.Element} The JSX code to render the experience form.
+ */
+const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps): JSX.Element => {
 	const router = useTransitionRouter()
 	const {user} = useUser()
 
+	// Initialize the form with default values and validation schema
 	const form = useForm<z.infer<typeof experienceFormSchema>>({
 		resolver: zodResolver(experienceFormSchema),
 		defaultValues: {
-			companyName: '',
+			company_name: '',
 			country: '',
-			jobTitle: '',
+			job_title: '',
 			city: '',
-			startedFromMonth: '',
-			startedFromYear: '',
-			finishedAtMonth: '',
-			finishedAtYear: '',
+			employment_type: 'flt',
+			started_from_month: '',
+			started_from_year: '',
+			finished_at_month: '',
+			finished_at_year: '',
 			current: false,
 			description: ''
 		}
 	})
 
-	const insertExperience = async (values: z.infer<typeof experienceFormSchema>) => {
+	/**
+	 * Function to insert experience details into the database.
+	 *
+	 * @param {z.infer<typeof experienceFormSchema>} values - The form values.
+	 * @returns {Promise<Experience>} The newly added experience entry.
+	 */
+	const insertExperience = async (values: z.infer<typeof experienceFormSchema>): Promise<Experience> => {
 		return await addExperienceToDB({
 			...values,
-			startedFromMonth: months.findIndex(month => month === values.startedFromMonth) + 1,
-			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
-			finishedAtMonth: months.findIndex(month => month === values.finishedAtMonth) + 1,
-			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
-			current: !values.finishedAtYear,
-			userId: user!.id
+			started_from_month: months.findIndex(month => month === values.started_from_month) + 1,
+			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
+			finished_at_month: months.findIndex(month => month === values.finished_at_month) + 1,
+			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
+			current: !values.finished_at_year
 		})
 	}
 
+	/**
+	 * Function to handle form submission.
+	 * @param {z.infer<typeof experienceFormSchema>} values - The form values.
+	 */
 	const onSubmit = async (values: z.infer<typeof experienceFormSchema>) => {
 		try {
 			const newExperience = await insertExperience(values)
-			if (newExperience && newExperience[0]){
-				setExperiences([...experiences, {...values, id: newExperience[0].id}])
+			if (newExperience){
+				setExperiences([...experiences, newExperience])
 				form.reset()
 			} else {
-				toast.error('Failed to update experience')
+				throw new Error('Failed to add education')
 			}
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
 		}
 	}
 
+	/**
+	 * Function to handle form submission with redirect to next step.
+	 * @param {z.infer<typeof experienceFormSchema>} values - The form values.
+	 */
 	const submitWithRedirect = async (values: z.infer<typeof experienceFormSchema>) => {
 		try {
 			if (form.formState.isDirty) {
@@ -103,6 +130,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	return (
 		<div className={cn('max-w-2xl flex flex-col', className)}
 		>
+			{/* Informational message about the benefits of adding employment details */}
 			<motion.div
 				className="text-xl mt-8 max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
@@ -111,10 +139,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 			</motion.div>
 
 			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(onSubmit)}
-					className="mt-12"
-				>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12">
+					{/* Form fields for company name and country */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
@@ -122,7 +148,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					>
 						<FormField
 							control={form.control}
-							name="companyName"
+							name="company_name"
 							render={({field}) => (
 								<FormItem className="w-[95%]">
 									<OnboardingFormInput placeholder="company" {...field} autoFocus/>
@@ -145,6 +171,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						/>
 					</motion.div>
 
+					{/* Form fields for job title and city */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
@@ -152,7 +179,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					>
 						<FormField
 							control={form.control}
-							name="jobTitle"
+							name="job_title"
 							render={({field}) => (
 								<FormItem className="w-[95%]">
 									<OnboardingFormInput placeholder="job title" {...field} />
@@ -175,14 +202,16 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						/>
 					</motion.div>
 
+					{/* Form fields for start and end dates */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
 					>
+						{/* Form field for start month */}
 						<FormField
 							control={form.control}
-							name="startedFromMonth"
+							name="started_from_month"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
@@ -197,9 +226,10 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							)}
 						/>
 
+						{/* Form field for start year */}
 						<FormField
 							control={form.control}
-							name="startedFromYear"
+							name="started_from_year"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
@@ -214,9 +244,10 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							)}
 						/>
 
+						{/* Form field for end month */}
 						<FormField
 							control={form.control}
-							name="finishedAtMonth"
+							name="finished_at_month"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
@@ -231,9 +262,10 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							)}
 						/>
 
+						{/* Form field for end year */}
 						<FormField
 							control={form.control}
-							name="finishedAtYear"
+							name="finished_at_year"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
@@ -249,6 +281,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						/>
 					</motion.div>
 
+					{/* Form field for description */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
@@ -269,11 +302,12 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						/>
 					</motion.div>
 
+					{/* Navigation buttons */}
 					<div
 						className="w-[calc(100%-4.7rem)] flex items-center justify-between fixed left-[4.7rem] z-10 bottom-16 px-16"
 
 					>
-						{/* PREVIOUS STEP BUTTON */}
+						{/* Button to navigate to the previous step */}
 						<Link href={'/app/onboarding?step=education'}>
 							<Button
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
@@ -285,7 +319,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							</Button>
 						</Link>
 
-						{/* NEXT STEP BUTTONS */}
+						{/* Buttons to add another experience or proceed to the next step */}
 						<div className="flex items-center gap-4">
 							<Button
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
