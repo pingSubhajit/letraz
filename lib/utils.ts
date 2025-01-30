@@ -5,11 +5,8 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
 export const deepCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
 
-export const stripNullFields = (obj: Record<any, any>) => {
-	for (const key in obj) {
-		if (obj[key] === null) {
-			delete obj[key]
-		}
-	}
-	return obj
+export const stripNullFields = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, value]) => value !== null)
+  ) as Partial<T>;
 }
