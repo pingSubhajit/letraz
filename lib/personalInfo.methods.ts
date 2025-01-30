@@ -49,7 +49,7 @@ export type UserInfoMutation = z.infer<typeof UserInfoMutationSchema>
  * @param {UserInfoMutation} userInfoValues - The user information to add or update
  * @returns {Promise<UserInfo>} - The updated user information
  */
-export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation) => {
+export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation): Promise<UserInfo> => {
 	const session = await auth()
 	const token = await session.getToken()
 
