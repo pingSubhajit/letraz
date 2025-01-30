@@ -61,7 +61,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 										'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-3xl flex items-center gap-4',
 										currentSegment && currentSegment === link.segment && 'opacity-100'
 									)}>
-										<div className="w-2 h-2 rounded-full bg-flame-500" />
+										<span className="w-2 h-2 rounded-full bg-flame-500" />
 										{link.title}
 									</p>
 								</Link>
