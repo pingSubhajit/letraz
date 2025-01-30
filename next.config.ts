@@ -5,7 +5,9 @@ import {validateEnv} from '@/env'
 validateEnv()
 
 const nextConfig: NextConfig = {
-	/* config options here */
+	experimental: {
+		reactCompiler: true
+	}
 }
 
 export default withSentryConfig(nextConfig, {
@@ -22,6 +24,11 @@ export default withSentryConfig(nextConfig, {
 
 	// An auth token is required for uploading source maps.
 	authToken: process.env.SENTRY_AUTH_TOKEN,
+
+	// Delete source maps after upload
+	sourcemaps: {
+		deleteSourcemapsAfterUpload: true
+	},
 
 	/*
 	 * For all available options, see:
