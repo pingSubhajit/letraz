@@ -23,8 +23,13 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			email: ''
-		}
+		},
+		mode: 'onChange'
 	})
+
+
+	// Compute button disabled state
+	const isSubmissionDisabled = !form.formState.isValid || form.formState.isSubmitting
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
@@ -66,7 +71,7 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 
 								<Button
 									type="submit"
-									disabled={!form.formState.isValid || form.formState.isSubmitting}
+									disabled={isSubmissionDisabled}
 									className="rounded-r-full h-auto px-4 lg:px-8"
 								>
 									Join waitlist
