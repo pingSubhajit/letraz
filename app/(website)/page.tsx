@@ -39,9 +39,7 @@ const LandingPage = async (
 				<div className="absolute w-full h-full inset-0 bg-neutral-100 z-20 shadow-2xl" />
 
 				{/* SIDEBAR GRADIENT SHADOWS */}
-				<Suspense>
-					<LandingPageGradientShadows />
-				</Suspense>
+				<LandingPageGradientShadows />
 			</div>
 
 			<div className="w-full lg:w-[80%] h-svh flex justify-center items-center overflow-hidden">
