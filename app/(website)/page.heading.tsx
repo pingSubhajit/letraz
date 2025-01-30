@@ -8,7 +8,7 @@ const LandingPageHeading = ({className}: {className?: string}) => {
 		<AnimatePresence>
 			<motion.h1
 				className={cn('text-3xl md:text-4xl lg:text-5xl max-w-[700px] lg:max-w-[900px] lg:leading-snug font-bold', className)}
-				initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.7}}
+				initial={{opacity: 0}} animate={{opacity: 1}}
 			>
 				Craft unique résumés tailored to every job application
 			</motion.h1>
