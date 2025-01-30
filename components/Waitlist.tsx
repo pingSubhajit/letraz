@@ -48,7 +48,6 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 				{!signedUp ? (
 					<motion.div
 						key="form"
-						initial={{opacity: 0}}
 						animate={{opacity: 1}}
 						exit={{opacity: 0}}
 					>
@@ -87,7 +86,6 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 						key="success"
 						initial={{opacity: 0}}
 						animate={{opacity: 1}}
-						exit={{opacity: 0}}
 					>
 						Thanks for signing up! Join our <a href={discordHandle} target="_blank"
 							className="text-flame-500 font-medium hover:underline focus-visible:underline">

@@ -10,10 +10,7 @@ import {Link} from 'next-view-transitions'
 const LandingPageFooter = ({className}: {className?: string}) => {
 	return (
 		<AnimatePresence>
-			<motion.div
-				className={cn('w-full flex items-center justify-between', className)}
-				initial={{opacity: 0}} animate={{opacity: 1}}
-			>
+			<motion.div className={cn('w-full flex items-center justify-between', className)}>
 				<Link href="/changes">
 					<Button variant="link" className="pl-0 text-flame-500 font-semibold">Development updates</Button>
 				</Link>
