@@ -103,10 +103,10 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 				setExperiences([...experiences, newExperience])
 				form.reset()
 			} else {
-				throw new Error('Failed to add education')
+				throw new Error('Failed to add experience')
 			}
 		} catch (error) {
-			toast.error('Failed to update experience, please try again')
+			toast.error(error instanceof Error ? error.message : 'Failed to update experience, please try again')
 		}
 	}
 
