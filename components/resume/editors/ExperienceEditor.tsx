@@ -253,8 +253,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 											</FormControl>
 											<SelectContent>
 												{months.map(month => (
-													<SelectItem key={month} value={month}>
-														{month}
+													<SelectItem key={month.value} value={month.value}>
+														{month.label}
 													</SelectItem>
 												))}
 											</SelectContent>
@@ -277,8 +277,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 											</FormControl>
 											<SelectContent>
 												{years.map(year => (
-													<SelectItem key={year} value={year}>
-														{year}
+													<SelectItem key={year.value} value={year.value}>
+														{year.label}
 													</SelectItem>
 												))}
 											</SelectContent>
@@ -305,8 +305,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 														</FormControl>
 														<SelectContent>
 															{months.map(month => (
-																<SelectItem key={month} value={month}>
-																	{month}
+																<SelectItem key={month.value} value={month.value}>
+																	{month.label}
 																</SelectItem>
 															))}
 														</SelectContent>
@@ -329,8 +329,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 														</FormControl>
 														<SelectContent>
 															{years.map(year => (
-																<SelectItem key={year} value={year}>
-																	{year}
+																<SelectItem key={year.value} value={year.value}>
+																	{year.label}
 																</SelectItem>
 															))}
 														</SelectContent>
