@@ -9,7 +9,8 @@ import {months} from '@/constants'
 import {X} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {toast} from 'sonner'
-import {deleteEducationFromDB, Education as EducationType} from '@/lib/education.methods'
+import {deleteEducationFromDB} from '@/lib/education/actions'
+import {Education as EducationType} from '@/lib/education/types'
 import {ScrollArea} from '@/components/ui/scroll-area'
 
 /**
@@ -102,10 +103,10 @@ const Education = ({allEducations}: { allEducations: EducationType[] }): JSX.Ele
 								</p>
 								<p className="mt-1 text-sm">
 									{education.started_from_month && education.started_from_year && 'From '}
-									{education.started_from_month && months[education.started_from_month - 1]} {education.started_from_year?.toString()}
+									{education.started_from_month && months.find(month => parseInt(month.value) === education.started_from_month)?.label} {education.started_from_year?.toString()}
 
 									{education.finished_at_month && education.finished_at_year && ' until '}
-									{education.finished_at_month && months[education.finished_at_month - 1]} {education.finished_at_year?.toString()}
+									{education.finished_at_month && months.find(month => parseInt(month.value) === education.finished_at_month)?.label} {education.finished_at_year?.toString()}
 								</p>
 							</li>
 						)

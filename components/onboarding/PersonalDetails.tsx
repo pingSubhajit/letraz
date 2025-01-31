@@ -1,7 +1,7 @@
 import PersonalDetailsForm from '@/components/onboarding/PersonalDetailsForm'
 import TextAnimate from '@/components/animations/TextAnimations'
 import {currentUser} from '@clerk/nextjs/server'
-import {getPersonalInfoFromDB} from '@/lib/personalInfo.methods'
+import {getPersonalInfoFromDB} from '@/lib/user-info/actions'
 
 const PersonalDetails = async () => {
 	const user = await currentUser()

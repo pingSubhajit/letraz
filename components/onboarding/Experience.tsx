@@ -7,7 +7,8 @@ import {useAutoAnimate} from '@formkit/auto-animate/react'
 import ExperienceForm from '@/components/onboarding/ExperienceForm'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
-import {deleteExperienceFromDB, Experience as ExperienceType} from '@/lib/experience.methods'
+import {deleteExperienceFromDB} from '@/lib/experience/actions'
+import {Experience as ExperienceType} from '@/lib/experience/types'
 import {toast} from 'sonner'
 import PopConfirm from '@/components/ui/pop-confirm'
 
@@ -95,10 +96,10 @@ const Experience = ({allExperiences}: { allExperiences: ExperienceType[] }): JSX
 								</p>
 								<p className="mt-1 text-sm">
 									{experience.started_from_month && experience.started_from_year && 'From '}
-									{experience.started_from_month && months[experience.started_from_month - 1]} {experience.started_from_year}
+									{experience.started_from_month && months.find(month => parseInt(month.value) === experience.started_from_month)?.label} {experience.started_from_year}
 
 									{experience.finished_at_month && experience.finished_at_year && ' until '}
-									{experience.finished_at_month && months[experience.finished_at_month - 1]} {experience.finished_at_year}
+									{experience.finished_at_month && months.find(month => parseInt(month.value) === experience.finished_at_month)?.label} {experience.finished_at_year}
 								</p>
 							</li>
 						)

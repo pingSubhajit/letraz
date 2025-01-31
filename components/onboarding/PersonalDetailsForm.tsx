@@ -10,25 +10,12 @@ import {Button} from '@/components/ui/button'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
-import {useUser} from '@clerk/nextjs'
 import {toast} from 'sonner'
-import {addOrUpdateUserInfoToDB} from '@/lib/personalInfo.methods'
+import {addOrUpdateUserInfoToDB} from '@/lib/user-info/actions'
+import {UserInfoMutationSchema} from '@/lib/user-info/types'
+import {JSX} from 'react'
 
-const formSchema = z.object({
-	first_name: z.string()
-		.min(2, {message: 'You don\'t have a name shorter than two letters do you?'})
-		.max(50, {message: 'That\'s a long name! We can\'t handle that'}),
-	last_name: z.string()
-		.min(2, {message: 'You don\'t have a name shorter than two letters do you?'})
-		.max(50, {message: 'That\'s a long name! We can\'t handle that'})
-		.optional(),
-	email: z.string().email({message: 'Please enter a valid email address'}),
-	phone: z.string()
-		.min(10, {message: 'That phone number doesn\'t look right'})
-		.max(15, {message: 'That phone number doesn\'t look right'})
-		.optional()
-})
-
+// Define the default values for the form
 type DefaultValues = {
 	first_name: string
 	last_name: string
@@ -36,12 +23,19 @@ type DefaultValues = {
 	phone?: string
 }
 
-const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }) => {
+/**
+ * PersonalDetails component handles the form for adding user's profile details.
+ *
+ * @param {DefaultValues} props - The default values object.
+ * @param {string} [props.className] - Additional class names for styling.
+ * @returns {JSX.Element} The JSX code to render the education form.
+ */
+const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }): JSX.Element => {
 	const router = useTransitionRouter()
-	const {user} = useUser()
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	// Initialize the form with default values and validation schema
+	const form = useForm<z.infer<typeof UserInfoMutationSchema>>({
+		resolver: zodResolver(UserInfoMutationSchema),
 		defaultValues: {
 			first_name: defaultValues.first_name,
 			last_name: defaultValues.last_name,
@@ -50,7 +44,12 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 		}
 	})
 
-	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+	/**
+	 * Function to submit user's profile details to the backend.
+	 *
+	 * @param {z.infer<typeof UserInfoMutationSchema>} values - The form values.
+	 */
+	const onSubmit = async (values: z.infer<typeof UserInfoMutationSchema>) => {
 		try {
 			await addOrUpdateUserInfoToDB({
 				...values
@@ -123,7 +122,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 							name="phone"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="phone no." {...field} />
+									<OnboardingFormInput placeholder="phone no." {...field} value={field.value || ''} />
 									<FormLabel className="transition">Phone (optional)</FormLabel>
 									<FormMessage/>
 								</FormItem>

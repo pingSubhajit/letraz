@@ -1,13 +1,10 @@
-'use server'
-
 import {z} from 'zod'
-import {auth} from '@clerk/nextjs/server'
 
 /*
  * Base schema for Experience
  * Check https://outline.letraz.app/api-reference/experience-object/get-experience-by-id for more information
  */
-const ExperienceSchema = z.object({
+export const ExperienceSchema = z.object({
 	id: z.string().uuid().describe('The unique identifier for the experience entry.').readonly(),
 	user: z.string().describe('The user who the experience entry belongs to.'),
 	resume_section: z.string().uuid().describe('The resume section the experience entry belongs to.'),
@@ -33,78 +30,25 @@ const ExperienceSchema = z.object({
  * Schema for ExperienceMutation
  * Derived by omitting read-only fields from ExperienceSchema
  */
-const ExperienceMutationSchema = ExperienceSchema.omit({
+export const ExperienceMutationSchema = ExperienceSchema.omit({
 	id: true,
 	user: true,
 	resume_section: true,
 	country: true,
+	started_from_month: true,
+	started_from_year: true,
+	finished_at_month: true,
+	finished_at_year: true,
 	created_at: true,
 	updated_at: true
 }).extend({
-	country: z.string()
+	country: z.string(),
+	started_from_month: z.string().nullish(),
+	started_from_year: z.string().nullish(),
+	finished_at_month: z.string().nullish(),
+	finished_at_year: z.string().nullish()
 }).partial()
 
 // Infer TypeScript types from the schema
 export type Experience = z.infer<typeof ExperienceSchema>
 export type ExperienceMutation = z.infer<typeof ExperienceMutationSchema>
-
-/**
- * Adds new experience information in the database
- * @param {ExperienceMutation} experienceValues - The experience information
- * @returns {Promise<Experience>} - The updated experience object
- */
-export const addExperienceToDB = async (experienceValues: ExperienceMutation): Promise<Experience> => {
-	const session = await auth()
-	const token = await session.getToken()
-
-	const params = ExperienceMutationSchema.parse(experienceValues)
-
-	const response = await fetch(`${process.env.API_URL}/resume/${'base'}/experience/`, {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			...params
-		})
-	})
-
-	return ExperienceSchema.parse(await response.json())
-}
-
-/**
- * Retrieves a single experience object from the database by its ID
- * @param {string} [resumeId] - The ID of the resume to retrieve experience entries from. Defaults to 'base'.
- * @returns {Promise<Experience[]>} - The retrieved experience objects
- */
-export const getExperiencesFromDB = async (resumeId?: string | 'base'): Promise<Experience[]> => {
-	const session = await auth()
-	const token = await session.getToken()
-
-	const response = await fetch(`${process.env.API_URL}/resume/${resumeId ?? 'base'}/experience/`, {
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	})
-
-	return z.array(ExperienceSchema).parse(await response.json())
-}
-
-/**
- * Deletes a single experience object from the database by its ID
- * @param {string} experienceId - The ID of the experience entry to delete
- * @param {string} [resumeId] - The ID of the resume the experience entry belongs to. Defaults to 'base'.
- * @returns {Promise<void>} - A promise that resolves when the experience entry is deleted
- */
-export const deleteExperienceFromDB = async (experienceId: string, resumeId?: string | 'base'): Promise<void> => {
-	const session = await auth()
-	const token = await session.getToken()
-
-	const response = await fetch(`${process.env.API_URL}/resume/${resumeId ?? 'base'}/experience/${experienceId}/`, {
-		method: 'DELETE',
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	})
-}

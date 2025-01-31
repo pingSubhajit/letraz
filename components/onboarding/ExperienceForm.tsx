@@ -16,26 +16,9 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-import {addExperienceToDB, Experience} from '@/lib/experience.methods'
-import {useUser} from '@clerk/nextjs'
-import {createBaseResume} from '@/lib/resume.methods'
+import {addExperienceToDB} from '@/lib/experience/actions'
+import {Experience, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
-
-// Define the schema for the experience form using zod
-export const experienceFormSchema = z.object({
-	id: z.string().optional(),
-	company_name: z.string().max(100, {message: 'That\'s a long name! We can\'t handle that'}).optional(),
-	country: z.string().optional(),
-	job_title: z.string().optional(),
-	city: z.string().optional(),
-	employment_type: z.string(),
-	started_from_month: z.string().optional(),
-	started_from_year: z.string().optional(),
-	finished_at_month: z.string().optional(),
-	finished_at_year: z.string().optional(),
-	current: z.boolean().optional(),
-	description: z.string().optional()
-})
 
 // Define the props for the EducationForm component
 type ExperienceFormProps = {
@@ -55,21 +38,20 @@ type ExperienceFormProps = {
  */
 const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps): JSX.Element => {
 	const router = useTransitionRouter()
-	const {user} = useUser()
 
 	// Initialize the form with default values and validation schema
-	const form = useForm<z.infer<typeof experienceFormSchema>>({
-		resolver: zodResolver(experienceFormSchema),
+	const form = useForm<z.infer<typeof ExperienceMutationSchema>>({
+		resolver: zodResolver(ExperienceMutationSchema),
 		defaultValues: {
 			company_name: '',
 			country: '',
 			job_title: '',
 			city: '',
 			employment_type: 'flt',
-			started_from_month: '',
-			started_from_year: '',
-			finished_at_month: '',
-			finished_at_year: '',
+			started_from_month: null,
+			started_from_year: null,
+			finished_at_month: null,
+			finished_at_year: null,
 			current: false,
 			description: ''
 		}
@@ -78,25 +60,25 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	/**
 	 * Function to insert experience details into the database.
 	 *
-	 * @param {z.infer<typeof experienceFormSchema>} values - The form values.
+	 * @param {z.infer<typeof ExperienceMutationSchema>} values - The form values.
 	 * @returns {Promise<Experience>} The newly added experience entry.
 	 */
-	const insertExperience = async (values: z.infer<typeof experienceFormSchema>): Promise<Experience> => {
+	const insertExperience = async (values: z.infer<typeof ExperienceMutationSchema>): Promise<Experience> => {
 		return await addExperienceToDB({
 			...values,
-			started_from_month: values.started_from_month ? months.findIndex(month => month === values.started_from_month) + 1 : null,
-			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
-			finished_at_month: values.finished_at_month ? months.findIndex(month => month === values.finished_at_month) + 1 : null,
-			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
+			started_from_month: values.started_from_month || null,
+			started_from_year: values.started_from_year || null,
+			finished_at_month: values.finished_at_month || null,
+			finished_at_year: values.finished_at_year || null,
 			current: !values.finished_at_year
 		})
 	}
 
 	/**
 	 * Function to handle form submission.
-	 * @param {z.infer<typeof experienceFormSchema>} values - The form values.
+	 * @param {z.infer<typeof ExperienceMutationSchema>} values - The form values.
 	 */
-	const onSubmit = async (values: z.infer<typeof experienceFormSchema>) => {
+	const onSubmit = async (values: z.infer<typeof ExperienceMutationSchema>) => {
 		try {
 			const newExperience = await insertExperience(values)
 			if (newExperience){
@@ -112,15 +94,14 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 
 	/**
 	 * Function to handle form submission with redirect to next step.
-	 * @param {z.infer<typeof experienceFormSchema>} values - The form values.
+	 * @param {z.infer<typeof ExperienceMutationSchema>} values - The form values.
 	 */
-	const submitWithRedirect = async (values: z.infer<typeof experienceFormSchema>) => {
+	const submitWithRedirect = async (values: z.infer<typeof ExperienceMutationSchema>) => {
 		try {
 			if (form.formState.isDirty) {
 				await insertExperience(values)
 			}
 
-			await createBaseResume(user!.id)
 			router.push('/app/onboarding?step=resume')
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
@@ -194,7 +175,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							name="city"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="city" {...field} />
+									<OnboardingFormInput placeholder="city" {...field} value={field.value || ''} />
 									<FormLabel className="transition">City of work</FormLabel>
 									<FormMessage/>
 								</FormItem>
@@ -216,7 +197,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={months}
 										placeholder="Start month"
 									/>
@@ -234,7 +215,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={years}
 										placeholder="Start year"
 									/>
@@ -252,7 +233,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={months}
 										placeholder="End month"
 									/>
@@ -270,7 +251,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={years}
 										placeholder="End year"
 									/>
@@ -292,7 +273,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingRichTextInput placeholder="write a few things about what you learnt, the things you've build etc."
-										value={field?.value}
+										value={field?.value || ''}
 										onChange={field?.onChange}
 									/>
 									<FormLabel className="transition">Description (optional)</FormLabel>

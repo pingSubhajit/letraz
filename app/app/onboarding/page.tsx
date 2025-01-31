@@ -4,11 +4,12 @@ import {notFound} from 'next/navigation'
 import {OnboardingStep} from '@/app/app/onboarding/types'
 import About from '@/components/onboarding/About'
 import PersonalDetails from '@/components/onboarding/PersonalDetails'
-import {getEducationsFromDB} from '@/lib/education.methods'
+import {getEducationsFromDB} from '@/lib/education/actions'
 import Education from '@/components/onboarding/Education'
 import {JSX} from 'react'
-import {getExperiencesFromDB} from '@/lib/experience.methods'
+import {getExperiencesFromDB} from '@/lib/experience/actions'
 import Experience from '@/components/onboarding/Experience'
+import BaseResume from '@/components/onboarding/BaseResume'
 
 /**
  * OnboardingPage component handles the rendering of different onboarding steps.
@@ -45,7 +46,7 @@ const OnboardingPage = async (
 			{step === OnboardingStep.PERSONAL_DETAILS && <PersonalDetails />}
 			{step === OnboardingStep.EDUCATION && <Education allEducations={educations} />}
 			{step === OnboardingStep.EXPERIENCE && <Experience allExperiences={experiences} />}
-			{/* {step === OnboardingStep.RESUME && <BaseResume />}*/}
+			{step === OnboardingStep.RESUME && <BaseResume />}
 		</div>
 	)
 }

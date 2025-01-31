@@ -16,26 +16,9 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-import {addEducationToDB, Education} from '@/lib/education.methods'
+import {addEducationToDB} from '@/lib/education/actions'
+import {Education, EducationMutationSchema} from '@/lib/education/types'
 import {JSX} from 'react'
-
-// Define the schema for the education form using zod
-export const educationFormSchema = z.object({
-	id: z.string().optional(),
-	institution_name: z
-		.string()
-		.max(100, {message: 'That\'s a long name! We can\'t handle that'})
-		.optional(),
-	country: z.string().optional(),
-	field_of_study: z.string().optional(),
-	degree: z.string().optional(),
-	started_from_month: z.string().optional(),
-	started_from_year: z.string().optional(),
-	finished_at_month: z.string().optional(),
-	finished_at_year: z.string().optional(),
-	current: z.boolean().optional(),
-	description: z.string().optional()
-})
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -61,17 +44,17 @@ const EducationForm = ({
 	const router = useTransitionRouter()
 
 	// Initialize the form with default values and validation schema
-	const form = useForm<z.infer<typeof educationFormSchema>>({
-		resolver: zodResolver(educationFormSchema),
+	const form = useForm<z.infer<typeof EducationMutationSchema>>({
+		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
 			institution_name: '',
 			country: '',
 			field_of_study: '',
 			degree: '',
-			started_from_month: '',
-			started_from_year: '',
-			finished_at_month: '',
-			finished_at_year: '',
+			started_from_month: null,
+			started_from_year: null,
+			finished_at_month: null,
+			finished_at_year: null,
 			current: false,
 			description: ''
 		}
@@ -80,25 +63,25 @@ const EducationForm = ({
 	/**
 	 * Function to insert education details into the database.
 	 *
-	 * @param {z.infer<typeof educationFormSchema>} values - The form values.
+	 * @param {z.infer<typeof EducationMutationSchema>} values - The form values.
 	 * @returns {Promise<Education>} The newly added education entry.
 	 */
-	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
+	const insertEducation = async (values: z.infer<typeof EducationMutationSchema>) => {
 		return await addEducationToDB({
 			...values,
-			started_from_month: values.started_from_month ? months.findIndex((month) => month === values.started_from_month) + 1 : null,
-			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
-			finished_at_month: values.finished_at_month ? months.findIndex((month) => month === values.finished_at_month) + 1 : null,
-			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
+			started_from_month: values.started_from_month || null,
+			started_from_year: values.started_from_year || null,
+			finished_at_month: values.finished_at_month || null,
+			finished_at_year: values.finished_at_year || null,
 			current: !values.finished_at_year
 		})
 	}
 
 	/**
 	 * Function to handle form submission.
-	 * @param {z.infer<typeof educationFormSchema>} values - The form values.
+	 * @param {z.infer<typeof EducationMutationSchema>} values - The form values.
 	 */
-	const onSubmit = async (values: z.infer<typeof educationFormSchema>) => {
+	const onSubmit = async (values: z.infer<typeof EducationMutationSchema>) => {
 		try {
 			const newEducation = await insertEducation(values)
 			if (newEducation) {
@@ -114,13 +97,14 @@ const EducationForm = ({
 
 	/**
 	 * Function to handle form submission with redirect to next step.
-	 * @param {z.infer<typeof educationFormSchema>} values - The form values.
+	 * @param {z.infer<typeof EducationMutationSchema>} values - The form values.
 	 */
-	const submitWithRedirect = async (values: z.infer<typeof educationFormSchema>) => {
+	const submitWithRedirect = async (values: z.infer<typeof EducationMutationSchema>) => {
 		try {
 			if (form.formState.isDirty) {
 				await insertEducation(values)
 			}
+
 			router.push('/app/onboarding?step=experience')
 		} catch (error) {
 			toast.error('Failed to update education, please try again')
@@ -202,7 +186,7 @@ const EducationForm = ({
 							name="degree"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="degree" {...field} />
+									<OnboardingFormInput placeholder="degree" {...field} value={field.value || ''} />
 									<FormLabel className="transition">Degree earned</FormLabel>
 									<FormMessage />
 								</FormItem>
@@ -224,7 +208,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={months}
 										placeholder="Start month"
 									/>
@@ -244,7 +228,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={years}
 										placeholder="Start year"
 									/>
@@ -262,7 +246,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={months}
 										placeholder="End month"
 									/>
@@ -280,7 +264,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value?.toString() || ''}
 										options={years}
 										placeholder="End year"
 									/>
@@ -306,7 +290,7 @@ const EducationForm = ({
 										Description (optional)
 									</FormLabel>
 									<OnboardingRichTextInput placeholder="write a few things about what you learnt, the things you've build etc."
-										value={field?.value}
+										value={field?.value || ''}
 										onChange={field?.onChange}
 									/>
 									<FormLabel className="transition">Description (optional)</FormLabel>
