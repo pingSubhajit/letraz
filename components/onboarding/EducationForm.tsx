@@ -86,9 +86,9 @@ const EducationForm = ({
 	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
 		return await addEducationToDB({
 			...values,
-			started_from_month: months.findIndex((month) => month === values.started_from_month) + 1,
+			started_from_month: values.started_from_month ? months.findIndex((month) => month === values.started_from_month) + 1 : null,
 			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
-			finished_at_month: months.findIndex((month) => month === values.finished_at_month) + 1,
+			finished_at_month: values.finished_at_month ? months.findIndex((month) => month === values.finished_at_month) + 1 : null,
 			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
 			current: !values.finished_at_year
 		})

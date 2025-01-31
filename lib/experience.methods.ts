@@ -19,10 +19,10 @@ const ExperienceSchema = z.object({
 	}).readonly(),
 	city: z.string().max(50).nullable().optional().describe('The city of the institution the user studied at.'),
 	employment_type: z.string().max(50).describe('The type of employment the user had.'),
-	started_from_month: z.number().int().min(0).max(32767).nullable().optional().describe('The month the user started studying. (optional)'),
-	started_from_year: z.number().int().min(0).max(32767).nullable().optional().describe('The year the user started studying. (optional)'),
-	finished_at_month: z.number().int().min(0).max(32767).nullable().optional().describe('The month the user finished studying. (optional)'),
-	finished_at_year: z.number().int().min(0).max(32767).nullable().optional().describe('The year the user finished studying. (optional)'),
+	started_from_month: z.number().int().min(1).max(12).nullable().optional().describe('The month the user started studying. (optional)'),
+	started_from_year: z.number().int().min(1947).max(new Date().getFullYear()).nullable().optional().describe('The year the user started studying. (optional)'),
+	finished_at_month: z.number().int().min(1).max(12).nullable().optional().describe('The month the user finished studying. (optional)'),
+	finished_at_year: z.number().int().min(1947).max(new Date().getFullYear()).nullable().optional().describe('The year the user finished studying. (optional)'),
 	current: z.boolean().describe('Whether the user is currently studying. default: False'),
 	description: z.string().max(3000).nullable().optional().describe('The description of the experience entry. User can provide any kind of description for that user. Usually in HTML format to support rich text. (optional)'),
 	created_at: z.string().readonly().describe('The date and time the experience entry was created.'),
@@ -58,6 +58,7 @@ export const addExperienceToDB = async (experienceValues: ExperienceMutation): P
 	const token = await session.getToken()
 
 	const params = ExperienceMutationSchema.parse(experienceValues)
+
 	const response = await fetch(`${process.env.API_URL}/resume/${'base'}/experience/`, {
 		method: 'POST',
 		headers: {

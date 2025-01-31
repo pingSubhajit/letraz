@@ -1,15 +1,13 @@
 import * as React from 'react'
 import type {Editor, Extensions} from '@tiptap/core'
 import type {Content, UseEditorOptions} from '@tiptap/react'
-import {StarterKit} from '@tiptap/starter-kit'
 import {useEditor} from '@tiptap/react'
+import {StarterKit} from '@tiptap/starter-kit'
 
 import {Placeholder} from '@tiptap/extension-placeholder'
 import {Underline} from '@tiptap/extension-underline'
 import {TextStyle} from '@tiptap/extension-text-style'
-import {
-	Link
-} from '../extensions/link'
+import {Link} from '../extensions/link'
 import {cn} from '@/lib/utils'
 import {getOutput} from '../utils'
 import {useThrottle} from '../hooks/use-throttle'
@@ -77,7 +75,7 @@ export const useMinimalTiptapEditor = ({
 		[output, onBlur]
 	)
 
-	const editor = useEditor({
+	return useEditor({
 		extensions: createExtensions(placeholder),
 		editorProps: {
 			attributes: {
@@ -87,13 +85,12 @@ export const useMinimalTiptapEditor = ({
 				class: cn('focus:outline-none', editorClassName)
 			}
 		},
+		immediatelyRender: false, // Prevents the editor from rendering on initialization (useful for SSR)
 		onUpdate: ({editor}) => handleUpdate(editor),
 		onCreate: ({editor}) => handleCreate(editor),
 		onBlur: ({editor}) => handleBlur(editor),
 		...props
 	})
-
-	return editor
 }
 
 export default useMinimalTiptapEditor
