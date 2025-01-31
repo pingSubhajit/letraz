@@ -14,7 +14,7 @@ export const ExperienceSchema = z.object({
 		code: z.string(),
 		name: z.string()
 	}).readonly(),
-	city: z.string().max(50).nullable().optional().describe('The city of the organization the user worked at at.'),
+	city: z.string().max(50).nullable().optional().describe('The city of the organization the user worked at.'),
 	employment_type: z.string().describe('The type of employment the user had.'),
 	started_from_month: z.number().int().min(1).max(12).nullable().optional().describe('The month the user started working. (optional)'),
 	started_from_year: z.number().int().min(1947).max(new Date().getFullYear()).nullable().optional().describe('The year the user started working. (optional)'),
