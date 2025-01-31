@@ -17,7 +17,7 @@ import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {addExperienceToDB} from '@/lib/experience/actions'
-import {Experience, ExperienceMutationSchema} from '@/lib/experience/types'
+import {employmentTypes, Experience, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
 
 // Define the props for the EducationForm component
@@ -47,7 +47,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 			country: '',
 			job_title: '',
 			city: '',
-			employment_type: 'flt',
+			employment_type: employmentTypes.FULL_TIME,
 			started_from_month: null,
 			started_from_year: null,
 			finished_at_month: null,
