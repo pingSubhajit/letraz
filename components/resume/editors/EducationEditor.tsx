@@ -390,18 +390,21 @@ const EducationEditor = ({className}: {className?: string}) => {
 								{education.degree} in {education.field_of_study}
 							</h3>
 							<p className="text-sm text-muted-foreground">
-								{education.institution_name}
-								{education.country && (
-									<span className="inline-flex items-center gap-1">
-										{', '}
-										{countries.find(c => c.name === education.country?.name)?.flag}
-										{education.country?.name}
-									</span>
-								)}
+								{[
+									education.institution_name,
+									education.country?.name && countries.find(c => c.name === education.country.name)?.flag,
+									education.country?.name
+								].filter(Boolean).join(', ')}
 							</p>
 							<p className="text-sm">
-								{education.started_from_month} {education.started_from_year} -{' '}
-								{education.current ? 'Present' : `${education.finished_at_month} ${education.finished_at_year}`}
+								{[
+									education.started_from_month,
+									education.started_from_year
+								].filter(Boolean).join(', ')} - {' '}
+								{education.current ? 'Present' : [
+									education.finished_at_month,
+									education.finished_at_year
+								].filter(Boolean).join(', ')}
 							</p>
 						</div>
 						<div className="flex gap-2">

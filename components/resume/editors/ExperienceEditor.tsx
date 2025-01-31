@@ -17,6 +17,7 @@ import {Checkbox} from '@/components/ui/checkbox'
 import {countries} from '@/lib/constants'
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {nanoid} from 'nanoid'
+import {Separator} from '@/components/ui/separator'
 
 type ViewState = 'list' | 'form'
 
@@ -421,13 +422,26 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 							<p className="text-sm text-muted-foreground">
 								{experience.company_name} • {employmentTypes.find(type => type.value === experience.employment_type)?.label}
 							</p>
-							<p className="text-sm text-muted-foreground">
-								{experience.city}, {countries.find(c => c.name === experience.country?.name)?.flag} {experience.country?.name}
-							</p>
-							<p className="text-sm">
-								{experience.started_from_month} {experience.started_from_year} - {' '}
-								{experience.current ? 'Present' : `${experience.finished_at_month} ${experience.finished_at_year}`}
-							</p>
+							<div className="flex justify-between items-center">
+								<p className="text-sm text-muted-foreground">
+									{[
+										experience.city,
+										experience.country?.name && countries.find(c => c.name === experience.country.name)?.flag,
+										experience.country?.name
+									].filter(Boolean).join(', ')}
+								</p>
+								<Separator orientation="vertical" className="mx-2 h-4" />
+								<p className="text-sm">
+									{[
+										experience.started_from_month,
+										experience.started_from_year
+									].filter(Boolean).join(', ')} - {' '}
+									{experience.current ? 'Present' : [
+										experience.finished_at_month,
+										experience.finished_at_year
+									].filter(Boolean).join(', ')}
+								</p>
+							</div>
 						</div>
 						<div className="flex gap-2">
 							<Button
@@ -436,13 +450,13 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								onClick={() => handleEdit(index)}
 							>
 								<span className="sr-only">Edit experience</span>
-								<Pencil className="h-4 w-4" />
+								<Pencil className="h-4 w-4"/>
 							</Button>
 							<PopConfirm
 								triggerElement={
 									<Button variant="ghost" size="icon">
 										<span className="sr-only">Delete experience</span>
-										<X className="h-4 w-4" />
+										<X className="h-4 w-4"/>
 									</Button>
 								}
 								message="Are you sure you want to delete this experience?"
