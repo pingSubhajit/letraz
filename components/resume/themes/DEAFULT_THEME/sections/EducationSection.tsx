@@ -28,7 +28,7 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 				<p className="text-sm leading-normal">
 					{education?.institution_name && <span className="font-bold">{education.institution_name}</span>}
 					{education?.institution_name && education?.country && <span>, </span>}
-					{education?.country && <span>{education.country.name}</span>}
+					{education?.country && <span>{education.country?.name}</span>}
 				</p>
 
 				<p className="text-sm">

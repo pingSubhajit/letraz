@@ -28,7 +28,7 @@ const ExperienceSection = ({section, previousSectionType}: ExperienceSectionProp
 				<p className="text-sm leading-normal">
 					{experience?.company_name && <span className="font-bold">{experience.company_name}</span>}
 					{experience?.company_name && experience?.country && <span>, </span>}
-					{experience?.country && <span>{experience.country.name}</span>}
+					{experience?.country && <span>{experience.country?.name}</span>}
 				</p>
 
 				<p className="text-sm">

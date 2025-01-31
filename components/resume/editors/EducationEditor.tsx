@@ -394,8 +394,8 @@ const EducationEditor = ({className}: {className?: string}) => {
 								{education.country && (
 									<span className="inline-flex items-center gap-1">
 										{', '}
-										{countries.find(c => c.name === education.country.name)?.flag}
-										{education.country.name}
+										{countries.find(c => c.name === education.country?.name)?.flag}
+										{education.country?.name}
 									</span>
 								)}
 							</p>

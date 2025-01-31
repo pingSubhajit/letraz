@@ -422,7 +422,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								{experience.company_name} • {employmentTypes.find(type => type.value === experience.employment_type)?.label}
 							</p>
 							<p className="text-sm text-muted-foreground">
-								{experience.city}, {countries.find(c => c.name === experience.country.name)?.flag} {experience.country.name}
+								{experience.city}, {countries.find(c => c.name === experience.country?.name)?.flag} {experience.country?.name}
 							</p>
 							<p className="text-sm">
 								{experience.started_from_month} {experience.started_from_year} - {' '}

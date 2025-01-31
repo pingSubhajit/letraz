@@ -34,7 +34,7 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 					{personalInfoData?.address && <p>{personalInfoData?.address}, </p>}
 					{personalInfoData?.city && <p>{personalInfoData?.city}, </p>}
 					{personalInfoData?.postal && <p>{personalInfoData?.postal}, </p>}
-					{personalInfoData?.country && <p>{personalInfoData?.country.name}</p>}
+					{personalInfoData?.country && <p>{personalInfoData?.country?.name}</p>}
 				</div>
 
 				{/* DOB */}
