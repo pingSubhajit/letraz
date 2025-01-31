@@ -1,20 +1,20 @@
-import {ResumeSection, ResumeSections} from '@/db/resumes.schema'
-import {educations} from '@/db/schema'
 import {cn} from '@/lib/utils'
 import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
+import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
+import {Education} from '@/lib/education/types'
 
 type EducationSectionProps = {
-  section: ResumeSection & { type: ResumeSections.EDUCATION, data: typeof educations.$inferSelect }
-  previousSectionType?: ResumeSections
+	section: ResumeSection & { type: 'Education', data: Education }
+	previousSectionType?: typeof ResumeSectionSchema._type.type
 }
 
 const EducationSection = ({section, previousSectionType}: EducationSectionProps) => {
 	const {data: education} = section
 
 	return (
-		<div className={cn('flex flex-col items-stretch pl-4', previousSectionType === ResumeSections.EDUCATION && 'mt-2')}>
+		<div className={cn('flex flex-col items-stretch pl-4', previousSectionType === 'Education' && 'mt-2')}>
 			{/* TITLE */}
-			{previousSectionType !== ResumeSections.EDUCATION && <div className="mt-8 -ml-4">
+			{previousSectionType !== 'Education' && <div className="mt-8 -ml-4">
 				<SectionTitle>Education</SectionTitle>
 
 				{/* DIVIDER */}
@@ -25,30 +25,30 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 			<div className="w-full flex flex-row items-center justify-between gap-4">
 				{/* INSTITUTION */}
 				<p className="text-sm leading-normal">
-					{education?.institutionName && <span className="font-bold">{education.institutionName}</span>}
-					{education?.institutionName && education?.country && <span>, </span>}
-					{education?.country && <span>{education.country}</span>}
+					{education?.institution_name && <span className="font-bold">{education.institution_name}</span>}
+					{education?.institution_name && education?.country && <span>, </span>}
+					{education?.country && <span>{education.country.name}</span>}
 				</p>
 
 				<p className="text-sm">
-					{education.startedFromMonth && education.startedFromYear &&
-            <span>From {education.startedFromMonth}/{education.startedFromYear}</span>}
-					{education.startedFromMonth && education.startedFromYear && education.finishedAtMonth && education.finishedAtYear &&
+					{education.started_from_month && education.started_from_year &&
+            <span>From {education.started_from_month}/{education.started_from_year}</span>}
+					{education.started_from_month && education.started_from_year && education.finished_at_month && education.finished_at_year &&
             <span>&nbsp; &nbsp;</span>}
-					{education.finishedAtMonth && education.finishedAtYear &&
-            <span>To {education.finishedAtMonth}/{education.finishedAtYear}</span>}
+					{education.finished_at_month && education.finished_at_year &&
+            <span>To {education.finished_at_month}/{education.finished_at_year}</span>}
 				</p>
 			</div>
 
 			{/* DEGREE */}
 			<p className="text-sm italic">
 				{education.degree && <span>{education.degree}</span>}
-				{education.degree && education.fieldOfStudy && <span> in </span>}
-				{education.fieldOfStudy && <span>{education.fieldOfStudy}</span>}
+				{education.degree && education.field_of_study && <span> in </span>}
+				{education.field_of_study && <span>{education.field_of_study}</span>}
 			</p>
 
 			{/* DESCRIPTION */}
-			{education.description && <p className="text-sm leading-snug mt-0.5 pl-8">{education.description}</p>}
+			{education.description && <div className="text-sm mt-0.5 pl-2 prose prose-sm leading-snug prose-p:m-0 max-w-none" dangerouslySetInnerHTML={{__html: education.description}} />}
 		</div>
 	)
 }

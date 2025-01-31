@@ -14,7 +14,7 @@ import {useTransitionRouter} from 'next-view-transitions'
 import {Loader2} from 'lucide-react'
 import {parseJobFromRawJD} from '@/app/app/craft/parseJD'
 import {toast} from 'sonner'
-import {addJobToDB} from '@/lib/jobs.methods'
+import {addJobToDB} from '@/lib/job/jobs.methods'
 import useDOMMounted from '@/hooks/useDOMMounted'
 
 const formSchema = z.object({

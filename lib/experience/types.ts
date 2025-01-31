@@ -15,7 +15,7 @@ export const ExperienceSchema = z.object({
 		name: z.string()
 	}).readonly(),
 	city: z.string().max(50).nullable().optional().describe('The city of the institution the user studied at.'),
-	employment_type: z.string().max(50).describe('The type of employment the user had.'),
+	employment_type: z.string().describe('The type of employment the user had.'),
 	started_from_month: z.number().int().min(1).max(12).nullable().optional().describe('The month the user started studying. (optional)'),
 	started_from_year: z.number().int().min(1947).max(new Date().getFullYear()).nullable().optional().describe('The year the user started studying. (optional)'),
 	finished_at_month: z.number().int().min(1).max(12).nullable().optional().describe('The month the user finished studying. (optional)'),
@@ -34,6 +34,7 @@ export const ExperienceMutationSchema = ExperienceSchema.omit({
 	id: true,
 	user: true,
 	resume_section: true,
+	employment_type: true,
 	country: true,
 	started_from_month: true,
 	started_from_year: true,
@@ -42,6 +43,7 @@ export const ExperienceMutationSchema = ExperienceSchema.omit({
 	created_at: true,
 	updated_at: true
 }).extend({
+	employment_type: z.enum(['flt', 'prt', 'con', 'int', 'fre', 'sel', 'vol', 'tra']).describe('The type of employment the user had.'),
 	country: z.string(),
 	started_from_month: z.string().nullish(),
 	started_from_year: z.string().nullish(),
@@ -52,3 +54,15 @@ export const ExperienceMutationSchema = ExperienceSchema.omit({
 // Infer TypeScript types from the schema
 export type Experience = z.infer<typeof ExperienceSchema>
 export type ExperienceMutation = z.infer<typeof ExperienceMutationSchema>
+
+// Employment types
+export const employmentTypes = {
+	FULL_TIME: 'flt',
+	PART_TIME: 'prt',
+	CONTRACT: 'con',
+	INTERNSHIP: 'int',
+	FREELANCE: 'fre',
+	SELF_EMPLOYED: 'sel',
+	VOLUNTEER: 'vol',
+	TRAINING: 'tra'
+}

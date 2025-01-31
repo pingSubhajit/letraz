@@ -1,12 +1,13 @@
-import {personalInfo} from '@/db/personalInfo.schema'
 import {Calendar, Globe, Mail, MapPin, Phone} from 'lucide-react'
 import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
+import {UserInfo} from '@/lib/user-info/types'
+import {DateTime} from 'luxon'
 
-const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: typeof personalInfo.$inferSelect }) => {
+const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }) => {
 	return (
 		<div className="flex flex-col gap-3 items-center">
 			{/* NAME */}
-			<p className="text-3xl font-bold">{personalInfoData?.firstName} {personalInfoData?.lastName}</p>
+			<p className="text-3xl font-bold">{personalInfoData?.first_name} {personalInfoData?.last_name}</p>
 
 			{/* CONTACT INFO */}
 			<div className="w-full flex flex-wrap gap-x-4 gap-y-2 justify-center text-sm">
@@ -33,13 +34,13 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: typeof per
 					{personalInfoData?.address && <p>{personalInfoData?.address}, </p>}
 					{personalInfoData?.city && <p>{personalInfoData?.city}, </p>}
 					{personalInfoData?.postal && <p>{personalInfoData?.postal}, </p>}
-					{personalInfoData?.country && <p>{personalInfoData?.country}</p>}
+					{personalInfoData?.country && <p>{personalInfoData?.country.name}</p>}
 				</div>
 
 				{/* DOB */}
 				{personalInfoData?.dob && <div className="flex items-center">
 					<Calendar className="'w-4 h-4 mr-1"/>
-					<p>{personalInfoData?.dob}</p>
+					<p>{DateTime.fromJSDate(personalInfoData?.dob).toLocaleString()}</p>
 				</div>}
 
 				{/* WEBSITE */}
@@ -50,7 +51,7 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: typeof per
 			</div>
 
 			{/* PROFILE */}
-			{personalInfoData?.profileText && <div className="w-full">
+			{personalInfoData?.profile_text && <div className="w-full">
 				{/* TITLE */}
 				<div>
 					<SectionTitle>Summary</SectionTitle>
@@ -58,7 +59,7 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: typeof per
 					{/* DIVIDER */}
 					<Divider className="mb-1.5" />
 				</div>
-				<p className="text-justify leading-snug text-sm">{personalInfoData?.profileText}</p>
+				<p className="text-justify leading-snug text-sm">{personalInfoData?.profile_text}</p>
 			</div>}
 		</div>
 	)
