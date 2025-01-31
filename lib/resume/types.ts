@@ -10,19 +10,19 @@ import {JobSchema} from '@/lib/job/types'
  */
 
 export const ResumeSectionSchema = z.object({
-	id: z.string(),
-	resume: z.string(),
-	index: z.number(),
-	type: z.enum(['Education', 'Experience']),
-	data: z.union([EducationSchema, ExperienceSchema])
+	id: z.string().describe('The unique identifier for the resume section.'),
+	resume: z.string().describe('The identifier of the resume this section belongs to.'),
+	index: z.number().describe('The position of this section within the resume.'),
+	type: z.enum(['Education', 'Experience']).describe('The type of the resume section, either Education or Experience.'),
+	data: z.union([EducationSchema, ExperienceSchema]).describe('The data associated with this section, either education or experience details.')
 })
 
 export const ResumeSchema = z.object({
-	id: z.string(),
-	base: z.boolean(),
-	user: UserInfoSchema,
-	job: JobSchema,
-	sections: z.array(ResumeSectionSchema)
+	id: z.string().describe('The unique identifier for the resume.'),
+	base: z.boolean().describe('Indicates if this is the base resume.'),
+	user: UserInfoSchema.describe('The user information associated with the resume.'),
+	job: JobSchema.describe('The job information associated with the resume.'),
+	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.')
 })
 
 // Infer TypeScript types from the schema
