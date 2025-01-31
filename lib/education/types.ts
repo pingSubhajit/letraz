@@ -46,7 +46,7 @@ export const EducationMutationSchema = EducationSchema.omit({
 	started_from_year: z.string().nullish(),
 	finished_at_month: z.string().nullish(),
 	finished_at_year: z.string().nullish()
-}).partial()
+})
 
 // Infer TypeScript types from the schema
 export type Education = z.infer<typeof EducationSchema>

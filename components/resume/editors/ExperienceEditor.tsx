@@ -1,7 +1,6 @@
 'use client'
 
 import {useState} from 'react'
-import {z} from 'zod'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -16,35 +15,10 @@ import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Checkbox} from '@/components/ui/checkbox'
 import {countries} from '@/lib/constants'
-
-const experienceFormSchema = z.object({
-	companyName: z.string().min(1, 'Company name is required'),
-	jobTitle: z.string().min(1, 'Job title is required'),
-	employmentType: z.string().min(1, 'Employment type is required'),
-	city: z.string().min(1, 'City is required'),
-	country: z.string().min(1, 'Country is required'),
-	startedFromMonth: z.string().min(1, 'Start month is required'),
-	startedFromYear: z.string().min(1, 'Start year is required'),
-	finishedAtMonth: z.string().optional(),
-	finishedAtYear: z.string().optional(),
-	current: z.boolean().default(false),
-	description: z.string().optional()
-})
-
-type Experience = z.infer<typeof experienceFormSchema>
+import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
+import {nanoid} from 'nanoid'
 
 type ViewState = 'list' | 'form'
-
-const employmentTypes = [
-	'Full-time',
-	'Part-time',
-	'Self-employed',
-	'Freelance',
-	'Contract',
-	'Internship',
-	'Trainee',
-	'Volunteer'
-]
 
 const ExperienceEditor = ({className}: {className?: string}) => {
 	const [view, setView] = useState<ViewState>('list')
@@ -54,33 +28,50 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 	const [headerParent] = useAutoAnimate()
 	const [endDateFieldsParent] = useAutoAnimate()
 
-	const form = useForm<Experience>({
-		resolver: zodResolver(experienceFormSchema),
+	const form = useForm<ExperienceMutation>({
+		resolver: zodResolver(ExperienceMutationSchema),
 		defaultValues: {
-			companyName: '',
-			jobTitle: '',
-			employmentType: '',
+			company_name: '',
+			job_title: '',
+			employment_type: employmentTypes[0].value,
 			city: '',
 			country: '',
-			startedFromMonth: '',
-			startedFromYear: '',
-			finishedAtMonth: '',
-			finishedAtYear: '',
+			started_from_month: '',
+			started_from_year: '',
+			finished_at_month: '',
+			finished_at_year: '',
 			current: false,
 			description: ''
 		}
 	})
 
-	const onSubmit = (values: Experience) => {
+	const onSubmit = (values: ExperienceMutation) => {
+		const newExperience: Experience = {
+			...values,
+			id: nanoid(),
+			user: 'user-id',
+			resume_section: 'resume-section-id',
+			country: {
+				code: values.country,
+				name: countries.find(c => c.name === values.country)?.name || ''
+			},
+			started_from_month: values.started_from_month ? parseInt(values.started_from_month) : null,
+			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
+			finished_at_month: values.finished_at_month ? parseInt(values.finished_at_month) : null,
+			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString()
+		}
+
 		if (editingIndex !== null) {
 			setExperiences(prev => {
 				const updated = [...prev]
-				updated[editingIndex] = values
+				updated[editingIndex] = newExperience
 				return updated
 			})
 			setEditingIndex(null)
 		} else {
-			setExperiences(prev => [...prev, values])
+			setExperiences(prev => [...prev, newExperience])
 		}
 
 		form.reset()
@@ -89,7 +80,15 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 
 	const handleEdit = (index: number) => {
 		const experience = experiences[index]
-		form.reset(experience)
+		form.reset({
+			...experience,
+			country: experience.country.code,
+			employment_type: employmentTypes.find(type => type.value === experience.employment_type)?.value,
+			started_from_month: experience.started_from_month?.toString(),
+			started_from_year: experience.started_from_year?.toString(),
+			finished_at_month: experience.finished_at_month?.toString() || '',
+			finished_at_year: experience.finished_at_year?.toString() || ''
+		})
 		setEditingIndex(index)
 		setView('form')
 	}
@@ -128,7 +127,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 						<div className="grid grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
-								name="companyName"
+								name="company_name"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Company Name</FormLabel>
@@ -145,7 +144,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 							/>
 							<FormField
 								control={form.control}
-								name="jobTitle"
+								name="job_title"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Job Title</FormLabel>
@@ -165,7 +164,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 						<div className="grid grid-cols-3 gap-4">
 							<FormField
 								control={form.control}
-								name="employmentType"
+								name="employment_type"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Employment Type</FormLabel>
@@ -177,8 +176,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 											</FormControl>
 											<SelectContent>
 												{employmentTypes.map(type => (
-													<SelectItem key={type} value={type}>
-														{type}
+													<SelectItem key={type.value} value={type.value || ''}>
+														{type.label}
 													</SelectItem>
 												))}
 											</SelectContent>
@@ -194,7 +193,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 									<FormItem>
 										<FormLabel className="text-foreground">City</FormLabel>
 										<FormControl>
-											<Input {...field} placeholder="e.g. San Francisco" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
+											<Input {...field} value={field.value || ''} placeholder="e.g. San Francisco" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
 										</FormControl>
 										<FormMessage className="text-xs" />
 									</FormItem>
@@ -241,11 +240,11 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 						<div className="grid grid-cols-4 gap-4">
 							<FormField
 								control={form.control}
-								name="startedFromMonth"
+								name="started_from_month"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Start Month</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
+										<Select onValueChange={field.onChange} value={field.value || ''}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Choose month" />
@@ -253,7 +252,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 											</FormControl>
 											<SelectContent>
 												{months.map(month => (
-													<SelectItem key={month.value} value={month.value}>
+													<SelectItem key={month.value} value={month.value || ''}>
 														{month.label}
 													</SelectItem>
 												))}
@@ -265,11 +264,11 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 							/>
 							<FormField
 								control={form.control}
-								name="startedFromYear"
+								name="started_from_year"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Start Year</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
+										<Select onValueChange={field.onChange} value={field.value || ''}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Choose year" />
@@ -277,7 +276,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 											</FormControl>
 											<SelectContent>
 												{years.map(year => (
-													<SelectItem key={year.value} value={year.value}>
+													<SelectItem key={year.value} value={year.value || ''}>
 														{year.label}
 													</SelectItem>
 												))}
@@ -293,11 +292,11 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 									<>
 										<FormField
 											control={form.control}
-											name="finishedAtMonth"
+											name="finished_at_month"
 											render={({field}) => (
 												<FormItem>
 													<FormLabel className="text-foreground">End Month</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value}>
+													<Select onValueChange={field.onChange} value={field.value || ''}>
 														<FormControl>
 															<SelectTrigger>
 																<SelectValue placeholder="Choose month" />
@@ -305,7 +304,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 														</FormControl>
 														<SelectContent>
 															{months.map(month => (
-																<SelectItem key={month.value} value={month.value}>
+																<SelectItem key={month.value} value={month.value || ''}>
 																	{month.label}
 																</SelectItem>
 															))}
@@ -317,11 +316,11 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 										/>
 										<FormField
 											control={form.control}
-											name="finishedAtYear"
+											name="finished_at_year"
 											render={({field}) => (
 												<FormItem>
 													<FormLabel className="text-foreground">End Year</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value}>
+													<Select onValueChange={field.onChange} value={field.value || ''}>
 														<FormControl>
 															<SelectTrigger>
 																<SelectValue placeholder="Choose year" />
@@ -329,7 +328,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 														</FormControl>
 														<SelectContent>
 															{years.map(year => (
-																<SelectItem key={year.value} value={year.value}>
+																<SelectItem key={year.value} value={year.value || ''}>
 																	{year.label}
 																</SelectItem>
 															))}
@@ -418,16 +417,16 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 				{experiences.map((experience, index) => (
 					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
 						<div className="space-y-1">
-							<h3 className="font-medium">{experience.jobTitle}</h3>
+							<h3 className="font-medium">{experience.job_title}</h3>
 							<p className="text-sm text-muted-foreground">
-								{experience.companyName} • {experience.employmentType}
+								{experience.company_name} • {employmentTypes.find(type => type.value === experience.employment_type)?.label}
 							</p>
 							<p className="text-sm text-muted-foreground">
-								{experience.city}, {experience.country}
+								{experience.city}, {countries.find(c => c.name === experience.country.name)?.flag} {experience.country.name}
 							</p>
 							<p className="text-sm">
-								{experience.startedFromMonth} {experience.startedFromYear} -{' '}
-								{experience.current ? 'Present' : `${experience.finishedAtMonth} ${experience.finishedAtYear}`}
+								{experience.started_from_month} {experience.started_from_year} - {' '}
+								{experience.current ? 'Present' : `${experience.finished_at_month} ${experience.finished_at_year}`}
 							</p>
 						</div>
 						<div className="flex gap-2">

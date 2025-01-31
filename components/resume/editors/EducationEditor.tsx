@@ -1,7 +1,6 @@
 'use client'
 
 import {useState} from 'react'
-import {z} from 'zod'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -16,21 +15,8 @@ import RichTextEditor from '@/components/richTextEditor'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Checkbox} from '@/components/ui/checkbox'
-
-const educationFormSchema = z.object({
-	institutionName: z.string().min(1, 'Institution name is required'),
-	country: z.string().min(1, 'Country is required'),
-	fieldOfStudy: z.string().min(1, 'Field of study is required'),
-	degree: z.string().min(1, 'Degree is required'),
-	startedFromMonth: z.string().min(1, 'Start month is required'),
-	startedFromYear: z.string().min(1, 'Start year is required'),
-	finishedAtMonth: z.string().optional(),
-	finishedAtYear: z.string().optional(),
-	current: z.boolean().default(false),
-	description: z.string().optional()
-})
-
-type Education = z.infer<typeof educationFormSchema>
+import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
+import {nanoid} from 'nanoid'
 
 type ViewState = 'list' | 'form'
 
@@ -42,52 +28,65 @@ const EducationEditor = ({className}: {className?: string}) => {
 	const [headerParent] = useAutoAnimate()
 	const [endDateFieldsParent] = useAutoAnimate()
 
-	const form = useForm<Education>({
-		resolver: zodResolver(educationFormSchema),
+	const form = useForm<EducationMutation>({
+		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
-			institutionName: '',
+			institution_name: '',
 			country: '',
-			fieldOfStudy: '',
+			field_of_study: '',
 			degree: '',
-			startedFromMonth: '',
-			startedFromYear: '',
-			finishedAtMonth: '',
-			finishedAtYear: '',
+			started_from_month: '',
+			started_from_year: '',
+			finished_at_month: '',
+			finished_at_year: '',
 			current: false,
 			description: ''
 		}
 	})
 
-	const onSubmit = (values: Education) => {
+	const onSubmit = (values: EducationMutation) => {
+		const newEducation: Education = {
+			...values,
+			id: nanoid(),
+			user: 'user-id',
+			resume_section: 'resume-section-id',
+			country: {
+				code: values.country,
+				name: countries.find(c => c.name === values.country)?.name || ''
+			},
+			started_from_month: values.started_from_month ? parseInt(values.started_from_month) : null,
+			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
+			finished_at_month: values.finished_at_month ? parseInt(values.finished_at_month) : null,
+			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString()
+		}
+
 		if (editingIndex !== null) {
 			setEducations(prev => {
 				const updated = [...prev]
-				updated[editingIndex] = values
+				updated[editingIndex] = newEducation
 				return updated
 			})
 			setEditingIndex(null)
 		} else {
-			setEducations(prev => [...prev, values])
+			setEducations(prev => [...prev, newEducation])
 		}
 
-		form.reset({
-			institutionName: '',
-			country: '',
-			fieldOfStudy: '',
-			degree: '',
-			startedFromMonth: '',
-			startedFromYear: '',
-			finishedAtMonth: '',
-			finishedAtYear: '',
-			current: false,
-			description: ''
-		})
+		form.reset()
 		setView('list')
 	}
 
 	const handleEdit = (index: number) => {
 		const education = educations[index]
-		form.reset(education)
+		form.reset({
+			...education,
+			country: education.country.code,
+			started_from_month: education.started_from_month?.toString(),
+			started_from_year: education.started_from_year?.toString(),
+			finished_at_month: education.finished_at_month?.toString() || '',
+			finished_at_year: education.finished_at_year?.toString() || ''
+		})
 		setEditingIndex(index)
 		setView('form')
 	}
@@ -126,7 +125,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 						<div className="grid grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
-								name="institutionName"
+								name="institution_name"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Institution Name</FormLabel>
@@ -187,7 +186,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 									<FormItem>
 										<FormLabel className="text-foreground">Degree</FormLabel>
 										<FormControl>
-											<Input {...field} placeholder="e.g. Bachelor of Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
+											<Input {...field} value={field.value || ''} placeholder="e.g. Bachelor of Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
 										</FormControl>
 										<FormMessage className="text-xs" />
 									</FormItem>
@@ -195,7 +194,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 							/>
 							<FormField
 								control={form.control}
-								name="fieldOfStudy"
+								name="field_of_study"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Field of Study</FormLabel>
@@ -211,11 +210,11 @@ const EducationEditor = ({className}: {className?: string}) => {
 						<div className="grid grid-cols-4 gap-4">
 							<FormField
 								control={form.control}
-								name="startedFromMonth"
+								name="started_from_month"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Start Month</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
+										<Select onValueChange={field.onChange} value={field.value || ''}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Choose start month" />
@@ -235,11 +234,11 @@ const EducationEditor = ({className}: {className?: string}) => {
 							/>
 							<FormField
 								control={form.control}
-								name="startedFromYear"
+								name="started_from_year"
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Start Year</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
+										<Select onValueChange={field.onChange} value={field.value || ''}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Choose start year" />
@@ -263,11 +262,11 @@ const EducationEditor = ({className}: {className?: string}) => {
 									<>
 										<FormField
 											control={form.control}
-											name="finishedAtMonth"
+											name="finished_at_month"
 											render={({field}) => (
 												<FormItem>
 													<FormLabel className="text-foreground">End Month</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value}>
+													<Select onValueChange={field.onChange} value={field.value || ''}>
 														<FormControl>
 															<SelectTrigger>
 																<SelectValue placeholder="Choose end month" />
@@ -287,11 +286,11 @@ const EducationEditor = ({className}: {className?: string}) => {
 										/>
 										<FormField
 											control={form.control}
-											name="finishedAtYear"
+											name="finished_at_year"
 											render={({field}) => (
 												<FormItem>
 													<FormLabel className="text-foreground">End Year</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value}>
+													<Select onValueChange={field.onChange} value={field.value || ''}>
 														<FormControl>
 															<SelectTrigger>
 																<SelectValue placeholder="Choose end year" />
@@ -388,21 +387,21 @@ const EducationEditor = ({className}: {className?: string}) => {
 					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
 						<div className="space-y-1">
 							<h3 className="font-medium">
-								{education.degree} in {education.fieldOfStudy}
+								{education.degree} in {education.field_of_study}
 							</h3>
 							<p className="text-sm text-muted-foreground">
-								{education.institutionName}
+								{education.institution_name}
 								{education.country && (
 									<span className="inline-flex items-center gap-1">
 										{', '}
-										{countries.find(c => c.name === education.country)?.flag}
-										{education.country}
+										{countries.find(c => c.name === education.country.name)?.flag}
+										{education.country.name}
 									</span>
 								)}
 							</p>
 							<p className="text-sm">
-								{education.startedFromMonth} {education.startedFromYear} -{' '}
-								{education.current ? 'Present' : `${education.finishedAtMonth} ${education.finishedAtYear}`}
+								{education.started_from_month} {education.started_from_year} -{' '}
+								{education.current ? 'Present' : `${education.finished_at_month} ${education.finished_at_year}`}
 							</p>
 						</div>
 						<div className="flex gap-2">

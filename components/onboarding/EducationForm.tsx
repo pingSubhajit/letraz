@@ -1,7 +1,6 @@
 'use client'
 
 import {motion} from 'motion/react'
-import {z} from 'zod'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
@@ -17,7 +16,7 @@ import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {addEducationToDB} from '@/lib/education/actions'
-import {Education, EducationMutationSchema} from '@/lib/education/types'
+import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {JSX} from 'react'
 
 // Define the props for the EducationForm component
@@ -44,7 +43,7 @@ const EducationForm = ({
 	const router = useTransitionRouter()
 
 	// Initialize the form with default values and validation schema
-	const form = useForm<z.infer<typeof EducationMutationSchema>>({
+	const form = useForm<EducationMutation>({
 		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
 			institution_name: '',
@@ -63,10 +62,10 @@ const EducationForm = ({
 	/**
 	 * Function to insert education details into the database.
 	 *
-	 * @param {z.infer<typeof EducationMutationSchema>} values - The form values.
+	 * @param {EducationMutation} values - The form values.
 	 * @returns {Promise<Education>} The newly added education entry.
 	 */
-	const insertEducation = async (values: z.infer<typeof EducationMutationSchema>) => {
+	const insertEducation = async (values: EducationMutation): Promise<Education> => {
 		return await addEducationToDB({
 			...values,
 			started_from_month: values.started_from_month || null,
@@ -79,9 +78,9 @@ const EducationForm = ({
 
 	/**
 	 * Function to handle form submission.
-	 * @param {z.infer<typeof EducationMutationSchema>} values - The form values.
+	 * @param {EducationMutation} values - The form values.
 	 */
-	const onSubmit = async (values: z.infer<typeof EducationMutationSchema>) => {
+	const onSubmit = async (values: EducationMutation) => {
 		try {
 			const newEducation = await insertEducation(values)
 			if (newEducation) {
@@ -97,9 +96,9 @@ const EducationForm = ({
 
 	/**
 	 * Function to handle form submission with redirect to next step.
-	 * @param {z.infer<typeof EducationMutationSchema>} values - The form values.
+	 * @param {EducationMutation} values - The form values.
 	 */
-	const submitWithRedirect = async (values: z.infer<typeof EducationMutationSchema>) => {
+	const submitWithRedirect = async (values: EducationMutation) => {
 		try {
 			if (form.formState.isDirty) {
 				await insertEducation(values)
@@ -208,7 +207,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={months}
 										placeholder="Start month"
 									/>
@@ -228,7 +227,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={years}
 										placeholder="Start year"
 									/>
@@ -246,7 +245,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={months}
 										placeholder="End month"
 									/>
@@ -264,7 +263,7 @@ const EducationForm = ({
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={years}
 										placeholder="End year"
 									/>

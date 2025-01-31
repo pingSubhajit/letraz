@@ -17,7 +17,7 @@ import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {addExperienceToDB} from '@/lib/experience/actions'
-import {employmentTypes, Experience, ExperienceMutationSchema} from '@/lib/experience/types'
+import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
 
 // Define the props for the EducationForm component
@@ -40,14 +40,14 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	const router = useTransitionRouter()
 
 	// Initialize the form with default values and validation schema
-	const form = useForm<z.infer<typeof ExperienceMutationSchema>>({
+	const form = useForm<ExperienceMutation>({
 		resolver: zodResolver(ExperienceMutationSchema),
 		defaultValues: {
 			company_name: '',
 			country: '',
 			job_title: '',
 			city: '',
-			employment_type: employmentTypes.FULL_TIME,
+			employment_type: employmentTypes[0].value,
 			started_from_month: null,
 			started_from_year: null,
 			finished_at_month: null,
@@ -60,10 +60,10 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	/**
 	 * Function to insert experience details into the database.
 	 *
-	 * @param {z.infer<typeof ExperienceMutationSchema>} values - The form values.
+	 * @param {ExperienceMutation} values - The form values.
 	 * @returns {Promise<Experience>} The newly added experience entry.
 	 */
-	const insertExperience = async (values: z.infer<typeof ExperienceMutationSchema>): Promise<Experience> => {
+	const insertExperience = async (values: ExperienceMutation): Promise<Experience> => {
 		return await addExperienceToDB({
 			...values,
 			started_from_month: values.started_from_month || null,
@@ -197,7 +197,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={months}
 										placeholder="Start month"
 									/>
@@ -215,7 +215,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={years}
 										placeholder="Start year"
 									/>
@@ -233,7 +233,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={months}
 										placeholder="End month"
 									/>
@@ -251,7 +251,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value?.toString() || ''}
+										value={field.value || ''}
 										options={years}
 										placeholder="End year"
 									/>

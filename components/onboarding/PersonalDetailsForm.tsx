@@ -2,7 +2,6 @@
 
 import {motion} from 'motion/react'
 import {cn} from '@/lib/utils'
-import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -12,7 +11,7 @@ import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
 import {toast} from 'sonner'
 import {addOrUpdateUserInfoToDB} from '@/lib/user-info/actions'
-import {UserInfoMutationSchema} from '@/lib/user-info/types'
+import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {JSX} from 'react'
 
 // Define the default values for the form
@@ -34,7 +33,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	const router = useTransitionRouter()
 
 	// Initialize the form with default values and validation schema
-	const form = useForm<z.infer<typeof UserInfoMutationSchema>>({
+	const form = useForm<UserInfoMutation>({
 		resolver: zodResolver(UserInfoMutationSchema),
 		defaultValues: {
 			first_name: defaultValues.first_name,
@@ -47,9 +46,9 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	/**
 	 * Function to submit user's profile details to the backend.
 	 *
-	 * @param {z.infer<typeof UserInfoMutationSchema>} values - The form values.
+	 * @param {UserInfoMutation} values - The form values.
 	 */
-	const onSubmit = async (values: z.infer<typeof UserInfoMutationSchema>) => {
+	const onSubmit = async (values: UserInfoMutation) => {
 		try {
 			await addOrUpdateUserInfoToDB({
 				...values
