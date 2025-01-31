@@ -20,19 +20,19 @@ import {addExperienceToDB} from '@/lib/experience/actions'
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
 
-// Define the props for the EducationForm component
+// Define the props for the ExperienceForm component
 type ExperienceFormProps = {
 	className?: string,
 	experiences: Experience[],
-	setExperiences: (educations: Experience[]) => void
+	setExperiences: (experiences: Experience[]) => void
 }
 
 /**
- * EducationForm component handles the form for adding educational details.
+ * ExperienceForm component handles the form for adding employment details.
  *
  * @param {ExperienceFormProps} props - The properties object.
  * @param {string} [props.className] - Additional class names for styling.
- * @param {Education[]} props.experiences - The list of current experience entries.
+ * @param {Experience[]} props.experiences - The list of current experience entries.
  * @param {function} props.setExperiences - Function to update the list of experiences entries.
  * @returns {JSX.Element} The JSX code to render the experience form.
  */
