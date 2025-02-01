@@ -21,9 +21,7 @@ export const signUpForWaitlist = async (email: string, referrer?: any) => {
 	})
 
 	if (!response.ok) {
-		console.log('DUPLICATE ENTRY')
 		const data = await response.json()
-		console.log(data.error.details)
 		return params
 	}
 
