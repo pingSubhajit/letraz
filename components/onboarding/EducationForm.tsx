@@ -1,7 +1,6 @@
 'use client'
 
 import {motion} from 'motion/react'
-import {z} from 'zod'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
@@ -16,74 +15,76 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-import {addEducationToDB} from '@/lib/education.methods'
-import {useUser} from '@clerk/nextjs'
+import {addEducationToDB} from '@/lib/education/actions'
+import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
+import {JSX} from 'react'
 
-export const educationFormSchema = z.object({
-	id: z.string().optional(),
-	institutionName: z
-		.string()
-		.max(100, {message: 'That\'s a long name! We can\'t handle that'})
-		.optional(),
-	country: z.string().optional(),
-	fieldOfStudy: z.string().optional(),
-	degree: z.string().optional(),
-	startedFromMonth: z.string().optional(),
-	startedFromYear: z.string().optional(),
-	finishedAtMonth: z.string().optional(),
-	finishedAtYear: z.string().optional(),
-	current: z.boolean().optional(),
-	description: z.string().optional()
-})
-
+// Define the props for the EducationForm component
 type EducationFormProps = {
 	className?: string
-	educations: z.infer<typeof educationFormSchema>[]
-	setEducations: (educations: z.infer<typeof educationFormSchema>[]) => void
+	educations: Education[]
+	setEducations: (educations: Education[]) => void
 }
 
+/**
+ * EducationForm component handles the form for adding educational details.
+ *
+ * @param {EducationFormProps} props - The properties object.
+ * @param {string} [props.className] - Additional class names for styling.
+ * @param {Education[]} props.educations - The list of current education entries.
+ * @param {function} props.setEducations - Function to update the list of education entries.
+ * @returns {JSX.Element} The JSX code to render the education form.
+ */
 const EducationForm = ({
 	className,
 	educations,
 	setEducations
-}: EducationFormProps) => {
+}: EducationFormProps): JSX.Element => {
 	const router = useTransitionRouter()
-	const {user} = useUser()
 
-	const form = useForm<z.infer<typeof educationFormSchema>>({
-		resolver: zodResolver(educationFormSchema),
+	// Initialize the form with default values and validation schema
+	const form = useForm<EducationMutation>({
+		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
-			institutionName: '',
+			institution_name: '',
 			country: '',
-			fieldOfStudy: '',
+			field_of_study: '',
 			degree: '',
-			startedFromMonth: '',
-			startedFromYear: '',
-			finishedAtMonth: '',
-			finishedAtYear: '',
+			started_from_month: null,
+			started_from_year: null,
+			finished_at_month: null,
+			finished_at_year: null,
 			current: false,
 			description: ''
 		}
 	})
 
-	const insertEducation = async (values: z.infer<typeof educationFormSchema>) => {
+	/**
+	 * Function to insert education details into the database.
+	 *
+	 * @param {EducationMutation} values - The form values.
+	 * @returns {Promise<Education>} The newly added education entry.
+	 */
+	const insertEducation = async (values: EducationMutation): Promise<Education> => {
 		return await addEducationToDB({
 			...values,
-			startedFromMonth: months.findIndex((month) => month === values.startedFromMonth) + 1,
-			startedFromYear: values.startedFromYear ? parseInt(values.startedFromYear) : null,
-			finishedAtMonth: months.findIndex((month) => month === values.finishedAtMonth) + 1,
-			finishedAtYear: values.finishedAtYear ? parseInt(values.finishedAtYear) : null,
-			current: !values.finishedAtYear,
-			userId: user!.id
+			started_from_month: values.started_from_month || null,
+			started_from_year: values.started_from_year || null,
+			finished_at_month: values.finished_at_month || null,
+			finished_at_year: values.finished_at_year || null,
+			current: !values.finished_at_year
 		})
 	}
 
-	// TODO: Disable form submission on enter pressed from description field
-	const onSubmit = async (values: z.infer<typeof educationFormSchema>) => {
+	/**
+	 * Function to handle form submission.
+	 * @param {EducationMutation} values - The form values.
+	 */
+	const onSubmit = async (values: EducationMutation) => {
 		try {
 			const newEducation = await insertEducation(values)
-			if (newEducation && newEducation[0]) {
-				setEducations([...educations, {...values, id: newEducation[0].id}])
+			if (newEducation) {
+				setEducations([...educations, newEducation])
 				form.reset()
 			} else {
 				throw new Error('Failed to add education')
@@ -93,11 +94,16 @@ const EducationForm = ({
 		}
 	}
 
-	const submitWithRedirect = async (values: z.infer<typeof educationFormSchema>) => {
+	/**
+	 * Function to handle form submission with redirect to next step.
+	 * @param {EducationMutation} values - The form values.
+	 */
+	const submitWithRedirect = async (values: EducationMutation) => {
 		try {
 			if (form.formState.isDirty) {
 				await insertEducation(values)
 			}
+
 			router.push('/app/onboarding?step=experience')
 		} catch (error) {
 			toast.error('Failed to update education, please try again')
@@ -106,6 +112,7 @@ const EducationForm = ({
 
 	return (
 		<div className={cn('max-w-2xl flex flex-col', className)}>
+			{/* Informational message about the benefits of adding educational details */}
 			<motion.div
 				className="text-xl mt-8 max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
@@ -118,6 +125,7 @@ const EducationForm = ({
 
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12">
+					{/* Form fields for institution name and country */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
@@ -125,7 +133,7 @@ const EducationForm = ({
 					>
 						<FormField
 							control={form.control}
-							name="institutionName"
+							name="institution_name"
 							render={({field}) => (
 								<FormItem className="w-[95%]">
 									<OnboardingFormInput
@@ -154,6 +162,7 @@ const EducationForm = ({
 						/>
 					</motion.div>
 
+					{/* Form fields for field of study and degree */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
@@ -161,7 +170,7 @@ const EducationForm = ({
 					>
 						<FormField
 							control={form.control}
-							name="fieldOfStudy"
+							name="field_of_study"
 							render={({field}) => (
 								<FormItem className="w-[95%]">
 									<OnboardingFormInput placeholder="field" {...field} />
@@ -176,7 +185,7 @@ const EducationForm = ({
 							name="degree"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="degree" {...field} />
+									<OnboardingFormInput placeholder="degree" {...field} value={field.value || ''} />
 									<FormLabel className="transition">Degree earned</FormLabel>
 									<FormMessage />
 								</FormItem>
@@ -184,19 +193,21 @@ const EducationForm = ({
 						/>
 					</motion.div>
 
+					{/* Form fields for start and end dates */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between my-6"
 					>
+						{/* Form field for start month */}
 						<FormField
 							control={form.control}
-							name="startedFromMonth"
+							name="started_from_month"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value || ''}
 										options={months}
 										placeholder="Start month"
 									/>
@@ -208,14 +219,15 @@ const EducationForm = ({
 							)}
 						/>
 
+						{/* Form field for start year */}
 						<FormField
 							control={form.control}
-							name="startedFromYear"
+							name="started_from_year"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value || ''}
 										options={years}
 										placeholder="Start year"
 									/>
@@ -225,14 +237,15 @@ const EducationForm = ({
 							)}
 						/>
 
+						{/* Form field for end month */}
 						<FormField
 							control={form.control}
-							name="finishedAtMonth"
+							name="finished_at_month"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value || ''}
 										options={months}
 										placeholder="End month"
 									/>
@@ -242,14 +255,15 @@ const EducationForm = ({
 							)}
 						/>
 
+						{/* Form field for end year */}
 						<FormField
 							control={form.control}
-							name="finishedAtYear"
+							name="finished_at_year"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect
 										onChange={field.onChange}
-										value={field.value}
+										value={field.value || ''}
 										options={years}
 										placeholder="End year"
 									/>
@@ -260,6 +274,7 @@ const EducationForm = ({
 						/>
 					</motion.div>
 
+					{/* Form field for description */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
@@ -274,7 +289,7 @@ const EducationForm = ({
 										Description (optional)
 									</FormLabel>
 									<OnboardingRichTextInput placeholder="write a few things about what you learnt, the things you've build etc."
-										value={field?.value}
+										value={field?.value || ''}
 										onChange={field?.onChange}
 									/>
 									<FormLabel className="transition">Description (optional)</FormLabel>
@@ -284,10 +299,11 @@ const EducationForm = ({
 						/>
 					</motion.div>
 
+					{/* Navigation buttons */}
 					<div
 						className="w-[calc(100%-4.7rem)] flex items-center justify-between fixed left-[4.7rem] z-10 bottom-16 px-16"
 					>
-						{/* PREVIOUS STEP BUTTON */}
+						{/* Button to navigate to the previous step */}
 						<Link href={'/app/onboarding?step=personal-details'}>
 							<Button
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
@@ -299,7 +315,7 @@ const EducationForm = ({
 							</Button>
 						</Link>
 
-						{/* NEXT STEP BUTTONS */}
+						{/* Buttons to add another education or proceed to the next step */}
 						<div className=" flex items-center gap-4">
 							<Button
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"

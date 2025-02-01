@@ -4,26 +4,39 @@ import {notFound} from 'next/navigation'
 import {OnboardingStep} from '@/app/app/onboarding/types'
 import About from '@/components/onboarding/About'
 import PersonalDetails from '@/components/onboarding/PersonalDetails'
+import {getEducationsFromDB} from '@/lib/education/actions'
 import Education from '@/components/onboarding/Education'
+import {JSX} from 'react'
+import {getExperiencesFromDB} from '@/lib/experience/actions'
 import Experience from '@/components/onboarding/Experience'
-import {getEducationsFromDB} from '@/lib/education.methods'
-import {auth} from '@clerk/nextjs/server'
-import {getExperiencesFromDB} from '@/lib/experience.methods'
 import BaseResume from '@/components/onboarding/BaseResume'
 
+/**
+ * OnboardingPage component handles the rendering of different onboarding steps.
+ *
+ * @param {Object} props - The properties object.
+ * @param {Promise<Object.<string, string|string[]|undefined>>} props.searchParams - The search parameters.
+ * @returns {Promise<JSX.Element>} The JSX code to render the onboarding page.
+ */
 const OnboardingPage = async (
 	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
-) => {
+): Promise<JSX.Element> => {
+	// Await the search parameters from the props
 	const searchParams = await props.searchParams
-	const {userId} = await auth()
-	const step = searchParams.step as OnboardingStep | undefined
-	const educations = await getEducationsFromDB(userId!)
-	const experiences = await getExperiencesFromDB(userId!)
 
+	// Extract the step parameter and cast it to OnboardingStep type
+	const step = searchParams.step as OnboardingStep | undefined
+
+	// If no step is provided, return a 404 not found response
 	if (!step) {
 		return notFound()
 	}
 
+	// Fetch the educations from the database
+	const educations = await getEducationsFromDB('base')
+	const experiences = await getExperiencesFromDB('base')
+
+	// Render the appropriate component based on the current onboarding step
 	return (
 		<div className="h-full min-h-dvh w-full relative">
 			<BrainAnimation onboardingStep={step} />

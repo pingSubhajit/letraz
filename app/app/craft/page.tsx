@@ -1,8 +1,4 @@
 import {notFound} from 'next/navigation'
-import {JobSummaryFromJson} from '@/components/JobSummary'
-import {db} from '@/db/drizzle'
-import {eq} from 'drizzle-orm'
-import {jobs} from '@/db/schema'
 
 const CraftPage = async (
 	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
@@ -14,18 +10,10 @@ const CraftPage = async (
 		notFound()
 	}
 
-	const job = await db.query.jobs.findFirst({
-		where: eq(jobs.id, jobId)
-	})
-
-	if (!job) {
-		notFound()
-	}
-
 	return (
 		<div className="flex gap-32">
 			<div className="w-full">
-				<JobSummaryFromJson jobDetails={job}/>
+				Job summary will come here
 			</div>
 
 			<div className="w-full">

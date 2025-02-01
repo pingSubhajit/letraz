@@ -1,16 +1,16 @@
 'use client'
 
-import {personalInfo} from '@/db/personalInfo.schema'
-import {ResumeSection, ResumeSections} from '@/db/resumes.schema'
-import {LegacyRef} from 'react'
+import {RefObject} from 'react'
 import PersonalInfoSection from '@/components/resume/themes/DEAFULT_THEME/sections/PersonalInfoSection'
 import EducationSection from '@/components/resume/themes/DEAFULT_THEME/sections/EducationSection'
 import ExperienceSection from '@/components/resume/themes/DEAFULT_THEME/sections/ExperienceSection'
+import {ResumeSection} from '@/lib/resume/types'
+import {UserInfo} from '@/lib/user-info/types'
 
 const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 	sections?: ResumeSection[],
-	personalInfoData?: typeof personalInfo.$inferSelect,
-	resumeRef?: LegacyRef<any>
+	personalInfoData?: UserInfo,
+	resumeRef?: RefObject<HTMLDivElement | null>
 }) => {
 	return (
 		<div ref={resumeRef}>
@@ -18,12 +18,12 @@ const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 				<PersonalInfoSection personalInfoData={personalInfoData}/>
 				{sections?.map((section, index) => (
 					<div key={section.id} className="space-y-4">
-						{section.type === ResumeSections.EDUCATION && <EducationSection
+						{section.type === 'Education' && <EducationSection
 							section={section as any}
 							previousSectionType={sections[index - 1]?.type}
 						/>}
 
-						{section.type === ResumeSections.EXPERIENCE && <ExperienceSection
+						{section.type === 'Experience' && <ExperienceSection
 							section={section as any}
 							previousSectionType={sections[index - 1]?.type}
 						/>}

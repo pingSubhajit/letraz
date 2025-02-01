@@ -84,7 +84,10 @@ const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 type OnboardingFormSelectProps = {
 	value: string | undefined
 	onChange: (value: string) => void
-	options: string[]
+	options: {
+		value: string
+		label: string
+	}[]
 	className?: string
 } & SelectValueProps
 
@@ -98,7 +101,7 @@ const OnboardingFormSelect = ({className, value, onChange, options, ...props}: O
 			</FormControl>
 			<SelectContent>
 				{options.map(option => (
-					<SelectItem key={option} value={option}>{option}</SelectItem>
+					<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
 				))}
 			</SelectContent>
 		</Select>

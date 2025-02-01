@@ -1,50 +1,47 @@
 'use client'
 
 import TextAnimate from '@/components/animations/TextAnimations'
-import EducationForm, {educationFormSchema} from '@/components/onboarding/EducationForm'
-import {z} from 'zod'
-import {useState} from 'react'
+import EducationForm from '@/components/onboarding/EducationForm'
+import {JSX, useState} from 'react'
 import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
-import {educations} from '@/db/schema'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {toast} from 'sonner'
-import {deleteEducationFromDB} from '@/lib/education.methods'
-import {ScrollArea} from '../ui/scroll-area'
+import {deleteEducationFromDB} from '@/lib/education/actions'
+import {Education as EducationType} from '@/lib/education/types'
+import {ScrollArea} from '@/components/ui/scroll-area'
 
-const Education = ({allEducations}: { allEducations: (typeof educations.$inferSelect)[] }) => {
-	const [currentEducations, setCurrentEducations] = useState<z.infer<typeof educationFormSchema>[]>(allEducations.map(education => ({
-		id: education.id,
-		institutionName: education.institutionName as string | undefined,
-		country: education.country as string | undefined,
-		fieldOfStudy: education.fieldOfStudy as string | undefined,
-		degree: education.degree as string | undefined,
-		startedFromMonth: education.startedFromMonth ? months[education.startedFromMonth - 1] : undefined,
-		startedFromYear: education.startedFromYear ? education.startedFromYear.toString() : undefined,
-		finishedAtMonth: education.finishedAtMonth ? months[education.finishedAtMonth - 1] : undefined,
-		finishedAtYear: education.finishedAtYear ? education.finishedAtYear.toString() : undefined,
-		current: education.current as boolean | undefined,
-		description: education.description as string | undefined
-	})))
+/**
+ * Education component to display and manage user's education details.
+ *
+ * @param {Object} props - Component props
+ * @param {EducationType[]} props.allEducations - Array of education details
+ * @returns {JSX.Element} The Education component
+ */
+const Education = ({allEducations}: { allEducations: EducationType[] }): JSX.Element => {
+	// State to manage the current list of educations
+	const [currentEducations, setCurrentEducations] = useState<EducationType[]>(allEducations)
 	const [parent] = useAutoAnimate()
 
+	/**
+	 * Handles the deletion of an education entry.
+	 * @param {number} index - Index of the education entry to delete
+	 */
 	const handleDeleteEducation = async (index: number) => {
 		const educationToDelete = currentEducations[index]
+		// Check if the education has an ID
 		if (!educationToDelete.id) {
 			toast.error('Cannot delete education without an ID')
 			return
 		}
 
+		// Delete the education from the database
 		try {
-			const result = await deleteEducationFromDB(educationToDelete.id)
-			if (result && result.length > 0) {
-				setCurrentEducations(prev => prev.filter((_, i) => i !== index))
-				toast.success('Education deleted successfully')
-			} else {
-				throw new Error('Failed to delete education')
-			}
+			await deleteEducationFromDB(educationToDelete.id)
+			setCurrentEducations(prev => prev.filter((_, i) => i !== index))
+			toast.success('Education deleted successfully')
 		} catch (error) {
 			toast.error('Failed to delete education. Please try again.')
 		}
@@ -71,6 +68,7 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 				<EducationForm educations={currentEducations} setEducations={setCurrentEducations} />
 
 			</ScrollArea>
+
 			{/* EDUCATIONS */}
 			<motion.div
 				initial={{opacity: 0, y: '-30%'}}
@@ -86,6 +84,7 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 					{currentEducations.map(
 						(education, index) => (
+							// EDUCATION ITEM
 							<li key={index} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
 								<PopConfirm
 									triggerElement={
@@ -98,16 +97,16 @@ const Education = ({allEducations}: { allEducations: (typeof educations.$inferSe
 								/>
 								<p className="truncate font-medium text-xl">
 									{education.degree + ' '}
-									{education.degree && education.fieldOfStudy && 'in'} {education.fieldOfStudy + ' '}
-									{(education.fieldOfStudy || education.degree) && education.institutionName && 'from '}
-									{education.institutionName}
+									{education.degree && education.field_of_study && 'in'} {education.field_of_study + ' '}
+									{(education.field_of_study || education.degree) && education.institution_name && 'from '}
+									{education.institution_name}
 								</p>
 								<p className="mt-1 text-sm">
-									{education.startedFromMonth && education.startedFromYear && 'From '}
-									{education.startedFromMonth} {education.startedFromYear}
+									{education.started_from_month && education.started_from_year && 'From '}
+									{education.started_from_month && months.find(month => parseInt(month.value) === education.started_from_month)?.label} {education.started_from_year?.toString()}
 
-									{education.finishedAtMonth && education.finishedAtYear && ' until '}
-									{education.finishedAtMonth} {education.finishedAtYear}
+									{education.finished_at_month && education.finished_at_year && ' until '}
+									{education.finished_at_month && months.find(month => parseInt(month.value) === education.finished_at_month)?.label} {education.finished_at_year?.toString()}
 								</p>
 							</li>
 						)

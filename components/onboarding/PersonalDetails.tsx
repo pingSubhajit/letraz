@@ -1,11 +1,11 @@
 import PersonalDetailsForm from '@/components/onboarding/PersonalDetailsForm'
 import TextAnimate from '@/components/animations/TextAnimations'
 import {currentUser} from '@clerk/nextjs/server'
-import {getPersonalInfoFromDB} from '@/lib/personalInfo.methods'
+import {getPersonalInfoFromDB} from '@/lib/user-info/actions'
 
 const PersonalDetails = async () => {
 	const user = await currentUser()
-	const personalDetailsFromDB = await getPersonalInfoFromDB(user!.id)
+	const personalDetailsFromDB = await getPersonalInfoFromDB()
 
 	return (
 		<div className="w-full h-full flex flex-col">
@@ -18,8 +18,8 @@ const PersonalDetails = async () => {
 			</div>
 
 			<PersonalDetailsForm defaultValues={{
-				firstName: personalDetailsFromDB?.firstName || user?.firstName || '',
-				lastName: personalDetailsFromDB?.lastName || user?.lastName || '',
+				first_name: personalDetailsFromDB?.first_name || user?.firstName || '',
+				last_name: personalDetailsFromDB?.last_name || user?.lastName || '',
 				email: personalDetailsFromDB?.email || user?.emailAddresses[0].emailAddress || '',
 				phone: personalDetailsFromDB?.phone || user?.primaryPhoneNumber?.phoneNumber || ''
 			}} />

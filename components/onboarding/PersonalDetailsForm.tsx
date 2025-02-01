@@ -2,7 +2,6 @@
 
 import {motion} from 'motion/react'
 import {cn} from '@/lib/utils'
-import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -10,51 +9,49 @@ import {Button} from '@/components/ui/button'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
-import {useUser} from '@clerk/nextjs'
 import {toast} from 'sonner'
-import {addPersonalInfoToDB} from '@/lib/personalInfo.methods'
+import {addOrUpdateUserInfoToDB} from '@/lib/user-info/actions'
+import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
+import {JSX} from 'react'
 
-const formSchema = z.object({
-	firstName: z.string()
-		.min(2, {message: 'You don\'t have a name shorter than two letters do you?'})
-		.max(50, {message: 'That\'s a long name! We can\'t handle that'}),
-	lastName: z.string()
-		.min(2, {message: 'You don\'t have a name shorter than two letters do you?'})
-		.max(50, {message: 'That\'s a long name! We can\'t handle that'})
-		.optional(),
-	email: z.string().email({message: 'Please enter a valid email address'}),
-	phone: z.string()
-		.min(10, {message: 'That phone number doesn\'t look right'})
-		.max(15, {message: 'That phone number doesn\'t look right'})
-		.optional()
-})
-
+// Define the default values for the form
 type DefaultValues = {
-	firstName: string
-	lastName: string
+	first_name: string
+	last_name: string
 	email: string
 	phone?: string
 }
 
-const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }) => {
+/**
+ * PersonalDetails component handles the form for adding user's profile details.
+ *
+ * @param {DefaultValues} props - The default values object.
+ * @param {string} [props.className] - Additional class names for styling.
+ * @returns {JSX.Element} The JSX code to render the education form.
+ */
+const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }): JSX.Element => {
 	const router = useTransitionRouter()
-	const {user} = useUser()
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	// Initialize the form with default values and validation schema
+	const form = useForm<UserInfoMutation>({
+		resolver: zodResolver(UserInfoMutationSchema),
 		defaultValues: {
-			firstName: defaultValues.firstName,
-			lastName: defaultValues.lastName,
+			first_name: defaultValues.first_name,
+			last_name: defaultValues.last_name,
 			email: defaultValues.email,
 			phone: defaultValues.phone || undefined
 		}
 	})
 
-	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+	/**
+	 * Function to submit user's profile details to the backend.
+	 *
+	 * @param {UserInfoMutation} values - The form values.
+	 */
+	const onSubmit = async (values: UserInfoMutation) => {
 		try {
-			await addPersonalInfoToDB({
-				...values,
-				userId: user!.id
+			await addOrUpdateUserInfoToDB({
+				...values
 			})
 			router.push('/app/onboarding?step=education')
 		} catch (error) {
@@ -65,7 +62,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	return (
 		<div className={cn('max-w-4xl mx-auto flex flex-col items-center', className)}>
 			<motion.div
-				className="text-xl text-center mt-8 max-w-xl" {...({} as any)}
+				className="text-xl text-center mt-8 max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>We need a few details about you to craft the perfect resume for you</p>
@@ -81,7 +78,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						className="flex items-center gap-8 justify-between" >
 						<FormField
 							control={form.control}
-							name="firstName"
+							name="first_name"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="first name" {...field} autoFocus />
@@ -93,7 +90,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 
 						<FormField
 							control={form.control}
-							name="lastName"
+							name="last_name"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="last name" {...field} />
@@ -124,7 +121,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 							name="phone"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="phone no." {...field} />
+									<OnboardingFormInput placeholder="phone no." {...field} value={field.value || ''} />
 									<FormLabel className="transition">Phone (optional)</FormLabel>
 									<FormMessage/>
 								</FormItem>

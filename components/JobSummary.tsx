@@ -4,7 +4,7 @@ import {useCompletion} from 'ai/react'
 import {useEffect} from 'react'
 import {cn} from '@/lib/utils'
 import AiLoading from '@/components/utilities/AiLoading'
-import {jobs} from '@/db/schema'
+import {Job} from '@/lib/job/types'
 
 export const JobSummary = ({jobDetails, loading, className}: {
 	jobDetails: string,
@@ -26,7 +26,7 @@ export const JobSummary = ({jobDetails, loading, className}: {
 	)
 }
 
-export const JobSummaryFromJson = ({jobDetails}: { jobDetails: typeof jobs.$inferSelect}) => {
+export const JobSummaryFromJson = ({jobDetails}: { jobDetails:Job}) => {
 	const {completion, isLoading, handleSubmit} = useCompletion({
 		api: '/app/craft/summarize',
 		initialInput: JSON.stringify(jobDetails)
