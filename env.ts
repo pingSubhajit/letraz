@@ -10,11 +10,6 @@ const envSchema = z.object({
 		message: 'MAIN_URL must be a valid URL (e.g., http://localhost:3000)'
 	}).optional().default('http://localhost:3000'),
 
-	// Database
-	DATABASE_URL: z.string().url({
-		message: 'DATABASE_URL must be a valid PostgreSQL connection string'
-	}),
-
 	// Backend
 	API_URL: z.string().url({
 		message: 'API_URL must be a valid URL'
