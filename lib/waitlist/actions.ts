@@ -7,7 +7,7 @@ import {WaitlistMutationSchema} from '@/lib/waitlist/types'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-export const signUpForWaitlist = async (email: string, referrer?: any) => {
+export const signUpForWaitlist = async (email: string, referrer?: string) => {
 	const params = WaitlistMutationSchema.parse({email, referrer})
 
 	const response = await fetch(`${process.env.API_URL}/waitlist/`, {
