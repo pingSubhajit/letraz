@@ -15,6 +15,11 @@ const envSchema = z.object({
 		message: 'API_URL must be a valid URL'
 	}),
 
+	// Backend
+	API_URL: z.string().url({
+		message: 'API_URL must be a valid URL'
+	}),
+
 	// Clerk Authentication
 	NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().startsWith('pk_', {
 		message: 'Clerk publishable key must start with "pk_"'
