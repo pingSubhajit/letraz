@@ -21,7 +21,6 @@ export const signUpForWaitlist = async (email: string, referrer?: any) => {
 	})
 
 	if (!response.ok) {
-		const data = await response.json()
 		return params
 	}
 
