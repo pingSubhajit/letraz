@@ -7,6 +7,7 @@ import {Toaster} from '@/components/ui/sonner'
 import {ViewTransitions} from 'next-view-transitions'
 import PosthogProvider from '@/components/providers/PosthogProvider'
 import {TooltipProvider} from '@/components/ui/tooltip'
+import APIProvider from '@/components/providers/ApiProvider'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
@@ -30,10 +31,14 @@ const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <Cle
 		<html lang="en">
 			<PosthogProvider>
 				<body className={modelica.className}>
-					<TooltipProvider>
-						{children}
-					</TooltipProvider>
-					<Toaster/>
+					<APIProvider>
+						<>
+							<TooltipProvider>
+								{children}
+							</TooltipProvider>
+							<Toaster/>
+						</>
+					</APIProvider>
 				</body>
 			</PosthogProvider>
 		</html>
