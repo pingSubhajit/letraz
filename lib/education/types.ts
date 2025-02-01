@@ -1,9 +1,9 @@
+import {z} from 'zod'
+
 /*
  * Base schema for Education
  * Check https://outline.letraz.app/api-reference/education-object/get-education-by-id for more information
  */
-import {z} from 'zod'
-
 export const EducationSchema = z.object({
 	id: z.string().uuid().describe('The unique identifier for the education entry.').readonly(),
 	user: z.string().describe('The user who the education entry belongs to.'),
