@@ -45,7 +45,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 		resolver: zodResolver(ExperienceMutationSchema),
 		defaultValues: {
 			company_name: '',
-			country: '',
+			country: 'IND',
 			job_title: '',
 			city: '',
 			employment_type: employmentTypes[0].value,

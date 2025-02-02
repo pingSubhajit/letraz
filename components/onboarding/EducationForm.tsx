@@ -48,7 +48,7 @@ const EducationForm = ({
 		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
 			institution_name: '',
-			country: '',
+			country: 'IND',
 			field_of_study: '',
 			degree: '',
 			started_from_month: null,
