@@ -11,7 +11,7 @@ const CraftPage = async (
 	}
 
 	return (
-		<div className="flex gap-32">
+		<div className="p-8 flex gap-32">
 			<div className="w-full">
 				Job summary will come here
 			</div>

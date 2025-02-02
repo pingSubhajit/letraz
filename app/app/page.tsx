@@ -2,7 +2,7 @@ import NewResumeInput from '@/components/NewResumeInput'
 
 const AppHome = () => {
 	return (
-		<div>
+		<div className="p-8">
 			<h1>Dashboard</h1>
 			<p>Welcome to the dashboard page!</p>
 

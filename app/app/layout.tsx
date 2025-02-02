@@ -14,7 +14,7 @@ const AppLayout = ({children}: {children: ReactNode}) => {
 			<div className="h-[709px] w-[176px] absolute bg-amber-300 rounded-[50%] -z-10 -bottom-36 blur-[150px] -left-72" />
 
 			{/* MAIN CONTENT */}
-			<SmoothScrollProvider className="overflow-y-auto overflow-x-hidden h-screen w-full p-8">
+			<SmoothScrollProvider className="overflow-y-auto overflow-x-hidden h-screen w-full">
 				{children}
 			</SmoothScrollProvider>
 		</div>
