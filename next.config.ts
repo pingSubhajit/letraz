@@ -7,6 +7,17 @@ validateEnv()
 const nextConfig: NextConfig = {
 	experimental: {
 		reactCompiler: true
+	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'flagsapi.com',
+				port: '',
+				pathname: '*/**',
+				search: ''
+			}
+		]
 	}
 }
 

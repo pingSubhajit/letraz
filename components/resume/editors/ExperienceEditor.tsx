@@ -18,6 +18,7 @@ import {countries} from '@/lib/constants'
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {nanoid} from 'nanoid'
 import {Separator} from '@/components/ui/separator'
+import Image from 'next/image'
 
 type ViewState = 'list' | 'form'
 
@@ -212,7 +213,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 													<SelectValue placeholder="Select country">
 														{field.value && (
 															<span className="flex items-center">
-																<span className="mr-2">{countries.find(c => c.name === field.value)?.flag}</span>
+																<Image src={countries.find(c => c.name === field.value)?.flag || ''} width={64} height={64} alt={`The flag of ${countries.find(c => c.name === field.value)?.name}`} className="mr-2 w-6" />
 																{field.value}
 															</span>
 														)}
@@ -226,7 +227,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 														value={country.name}
 														className="flex items-center"
 													>
-														<span className="mr-2">{country.flag || '🏳️'}</span>
+														<Image src={country.flag} width={64} height={64} alt={`The flag of ${country.name}`} className="mr-2 w-6" />
 														{country.name}
 													</SelectItem>
 												))}
@@ -426,7 +427,6 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								<p className="text-sm text-muted-foreground">
 									{[
 										experience.city,
-										experience.country?.name && countries.find(c => c.name === experience.country.name)?.flag,
 										experience.country?.name
 									].filter(Boolean).join(', ')}
 								</p>
