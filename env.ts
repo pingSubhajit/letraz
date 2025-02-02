@@ -1,74 +1,84 @@
 import {z} from 'zod'
 
+/**
+ * Schema for environment variables validation using Zod.
+ */
 const envSchema = z.object({
-	// Optional
+	// Optional environment variable for Vercel environment
 	VERCEL_ENV: z.enum(['development', 'production', 'preview'], {
 		errorMap: () => ({message: 'Environment must be either "development", "preview" or "production"'})
 	}).optional().default('development'),
 
+	// Optional main URL, must be a valid URL
 	MAIN_URL: z.string().url({
 		message: 'MAIN_URL must be a valid URL (e.g., http://localhost:3000)'
 	}).optional().default('http://localhost:3000'),
 
-	// Backend
+	// Required backend API URL, must be a valid URL
 	API_URL: z.string().url({
 		message: 'API_URL must be a valid URL'
 	}),
 
-	// Clerk Authentication
+	// Required Clerk publishable key, must start with "pk_"
 	NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().startsWith('pk_', {
 		message: 'Clerk publishable key must start with "pk_"'
 	}),
 
+	// Required Clerk secret key, must start with "sk_"
 	CLERK_SECRET_KEY: z.string().startsWith('sk_', {
 		message: 'Clerk secret key must start with "sk_"'
 	}),
 
+	// Required Clerk sign-in URL, must start with "/"
 	NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().startsWith('/', {
 		message: 'Sign in URL must start with "/" (e.g., /signin)'
 	}),
 
+	// Required Clerk sign-up URL, must start with "/"
 	NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().startsWith('/', {
 		message: 'Sign up URL must start with "/" (e.g., /signup)'
 	}),
 
-	// Email Service
+	// Required Resend API key, must start with "re_"
 	RESEND_API_KEY: z.string().startsWith('re_', {
 		message: 'Resend API key must start with "re_"'
 	}),
 
-	// AI Service
+	// Required Anthropic API key, must start with "sk-ant-api03-"
 	ANTHROPIC_API_KEY: z.string().startsWith('sk-ant-api03-', {
 		message: 'Anthropic API key must start with "sk-ant-api03-"'
 	}),
 
-	// Ghost CMS
+	// Required Ghost CMS API key
 	GHOST_API_KEY: z.string({
 		required_error: 'Ghost API key is required',
 		invalid_type_error: 'Ghost API key must be a string'
 	}),
 
-	// PostHog Analytics
+	// Required PostHog key, must start with "phc_"
 	NEXT_PUBLIC_POSTHOG_KEY: z.string().startsWith('phc_', {
 		message: 'PostHog key must start with "phc_"'
 	}),
 
+	// Required PostHog host URL, must be a valid URL
 	NEXT_PUBLIC_POSTHOG_HOST: z.string().url({
 		message: 'PostHog host must be a valid URL (e.g., https://us.i.posthog.com)'
 	}),
 
-	// Discord Bot Token
+	// Required Discord bot token
 	DISCORD_BOT_TOKEN: z.string({
 		required_error: 'Discord bot token is required',
 		invalid_type_error: 'Discord bot token must be a string'
 	}),
 
-	// Sentry Configuration
+	// Optional Sentry auth token, must start with "sntrys_"
 	SENTRY_AUTH_TOKEN: z.string()
 		.regex(/^sntrys_.*/, {
 			message: 'Sentry auth token must start with "sntrys_"'
 		})
 		.optional(),
+
+	// Required Sentry DSN, must be a valid URL and match specific format
 	SENTRY_DSN: z.string()
 		.url({message: 'SENTRY_DSN must be a valid URL'})
 		.regex(/^https:\/\/[a-zA-Z0-9]+@[a-zA-Z0-9]+\.ingest\.(us|uk)\.sentry\.io\/[0-9]+$/, {
@@ -77,11 +87,16 @@ const envSchema = z.object({
 		.transform(url => url.toString())
 })
 
-// Create a type from the schema
+
+// Type representing the environment variables schema.
 type Env = z.infer<typeof envSchema>
 
 
-// Validate environment variables
+/**
+ * Validates the environment variables against the schema.
+ * @returns {Env} - The validated environment variables.
+ * @throws {Error} - Throws an error if validation fails.
+ */
 const validateEnv = (): Env => {
 	try {
 		return envSchema.parse(process.env)
@@ -96,6 +111,7 @@ const validateEnv = (): Env => {
 
 declare global {
 	namespace NodeJS {
+		 // Extends the Node.js ProcessEnv interface with the environment variables schema.
 		interface ProcessEnv extends z.infer<typeof envSchema> {}
 	}
 }
