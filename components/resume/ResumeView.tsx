@@ -19,8 +19,8 @@ const ResumeView = ({resume}: {resume: Resume}) => {
 			<Button variant="secondary" size="icon" className="absolute top-2 left-2 z-20 h-8 w-8">
 				<Printer className="w-4 aspect-square" />
 			</Button>
-			<ResumeViewer resumeRef={resumeRef} resume={resumeData} className="h-full shadow-2xl bg-neutral-50" />
-			<ResumeEditor resume={resume} className="h-full shadow-2xl w-full bg-neutral-50" />
+			<ResumeViewer resumeRef={resumeRef} resume={resumeData} className="max-h-screen shadow-2xl bg-neutral-50" />
+			<ResumeEditor resume={resume} className="h-full shadow-2xl w-full bg-neutral-50 p-12" />
 		</div>
 	)
 }

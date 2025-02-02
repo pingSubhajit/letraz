@@ -8,8 +8,14 @@ import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {months, years} from '@/constants'
 import {Pencil, Plus, X} from 'lucide-react'
-import {Input} from '@/components/ui/input'
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
+import {BrandedInput as Input} from '@/components/ui/input'
+import {
+	BrandedSelectTrigger as SelectTrigger,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectValue
+} from '@/components/ui/select'
 import RichTextEditor from '@/components/richTextEditor'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
@@ -19,6 +25,7 @@ import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchem
 import {nanoid} from 'nanoid'
 import {Separator} from '@/components/ui/separator'
 import Image from 'next/image'
+import ButtonGroup from '@/components/ui/button-group'
 
 type ViewState = 'list' | 'form'
 
@@ -118,10 +125,17 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 	if (view === 'form') {
 		return (
 			<div className={cn('space-y-6', className)}>
-				<div className="mb-6 flex items-center justify-between">
+				<div className="mb-10 flex flex-col gap-1">
 					<h2 className="text-lg font-medium min-w-[16rem]">
 						{editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
 					</h2>
+
+					<p className="text-sm max-w-lg opacity-80">
+						{editingIndex !== null
+							? 'Ensure that the details are correct and reflect your previous experience'
+							: 'Mentioning your past employment details can increase the chance of your résumé getting selected upto 75%'
+						}
+					</p>
 				</div>
 
 				<Form {...form}>
@@ -385,14 +399,14 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 							)}
 						/>
 
-						<div className="flex gap-4 justify-end">
+						<ButtonGroup className="justify-end">
 							<Button type="button" variant="outline" size="sm" onClick={handleCancel}>
 								Cancel
 							</Button>
 							<Button type="submit" size="sm">
 								{editingIndex !== null ? 'Update Experience' : 'Add Experience'}
 							</Button>
-						</div>
+						</ButtonGroup>
 					</form>
 				</Form>
 			</div>

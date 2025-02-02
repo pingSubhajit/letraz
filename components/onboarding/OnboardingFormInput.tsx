@@ -114,10 +114,10 @@ const OnboardingFormSelect = ({className, value, onChange, options, ...props}: O
 }
 
 interface OnboardingRichTextInputProps {
-  className?: string;
-  value?: string;
-  onChange?: (value: Content) => void;
-  placeholder: string;
+  className?: string
+  value?: string
+  onChange?: (value: Content) => void
+  placeholder: string
 }
 
 const OnboardingRichTextInput: FC<OnboardingRichTextInputProps> = ({

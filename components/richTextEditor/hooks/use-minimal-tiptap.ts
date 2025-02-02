@@ -14,13 +14,13 @@ import {useThrottle} from '../hooks/use-throttle'
 
 
 export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
-  value?: Content;
-  output?: 'html' | 'json' | 'text';
-  placeholder?: string;
-  editorClassName?: string;
-  throttleDelay?: number;
-  onUpdate?: (content: Content) => void;
-  onBlur?: (content: Content) => void;
+  value?: Content
+  output?: 'html' | 'json' | 'text'
+  placeholder?: string
+  editorClassName?: string
+  throttleDelay?: number
+  onUpdate?: (content: Content) => void
+  onBlur?: (content: Content) => void
 }
 
 const createExtensions = (placeholder: string) :Extensions => [
