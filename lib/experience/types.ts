@@ -11,7 +11,7 @@ export const ExperienceSchema = z.object({
 	company_name: z.string().max(250).describe('The name of the company where the user worked.'),
 	job_title: z.string().max(250).describe('The job title or position held by the user.'),
 	country: z.object({
-		code: z.string(),
+		code: z.string().regex(/^[A-Z]{3}$/),
 		name: z.string()
 	}).readonly(),
 	city: z.string().max(50).nullable().optional().describe('The city of the organization the user worked at.'),
@@ -44,7 +44,7 @@ export const ExperienceMutationSchema = ExperienceSchema.omit({
 	updated_at: true
 }).extend({
 	employment_type: z.enum(['flt', 'prt', 'con', 'int', 'fre', 'sel', 'vol', 'tra']).describe('The type of employment the user had.'),
-	country: z.string(),
+	country: z.string().regex(/^[A-Z]{3}$/),
 	started_from_month: z.string().nullish(),
 	started_from_year: z.string().nullish(),
 	finished_at_month: z.string().nullish(),

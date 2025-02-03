@@ -12,7 +12,7 @@ export const EducationSchema = z.object({
 	field_of_study: z.string().max(250).describe('The field of study the user studied.'),
 	degree: z.string().max(250).nullable().optional().describe('The degree the user obtained. (optional)'),
 	country: z.object({
-		code: z.string(),
+		code: z.string().regex(/^[A-Z]{3}$/),
 		name: z.string()
 	}).readonly(),
 	started_from_month: z.number().int().min(1).max(12).nullable().optional().describe('The month the user started studying. (optional)'),
@@ -41,7 +41,7 @@ export const EducationMutationSchema = EducationSchema.omit({
 	created_at: true,
 	updated_at: true
 }).extend({
-	country: z.string(),
+	country: z.string().regex(/^[A-Z]{3}$/),
 	started_from_month: z.string().nullish(),
 	started_from_year: z.string().nullish(),
 	finished_at_month: z.string().nullish(),

@@ -2,13 +2,7 @@ import {VariantProps} from 'class-variance-authority'
 import {FormatAction} from '../types'
 import {Editor} from '@tiptap/react'
 
-import {
-	DotsHorizontalIcon,
-	FontBoldIcon,
-	FontItalicIcon,
-	ListBulletIcon,
-	UnderlineIcon
-} from '@radix-ui/react-icons'
+import {DotsHorizontalIcon, FontBoldIcon, FontItalicIcon, ListBulletIcon, UnderlineIcon} from '@radix-ui/react-icons'
 import {toggleVariants} from '../../ui/toggle'
 import ToolbarSection from './toolbar-section'
 import {LinkEditPopover} from './link/link-edit-popover'
@@ -18,9 +12,9 @@ type TextStyleAction =
   | 'italic'
   | 'underline'
   | 'orderedList'
-  | 'bulletList';
+  | 'bulletList'
 interface TextStyle extends FormatAction {
-  value: TextStyleAction;
+  value: TextStyleAction
 }
 
 const formatActions: TextStyle[] = [
@@ -85,9 +79,9 @@ const formatActions: TextStyle[] = [
 ]
 
 interface ToolbarProps extends VariantProps<typeof toggleVariants> {
-  editor: Editor;
-  activeActions?: TextStyleAction[];
-  mainActionCount?: number;
+  editor: Editor
+  activeActions?: TextStyleAction[]
+  mainActionCount?: number
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({

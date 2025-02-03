@@ -17,7 +17,7 @@ export type FileValidationOptions = {
   allowBase64: boolean
 }
 
-type FileInput = File | { src: string | File; alt?: string; title?: string }
+type FileInput = File | { src: string | File, alt?: string, title?: string }
 
 export const isClient = (): boolean => typeof window !== 'undefined'
 export const isServer = (): boolean => !isClient()
@@ -46,7 +46,7 @@ export const getOutput = (editor: Editor, format: RichTextEditorProps['output'])
 
 export const isUrl = (
 	text: string,
-	options: { requireHostname: boolean; allowBase64?: boolean } = {requireHostname: false}
+	options: { requireHostname: boolean, allowBase64?: boolean } = {requireHostname: false}
 ): boolean => {
 	if (text.includes('\n')) return false
 
@@ -139,7 +139,7 @@ const validateFileOrBase64 = <T extends FileInput>(
 const checkTypeAndSize = (
 	input: File | string,
 	{allowedMimeTypes, maxFileSize}: FileValidationOptions
-): { isValidType: boolean; isValidSize: boolean } => {
+): { isValidType: boolean, isValidSize: boolean } => {
 	const mimeType = input instanceof File ? input.type : base64MimeType(input)
 	const size = input instanceof File ? input.size : atob(input.split(',')[1]).length
 
