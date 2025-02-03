@@ -1,1 +1,0 @@
-ALTER TABLE "waitlist" ADD COLUMN "referral_link" varchar;
