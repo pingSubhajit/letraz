@@ -12,7 +12,7 @@ const ResumeView = ({resume}: {resume: Resume}) => {
 	const [resumeData, setResumeData] = useState<Resume>(resume)
 
 	return (
-		<div className="flex h-screen">
+		<div className="flex h-screen" role="main">
 			<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
 				<ResumeViewer resumeRef={resumeRef} resume={resumeData} className="max-h-screen" />
 			</div>

@@ -42,7 +42,15 @@ const ResumeViewer = ({resume, resumeRef, className}: ResumeViewerProps) => {
 				</motion.div>
 			</>
 
-			<DefaultTheme resumeRef={resumeRef} sections={resume.sections || []} personalInfoData={resume.user}/>
+			<DefaultTheme
+				resumeRef={resumeRef}
+				sections={resume.sections || []}
+				personalInfoData={resume.user}
+				data-prefers-reduced-motion={
+					typeof window !== 'undefined'
+					&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
+				}
+			/>
 		</div>
 	)
 }
