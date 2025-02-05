@@ -46,6 +46,7 @@ const ResumeViewer = ({resume, resumeRef, className}: ResumeViewerProps) => {
 				resumeRef={resumeRef}
 				sections={resume.sections || []}
 				personalInfoData={resume.user}
+				aria-label="Resume preview"
 				data-prefers-reduced-motion={
 					typeof window !== 'undefined'
 					&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
