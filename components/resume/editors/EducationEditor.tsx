@@ -136,7 +136,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 				</div>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
 						<div className="grid grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
@@ -352,7 +352,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 							control={form.control}
 							name="description"
 							render={({field}) => (
-								<FormItem className="flex-1">
+								<FormItem className="mt-4 flex-1">
 									<FormLabel className="text-foreground ">Description</FormLabel>
 									<FormControl>
 										<RichTextEditor
