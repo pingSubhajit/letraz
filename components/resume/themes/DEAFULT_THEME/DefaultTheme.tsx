@@ -9,6 +9,8 @@ import {UserInfo} from '@/lib/user-info/types'
 import {motion} from 'motion/react'
 import {cn} from '@/lib/utils'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
+import {Education} from '@/lib/education/types'
+import {Experience} from '@/lib/experience/types'
 
 const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 	sections?: ResumeSection[],
@@ -24,12 +26,12 @@ const DefaultTheme = ({sections, personalInfoData, resumeRef}: {
 					className={cn('space-y-4', index === sections.length - 1 ? 'pb-4' : '')}
 				>
 					{section.type === 'Education' && <EducationSection
-						section={section as any}
+						section={section as ResumeSection & { type: 'Education', data: Education }}
 						previousSectionType={sections[index - 1]?.type}
 					/>}
 
 					{section.type === 'Experience' && <ExperienceSection
-						section={section as any}
+						section={section as ResumeSection & { type: 'Experience', data: Experience }}
 						previousSectionType={sections[index - 1]?.type}
 					/>}
 				</motion.div>
