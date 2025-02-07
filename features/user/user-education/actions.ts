@@ -1,5 +1,6 @@
 'use server'
 
+import {api} from '@/lib/config/api-client'
 import {Education, EducationMutation, EducationMutationSchema, EducationSchema} from '@/lib/education/types'
 import {auth} from '@clerk/nextjs/server'
 
@@ -22,24 +23,9 @@ export const updateUserEducationAction = async (
 			throw new Error('Unauthorized: No token found')
 		}
 
-		const response = await fetch(`${process.env.API_URL}/resume/base/education/`, {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(params)
-		})
+		const data = await api.post<Education>('/resume/base/education/', params)
 
-		if (!response.ok) {
-			const errorData = await response.json().catch(() => null)
-			throw new Error(
-				`Failed to update education: ${response.status} - ${response.statusText}. ${errorData?.message || ''}`
-			)
-		}
-
-		const responseData = await response.json()
-		return EducationSchema.parse(responseData)
+		return EducationSchema.parse(data)
 	} catch (error) {
 
 		if (error instanceof ZodError) {
