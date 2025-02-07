@@ -36,7 +36,7 @@ const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <Cle
 							<TooltipProvider>
 								{children}
 							</TooltipProvider>
-							<Toaster/>
+							<Toaster richColors/>
 						</>
 					</APIProvider>
 				</body>

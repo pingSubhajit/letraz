@@ -10,9 +10,10 @@ import {Link, useTransitionRouter} from 'next-view-transitions'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
 import {toast} from 'sonner'
-import {addOrUpdateUserInfoToDB} from '@/lib/user-info/actions'
+
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {JSX} from 'react'
+import {useUpadataUserInfoMutation} from '@/features/user-info/mutations'
 
 // Define the default values for the form
 type DefaultValues = {
@@ -32,6 +33,17 @@ type DefaultValues = {
 const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }): JSX.Element => {
 	const router = useTransitionRouter()
 
+	const {mutateAsync, isPending} = useUpadataUserInfoMutation({
+		onSuccess: () => {
+			toast.success('Information updated successfully')
+			router.push('/app/onboarding?step=education')
+		},
+		onError: () => {
+			toast.error('Failed to update information, please try again')
+		}
+	})
+
+
 	// Initialize the form with default values and validation schema
 	const form = useForm<UserInfoMutation>({
 		resolver: zodResolver(UserInfoMutationSchema),
@@ -49,14 +61,17 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	 * @param {UserInfoMutation} values - The form values.
 	 */
 	const onSubmit = async (values: UserInfoMutation) => {
-		try {
-			await addOrUpdateUserInfoToDB({
-				...values
-			})
-			router.push('/app/onboarding?step=education')
-		} catch (error) {
-			toast.error('Failed to update information, please try again')
-		}
+		await mutateAsync(values)
+		/*
+		 * try {
+		 * 	await addOrUpdateUserInfoToDB({
+		 * 		...values
+		 * 	})
+		 * 	router.push('/app/onboarding?step=education')
+		 * } catch (error) {
+		 * 	toast.error('Failed to update information, please try again')
+		 * }
+		 */
 	}
 
 	return (
@@ -77,6 +92,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between" >
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="first_name"
 							render={({field}) => (
@@ -89,6 +105,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="last_name"
 							render={({field}) => (
@@ -105,6 +122,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between" >
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="email"
 							render={({field}) => (
@@ -117,6 +135,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="phone"
 							render={({field}) => (
@@ -135,6 +154,8 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						{/* PREVIOUS STEP BUTTON */}
 						<Link href={'/app/onboarding?step=about'}>
 							<Button
+								disabled={isPending}
+
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
 								variant="secondary"
 								type="button"
@@ -146,10 +167,13 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 
 						{/* NEXT STEP BUTTON */}
 						<Button
+
+
 							className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 							variant="secondary"
 							type="submit"
-							disabled={form.formState.isSubmitting || !form.formState.isValid}
+
+							disabled={ isPending || form.formState.isSubmitting || !form.formState.isValid}
 						>
 							Looks good
 							{form.formState.isSubmitting
