@@ -13,7 +13,7 @@ import {toast} from 'sonner'
 
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {JSX} from 'react'
-import {useUpadataUserInfoMutation} from '@/features/user-info/mutations'
+import {useUpadataUserInfoMutation} from '@/features/user/user-info/mutations'
 
 // Define the default values for the form
 type DefaultValues = {
