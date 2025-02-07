@@ -16,9 +16,10 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-import {addExperienceToDB} from '@/lib/experience/actions'
+
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
+import {useUpdateUserExperienceMutation} from '@/features/user/user-experience/mutations'
 
 // Define the props for the ExperienceForm component
 type ExperienceFormProps = {
@@ -38,6 +39,17 @@ type ExperienceFormProps = {
  */
 const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps): JSX.Element => {
 	const router = useTransitionRouter()
+
+	const {mutateAsync, isPending} = useUpdateUserExperienceMutation(
+		{
+			onSuccess: () => {
+				toast.success('Experience updated successfully')
+			},
+			onError: () => {
+				toast.error('Failed to update experience, please try again')
+			}
+		}
+	)
 
 	// Initialize the form with default values and validation schema
 	const form = useForm<ExperienceMutation>({
@@ -64,14 +76,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 	 * @returns {Promise<Experience>} The newly added experience entry.
 	 */
 	const insertExperience = async (values: ExperienceMutation): Promise<Experience> => {
-		return await addExperienceToDB({
-			...values,
-			started_from_month: values.started_from_month || null,
-			started_from_year: values.started_from_year || null,
-			finished_at_month: values.finished_at_month || null,
-			finished_at_year: values.finished_at_year || null,
-			current: !values.finished_at_year
-		})
+		const params = ExperienceMutationSchema.parse(values)
+		return mutateAsync(params)
 	}
 
 	/**
@@ -128,6 +134,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						className="flex items-center gap-8 justify-between w-full"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="company_name"
 							render={({field}) => (
@@ -140,6 +147,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="country"
 							render={({field}) => (
@@ -159,6 +167,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						className="flex items-center gap-8 justify-between my-8"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="job_title"
 							render={({field}) => (
@@ -171,6 +180,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="city"
 							render={({field}) => (
@@ -191,6 +201,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					>
 						{/* Form field for start month */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="started_from_month"
 							render={({field}) => (
@@ -209,6 +220,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 
 						{/* Form field for start year */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="started_from_year"
 							render={({field}) => (
@@ -227,6 +239,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 
 						{/* Form field for end month */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="finished_at_month"
 							render={({field}) => (
@@ -245,6 +258,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 
 						{/* Form field for end year */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="finished_at_year"
 							render={({field}) => (
@@ -268,6 +282,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between" >
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="description"
 							render={({field}) => (
@@ -291,6 +306,8 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 						{/* Button to navigate to the previous step */}
 						<Link href={'/app/onboarding?step=education'}>
 							<Button
+								disabled={isPending}
+
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
 								variant="secondary"
 								type="button"
@@ -306,7 +323,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 								variant="secondary"
 								type="submit"
-								disabled={form.formState.isSubmitting || !form.formState.isDirty}
+								disabled={ isPending || form.formState.isSubmitting || !form.formState.isDirty}
 							>
 								Add another
 								{form.formState.isSubmitting
