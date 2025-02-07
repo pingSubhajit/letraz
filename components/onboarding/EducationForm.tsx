@@ -15,9 +15,10 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-import {addEducationToDB} from '@/lib/education/actions'
+
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {JSX} from 'react'
+import {useUpdateUserEducationMutation} from '@/features/user/user-education/mutations'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -42,6 +43,14 @@ const EducationForm = ({
 }: EducationFormProps): JSX.Element => {
 	const router = useTransitionRouter()
 
+	const {mutateAsync, isPending} = useUpdateUserEducationMutation({
+		onSuccess: () => {
+			toast.success('Education updated successfully')
+		},
+		onError: () => {
+			toast.error('Failed to update education, please try again')
+		}
+	})
 	// Initialize the form with default values and validation schema
 	const form = useForm<EducationMutation>({
 		resolver: zodResolver(EducationMutationSchema),
@@ -66,14 +75,7 @@ const EducationForm = ({
 	 * @returns {Promise<Education>} The newly added education entry.
 	 */
 	const insertEducation = async (values: EducationMutation): Promise<Education> => {
-		return await addEducationToDB({
-			...values,
-			started_from_month: values.started_from_month || null,
-			started_from_year: values.started_from_year || null,
-			finished_at_month: values.finished_at_month || null,
-			finished_at_year: values.finished_at_year || null,
-			current: !values.finished_at_year
-		})
+		return await mutateAsync(values)
 	}
 
 	/**
@@ -132,6 +134,7 @@ const EducationForm = ({
 						className="flex items-center gap-8 justify-between w-full"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="institution_name"
 							render={({field}) => (
@@ -150,6 +153,7 @@ const EducationForm = ({
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="country"
 							render={({field}) => (
@@ -169,6 +173,7 @@ const EducationForm = ({
 						className="flex items-center gap-8 justify-between my-8"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="field_of_study"
 							render={({field}) => (
@@ -181,6 +186,7 @@ const EducationForm = ({
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="degree"
 							render={({field}) => (
@@ -201,6 +207,7 @@ const EducationForm = ({
 					>
 						{/* Form field for start month */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="started_from_month"
 							render={({field}) => (
@@ -221,6 +228,7 @@ const EducationForm = ({
 
 						{/* Form field for start year */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="started_from_year"
 							render={({field}) => (
@@ -239,6 +247,7 @@ const EducationForm = ({
 
 						{/* Form field for end month */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="finished_at_month"
 							render={({field}) => (
@@ -257,6 +266,7 @@ const EducationForm = ({
 
 						{/* Form field for end year */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="finished_at_year"
 							render={({field}) => (
@@ -281,6 +291,7 @@ const EducationForm = ({
 						className="flex items-center gap-8 justify-between"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="description"
 							render={({field}) => (
@@ -306,6 +317,8 @@ const EducationForm = ({
 						{/* Button to navigate to the previous step */}
 						<Link href={'/app/onboarding?step=personal-details'}>
 							<Button
+								disabled={isPending}
+
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
 								variant="secondary"
 								type="button"
@@ -321,7 +334,7 @@ const EducationForm = ({
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 								variant="secondary"
 								type="submit"
-								disabled={form.formState.isSubmitting || !form.formState.isDirty}
+								disabled={isPending || form.formState.isSubmitting || !form.formState.isDirty}
 							>
 								Add another
 								{form.formState.isSubmitting
