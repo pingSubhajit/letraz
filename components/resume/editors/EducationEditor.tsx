@@ -9,14 +9,22 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {months, years} from '@/constants'
 import {countries} from '@/lib/constants'
 import {Pencil, Plus, X} from 'lucide-react'
-import {Input} from '@/components/ui/input'
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
+import {BrandedInput as Input} from '@/components/ui/input'
+import {
+	BrandedSelectTrigger as SelectTrigger,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectValue
+} from '@/components/ui/select'
 import RichTextEditor from '@/components/richTextEditor'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Checkbox} from '@/components/ui/checkbox'
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {nanoid} from 'nanoid'
+import Image from 'next/image'
+import ButtonGroup from '@/components/ui/button-group'
 
 type ViewState = 'list' | 'form'
 
@@ -114,14 +122,21 @@ const EducationEditor = ({className}: {className?: string}) => {
 	if (view === 'form') {
 		return (
 			<div className={cn('space-y-6', className)}>
-				<div ref={headerParent} className="mb-6 flex items-center justify-between">
+				<div ref={headerParent} className="mb-10 flex flex-col gap-1">
 					<h2 className="text-lg font-medium min-w-[16rem]">
 						{editingIndex !== null ? 'Update Education' : 'Add New Education'}
 					</h2>
+
+					<p className="text-sm max-w-lg opacity-80">
+						{editingIndex !== null
+							? 'Ensure that the details are correct and reflect your educational background'
+							: 'Having 2 or more educational details can increase the chance of your résumé getting selected upto 15%'
+						}
+					</p>
 				</div>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
 						<div className="grid grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
@@ -152,7 +167,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 													<SelectValue placeholder="Select country">
 														{field.value && (
 															<span className="flex items-center">
-																<span className="mr-2">{countries.find(c => c.name === field.value)?.flag}</span>
+																<Image src={countries.find(c => c.name === field.value)?.flag || ''} width={64} height={64} alt={`The flag of ${countries.find(c => c.name === field.value)?.name}`} className="mr-2 w-6" />
 																{field.value}
 															</span>
 														)}
@@ -166,7 +181,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 														value={country.name}
 														className="flex items-center"
 													>
-														<span className="mr-2">{country.flag || '🏳️'}</span>
+														<Image src={country.flag} width={64} height={64} alt={`The flag of ${country.name}`} className="mr-2 w-6" />
 														{country.name}
 													</SelectItem>
 												))}
@@ -337,13 +352,13 @@ const EducationEditor = ({className}: {className?: string}) => {
 							control={form.control}
 							name="description"
 							render={({field}) => (
-								<FormItem className="flex-1">
+								<FormItem className="mt-4 flex-1">
 									<FormLabel className="text-foreground ">Description</FormLabel>
 									<FormControl>
 										<RichTextEditor
 											value={field.value}
 											onChange={field.onChange}
-											className="h-60 mt-3 "
+											className="h-60 mt-3"
 											placeholder="Describe your academic achievements, relevant coursework, thesis, or any notable projects completed during your studies..."
 											editorContentClassName="flex-1 h-[200px] overflow-y-auto"
 										/>
@@ -353,14 +368,14 @@ const EducationEditor = ({className}: {className?: string}) => {
 							)}
 						/>
 
-						<div className="flex gap-4 justify-end">
-							<Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+						<ButtonGroup className="justify-end">
+							<Button type="button" variant="outline" onClick={handleCancel}>
 								Cancel
 							</Button>
-							<Button type="submit" size="sm">
+							<Button type="submit">
 								{editingIndex !== null ? 'Update Education' : 'Add Education'}
 							</Button>
-						</div>
+						</ButtonGroup>
 					</form>
 				</Form>
 			</div>
@@ -392,7 +407,6 @@ const EducationEditor = ({className}: {className?: string}) => {
 							<p className="text-sm text-muted-foreground">
 								{[
 									education.institution_name,
-									education.country?.name && countries.find(c => c.name === education.country.name)?.flag,
 									education.country?.name
 								].filter(Boolean).join(', ')}
 							</p>

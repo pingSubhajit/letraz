@@ -15,7 +15,6 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {JSX} from 'react'
 import {useUpdateUserEducationMutation} from '@/features/user/user-education/mutations'
@@ -51,6 +50,7 @@ const EducationForm = ({
 			toast.error('Failed to update education, please try again')
 		}
 	})
+
 	// Initialize the form with default values and validation schema
 	const form = useForm<EducationMutation>({
 		resolver: zodResolver(EducationMutationSchema),
@@ -126,7 +126,7 @@ const EducationForm = ({
 			</motion.div>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12">
+				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12 space-y-8">
 					{/* Form fields for institution name and country */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
@@ -157,9 +157,21 @@ const EducationForm = ({
 							control={form.control}
 							name="country"
 							render={({field}) => (
-								<FormItem>
-									<OnboardingFormInput placeholder="country" {...field} />
-									<FormLabel className="transition">Country</FormLabel>
+								<FormItem className="w-full">
+									<OnboardingFormSelect
+										onChange={field.onChange}
+										value={field.value || ''}
+										options={countries.map(country => ({
+											value: country.code,
+											label: country.name, image:
+											country.flag
+										}))}
+										placeholder="Country"
+										className="text-3xl"
+									/>
+									<FormLabel className="transition">
+										Country of institution
+									</FormLabel>
 									<FormMessage />
 								</FormItem>
 							)}
@@ -170,7 +182,7 @@ const EducationForm = ({
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between my-8"
+						className="flex items-center gap-8 justify-between"
 					>
 						<FormField
 							disabled={isPending}
@@ -203,7 +215,7 @@ const EducationForm = ({
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between my-6"
+						className="flex items-center gap-8 justify-between"
 					>
 						{/* Form field for start month */}
 						<FormField

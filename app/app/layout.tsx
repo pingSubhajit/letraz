@@ -4,7 +4,7 @@ import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 
 const AppLayout = ({children}: {children: ReactNode}) => {
 	return (
-		<div className="h-svh flex items-stretch relative overflow-hidden">
+		<div className="h-svh flex items-stretch relative overflow-hidden scrollbar-thin">
 			{/* SIDEBAR */}
 			<AppSidebar />
 
@@ -14,8 +14,10 @@ const AppLayout = ({children}: {children: ReactNode}) => {
 			<div className="h-[709px] w-[176px] absolute bg-amber-300 rounded-[50%] -z-10 -bottom-36 blur-[150px] -left-72" />
 
 			{/* MAIN CONTENT */}
-			<SmoothScrollProvider className="overflow-y-auto overflow-x-hidden h-screen w-full p-8">
-				{children}
+			<SmoothScrollProvider className="overflow-y-auto overflow-x-hidden h-screen w-full">
+				<main>
+					{children}
+				</main>
 			</SmoothScrollProvider>
 		</div>
 	)

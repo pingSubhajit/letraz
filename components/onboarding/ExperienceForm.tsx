@@ -14,9 +14,8 @@ import {
 } from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
-import {months, years} from '@/constants'
+import {months, years, countries} from '@/constants'
 import {toast} from 'sonner'
-
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
 import {useUpdateUserExperienceMutation} from '@/features/user/user-experience/mutations'
@@ -56,7 +55,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 		resolver: zodResolver(ExperienceMutationSchema),
 		defaultValues: {
 			company_name: '',
-			country: '',
+			country: 'IND',
 			job_title: '',
 			city: '',
 			employment_type: employmentTypes[0].value,
@@ -126,7 +125,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 			</motion.div>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12">
+				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12 space-y-8">
 					{/* Form fields for company name and country */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
@@ -151,10 +150,22 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 							control={form.control}
 							name="country"
 							render={({field}) => (
-								<FormItem>
-									<OnboardingFormInput placeholder="country" {...field} />
-									<FormLabel className="transition">Country</FormLabel>
-									<FormMessage/>
+								<FormItem className="w-full">
+									<OnboardingFormSelect
+										onChange={field.onChange}
+										value={field.value || ''}
+										options={countries.map(country => ({
+											value: country.code,
+											label: country.name, image:
+											country.flag
+										}))}
+										placeholder="Country"
+										className="text-3xl"
+									/>
+									<FormLabel className="transition">
+										Country of workplace
+									</FormLabel>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -164,7 +175,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between my-8"
+						className="flex items-center gap-8 justify-between"
 					>
 						<FormField
 							disabled={isPending}
@@ -197,7 +208,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between my-6"
+						className="flex items-center gap-8 justify-between"
 					>
 						{/* Form field for start month */}
 						<FormField

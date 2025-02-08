@@ -25,4 +25,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 Input.displayName = 'Input'
 
-export {Input}
+const BrandedInput = React.forwardRef<HTMLInputElement, InputProps>(
+	({className, type, ...props}, ref) => {
+		return (
+			<Input
+				type={type}
+				className={cn(
+					'bg-white h-12 border-input/75 transition',
+					'hover:border-input/50 focus-visible:border-input/50 hover:shadow-subtle placeholder:opacity-50 placeholder:font-medium',
+					className
+				)}
+				ref={ref}
+				{...props}
+			/>
+		)
+	}
+)
+BrandedInput.displayName = 'BrandedInput'
+
+export {Input, BrandedInput}

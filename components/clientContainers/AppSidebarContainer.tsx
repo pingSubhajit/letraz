@@ -6,7 +6,7 @@ import {ReactNode} from 'react'
 const AppSidebarContainer = ({children, className}: {children: ReactNode, className?: string}) => {
 	return (
 		<motion.aside
-			className="w-20 shadow-xl"
+			className="w-20 shadow-xl z-20"
 			initial={{width: '0px'}} animate={{width: '80px'}} transition={{
 				type: 'tween',
 				ease: 'easeInOut'

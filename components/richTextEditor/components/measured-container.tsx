@@ -2,9 +2,9 @@ import * as React from 'react'
 import {useContainerSize} from '../hooks/use-container-size'
 
 interface MeasuredContainerProps<T extends React.ElementType> {
-  as: T;
-  name: string;
-  children?: React.ReactNode;
+  as: T
+  name: string
+  children?: React.ReactNode
 }
 
 export const MeasuredContainer = React.forwardRef(

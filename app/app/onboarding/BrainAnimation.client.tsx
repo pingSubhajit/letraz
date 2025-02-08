@@ -14,7 +14,7 @@ type Props = {
 const BrainAnimation = ({className, onboardingStep, ref}: Props) => {
 	return (
 		<AnimatePresence>
-			<motion.video
+			{onboardingStep !== 'resume' && <motion.video
 				autoPlay muted loop
 				ref={ref}
 				className={cn('aspect-video absolute -z-10 w-full h-full scale-150', className)}
@@ -30,7 +30,7 @@ const BrainAnimation = ({className, onboardingStep, ref}: Props) => {
 				}}
 			>
 				<source src="/letraz-brain.webm" type="video/webm"/>
-			</motion.video>
+			</motion.video>}
 		</AnimatePresence>
 	)
 }

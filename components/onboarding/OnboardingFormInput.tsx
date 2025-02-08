@@ -10,6 +10,7 @@ import {SelectValueProps} from '@radix-ui/react-select'
 import {Textarea, TextareaProps} from '@/components/ui/textarea'
 import {Content} from '@tiptap/react'
 import RichTextEditor from '../richTextEditor'
+import Image from 'next/image'
 
 const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 	const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus' | 'error'>('idle')
@@ -87,6 +88,7 @@ type OnboardingFormSelectProps = {
 	options: {
 		value: string
 		label: string
+		image?: string
 	}[]
 	className?: string
 } & SelectValueProps
@@ -95,13 +97,16 @@ const OnboardingFormSelect = ({className, value, onChange, options, ...props}: O
 	return (
 		<Select onValueChange={onChange} defaultValue={value}>
 			<FormControl>
-				<SelectTrigger className={cn('text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground')}>
+				<SelectTrigger className={cn('text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground mb-2', className)}>
 					<SelectValue {...props} />
 				</SelectTrigger>
 			</FormControl>
 			<SelectContent>
 				{options.map(option => (
-					<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+					<SelectItem key={option.value} value={option.value}>
+						{option.image && <Image src={option.image} width={64} height={64} alt={`The image associated with the option ${option.label}`} className="mr-2 w-6" />}
+						{option.label}
+					</SelectItem>
 				))}
 			</SelectContent>
 		</Select>
@@ -109,10 +114,10 @@ const OnboardingFormSelect = ({className, value, onChange, options, ...props}: O
 }
 
 interface OnboardingRichTextInputProps {
-  className?: string;
-  value?: string;
-  onChange?: (value: Content) => void;
-  placeholder: string;
+  className?: string
+  value?: string
+  onChange?: (value: Content) => void
+  placeholder: string
 }
 
 const OnboardingRichTextInput: FC<OnboardingRichTextInputProps> = ({

@@ -5,7 +5,7 @@ const BaseResume = async () => {
 	const baseResume = await getResumeFromDB('base')
 
 	return (
-		<div className="w-full h-full flex flex-col justify-start pl-16 mb-40 pt-16">
+		<div className="w-full h-full flex flex-col justify-start">
 			<ResumeView resume={baseResume} />
 		</div>
 	)

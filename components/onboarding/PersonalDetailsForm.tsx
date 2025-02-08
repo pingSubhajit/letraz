@@ -10,7 +10,6 @@ import {Link, useTransitionRouter} from 'next-view-transitions'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
 import {toast} from 'sonner'
-
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {JSX} from 'react'
 import {useUpadataUserInfoMutation} from '@/features/user/user-info/mutations'
@@ -62,16 +61,6 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	 */
 	const onSubmit = async (values: UserInfoMutation) => {
 		await mutateAsync(values)
-		/*
-		 * try {
-		 * 	await addOrUpdateUserInfoToDB({
-		 * 		...values
-		 * 	})
-		 * 	router.push('/app/onboarding?step=education')
-		 * } catch (error) {
-		 * 	toast.error('Failed to update information, please try again')
-		 * }
-		 */
 	}
 
 	return (
@@ -167,12 +156,9 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 
 						{/* NEXT STEP BUTTON */}
 						<Button
-
-
 							className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 							variant="secondary"
 							type="submit"
-
 							disabled={ isPending || form.formState.isSubmitting || !form.formState.isValid}
 						>
 							Looks good

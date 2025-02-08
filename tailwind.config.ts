@@ -72,7 +72,10 @@ const config: Config = {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
-			}
+			},
+			boxShadow: ({theme}) => ({
+				subtle: `0 2px 16px ${theme('colors.neutral.950')}15`
+			})
 		}
 	},
 	plugins: [
