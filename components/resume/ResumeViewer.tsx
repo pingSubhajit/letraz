@@ -52,8 +52,10 @@ const ResumeViewer = ({resume, resumeRef, className}: ResumeViewerProps) => {
 					&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
 				}
 			/>
-		<div className={cn('size-a4 relative rounded-l-2xl resume p-2', className)}>
-			<DefaultTheme resumeRef={resumeRef} sections={resume.sections || []} personalInfoData={resume.user} />
+
+			<div className={cn('size-a4 relative rounded-l-2xl resume p-2', className)}>
+				<DefaultTheme resumeRef={resumeRef} sections={resume.sections || []} personalInfoData={resume.user} />
+			</div>
 		</div>
 	)
 }

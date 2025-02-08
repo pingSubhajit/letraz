@@ -14,11 +14,12 @@ import {
 } from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
-import {months, years, countries} from '@/constants'
+import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
 import {useUpdateUserExperienceMutation} from '@/features/user/user-experience/mutations'
+import {countries} from '@/lib/constants'
 
 // Define the props for the ExperienceForm component
 type ExperienceFormProps = {

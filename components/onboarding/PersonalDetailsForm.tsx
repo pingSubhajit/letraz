@@ -12,7 +12,8 @@ import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
 import {toast} from 'sonner'
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {JSX} from 'react'
-import {useUpadataUserInfoMutation} from '@/features/user/user-info/mutations'
+import {useUpdateUserInfoMutation} from '@/features/user/user-info/mutations'
+import * as Sentry from '@sentry/nextjs'
 
 // Define the default values for the form
 type DefaultValues = {
@@ -32,13 +33,13 @@ type DefaultValues = {
 const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }): JSX.Element => {
 	const router = useTransitionRouter()
 
-	const {mutateAsync, isPending} = useUpadataUserInfoMutation({
+	const {mutateAsync, isPending} = useUpdateUserInfoMutation({
 		onSuccess: () => {
-			toast.success('Information updated successfully')
 			router.push('/app/onboarding?step=education')
 		},
-		onError: () => {
+		onError: (error) => {
 			toast.error('Failed to update information, please try again')
+			Sentry.captureException(error)
 		}
 	})
 

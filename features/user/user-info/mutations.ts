@@ -4,7 +4,7 @@ import {updateUserInfo} from './actions'
 // import {userInfoQueryOption} from './queries'
 
 
-export const useUpadataUserInfoMutation = (options?: MutationOptions<UserInfo, Error, UserInfoMutation>) => {
+export const useUpdateUserInfoMutation = (options?: MutationOptions<UserInfo, Error, UserInfoMutation>) => {
 	// const queryClient = useQueryClient()
 
 	return useMutation({

@@ -18,6 +18,7 @@ import {toast} from 'sonner'
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {JSX} from 'react'
 import {useUpdateUserEducationMutation} from '@/features/user/user-education/mutations'
+import {countries} from '@/lib/constants'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -56,7 +57,7 @@ const EducationForm = ({
 		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
 			institution_name: '',
-			country: '',
+			country: 'IND',
 			field_of_study: '',
 			degree: '',
 			started_from_month: null,
