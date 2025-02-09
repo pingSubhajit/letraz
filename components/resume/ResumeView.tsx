@@ -9,6 +9,7 @@ const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {
 
 const ResumeView = ({resume}: {resume: Resume}) => {
 	const resumeRef = useRef<HTMLDivElement>(null)
+
 	const [resumeData, setResumeData] = useState<Resume>(resume)
 
 	return (
