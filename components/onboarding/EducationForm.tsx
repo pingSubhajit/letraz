@@ -44,9 +44,6 @@ const EducationForm = ({
 	const router = useTransitionRouter()
 
 	const {mutateAsync, isPending} = useUpdateUserEducationMutation({
-		onSuccess: () => {
-			toast.success('Education updated successfully')
-		},
 		onError: () => {
 			toast.error('Failed to update education, please try again')
 		}

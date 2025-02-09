@@ -40,16 +40,11 @@ type ExperienceFormProps = {
 const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps): JSX.Element => {
 	const router = useTransitionRouter()
 
-	const {mutateAsync, isPending} = useUpdateUserExperienceMutation(
-		{
-			onSuccess: () => {
-				toast.success('Experience updated successfully')
-			},
-			onError: () => {
-				toast.error('Failed to update experience, please try again')
-			}
+	const {mutateAsync, isPending} = useUpdateUserExperienceMutation({
+		onError: () => {
+			toast.error('Failed to update experience, please try again')
 		}
-	)
+	})
 
 	// Initialize the form with default values and validation schema
 	const form = useForm<ExperienceMutation>({
