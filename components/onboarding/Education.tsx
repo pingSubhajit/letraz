@@ -9,12 +9,10 @@ import {months} from '@/constants'
 import {X} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {toast} from 'sonner'
-import {deleteEducationFromDB} from '@/lib/education/actions'
-import {Education as EducationType} from '@/lib/education/types'
 import {ScrollArea} from '@/components/ui/scroll-area'
-import {useCurrentEducations} from '@/lib/education/queries'
+import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
 import {useQueryClient} from '@tanstack/react-query'
-import {EDUCATION_KEYS} from '@/lib/education/keys'
+import {useDeleteEducationMutation} from '@/lib/education/mutations'
 
 /**
  * Education component to display and manage user's education details.
@@ -27,35 +25,38 @@ const Education = (): JSX.Element => {
 	// State to manage the current list of educations
 
 	const queryClient = useQueryClient()
-	// const [currentEducations, setCurrentEducations] = useState<EducationType[]>(allEducations)
 	const [parent] = useAutoAnimate()
 
+	// TODO: change js docs
 	/**
 	 * Handles the deletion of an education entry.
-	 * @param {number} index - Index of the education entry to delete
+	 * @param {string} educationId - Id of the education entry to delete
 	 */
-	const handleDeleteEducation = async (index: number) => {
-		// eslint-disable-next-line @stylistic/js/multiline-comment-style
-		// const educationToDelete = currentEducations[index]
-		// // Check if the education has an ID
-		// if (!educationToDelete.id) {
-		// 	toast.error('Cannot delete education without an ID')
-		// 	return
-		// }
-		// // Delete the education from the database
-		// try {
-		// 	await deleteEducationFromDB(educationToDelete.id)
-		// 	setCurrentEducations(prev => prev.filter((_, i) => i !== index))
-		// 	toast.success('Education deleted successfully')
-		// } catch (error) {
-		// 	toast.error('Failed to delete education. Please try again.')
-		// }
+	const {data: currentEducations} = useCurrentEducations()
+
+
+	const {mutateAsync} = useDeleteEducationMutation({
+		onMutate: async (educationId) => {
+			await queryClient.cancelQueries(educationOptions)
+			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+			queryClient.setQueryData(educationOptions.queryKey, (oldData) => oldData ? oldData.filter(i => i.id != educationId) : oldData )
+			return {prevEducations}
+		},
+		// TODO remove this any the
+		onError: (err, newEducation, context:any) => {
+			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+			toast.error('Failed to delete education.')
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(educationOptions)
+		}
+
+	})
+
+	const handleDeleteEducation = (id:string) => {
+		mutateAsync(id)
 	}
 
-
-	// const currentEducations = queryClient.getQueryData<EducationType[]>(EDUCATION_KEYS) || []
-
-	const {data: currentEducations} = useCurrentEducations()
 
 	return (
 		<div className="w-full h-full flex flex-col justify-start pl-16 mb-40 pt-16">
@@ -93,9 +94,9 @@ const Education = (): JSX.Element => {
 
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 					{currentEducations?.map(
-						(education, index) => (
+						(education) => (
 							// EDUCATION ITEM
-							<li key={index} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
+							<li key={education.id} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
 								<PopConfirm
 									triggerElement={
 										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
@@ -103,7 +104,7 @@ const Education = (): JSX.Element => {
 										</button>
 									}
 									message="Are you sure you want to delete this education?"
-									onYes={() => handleDeleteEducation(index)}
+									onYes={() => handleDeleteEducation(education.id)}
 								/>
 								<p className="truncate font-medium text-xl">
 									{education.degree + ' '}
