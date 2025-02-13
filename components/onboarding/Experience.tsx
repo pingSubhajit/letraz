@@ -11,7 +11,9 @@ import {deleteExperienceFromDB} from '@/lib/experience/actions'
 import {Experience as ExperienceType} from '@/lib/experience/types'
 import {toast} from 'sonner'
 import PopConfirm from '@/components/ui/pop-confirm'
-import {useCurrentExperiences} from '@/lib/experience/queries'
+import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
+import {useDeleteExperienceMutation} from '@/lib/experience/mutations'
+import {useQueryClient} from '@tanstack/react-query'
 
 /**
  * Experience component to display and manage user's experience details.
@@ -21,32 +23,37 @@ import {useCurrentExperiences} from '@/lib/experience/queries'
  * @returns {JSX.Element} The Experience component
  */
 const Experience = (): JSX.Element => {
+	const queryClient = useQueryClient()
+
+
 	// State to manage the current list of experiences
 	const {data: currentExperiences} = useCurrentExperiences()
-	// const [currentExperiences, setCurrentExperiences] = useState<ExperienceType[]>(allExperiences)
+
 	const [parent] = useAutoAnimate()
+
+	const {mutateAsync} = useDeleteExperienceMutation({
+		onMutate: async (experienceId) => {
+			await queryClient.cancelQueries(experienceQueryOptions)
+			const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData) => oldData ? oldData.filter(i => i.id != experienceId) : oldData )
+			return {prevExperiences}
+		},
+		// TODO remove this any the
+		onError: (err, newExperience, context:any) => {
+			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+			toast.error('Failed to delete experience.')
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(experienceQueryOptions)
+		}
+	})
 
 	/**
 	 * Handles the deletion of an experience entry.
-	 * @param {number} index - Index of the experience entry to delete
+	 * @param {string} experienceId - Index of the experience entry to delete
 	 */
-	const handleDeleteExperience = async (index: number) => {
-		// TODO handle delete
-		// eslint-disable-next-line @stylistic/js/multiline-comment-style
-		// const experienceToDelete = currentExperiences[index]
-		// // Check if the experience has an ID
-		// if (!experienceToDelete.id) {
-		// 	toast.error('Cannot delete experience without an ID')
-		// 	return
-		// }
-		// // Delete the experience from the database
-		// try {
-		// 	const result = await deleteExperienceFromDB(experienceToDelete.id)
-		// 	setCurrentExperiences(prev => prev.filter((_, i) => i !== index))
-		// 	toast.success('Experience deleted successfully')
-		// } catch (error) {
-		// 	toast.error('Failed to delete experience. Please try again.')
-		// }
+	const handleDeleteExperience = async (experienceId:string) => {
+		await mutateAsync(experienceId)
 	}
 
 	return (
@@ -82,8 +89,8 @@ const Experience = (): JSX.Element => {
 
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 					{currentExperiences?.map(
-						(experience, index) => (
-							<li key={experience.id || index} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
+						(experience) => (
+							<li key={experience.id } className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
 								<PopConfirm
 									triggerElement={
 										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
@@ -91,7 +98,7 @@ const Experience = (): JSX.Element => {
 										</button>
 									}
 									message="Are you sure you want to delete this experience?"
-									onYes={() => handleDeleteExperience(index)}
+									onYes={() => handleDeleteExperience(experience.id)}
 								/>
 								<p className="truncate font-medium text-xl">
 									{experience.job_title && experience.job_title + ' '}

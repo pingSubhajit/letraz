@@ -11,7 +11,6 @@ const PersonalDetails = async () => {
 	await queryClient.prefetchQuery(userInfoQueryOptions)
 	const dehydratedState = dehydrate(queryClient)
 
-	// TODO default data
 	return (
 		<HydrationBoundary state={dehydratedState}>
 			<div className="w-full h-full flex flex-col">

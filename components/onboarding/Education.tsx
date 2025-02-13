@@ -27,7 +27,6 @@ const Education = (): JSX.Element => {
 	const queryClient = useQueryClient()
 	const [parent] = useAutoAnimate()
 
-	// TODO: change js docs
 	/**
 	 * Handles the deletion of an education entry.
 	 * @param {string} educationId - Id of the education entry to delete
