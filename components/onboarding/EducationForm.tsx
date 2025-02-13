@@ -19,12 +19,13 @@ import {Education, EducationMutation, EducationMutationSchema} from '@/lib/educa
 import {JSX} from 'react'
 import {useUpdateUserEducationMutation} from '@/features/user/user-education/mutations'
 import {countries} from '@/lib/constants'
+import {useQueryClient} from '@tanstack/react-query'
+
+import {educationOptions} from '@/lib/education/queries'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
 	className?: string
-	educations: Education[]
-	setEducations: (educations: Education[]) => void
 }
 
 /**
@@ -37,17 +38,24 @@ type EducationFormProps = {
  * @returns {JSX.Element} The JSX code to render the education form.
  */
 const EducationForm = ({
-	className,
-	educations,
-	setEducations
+	className
 }: EducationFormProps): JSX.Element => {
 	const router = useTransitionRouter()
 
+	const queryClient = useQueryClient()
+
+
+	// Fixing the mutation options
 	const {mutateAsync, isPending} = useUpdateUserEducationMutation({
+		onSuccess: () => {
+			toast.success('Education added')
+			queryClient.invalidateQueries(educationOptions)
+		},
 		onError: () => {
-			toast.error('Failed to update education, please try again')
+			throw Error('Failed to add education')
 		}
 	})
+
 
 	// Initialize the form with default values and validation schema
 	const form = useForm<EducationMutation>({
@@ -84,7 +92,7 @@ const EducationForm = ({
 		try {
 			const newEducation = await insertEducation(values)
 			if (newEducation) {
-				setEducations([...educations, newEducation])
+				// setEducations([...educations, newEducation])
 				form.reset()
 			} else {
 				throw new Error('Failed to add education')
@@ -104,7 +112,7 @@ const EducationForm = ({
 				await insertEducation(values)
 			}
 
-			router.push('/app/onboarding?step=experience')
+			// router.push('/app/onboarding?step=experience')
 		} catch (error) {
 			toast.error('Failed to update education, please try again')
 		}

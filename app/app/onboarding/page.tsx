@@ -4,12 +4,13 @@ import {notFound} from 'next/navigation'
 import {OnboardingStep} from '@/app/app/onboarding/types'
 import About from '@/components/onboarding/About'
 import PersonalDetails from '@/components/onboarding/PersonalDetails'
-import {getEducationsFromDB} from '@/lib/education/actions'
 import Education from '@/components/onboarding/Education'
 import {JSX} from 'react'
 import {getExperiencesFromDB} from '@/lib/experience/actions'
 import Experience from '@/components/onboarding/Experience'
 import BaseResume from '@/components/onboarding/BaseResume'
+import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
+import {educationOptions} from '@/lib/education/queries'
 
 /**
  * OnboardingPage component handles the rendering of different onboarding steps.
@@ -32,22 +33,32 @@ const OnboardingPage = async (
 		return notFound()
 	}
 
-	// Fetch the educations from the database
-	const educations = await getEducationsFromDB('base')
+	const queryClient = new QueryClient()
+
+	//  Pre-fetch the educations from the database
+	await queryClient.prefetchQuery(educationOptions)
+
+
 	const experiences = await getExperiencesFromDB('base')
+
+
+	const dehydratedState = dehydrate(queryClient)
+
 
 	// Render the appropriate component based on the current onboarding step
 	return (
-		<div className="h-full min-h-dvh w-full relative">
-			<BrainAnimation onboardingStep={step} />
+		<HydrationBoundary state={dehydratedState}>
+			<div className="h-full min-h-dvh w-full relative">
+				<BrainAnimation onboardingStep={step} />
 
-			{step === OnboardingStep.WELCOME && <Welcome />}
-			{step === OnboardingStep.ABOUT && <About />}
-			{step === OnboardingStep.PERSONAL_DETAILS && <PersonalDetails />}
-			{step === OnboardingStep.EDUCATION && <Education allEducations={educations} />}
-			{step === OnboardingStep.EXPERIENCE && <Experience allExperiences={experiences} />}
-			{step === OnboardingStep.RESUME && <BaseResume />}
-		</div>
+				{step === OnboardingStep.WELCOME && <Welcome />}
+				{step === OnboardingStep.ABOUT && <About />}
+				{step === OnboardingStep.PERSONAL_DETAILS && <PersonalDetails />}
+				{step === OnboardingStep.EDUCATION && <Education />}
+				{step === OnboardingStep.EXPERIENCE && <Experience allExperiences={experiences} />}
+				{step === OnboardingStep.RESUME && <BaseResume />}
+			</div>
+		</HydrationBoundary>
 	)
 }
 
