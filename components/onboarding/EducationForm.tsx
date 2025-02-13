@@ -47,12 +47,25 @@ const EducationForm = ({
 
 	// Fixing the mutation options
 	const {mutateAsync, isPending} = useUpdateUserEducationMutation({
+		onMutate: async (newEducation) => {
+			await queryClient.cancelQueries(educationOptions)
+			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+			// TODO remove this any
+			queryClient.setQueryData(educationOptions.queryKey, (oldData:any) => [...oldData, newEducation])
+			return {prevEducations}
+		},
 		onSuccess: () => {
 			toast.success('Education added')
 			queryClient.invalidateQueries(educationOptions)
 		},
-		onError: () => {
+		// TODO remove this any the
+		onError: (err, newEducation, context:any) => {
+			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+
 			throw Error('Failed to add education')
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(educationOptions)
 		}
 	})
 
@@ -112,7 +125,7 @@ const EducationForm = ({
 				await insertEducation(values)
 			}
 
-			// router.push('/app/onboarding?step=experience')
+			router.push('/app/onboarding?step=experience')
 		} catch (error) {
 			toast.error('Failed to update education, please try again')
 		}
