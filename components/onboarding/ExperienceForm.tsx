@@ -330,7 +330,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 
 					>
 						{/* Button to navigate to the previous step */}
-						<Link href={'/app/onboarding?step=experience'}>
+						<Link href={'/app/onboarding?step=education'}>
 							<Button
 								disabled={isPending}
 
@@ -339,7 +339,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 								type="button"
 							>
 								<ChevronLeft className="w-5 h-5 mr-1"/>
-								Experiences
+								Education
 							</Button>
 						</Link>
 
