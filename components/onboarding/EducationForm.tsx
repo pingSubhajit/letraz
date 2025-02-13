@@ -17,11 +17,12 @@ import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {JSX} from 'react'
-import {useUpdateUserEducationMutation} from '@/features/user/user-education/mutations'
+
 import {countries} from '@/lib/constants'
 import {useQueryClient} from '@tanstack/react-query'
 
 import {educationOptions} from '@/lib/education/queries'
+import {useUpdateEducationMutation} from '@/lib/education/mutations'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -46,7 +47,7 @@ const EducationForm = ({
 
 
 	// Fixing the mutation options
-	const {mutateAsync, isPending} = useUpdateUserEducationMutation({
+	const {mutateAsync, isPending} = useUpdateEducationMutation({
 		onMutate: async (newEducation) => {
 			await queryClient.cancelQueries(educationOptions)
 			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
@@ -91,9 +92,9 @@ const EducationForm = ({
 	 * Function to insert education details into the database.
 	 *
 	 * @param {EducationMutation} values - The form values.
-	 * @returns {Promise<Education>} The newly added education entry.
+	 * @returns {Promise<Education|undefined>} The newly added education entry.
 	 */
-	const insertEducation = async (values: EducationMutation): Promise<Education> => {
+	const insertEducation = async (values: EducationMutation): Promise<Education|undefined> => {
 		return await mutateAsync(values)
 	}
 

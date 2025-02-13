@@ -18,10 +18,10 @@ import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {JSX} from 'react'
-import {useUpdateUserExperienceMutation} from '@/features/user/user-experience/mutations'
 import {countries} from '@/lib/constants'
 import {useQueryClient} from '@tanstack/react-query'
 import {experienceQueryOptions} from '@/lib/experience/queries'
+import {useUpdateUserExperienceMutation} from '@/lib/experience/mutations'
 
 // Define the props for the ExperienceForm component
 type ExperienceFormProps = {
@@ -42,18 +42,13 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 
 	const queryClient = useQueryClient()
 
-
 	const {mutateAsync, isPending} = useUpdateUserExperienceMutation({
 		onMutate: async (newExperience) => {
 			await queryClient.cancelQueries(experienceQueryOptions)
 			const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
-			// TODO remove this any
-			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData:any) => [...oldData, newExperience])
+			// TODO remove this any the
+			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData:any) => oldData ? [...oldData, newExperience] : oldData)
 			return {prevExperiences}
-		},
-		onSuccess: () => {
-			toast.success('Experience added')
-			queryClient.invalidateQueries(experienceQueryOptions)
 		},
 		// TODO remove this any the
 		onError: (err, newExperience, context:any) => {
@@ -122,7 +117,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 				await insertExperience(values)
 			}
 
-			// router.push('/app/onboarding?step=resume')
+			router.push('/app/onboarding?step=resume')
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
 		}
