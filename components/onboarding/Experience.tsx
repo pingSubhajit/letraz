@@ -11,6 +11,7 @@ import {deleteExperienceFromDB} from '@/lib/experience/actions'
 import {Experience as ExperienceType} from '@/lib/experience/types'
 import {toast} from 'sonner'
 import PopConfirm from '@/components/ui/pop-confirm'
+import {useCurrentExperiences} from '@/lib/experience/queries'
 
 /**
  * Experience component to display and manage user's experience details.
@@ -19,9 +20,10 @@ import PopConfirm from '@/components/ui/pop-confirm'
  * @param {ExperienceType[]} props.allExperiences - Array of experience details
  * @returns {JSX.Element} The Experience component
  */
-const Experience = ({allExperiences}: { allExperiences: ExperienceType[] }): JSX.Element => {
+const Experience = (): JSX.Element => {
 	// State to manage the current list of experiences
-	const [currentExperiences, setCurrentExperiences] = useState<ExperienceType[]>(allExperiences)
+	const {data: currentExperiences} = useCurrentExperiences()
+	// const [currentExperiences, setCurrentExperiences] = useState<ExperienceType[]>(allExperiences)
 	const [parent] = useAutoAnimate()
 
 	/**
@@ -29,21 +31,22 @@ const Experience = ({allExperiences}: { allExperiences: ExperienceType[] }): JSX
 	 * @param {number} index - Index of the experience entry to delete
 	 */
 	const handleDeleteExperience = async (index: number) => {
-		const experienceToDelete = currentExperiences[index]
-		// Check if the experience has an ID
-		if (!experienceToDelete.id) {
-			toast.error('Cannot delete experience without an ID')
-			return
-		}
-
-		// Delete the experience from the database
-		try {
-			const result = await deleteExperienceFromDB(experienceToDelete.id)
-			setCurrentExperiences(prev => prev.filter((_, i) => i !== index))
-			toast.success('Experience deleted successfully')
-		} catch (error) {
-			toast.error('Failed to delete experience. Please try again.')
-		}
+		// TODO handle delete
+		// eslint-disable-next-line @stylistic/js/multiline-comment-style
+		// const experienceToDelete = currentExperiences[index]
+		// // Check if the experience has an ID
+		// if (!experienceToDelete.id) {
+		// 	toast.error('Cannot delete experience without an ID')
+		// 	return
+		// }
+		// // Delete the experience from the database
+		// try {
+		// 	const result = await deleteExperienceFromDB(experienceToDelete.id)
+		// 	setCurrentExperiences(prev => prev.filter((_, i) => i !== index))
+		// 	toast.success('Experience deleted successfully')
+		// } catch (error) {
+		// 	toast.error('Failed to delete experience. Please try again.')
+		// }
 	}
 
 	return (
@@ -63,12 +66,12 @@ const Experience = ({allExperiences}: { allExperiences: ExperienceType[] }): JSX
 			</div>
 
 			{/* FORM */}
-			<ExperienceForm experiences={currentExperiences} setExperiences={setCurrentExperiences} />
+			<ExperienceForm />
 
 			{/* EXPERIENCES */}
 			<motion.div
 				initial={{opacity: 0, y: '-30%'}}
-				animate={{opacity: currentExperiences.length > 0 ? 1 : 0, y: currentExperiences.length > 0 ? '-50%' : '-30%'}}
+				animate={{opacity: currentExperiences?.length as number > 0 ? 1 : 0, y: currentExperiences?.length as number > 0 ? '-50%' : '-30%'}}
 				transition={{
 					type: 'tween',
 					ease: 'easeInOut'
@@ -78,7 +81,7 @@ const Experience = ({allExperiences}: { allExperiences: ExperienceType[] }): JSX
 				<h3 className="text-center text-3xl font-medium">Experiences</h3>
 
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
-					{currentExperiences.map(
+					{currentExperiences?.map(
 						(experience, index) => (
 							<li key={experience.id || index} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
 								<PopConfirm

@@ -6,11 +6,11 @@ import About from '@/components/onboarding/About'
 import PersonalDetails from '@/components/onboarding/PersonalDetails'
 import Education from '@/components/onboarding/Education'
 import {JSX} from 'react'
-import {getExperiencesFromDB} from '@/lib/experience/actions'
 import Experience from '@/components/onboarding/Experience'
 import BaseResume from '@/components/onboarding/BaseResume'
 import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
 import {educationOptions} from '@/lib/education/queries'
+import {experienceQueryOptions} from '@/lib/experience/queries'
 
 /**
  * OnboardingPage component handles the rendering of different onboarding steps.
@@ -37,10 +37,7 @@ const OnboardingPage = async (
 
 	//  Pre-fetch the educations from the database
 	await queryClient.prefetchQuery(educationOptions)
-
-
-	const experiences = await getExperiencesFromDB('base')
-
+	await queryClient.prefetchQuery(experienceQueryOptions)
 
 	const dehydratedState = dehydrate(queryClient)
 
@@ -55,7 +52,7 @@ const OnboardingPage = async (
 				{step === OnboardingStep.ABOUT && <About />}
 				{step === OnboardingStep.PERSONAL_DETAILS && <PersonalDetails />}
 				{step === OnboardingStep.EDUCATION && <Education />}
-				{step === OnboardingStep.EXPERIENCE && <Experience allExperiences={experiences} />}
+				{step === OnboardingStep.EXPERIENCE && <Experience />}
 				{step === OnboardingStep.RESUME && <BaseResume />}
 			</div>
 		</HydrationBoundary>

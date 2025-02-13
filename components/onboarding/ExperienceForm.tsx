@@ -20,12 +20,12 @@ import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchem
 import {JSX} from 'react'
 import {useUpdateUserExperienceMutation} from '@/features/user/user-experience/mutations'
 import {countries} from '@/lib/constants'
+import {useQueryClient} from '@tanstack/react-query'
+import {experienceQueryOptions} from '@/lib/experience/queries'
 
 // Define the props for the ExperienceForm component
 type ExperienceFormProps = {
 	className?: string,
-	experiences: Experience[],
-	setExperiences: (experiences: Experience[]) => void
 }
 
 /**
@@ -37,12 +37,32 @@ type ExperienceFormProps = {
  * @param {function} props.setExperiences - Function to update the list of experiences entries.
  * @returns {JSX.Element} The JSX code to render the experience form.
  */
-const ExperienceForm = ({className, experiences, setExperiences}: ExperienceFormProps): JSX.Element => {
+const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 	const router = useTransitionRouter()
 
+	const queryClient = useQueryClient()
+
+
 	const {mutateAsync, isPending} = useUpdateUserExperienceMutation({
-		onError: () => {
-			toast.error('Failed to update experience, please try again')
+		onMutate: async (newExperience) => {
+			await queryClient.cancelQueries(experienceQueryOptions)
+			const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+			// TODO remove this any
+			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData:any) => [...oldData, newExperience])
+			return {prevExperiences}
+		},
+		onSuccess: () => {
+			toast.success('Experience added')
+			queryClient.invalidateQueries(experienceQueryOptions)
+		},
+		// TODO remove this any the
+		onError: (err, newExperience, context:any) => {
+			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+
+			throw Error('Failed to add experience')
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(experienceQueryOptions)
 		}
 	})
 
@@ -83,7 +103,6 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 		try {
 			const newExperience = await insertExperience(values)
 			if (newExperience){
-				setExperiences([...experiences, newExperience])
 				form.reset()
 			} else {
 				throw new Error('Failed to add experience')
@@ -103,7 +122,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 				await insertExperience(values)
 			}
 
-			router.push('/app/onboarding?step=resume')
+			// router.push('/app/onboarding?step=resume')
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')
 		}
@@ -311,7 +330,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 
 					>
 						{/* Button to navigate to the previous step */}
-						<Link href={'/app/onboarding?step=education'}>
+						<Link href={'/app/onboarding?step=experience'}>
 							<Button
 								disabled={isPending}
 
@@ -320,7 +339,7 @@ const ExperienceForm = ({className, experiences, setExperiences}: ExperienceForm
 								type="button"
 							>
 								<ChevronLeft className="w-5 h-5 mr-1"/>
-								Educations
+								Experiences
 							</Button>
 						</Link>
 
