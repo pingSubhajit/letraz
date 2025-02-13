@@ -11,7 +11,6 @@ import {api} from '@/lib/config/api-client'
 export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation): Promise<UserInfo> => {
 	const params = UserInfoMutationSchema.parse(userInfoValues)
 	const response = await api.patch<UserInfo>('/user/', params)
-
 	return UserInfoSchema.parse(response)
 }
 
