@@ -53,6 +53,6 @@ export const deleteEducationFromDB = async (
 	try {
 		await api.delete(`/resume/${resumeId}/education/${educationId}/`)
 	} catch (error) {
-		handleErrors(error, 'delete education')
+		return handleErrors(error, 'delete education')
 	}
 }
