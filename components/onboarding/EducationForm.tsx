@@ -55,11 +55,6 @@ const EducationForm = ({
 			queryClient.setQueryData(educationOptions.queryKey, (oldData:any) => [...oldData, newEducation])
 			return {prevEducations}
 		},
-		// TODO remove onSuccess handler
-		onSuccess: () => {
-			toast.success('Education added')
-			queryClient.invalidateQueries(educationOptions)
-		},
 		// TODO remove this any the
 		onError: (err, newEducation, context:any) => {
 			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)

@@ -3,6 +3,7 @@
 import {z, ZodError} from 'zod'
 import {Education, EducationMutation, EducationMutationSchema, EducationSchema} from '@/lib/education/types'
 import {api} from '@/lib/config/api-client'
+import {handleErrors} from '@/lib//misc/error-handler'
 
 /**
  * Adds new education information to the database.
@@ -54,23 +55,4 @@ export const deleteEducationFromDB = async (
 	} catch (error) {
 		handleErrors(error, 'delete education')
 	}
-}
-
-// TODO make an util
-/**
- * Handles errors consistently across all functions.
- * @param {unknown} error - The error object.
- * @param {string} context - The context in which the error occurred (e.g., 'add education').
- * @throws {Error} A formatted error message based on the error type.
- */
-const handleErrors = (error: unknown, context: string): never => {
-	if (error instanceof ZodError) {
-		throw new Error(
-			`Validation failed for ${context}: ${error.errors.map(e => e.message).join(', ')}`
-		)
-	}
-	if (error instanceof Error) {
-		throw new Error(`Failed to ${context}: ${error.message}`)
-	}
-	throw new Error(`An unknown error occurred while trying to ${context}`)
 }
