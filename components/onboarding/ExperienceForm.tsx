@@ -53,7 +53,6 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 		// TODO remove this any the
 		onError: (err, newExperience, context:any) => {
 			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
-
 			throw Error('Failed to add experience')
 		},
 		onSettled: () => {

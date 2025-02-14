@@ -1,27 +1,8 @@
 'use server'
 
 import {z, ZodError} from 'zod'
-import {auth} from '@clerk/nextjs/server'
-import {
-	Education,
-	EducationMutation,
-	EducationMutationSchema,
-	EducationSchema
-} from '@/lib/education/types'
+import {Education, EducationMutation, EducationMutationSchema, EducationSchema} from '@/lib/education/types'
 import {api} from '@/lib/config/api-client'
-
-// TODO make a util
-/**
- * Handles authentication and retrieves the session token.
- * @returns {Promise<string>} The authentication token.
- * @throws {Error} If no token is found.
- */
-const handleAuth = async (): Promise<string> => {
-	const session = await auth()
-	const token = await session?.getToken()
-	if (!token) throw new Error('Unauthorized: No authentication token found')
-	return token
-}
 
 /**
  * Adds new education information to the database.
@@ -33,13 +14,8 @@ export const addEducationToDB = async (
 	educationValues: EducationMutation
 ): Promise<Education|undefined> => {
 	try {
-		const token = await handleAuth()
 		const params = EducationMutationSchema.parse(educationValues)
-
-		const data = await api.post<Education>('/resume/base/education/', params, {
-			headers: {Authorization: `Bearer ${token}`}
-		})
-
+		const data = await api.post<Education>('/resume/base/education/', params)
 		return EducationSchema.parse(data)
 	} catch (error) {
 		handleErrors(error, 'add education')
@@ -56,13 +32,7 @@ export const getEducationsFromDB = async (
 	resumeId: string = 'base'
 ): Promise<Education[]|undefined > => {
 	try {
-		const token = await handleAuth()
-
-		const data = await api.get<Education[]>(
-			`/resume/${resumeId}/education/`,
-			{headers: {Authorization: `Bearer ${token}`}}
-		)
-
+		const data = await api.get<Education[]>(`/resume/${resumeId}/education/`)
 		return z.array(EducationSchema).parse(data)
 	} catch (error) {
 		handleErrors(error, 'fetch educations')
@@ -80,42 +50,13 @@ export const deleteEducationFromDB = async (
 	resumeId: string = 'base'
 ): Promise<void> => {
 	try {
-		const token = await handleAuth()
-
-		await api.delete(
-			`/resume/${resumeId}/education/${educationId}/`,
-			{headers: {Authorization: `Bearer ${token}`}}
-		)
+		await api.delete(`/resume/${resumeId}/education/${educationId}/`)
 	} catch (error) {
 		handleErrors(error, 'delete education')
 	}
 }
 
-/**
- * Updates an existing education entry in the database.
- * @param {EducationMutation} educationValues - The updated education information.
- * @returns {Promise<Education|undefined>} The updated education object.
- * @throws {Error} If validation, authentication, or API request fails.
- */
-export const updateEducationOnDB = async (
-	educationValues: EducationMutation
-): Promise<Education|undefined> => {
-	try {
-		const token = await handleAuth()
-		const params = EducationMutationSchema.parse(educationValues)
-
-		const data = await api.patch<Education>(
-			'/resume/base/education/',
-			params,
-			{headers: {Authorization: `Bearer ${token}`}}
-		)
-
-		return EducationSchema.parse(data)
-	} catch (error) {
-		handleErrors(error, 'update education')
-	}
-}
-
+// TODO make an util
 /**
  * Handles errors consistently across all functions.
  * @param {unknown} error - The error object.
