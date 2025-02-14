@@ -8,7 +8,7 @@ import {
 	EducationMutationSchema,
 	EducationSchema
 } from '@/lib/education/types'
-import {api} from '../config/api-client'
+import {api} from '@/lib/config/api-client'
 
 // TODO make a util
 /**
