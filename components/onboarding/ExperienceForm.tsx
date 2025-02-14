@@ -21,7 +21,7 @@ import {JSX} from 'react'
 import {countries} from '@/lib/constants'
 import {useQueryClient} from '@tanstack/react-query'
 import {experienceQueryOptions} from '@/lib/experience/queries'
-import {useUpdateUserExperienceMutation} from '@/lib/experience/mutations'
+import {useAddUserExperienceMutation} from '@/lib/experience/mutations'
 
 // Define the props for the ExperienceForm component
 type ExperienceFormProps = {
@@ -42,7 +42,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 
 	const queryClient = useQueryClient()
 
-	const {mutateAsync, isPending} = useUpdateUserExperienceMutation({
+	const {mutateAsync, isPending} = useAddUserExperienceMutation({
 		onMutate: async (newExperience) => {
 			await queryClient.cancelQueries(experienceQueryOptions)
 			const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)

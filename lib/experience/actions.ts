@@ -3,7 +3,7 @@
 import {z, ZodError} from 'zod'
 import {auth} from '@clerk/nextjs/server'
 import {Experience, ExperienceMutation, ExperienceMutationSchema, ExperienceSchema} from '@/lib/experience/types'
-import {api} from '../config/api-client'
+import {api} from '@/lib/config/api-client'
 
 /**
  * Adds new experience information in the database
@@ -58,47 +58,4 @@ export const deleteExperienceFromDB = async (experienceId: string, resumeId?: st
 			Authorization: `Bearer ${token}`
 		}
 	})
-}
-
-/**
- * Updates an existing experience entry in the database
- * @param {ExperienceMutation} experienceValues - The experience information to update
- * @returns {Promise<Experience>} - The updated experience object
- */
-export const updateExperienceOnDB = async (
-	experienceValues: ExperienceMutation
-): Promise<Experience> => {
-	try {
-		const session = await auth()
-		if (!session) {
-			throw new Error('Unauthorized: No session found')
-		}
-
-		const token = await session.getToken()
-		if (!token) {
-			throw new Error('Unauthorized: No token found')
-		}
-
-		const params = ExperienceMutationSchema.parse(experienceValues)
-
-		const data = await api.post<Experience>('/resume/base/experience/', params, {
-			headers: {
-				Authorization: `Bearer ${token}`
-			}
-		})
-
-		return ExperienceSchema.parse(data)
-	} catch (error) {
-		if (error instanceof ZodError) {
-			throw new Error(
-				`Validation failed: ${error.errors.map((e) => e.message).join(', ')}`
-			)
-		}
-
-		if (error instanceof Error) {
-			throw new Error(`Failed to update experience: ${error.message}`)
-		}
-
-		throw new Error('An unknown error occurred while updating experience')
-	}
 }
