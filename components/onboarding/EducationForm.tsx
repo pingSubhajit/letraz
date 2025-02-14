@@ -22,7 +22,7 @@ import {countries} from '@/lib/constants'
 import {useQueryClient} from '@tanstack/react-query'
 
 import {educationOptions} from '@/lib/education/queries'
-import {useUpdateEducationMutation} from '@/lib/education/mutations'
+import {useAddEducationMutation} from '@/lib/education/mutations'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -47,7 +47,7 @@ const EducationForm = ({
 
 
 	// Fixing the mutation options
-	const {mutateAsync, isPending} = useUpdateEducationMutation({
+	const {mutateAsync, isPending} = useAddEducationMutation({
 		onMutate: async (newEducation) => {
 			await queryClient.cancelQueries(educationOptions)
 			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)

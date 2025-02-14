@@ -10,6 +10,7 @@ import {
 } from '@/lib/education/types'
 import {api} from '../config/api-client'
 
+// TODO make a util
 /**
  * Handles authentication and retrieves the session token.
  * @returns {Promise<string>} The authentication token.
