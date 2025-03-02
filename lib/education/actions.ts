@@ -1,65 +1,58 @@
 'use server'
 
 import {z} from 'zod'
-import {auth} from '@clerk/nextjs/server'
 import {Education, EducationMutation, EducationMutationSchema, EducationSchema} from '@/lib/education/types'
+import {api} from '@/lib/config/api-client'
+import {handleErrors} from '@/lib//misc/error-handler'
 
 /**
- * Adds new education information in the database
- * @param {EducationMutation} educationValues - The education information
- * @returns {Promise<Education>} - The updated education object
+ * Adds new education information to the database.
+ * @param {EducationMutation} educationValues - The education information to add.
+ * @returns {Promise<Education>} The newly added education object.
+ * @throws {Error} If validation, authentication, or API request fails.
  */
-export const addEducationToDB = async (educationValues: EducationMutation): Promise<Education> => {
-	const session = await auth()
-	const token = await session.getToken()
-
-	const params = EducationMutationSchema.parse(educationValues)
-	const response = await fetch(`${process.env.API_URL}/resume/${'base'}/education/`, {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			...params
-		})
-	})
-
-	return EducationSchema.parse(await response.json())
+export const addEducationToDB = async (
+	educationValues: EducationMutation
+): Promise<Education> => {
+	try {
+		const params = EducationMutationSchema.parse(educationValues)
+		const data = await api.post<Education>('/resume/base/education/', params)
+		return EducationSchema.parse(data)
+	} catch (error) {
+		return	handleErrors(error, 'add education')
+	}
 }
 
 /**
- * Retrieves a single education object from the database by its ID
- * @param {string} [resumeId] - The ID of the resume to retrieve education entries from. Defaults to 'base'.
- * @returns {Promise<Education[]>} - The retrieved education objects
+ * Retrieves all education entries for a specific resume from the database.
+ * @param {string} [resumeId='base'] - The ID of the resume to retrieve education entries for. Defaults to 'base'.
+ * @returns {Promise<Education[]>} An array of education objects.
+ * @throws {Error} If authentication or API request fails.
  */
-export const getEducationsFromDB = async (resumeId?: string | 'base'): Promise<Education[]> => {
-	const session = await auth()
-	const token = await session.getToken()
-
-	const response = await fetch(`${process.env.API_URL}/resume/${resumeId ?? 'base'}/education/`, {
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	})
-
-	return z.array(EducationSchema).parse(await response.json())
+export const getEducationsFromDB = async (
+	resumeId: string = 'base'
+): Promise<Education[] > => {
+	try {
+		const data = await api.get<Education[]>(`/resume/${resumeId}/education/`)
+		return z.array(EducationSchema).parse(data)
+	} catch (error) {
+		return handleErrors(error, 'fetch educations')
+	}
 }
 
 /**
- * Deletes a single education object from the database by its ID
- * @param {string} educationId - The ID of the education entry to delete
- * @param {string} [resumeId] - The ID of the resume the education entry belongs to. Defaults to 'base'.
- * @returns {Promise<void>} - A promise that resolves when the education entry is deleted
+ * Deletes a specific education entry from the database.
+ * @param {string} educationId - The ID of the education entry to delete.
+ * @param {string} [resumeId='base'] - The ID of the resume the education entry belongs to. Defaults to 'base'.
+ * @throws {Error} If authentication or API request fails.
  */
-export const deleteEducationFromDB = async (educationId: string, resumeId?: string | 'base'): Promise<void> => {
-	const session = await auth()
-	const token = await session.getToken()
-
-	const response = await fetch(`${process.env.API_URL}/resume/${resumeId ?? 'base'}/education/${educationId}/`, {
-		method: 'DELETE',
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	})
+export const deleteEducationFromDB = async (
+	educationId: string,
+	resumeId: string = 'base'
+): Promise<void> => {
+	try {
+		await api.delete(`/resume/${resumeId}/education/${educationId}/`)
+	} catch (error) {
+		return handleErrors(error, 'delete education')
+	}
 }

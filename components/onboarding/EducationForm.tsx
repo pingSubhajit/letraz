@@ -15,16 +15,18 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
-import {addEducationToDB} from '@/lib/education/actions'
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {JSX} from 'react'
+
 import {countries} from '@/lib/constants'
+import {useQueryClient} from '@tanstack/react-query'
+
+import {educationOptions} from '@/lib/education/queries'
+import {useAddEducationMutation} from '@/lib/education/mutations'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
 	className?: string
-	educations: Education[]
-	setEducations: (educations: Education[]) => void
 }
 
 /**
@@ -37,11 +39,33 @@ type EducationFormProps = {
  * @returns {JSX.Element} The JSX code to render the education form.
  */
 const EducationForm = ({
-	className,
-	educations,
-	setEducations
+	className
 }: EducationFormProps): JSX.Element => {
 	const router = useTransitionRouter()
+
+	const queryClient = useQueryClient()
+
+
+	// Fixing the mutation options
+	const {mutateAsync, isPending} = useAddEducationMutation({
+		onMutate: async (newEducation) => {
+			await queryClient.cancelQueries(educationOptions)
+			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+			// TODO remove this any
+			queryClient.setQueryData(educationOptions.queryKey, (oldData:any) => [...oldData, newEducation])
+			return {prevEducations}
+		},
+		// TODO remove this any the
+		onError: (err, newEducation, context:any) => {
+			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+
+			throw Error('Failed to add education')
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(educationOptions)
+		}
+	})
+
 
 	// Initialize the form with default values and validation schema
 	const form = useForm<EducationMutation>({
@@ -64,17 +88,10 @@ const EducationForm = ({
 	 * Function to insert education details into the database.
 	 *
 	 * @param {EducationMutation} values - The form values.
-	 * @returns {Promise<Education>} The newly added education entry.
+	 * @returns {Promise<Education|undefined>} The newly added education entry.
 	 */
-	const insertEducation = async (values: EducationMutation): Promise<Education> => {
-		return await addEducationToDB({
-			...values,
-			started_from_month: values.started_from_month || null,
-			started_from_year: values.started_from_year || null,
-			finished_at_month: values.finished_at_month || null,
-			finished_at_year: values.finished_at_year || null,
-			current: !values.finished_at_year
-		})
+	const insertEducation = async (values: EducationMutation): Promise<Education|undefined> => {
+		return await mutateAsync(values)
 	}
 
 	/**
@@ -85,7 +102,7 @@ const EducationForm = ({
 		try {
 			const newEducation = await insertEducation(values)
 			if (newEducation) {
-				setEducations([...educations, newEducation])
+				// setEducations([...educations, newEducation])
 				form.reset()
 			} else {
 				throw new Error('Failed to add education')
@@ -133,6 +150,7 @@ const EducationForm = ({
 						className="flex items-center gap-8 justify-between w-full"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="institution_name"
 							render={({field}) => (
@@ -151,6 +169,7 @@ const EducationForm = ({
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="country"
 							render={({field}) => (
@@ -182,6 +201,7 @@ const EducationForm = ({
 						className="flex items-center gap-8 justify-between"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="field_of_study"
 							render={({field}) => (
@@ -194,6 +214,7 @@ const EducationForm = ({
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="degree"
 							render={({field}) => (
@@ -214,6 +235,7 @@ const EducationForm = ({
 					>
 						{/* Form field for start month */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="started_from_month"
 							render={({field}) => (
@@ -234,6 +256,7 @@ const EducationForm = ({
 
 						{/* Form field for start year */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="started_from_year"
 							render={({field}) => (
@@ -252,6 +275,7 @@ const EducationForm = ({
 
 						{/* Form field for end month */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="finished_at_month"
 							render={({field}) => (
@@ -270,6 +294,7 @@ const EducationForm = ({
 
 						{/* Form field for end year */}
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="finished_at_year"
 							render={({field}) => (
@@ -294,6 +319,7 @@ const EducationForm = ({
 						className="flex items-center gap-8 justify-between"
 					>
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="description"
 							render={({field}) => (
@@ -319,6 +345,8 @@ const EducationForm = ({
 						{/* Button to navigate to the previous step */}
 						<Link href={'/app/onboarding?step=personal-details'}>
 							<Button
+								disabled={isPending}
+
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
 								variant="secondary"
 								type="button"
@@ -334,7 +362,7 @@ const EducationForm = ({
 								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 								variant="secondary"
 								type="submit"
-								disabled={form.formState.isSubmitting || !form.formState.isDirty}
+								disabled={isPending || form.formState.isSubmitting || !form.formState.isDirty}
 							>
 								Add another
 								{form.formState.isSubmitting

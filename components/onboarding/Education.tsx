@@ -2,16 +2,17 @@
 
 import TextAnimate from '@/components/animations/TextAnimations'
 import EducationForm from '@/components/onboarding/EducationForm'
-import {JSX, useState} from 'react'
+import {JSX} from 'react'
 import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {toast} from 'sonner'
-import {deleteEducationFromDB} from '@/lib/education/actions'
-import {Education as EducationType} from '@/lib/education/types'
 import {ScrollArea} from '@/components/ui/scroll-area'
+import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
+import {useQueryClient} from '@tanstack/react-query'
+import {useDeleteEducationMutation} from '@/lib/education/mutations'
 
 /**
  * Education component to display and manage user's education details.
@@ -20,32 +21,41 @@ import {ScrollArea} from '@/components/ui/scroll-area'
  * @param {EducationType[]} props.allEducations - Array of education details
  * @returns {JSX.Element} The Education component
  */
-const Education = ({allEducations}: { allEducations: EducationType[] }): JSX.Element => {
+const Education = (): JSX.Element => {
 	// State to manage the current list of educations
-	const [currentEducations, setCurrentEducations] = useState<EducationType[]>(allEducations)
+
+	const queryClient = useQueryClient()
 	const [parent] = useAutoAnimate()
 
 	/**
 	 * Handles the deletion of an education entry.
-	 * @param {number} index - Index of the education entry to delete
+	 * @param {string} educationId - Id of the education entry to delete
 	 */
-	const handleDeleteEducation = async (index: number) => {
-		const educationToDelete = currentEducations[index]
-		// Check if the education has an ID
-		if (!educationToDelete.id) {
-			toast.error('Cannot delete education without an ID')
-			return
+	const {data: currentEducations} = useCurrentEducations()
+
+
+	const {mutateAsync} = useDeleteEducationMutation({
+		onMutate: async (educationId) => {
+			await queryClient.cancelQueries(educationOptions)
+			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+			queryClient.setQueryData(educationOptions.queryKey, (oldData) => oldData ? oldData.filter(i => i.id != educationId) : oldData )
+			return {prevEducations}
+		},
+		// TODO remove this any the
+		onError: (err, newEducation, context:any) => {
+			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+			toast.error('Failed to delete education.')
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(educationOptions)
 		}
 
-		// Delete the education from the database
-		try {
-			await deleteEducationFromDB(educationToDelete.id)
-			setCurrentEducations(prev => prev.filter((_, i) => i !== index))
-			toast.success('Education deleted successfully')
-		} catch (error) {
-			toast.error('Failed to delete education. Please try again.')
-		}
+	})
+
+	const handleDeleteEducation = (id:string) => {
+		mutateAsync(id)
 	}
+
 
 	return (
 		<div className="w-full h-full flex flex-col justify-start pl-16 mb-40 pt-16">
@@ -64,15 +74,15 @@ const Education = ({allEducations}: { allEducations: EducationType[] }): JSX.Ele
 					/>
 				</div>
 
-				{/* FORM */}
-				<EducationForm educations={currentEducations} setEducations={setCurrentEducations} />
 
+				{/* FORM */}
+				<EducationForm />
 			</ScrollArea>
 
 			{/* EDUCATIONS */}
 			<motion.div
 				initial={{opacity: 0, y: '-30%'}}
-				animate={{opacity: currentEducations.length > 0 ? 1 : 0, y: currentEducations.length > 0 ? '-50%' : '-30%'}}
+				animate={{opacity: currentEducations?.length as number > 0 ? 1 : 0, y: currentEducations?.length as number > 0 ? '-50%' : '-30%'}}
 				transition={{
 					type: 'tween',
 					ease: 'easeInOut'
@@ -82,10 +92,10 @@ const Education = ({allEducations}: { allEducations: EducationType[] }): JSX.Ele
 				<h3 className="text-center text-3xl font-medium">Educations</h3>
 
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
-					{currentEducations.map(
-						(education, index) => (
+					{currentEducations?.map(
+						(education) => (
 							// EDUCATION ITEM
-							<li key={index} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
+							<li key={education.id} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
 								<PopConfirm
 									triggerElement={
 										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
@@ -93,7 +103,7 @@ const Education = ({allEducations}: { allEducations: EducationType[] }): JSX.Ele
 										</button>
 									}
 									message="Are you sure you want to delete this education?"
-									onYes={() => handleDeleteEducation(index)}
+									onYes={() => handleDeleteEducation(education.id)}
 								/>
 								<p className="truncate font-medium text-xl">
 									{education.degree + ' '}

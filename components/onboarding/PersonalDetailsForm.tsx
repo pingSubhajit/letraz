@@ -10,17 +10,13 @@ import {Link, useTransitionRouter} from 'next-view-transitions'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {OnboardingFormInput} from '@/components/onboarding/OnboardingFormInput'
 import {toast} from 'sonner'
-import {addOrUpdateUserInfoToDB} from '@/lib/user-info/actions'
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {JSX} from 'react'
+import {useUpdateUserInfoMutation} from '@/lib/user-info/mutations'
+import * as Sentry from '@sentry/nextjs'
+import {useQuery} from '@tanstack/react-query'
+import {userInfoQueryOptions} from '@/lib/user-info/queries'
 
-// Define the default values for the form
-type DefaultValues = {
-	first_name: string
-	last_name: string
-	email: string
-	phone?: string
-}
 
 /**
  * PersonalDetails component handles the form for adding user's profile details.
@@ -29,17 +25,29 @@ type DefaultValues = {
  * @param {string} [props.className] - Additional class names for styling.
  * @returns {JSX.Element} The JSX code to render the education form.
  */
-const PersonalDetailsForm = ({className, defaultValues}: { className?: string, defaultValues: DefaultValues }): JSX.Element => {
+const PersonalDetailsForm = ({className}: { className?: string }): JSX.Element => {
 	const router = useTransitionRouter()
+
+	const {mutateAsync, isPending} = useUpdateUserInfoMutation({
+		onSuccess: () => {
+			router.push('/app/onboarding?step=education')
+		},
+		onError: (error) => {
+			toast.error('Failed to update information, please try again')
+			Sentry.captureException(error)
+		}
+	})
+
+	const {data: userData} = useQuery(userInfoQueryOptions)
 
 	// Initialize the form with default values and validation schema
 	const form = useForm<UserInfoMutation>({
 		resolver: zodResolver(UserInfoMutationSchema),
 		defaultValues: {
-			first_name: defaultValues.first_name,
-			last_name: defaultValues.last_name,
-			email: defaultValues.email,
-			phone: defaultValues.phone || undefined
+			first_name: userData?.first_name,
+			last_name: userData?.last_name,
+			email: userData?.email,
+			phone: userData?.phone || undefined
 		}
 	})
 
@@ -49,14 +57,7 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 	 * @param {UserInfoMutation} values - The form values.
 	 */
 	const onSubmit = async (values: UserInfoMutation) => {
-		try {
-			await addOrUpdateUserInfoToDB({
-				...values
-			})
-			router.push('/app/onboarding?step=education')
-		} catch (error) {
-			toast.error('Failed to update information, please try again')
-		}
+		await mutateAsync(values)
 	}
 
 	return (
@@ -77,25 +78,27 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between" >
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="first_name"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="first name" {...field} autoFocus />
 									<FormLabel className="transition">First name</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="last_name"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="last name" {...field} />
 									<FormLabel className="transition">Last name</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -105,25 +108,27 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
 						className="flex items-center gap-8 justify-between" >
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="email"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="email address" {...field} />
 									<FormLabel className="transition">Email</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
 
 						<FormField
+							disabled={isPending}
 							control={form.control}
 							name="phone"
 							render={({field}) => (
 								<FormItem>
 									<OnboardingFormInput placeholder="phone no." {...field} value={field.value || ''} />
 									<FormLabel className="transition">Phone (optional)</FormLabel>
-									<FormMessage/>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -135,11 +140,12 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 						{/* PREVIOUS STEP BUTTON */}
 						<Link href={'/app/onboarding?step=about'}>
 							<Button
+								disabled={isPending}
 								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
 								variant="secondary"
 								type="button"
 							>
-								<ChevronLeft className="w-5 h-5 mr-1"/>
+								<ChevronLeft className="w-5 h-5 mr-1" />
 								Overview
 							</Button>
 						</Link>
@@ -149,12 +155,12 @@ const PersonalDetailsForm = ({className, defaultValues}: { className?: string, d
 							className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
 							variant="secondary"
 							type="submit"
-							disabled={form.formState.isSubmitting || !form.formState.isValid}
+							disabled={isPending || form.formState.isSubmitting || !form.formState.isValid}
 						>
 							Looks good
 							{form.formState.isSubmitting
-								? <Loader2 className="w-4 h-4 ml-1 animate-spin"/>
-								: <ChevronRight className="w-5 h-5 ml-1"/>
+								? <Loader2 className="w-4 h-4 ml-1 animate-spin" />
+								: <ChevronRight className="w-5 h-5 ml-1" />
 							}
 						</Button>
 					</div>

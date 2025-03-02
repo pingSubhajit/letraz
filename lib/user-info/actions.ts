@@ -1,7 +1,7 @@
 'use server'
 
-import {auth} from '@clerk/nextjs/server'
 import {UserInfo, UserInfoMutation, UserInfoMutationSchema, UserInfoSchema} from '@/lib/user-info/types'
+import {api} from '@/lib/config/api-client'
 
 /**
  * Adds or updates user information in the database
@@ -9,22 +9,9 @@ import {UserInfo, UserInfoMutation, UserInfoMutationSchema, UserInfoSchema} from
  * @returns {Promise<UserInfo>} - The updated user information
  */
 export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation): Promise<UserInfo> => {
-	const session = await auth()
-	const token = await session.getToken()
-
 	const params = UserInfoMutationSchema.parse(userInfoValues)
-	const response = await fetch(`${process.env.API_URL}/user/`, {
-		method: 'PATCH',
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			...params
-		})
-	})
-
-	return UserInfoSchema.parse(await response.json())
+	const response = await api.patch<UserInfo>('/user/', params)
+	return UserInfoSchema.parse(response)
 }
 
 /**
@@ -32,14 +19,6 @@ export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation):
  * @returns {Promise<UserInfo>} - The retrieved user information
  */
 export const getPersonalInfoFromDB = async (): Promise<UserInfo> => {
-	const session = await auth()
-	const token = await session.getToken()
-
-	const response = await fetch(`${process.env.API_URL}/user/`, {
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	})
-
-	return UserInfoSchema.parse(await response.json())
+	const response = await api.get<UserInfo>('/user/')
+	return UserInfoSchema.parse(response)
 }

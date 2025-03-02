@@ -36,6 +36,8 @@
     "@react-email/tailwind": "0.1.0",
     "@react-pdf/renderer": "^3.4.4",
     "@sentry/nextjs": "8",
+    "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-query-devtools": "^5.66.0",
     "@tiptap/extension-bullet-list": "^2.8.0",
     "@tiptap/extension-link": "^2.8.0",
     "@tiptap/extension-list-item": "^2.8.0",
