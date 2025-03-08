@@ -362,4 +362,3 @@ const EducationEditor = ({className}: {className?: string}) => {
 }
 
 export default EducationEditor
-
