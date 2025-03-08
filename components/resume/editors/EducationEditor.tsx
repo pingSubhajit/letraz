@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -8,7 +8,7 @@ import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {months, years} from '@/constants'
 import {countries} from '@/lib/constants'
-import {Pencil, Plus, X} from 'lucide-react'
+import {Pencil, Plus, X, Loader2} from 'lucide-react'
 import {BrandedInput as Input} from '@/components/ui/input'
 import {
 	BrandedSelectTrigger as SelectTrigger,
@@ -22,19 +22,101 @@ import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Checkbox} from '@/components/ui/checkbox'
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
-import {nanoid} from 'nanoid'
+import {useQueryClient} from '@tanstack/react-query'
+import {toast} from 'sonner'
+import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
+import {useAddEducationMutation, useDeleteEducationMutation} from '@/lib/education/mutations'
 import Image from 'next/image'
 import ButtonGroup from '@/components/ui/button-group'
+import {AnimatePresence, motion} from 'framer-motion'
 
 type ViewState = 'list' | 'form'
 
 const EducationEditor = ({className}: {className?: string}) => {
 	const [view, setView] = useState<ViewState>('list')
-	const [educations, setEducations] = useState<Education[]>([])
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [headerParent] = useAutoAnimate()
-	const [endDateFieldsParent] = useAutoAnimate()
+	const queryClient = useQueryClient()
+	const [isMounted, setIsMounted] = useState(false)
+	const [deletingId, setDeletingId] = useState<string | null>(null)
+
+	const {data: educations = [], isLoading, error} = useCurrentEducations()
+
+	const {mutateAsync: addOrUpdateEducation, isPending: isSubmitting} = useAddEducationMutation({
+		onMutate: async (newEducation) => {
+			await queryClient.cancelQueries(educationOptions)
+
+			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+
+			if (editingIndex !== null) {
+				const currentId = educations[editingIndex]?.id
+				queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
+					const data = oldData || []
+					return data.map((item: any) => item.id === currentId ? {...item, ...newEducation} : item)
+				})
+			} else {
+				queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
+					const data = oldData || []
+					return [...data, {
+						...newEducation,
+						id: `temp-id-${Date.now()}`,
+						country: {
+							code: newEducation.country,
+							name: countries.find(c => c.code === newEducation.country)?.name || ''
+						},
+						created_at: new Date().toISOString(),
+						updated_at: new Date().toISOString()
+					}]
+				})
+			}
+
+			return {prevEducations}
+		},
+		onError: (err, _newEducation, context: any) => {
+			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+			console.log(err)
+			toast.error(`Failed to save education details: ${err.message}`)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(educationOptions)
+		},
+		onSuccess: () => {
+			toast.success(editingIndex !== null ? 'Education updated successfully!' : 'Education added successfully!')
+		}
+	})
+
+	const {mutateAsync: deleteEducation, isPending: isDeleting} = useDeleteEducationMutation({
+		onMutate: async (educationId) => {
+			setDeletingId(educationId)
+
+			await queryClient.cancelQueries(educationOptions)
+
+			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+
+			queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
+				const data = oldData || []
+				return data.filter((item: any) => item.id !== educationId)
+			})
+
+			return {prevEducations}
+		},
+		onError: (err, _educationId, context: any) => {
+			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+			toast.error(`Failed to delete education: ${err.message}`)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(educationOptions)
+			setDeletingId(null)
+		},
+		onSuccess: () => {
+			toast.success('Education deleted successfully!')
+		}
+	})
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const form = useForm<EducationMutation>({
 		resolver: zodResolver(EducationMutationSchema),
@@ -52,37 +134,15 @@ const EducationEditor = ({className}: {className?: string}) => {
 		}
 	})
 
-	const onSubmit = (values: EducationMutation) => {
-		const newEducation: Education = {
-			...values,
-			id: nanoid(),
-			user: 'user-id',
-			resume_section: 'resume-section-id',
-			country: {
-				code: values.country,
-				name: countries.find(c => c.name === values.country)?.name || ''
-			},
-			started_from_month: values.started_from_month ? parseInt(values.started_from_month) : null,
-			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
-			finished_at_month: values.finished_at_month ? parseInt(values.finished_at_month) : null,
-			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString()
-		}
-
-		if (editingIndex !== null) {
-			setEducations(prev => {
-				const updated = [...prev]
-				updated[editingIndex] = newEducation
-				return updated
-			})
+	const onSubmit = async (values: EducationMutation) => {
+		try {
+			await addOrUpdateEducation(values)
+			form.reset()
+			setView('list')
 			setEditingIndex(null)
-		} else {
-			setEducations(prev => [...prev, newEducation])
+		} catch (error) {
+			// Error already handled by the mutation's onError callback
 		}
-
-		form.reset()
-		setView('list')
 	}
 
 	const handleEdit = (index: number) => {
@@ -90,8 +150,8 @@ const EducationEditor = ({className}: {className?: string}) => {
 		form.reset({
 			...education,
 			country: education.country.code,
-			started_from_month: education.started_from_month?.toString(),
-			started_from_year: education.started_from_year?.toString(),
+			started_from_month: education.started_from_month?.toString() || '',
+			started_from_year: education.started_from_year?.toString() || '',
 			finished_at_month: education.finished_at_month?.toString() || '',
 			finished_at_year: education.finished_at_year?.toString() || ''
 		})
@@ -99,11 +159,16 @@ const EducationEditor = ({className}: {className?: string}) => {
 		setView('form')
 	}
 
-	const handleDelete = (index: number) => {
-		setEducations(prev => prev.filter((_, i) => i !== index))
-		if (editingIndex === index) {
-			setEditingIndex(null)
-			form.reset()
+	const handleDelete = async (id: string) => {
+		try {
+			await deleteEducation(id)
+			if (editingIndex !== null && educations[editingIndex]?.id === id) {
+				setEditingIndex(null)
+				form.reset()
+				setView('list')
+			}
+		} catch (error) {
+			// Error already handled by the mutation's onError callback
 		}
 	}
 
@@ -118,6 +183,8 @@ const EducationEditor = ({className}: {className?: string}) => {
 		setEditingIndex(null)
 		setView('list')
 	}
+
+	const isCurrentEducation = form.watch('current')
 
 	if (view === 'form') {
 		return (
@@ -149,6 +216,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 												{...field}
 												placeholder="e.g. Harvard University"
 												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
+												disabled={isSubmitting}
 											/>
 										</FormControl>
 										<FormMessage className="text-xs" />
@@ -161,14 +229,20 @@ const EducationEditor = ({className}: {className?: string}) => {
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Country</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
+										<Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
 											<FormControl>
 												<SelectTrigger className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0">
 													<SelectValue placeholder="Select country">
 														{field.value && (
 															<span className="flex items-center">
-																<Image src={countries.find(c => c.name === field.value)?.flag || ''} width={64} height={64} alt={`The flag of ${countries.find(c => c.name === field.value)?.name}`} className="mr-2 w-6" />
-																{field.value}
+																<Image
+																	src={countries.find(c => c.code === field.value)?.flag || ''}
+																	width={64}
+																	height={64}
+																	alt={`The flag of ${countries.find(c => c.code === field.value)?.name}`}
+																	className="mr-2 w-6"
+																/>
+																{countries.find(c => c.code === field.value)?.name || field.value}
 															</span>
 														)}
 													</SelectValue>
@@ -178,10 +252,16 @@ const EducationEditor = ({className}: {className?: string}) => {
 												{countries.map(country => (
 													<SelectItem
 														key={country.code}
-														value={country.name}
+														value={country.code}
 														className="flex items-center"
 													>
-														<Image src={country.flag} width={64} height={64} alt={`The flag of ${country.name}`} className="mr-2 w-6" />
+														<Image
+															src={country.flag}
+															width={64}
+															height={64}
+															alt={`The flag of ${country.name}`}
+															className="mr-2 w-6"
+														/>
 														{country.name}
 													</SelectItem>
 												))}
@@ -201,7 +281,13 @@ const EducationEditor = ({className}: {className?: string}) => {
 									<FormItem>
 										<FormLabel className="text-foreground">Degree</FormLabel>
 										<FormControl>
-											<Input {...field} value={field.value || ''} placeholder="e.g. Bachelor of Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
+											<Input
+												{...field}
+												value={field.value || ''}
+												placeholder="e.g. Bachelor of Science"
+												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
+												disabled={isSubmitting}
+											/>
 										</FormControl>
 										<FormMessage className="text-xs" />
 									</FormItem>
@@ -214,7 +300,12 @@ const EducationEditor = ({className}: {className?: string}) => {
 									<FormItem>
 										<FormLabel className="text-foreground">Field of Study</FormLabel>
 										<FormControl>
-											<Input {...field} placeholder="e.g. Computer Science" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
+											<Input
+												{...field}
+												placeholder="e.g. Computer Science"
+												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
+												disabled={isSubmitting}
+											/>
 										</FormControl>
 										<FormMessage className="text-xs" />
 									</FormItem>
@@ -229,7 +320,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Start Month</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value || ''}>
+										<Select onValueChange={field.onChange} value={field.value || ''} disabled={isSubmitting}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Choose start month" />
@@ -253,7 +344,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Start Year</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value || ''}>
+										<Select onValueChange={field.onChange} value={field.value || ''} disabled={isSubmitting}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Choose start year" />
@@ -272,59 +363,75 @@ const EducationEditor = ({className}: {className?: string}) => {
 								)}
 							/>
 
-							<div ref={endDateFieldsParent} className="col-span-2 grid grid-cols-2 gap-4">
-								{!form.watch('current') && (
-									<>
-										<FormField
-											control={form.control}
-											name="finished_at_month"
-											render={({field}) => (
-												<FormItem>
-													<FormLabel className="text-foreground">End Month</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value || ''}>
-														<FormControl>
-															<SelectTrigger>
-																<SelectValue placeholder="Choose end month" />
-															</SelectTrigger>
-														</FormControl>
-														<SelectContent>
-															{months.map(month => (
-																<SelectItem key={month.value} value={month.value}>
-																	{month.label}
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
-													<FormMessage className="text-xs" />
-												</FormItem>
-											)}
-										/>
-										<FormField
-											control={form.control}
-											name="finished_at_year"
-											render={({field}) => (
-												<FormItem>
-													<FormLabel className="text-foreground">End Year</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value || ''}>
-														<FormControl>
-															<SelectTrigger>
-																<SelectValue placeholder="Choose end year" />
-															</SelectTrigger>
-														</FormControl>
-														<SelectContent>
-															{years.map(year => (
-																<SelectItem key={year.value} value={year.value}>
-																	{year.label}
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
-													<FormMessage className="text-xs" />
-												</FormItem>
-											)}
-										/>
-									</>
-								)}
+							<div className="col-span-2 grid grid-cols-2 gap-4">
+								<AnimatePresence>
+									{!isCurrentEducation && (
+										<>
+											<motion.div
+												initial={{opacity: 0, height: 0}}
+												animate={{opacity: 1, height: 'auto'}}
+												exit={{opacity: 0, height: 0}}
+												transition={{duration: 0.3, ease: 'easeInOut'}}
+											>
+												<FormField
+													control={form.control}
+													name="finished_at_month"
+													render={({field}) => (
+														<FormItem>
+															<FormLabel className="text-foreground">End Month</FormLabel>
+															<Select onValueChange={field.onChange} value={field.value || ''} disabled={isSubmitting}>
+																<FormControl>
+																	<SelectTrigger>
+																		<SelectValue placeholder="Choose end month" />
+																	</SelectTrigger>
+																</FormControl>
+																<SelectContent>
+																	{months.map(month => (
+																		<SelectItem key={month.value} value={month.value}>
+																			{month.label}
+																		</SelectItem>
+																	))}
+																</SelectContent>
+															</Select>
+															<FormMessage className="text-xs" />
+														</FormItem>
+													)}
+												/>
+											</motion.div>
+											<motion.div
+												initial={{opacity: 0, height: 0}}
+												animate={{opacity: 1, height: 'auto'}}
+												exit={{opacity: 0, height: 0}}
+												transition={{duration: 0.3, ease: 'easeInOut'}}
+											>
+												<FormField
+													control={form.control}
+													name="finished_at_year"
+													render={({field}) => (
+														<FormItem>
+															<FormLabel className="text-foreground">End Year</FormLabel>
+															<Select onValueChange={field.onChange} value={field.value || ''} disabled={isSubmitting}>
+																<FormControl>
+																	<SelectTrigger>
+																		<SelectValue placeholder="Choose end year" />
+																	</SelectTrigger>
+																</FormControl>
+																<SelectContent>
+																	{years.map(year => (
+																		<SelectItem key={year.value} value={year.value}>
+																			{year.label}
+																		</SelectItem>
+																	))}
+																</SelectContent>
+															</Select>
+															<FormMessage className="text-xs" />
+														</FormItem>
+													)}
+												/>
+											</motion.div>
+										</>
+									)}
+								</AnimatePresence>
 							</div>
 						</div>
 
@@ -336,7 +443,15 @@ const EducationEditor = ({className}: {className?: string}) => {
 									<FormControl>
 										<Checkbox
 											checked={field.value}
-											onCheckedChange={field.onChange}
+											onCheckedChange={(checked) => {
+												field.onChange(checked)
+												// Clear end date fields when "currently study here" is checked
+												if (checked) {
+													form.setValue('finished_at_month', '')
+													form.setValue('finished_at_year', '')
+												}
+											}}
+											disabled={isSubmitting}
 										/>
 									</FormControl>
 									<div className="space-y-1 leading-none">
@@ -356,9 +471,9 @@ const EducationEditor = ({className}: {className?: string}) => {
 									<FormLabel className="text-foreground ">Description</FormLabel>
 									<FormControl>
 										<RichTextEditor
-											value={field.value}
+											value={field.value || ''}
 											onChange={field.onChange}
-											className="h-60 mt-3"
+											className={isSubmitting ? 'h-60 mt-3 opacity-60 pointer-events-none' : 'h-60 mt-3'}
 											placeholder="Describe your academic achievements, relevant coursework, thesis, or any notable projects completed during your studies..."
 											editorContentClassName="flex-1 h-[200px] overflow-y-auto"
 										/>
@@ -368,12 +483,19 @@ const EducationEditor = ({className}: {className?: string}) => {
 							)}
 						/>
 
-						<ButtonGroup className="justify-end">
-							<Button type="button" variant="outline" onClick={handleCancel}>
+						<ButtonGroup className="justify-end mt-4">
+							<Button type="button" variant="outline" onClick={handleCancel} disabled={isSubmitting}>
 								Cancel
 							</Button>
-							<Button type="submit">
-								{editingIndex !== null ? 'Update Education' : 'Add Education'}
+							<Button type="submit" disabled={isSubmitting}>
+								{isSubmitting ? (
+									<>
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+										{editingIndex !== null ? 'Updating...' : 'Adding...'}
+									</>
+								) : (
+									<>{editingIndex !== null ? 'Update Education' : 'Add Education'}</>
+								)}
 							</Button>
 						</ButtonGroup>
 					</form>
@@ -386,73 +508,90 @@ const EducationEditor = ({className}: {className?: string}) => {
 		<div className={cn('space-y-6', className)}>
 			<div ref={headerParent} className="mb-6 flex items-center justify-between">
 				<h2 className="text-lg font-medium">Education</h2>
-				{educations.length > 0 && (
+				{isMounted && !isLoading && educations.length > 0 && (
 					<Button
 						onClick={handleAddNew}
 						variant="outline"
 						size="sm"
+						disabled={isDeleting}
 					>
 						<Plus className="h-4 w-4 mr-2" />
 						Add New Education
-					</Button>)}
+					</Button>
+				)}
 			</div>
 
-			<div ref={parent} className="space-y-4">
-				{educations.map((education, index) => (
-					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
-						<div className="space-y-1">
-							<h3 className="font-medium">
-								{education.degree} in {education.field_of_study}
-							</h3>
-							<p className="text-sm text-muted-foreground">
-								{[
-									education.institution_name,
-									education.country?.name
-								].filter(Boolean).join(', ')}
-							</p>
-							<p className="text-sm">
-								{[
-									education.started_from_month,
-									education.started_from_year
-								].filter(Boolean).join(', ')} - {' '}
-								{education.current ? 'Present' : [
-									education.finished_at_month,
-									education.finished_at_year
-								].filter(Boolean).join(', ')}
-							</p>
-						</div>
-						<div className="flex gap-2">
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={() => handleEdit(index)}
-							>
-								<span className="sr-only">Edit education</span>
-								<Pencil className="h-4 w-4" />
-							</Button>
-							<PopConfirm
-								triggerElement={
-									<Button variant="ghost" size="icon">
-										<span className="sr-only">Delete education</span>
-										<X className="h-4 w-4" />
+			{isLoading ? (
+				<div className="flex items-center justify-center py-10">
+					<Loader2 className="h-8 w-8 animate-spin text-primary" />
+					<span className="ml-2">Loading education details...</span>
+				</div>
+			) : error ? (
+				<div className="text-center py-10 text-red-500">
+					Error loading education details. Please try again later.
+				</div>
+			) : (
+				<div ref={parent} className="space-y-4">
+					{educations.length > 0 ? (
+						educations.map((education, index) => (
+							<div key={education.id} className="flex items-start justify-between p-4 rounded-lg border bg-card">
+								<div className="space-y-1">
+									<h3 className="font-medium">
+										{education.degree} {education.degree && education.field_of_study && 'in'} {education.field_of_study}
+									</h3>
+									<p className="text-sm text-muted-foreground">
+										{[
+											education.institution_name,
+											education.country?.name
+										].filter(Boolean).join(', ')}
+									</p>
+									<p className="text-sm">
+										{education.started_from_month && months.find(m => m.value === education.started_from_month?.toString())?.label} {education.started_from_year} - {' '}
+										{education.current ? 'Present' : (
+											<>
+												{education.finished_at_month && months.find(m => m.value === education.finished_at_month?.toString())?.label} {education.finished_at_year}
+											</>
+										)}
+									</p>
+								</div>
+								<div className="flex gap-2">
+									<Button
+										variant="ghost"
+										size="icon"
+										onClick={() => handleEdit(index)}
+										disabled={isDeleting}
+									>
+										<span className="sr-only">Edit education</span>
+										<Pencil className="h-4 w-4" />
 									</Button>
-								}
-								message="Are you sure you want to delete this education?"
-								onYes={() => handleDelete(index)}
-							/>
-						</div>
-					</div>
-				))}
-			</div>
-			{educations.length === 0 && (
-				<Button
-					onClick={handleAddNew}
-					className="w-full"
-					variant="outline"
-				>
-					<Plus className="h-4 w-4 mr-2" />
-					Add New Education
-				</Button>
+									<PopConfirm
+										triggerElement={
+											<Button variant="ghost" size="icon" disabled={isDeleting}>
+												{isMounted && deletingId === education.id ? (
+													<Loader2 className="h-4 w-4 animate-spin" />
+												) : (
+													<X className="h-4 w-4" />
+												)}
+												<span className="sr-only">Delete education</span>
+											</Button>
+										}
+										message="Are you sure you want to delete this education?"
+										onYes={() => handleDelete(education.id)}
+									/>
+								</div>
+							</div>
+						))
+					) : (
+						<Button
+							onClick={handleAddNew}
+							className="w-full"
+							variant="outline"
+						>
+							<Plus className="h-4 w-4 mr-2" />
+							Add New Education
+						</Button>
+					)}
+				</div>
 			)}
 		</div>
 	)
