@@ -21,7 +21,7 @@ import RichTextEditor from '@/components/richTextEditor'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Checkbox} from '@/components/ui/checkbox'
-import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
+import {EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
@@ -75,7 +75,6 @@ const EducationEditor = ({className}: {className?: string}) => {
 		},
 		onError: (err, _newEducation, context: any) => {
 			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
-			console.log(err)
 			toast.error(`Failed to save education details: ${err.message}`)
 		},
 		onSettled: () => {
@@ -125,10 +124,10 @@ const EducationEditor = ({className}: {className?: string}) => {
 			country: '',
 			field_of_study: '',
 			degree: '',
-			started_from_month: '',
-			started_from_year: '',
-			finished_at_month: '',
-			finished_at_year: '',
+			started_from_month: null,
+			started_from_year: null,
+			finished_at_month: null,
+			finished_at_year: null,
 			current: false,
 			description: ''
 		}

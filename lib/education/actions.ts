@@ -19,7 +19,6 @@ export const addEducationToDB = async (
 		const data = await api.post<Education>('/resume/base/education/', params)
 		return EducationSchema.parse(data)
 	} catch (error) {
-		console.log("action se error",error)
 		return	handleErrors(error, 'add education')
 	}
 }
