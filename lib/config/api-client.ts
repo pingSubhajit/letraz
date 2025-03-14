@@ -99,8 +99,6 @@ const fetchApi = async <T>(
 		throw new Error(error.message)
 	}
 
-	console.log('response', response)
-
 	if (response.status === 204) {
 		return {} as T
 	}
