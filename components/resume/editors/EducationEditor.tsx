@@ -149,10 +149,10 @@ const EducationEditor = ({className}: {className?: string}) => {
 		form.reset({
 			...education,
 			country: education.country.code,
-			started_from_month: education.started_from_month?.toString() || '',
-			started_from_year: education.started_from_year?.toString() || '',
-			finished_at_month: education.finished_at_month?.toString() || '',
-			finished_at_year: education.finished_at_year?.toString() || ''
+			started_from_month: education.started_from_month?.toString() || null,
+			started_from_year: education.started_from_year?.toString() || null,
+			finished_at_month: education.finished_at_month?.toString() || null,
+			finished_at_year: education.finished_at_year?.toString() || null
 		})
 		setEditingIndex(index)
 		setView('form')
@@ -446,8 +446,8 @@ const EducationEditor = ({className}: {className?: string}) => {
 												field.onChange(checked)
 												// Clear end date fields when "currently study here" is checked
 												if (checked) {
-													form.setValue('finished_at_month', '')
-													form.setValue('finished_at_year', '')
+													form.setValue('finished_at_month', null)
+													form.setValue('finished_at_year', null)
 												}
 											}}
 											disabled={isSubmitting}
