@@ -41,6 +41,27 @@ export const getEducationsFromDB = async (
 }
 
 /**
+ * Updates an existing education entry in the database.
+ * @param {string} educationId - The ID of the education entry to update.
+ * @param {Partial<EducationMutation>} educationValues - The updated education information.
+ * @param {string} [resumeId='base'] - The ID of the resume the education entry belongs to. Defaults to 'base'.
+ * @returns {Promise<Education>} The updated education object.
+ * @throws {Error} If validation, authentication, or API request fails.
+ */
+export const updateEducationInDB = async (
+	educationId: string,
+	educationValues: Partial<EducationMutation>,
+	resumeId: string = 'base'
+): Promise<Education> => {
+	try {
+		const data = await api.patch<Education>(`/resume/${resumeId}/education/${educationId}/`, educationValues)
+		return EducationSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'update education')
+	}
+}
+
+/**
  * Deletes a specific education entry from the database.
  * @param {string} educationId - The ID of the education entry to delete.
  * @param {string} [resumeId='base'] - The ID of the resume the education entry belongs to. Defaults to 'base'.

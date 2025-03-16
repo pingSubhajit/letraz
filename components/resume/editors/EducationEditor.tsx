@@ -25,12 +25,25 @@ import {EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
-import {useAddEducationMutation, useDeleteEducationMutation} from '@/lib/education/mutations'
+import {useAddEducationMutation, useDeleteEducationMutation, useUpdateEducationMutation} from '@/lib/education/mutations'
 import Image from 'next/image'
 import ButtonGroup from '@/components/ui/button-group'
 import {AnimatePresence, motion} from 'framer-motion'
 
 type ViewState = 'list' | 'form'
+
+const DEFAULT_EDUCATION_VALUES: EducationMutation = {
+	institution_name: '',
+	country: '',
+	field_of_study: '',
+	degree: '',
+	started_from_month: null,
+	started_from_year: null,
+	finished_at_month: null,
+	finished_at_year: null,
+	current: false,
+	description: ''
+}
 
 const EducationEditor = ({className}: {className?: string}) => {
 	const [view, setView] = useState<ViewState>('list')
@@ -43,69 +56,96 @@ const EducationEditor = ({className}: {className?: string}) => {
 
 	const {data: educations = [], isLoading, error} = useCurrentEducations()
 
-	const {mutateAsync: addOrUpdateEducation, isPending: isSubmitting} = useAddEducationMutation({
+	const {mutateAsync: addEducation, isPending: isAddingPending} = useAddEducationMutation({
 		onMutate: async (newEducation) => {
-			await queryClient.cancelQueries(educationOptions)
+			await queryClient.cancelQueries({queryKey: educationOptions.queryKey})
 
-			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+			const prevAddEducations = queryClient.getQueryData(educationOptions.queryKey)
 
-			if (editingIndex !== null) {
-				const currentId = educations[editingIndex]?.id
-				queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
-					const data = oldData || []
-					return data.map((item: any) => item.id === currentId ? {...item, ...newEducation} : item)
-				})
-			} else {
-				queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
-					const data = oldData || []
-					return [...data, {
-						...newEducation,
-						id: `temp-id-${Date.now()}`,
-						country: {
-							code: newEducation.country,
-							name: countries.find(c => c.code === newEducation.country)?.name || ''
-						},
-						created_at: new Date().toISOString(),
-						updated_at: new Date().toISOString()
-					}]
-				})
-			}
+			queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
+				const data = oldData || []
+				return [...data, {
+					...newEducation,
+					id: `temp-id-${Date.now()}`,
+					country: {
+						code: newEducation.country,
+						name: countries.find(c => c.code === newEducation.country)?.name || ''
+					},
+					created_at: new Date().toISOString(),
+					updated_at: new Date().toISOString()
+				}]
+			})
 
-			return {prevEducations}
+			return {prevEducations: prevAddEducations}
 		},
 		onError: (err, _newEducation, context: any) => {
 			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
 			toast.error(`Failed to save education details: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(educationOptions)
+			queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
 		},
 		onSuccess: () => {
-			toast.success(editingIndex !== null ? 'Education updated successfully!' : 'Education added successfully!')
+			toast.success('Education added successfully!')
 		}
 	})
+
+	const {mutateAsync: updateEducation, isPending: isUpdatingPending} = useUpdateEducationMutation({
+		onMutate: async ({id, data}) => {
+			await queryClient.cancelQueries({queryKey: educationOptions.queryKey})
+
+			const prevUpdateEducations = queryClient.getQueryData(educationOptions.queryKey)
+
+			queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
+				const dataArr = oldData || []
+				return dataArr.map((item: any) => item.id === id ? {
+					...item,
+					...data,
+					country: {
+						code: data.country || item.country.code,
+						name: data.country ? countries.find(c => c.code === data.country)?.name || '' : item.country.name
+					},
+					updated_at: new Date().toISOString()
+				} : item)
+			})
+
+			return {prevEducations: prevUpdateEducations}
+		},
+		onError: (err, _updateData, context: any) => {
+			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+			toast.error(`Failed to update education details: ${err.message}`)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+		},
+		onSuccess: () => {
+			toast.success('Education updated successfully!')
+		}
+	})
+
+	const isSubmitting = isAddingPending || isUpdatingPending
 
 	const {mutateAsync: deleteEducation, isPending: isDeleting} = useDeleteEducationMutation({
 		onMutate: async (educationId) => {
 			setDeletingId(educationId)
 
-			await queryClient.cancelQueries(educationOptions)
+			await queryClient.cancelQueries({queryKey: educationOptions.queryKey})
 
-			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+			const prevDeleteEducations = queryClient.getQueryData(educationOptions.queryKey)
 
 			queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
 				const data = oldData || []
 				return data.filter((item: any) => item.id !== educationId)
 			})
 
-			return {prevEducations}
+			return {prevEducations: prevDeleteEducations}
 		},
 		onError: (err, _educationId, context: any) => {
 			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
 			toast.error(`Failed to delete education: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(educationOptions)
+			queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
 			setDeletingId(null)
 		},
 		onSuccess: () => {
@@ -119,24 +159,19 @@ const EducationEditor = ({className}: {className?: string}) => {
 
 	const form = useForm<EducationMutation>({
 		resolver: zodResolver(EducationMutationSchema),
-		defaultValues: {
-			institution_name: '',
-			country: '',
-			field_of_study: '',
-			degree: '',
-			started_from_month: null,
-			started_from_year: null,
-			finished_at_month: null,
-			finished_at_year: null,
-			current: false,
-			description: ''
-		}
+		defaultValues: DEFAULT_EDUCATION_VALUES
 	})
 
 	const onSubmit = async (values: EducationMutation) => {
 		try {
-			await addOrUpdateEducation(values)
-			form.reset()
+			if (editingIndex !== null) {
+				const educationId = educations[editingIndex]?.id
+				await updateEducation({id: educationId, data: values})
+			} else {
+				await addEducation(values)
+			}
+
+			form.reset(DEFAULT_EDUCATION_VALUES)
 			setView('list')
 			setEditingIndex(null)
 		} catch (error) {
@@ -163,7 +198,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 			await deleteEducation(id)
 			if (editingIndex !== null && educations[editingIndex]?.id === id) {
 				setEditingIndex(null)
-				form.reset()
+				form.reset(DEFAULT_EDUCATION_VALUES)
 				setView('list')
 			}
 		} catch (error) {
@@ -172,13 +207,13 @@ const EducationEditor = ({className}: {className?: string}) => {
 	}
 
 	const handleAddNew = () => {
-		form.reset()
+		form.reset(DEFAULT_EDUCATION_VALUES)
 		setEditingIndex(null)
 		setView('form')
 	}
 
 	const handleCancel = () => {
-		form.reset()
+		form.reset(DEFAULT_EDUCATION_VALUES)
 		setEditingIndex(null)
 		setView('list')
 	}
