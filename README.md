@@ -20,7 +20,7 @@ This repository contains the client-side implementation of the Letraz applicatio
 - [Next.js 15](https://nextjs.org/) - React framework
 - [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [django backend](https://www.djangoproject.com/) - The web framework for Python
+- [Django backend](https://www.djangoproject.com/) - The web framework for Python
 - [Clerk](https://clerk.com/) - Authentication provider
 - [Tanstack Query](https://tanstack.com/query/latest) - Data fetching and state management
 - [React Email](https://react.email/) - Email template system
@@ -38,7 +38,7 @@ This repository contains the client-side implementation of the Letraz applicatio
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/yourusername/letraz-client.git
+   git clone https://github.com/pingSubhajit/letraz.git
    cd letraz-client
    ```
 
