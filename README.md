@@ -1,6 +1,6 @@
 # Letraz Client
 
-![Letraz Banner](https://mintlify.s3.us-west-1.amazonaws.com/letraz/images/main-hero.png)
+![Letraz Banner](https://i.imgur.com/pLMcA9a.png)
 
 ## Overview
 
