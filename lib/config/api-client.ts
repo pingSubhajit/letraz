@@ -91,12 +91,20 @@ const fetchApi = async <T>(
 	})
 
 	if (!response.ok) {
-		const error = ((await response.json()) || response.statusText) as ApiError
-		if (typeof window !== 'undefined') {
-			// error handing
+		const {error} = ((await response.json()) || response.statusText) as { error: ApiError }
+		if (typeof window === 'undefined') {
+		} else {
+			/*
+			 * TODO Capture error with Sentry
+			 * TODO Call the error handler directly here and remove handling from individual actions
+			 */
 		}
 
 		throw new Error(error.message)
+	}
+
+	if (response.status === 204) {
+		return {} as T
 	}
 
 	return response.json()
