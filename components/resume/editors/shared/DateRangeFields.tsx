@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import {FormField, FormItem, FormLabel, FormControl, FormMessage} from '@/components/ui/form'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Checkbox} from '@/components/ui/checkbox'
@@ -29,15 +29,36 @@ const DateRangeFields = ({
 	currentFieldName = 'current',
 	currentLabel = 'I currently study here'
 }: DateRangeFieldsProps) => {
+	// Use useState to track the current checkbox state locally in addition to form state
+	const [isCurrentLocal, setIsCurrentLocal] = useState(form.getValues(currentFieldName) || false)
+	// Also watch the form value
 	const isCurrent = form.watch(currentFieldName)
+
+	// Keep local state in sync with form state
+	useEffect(() => {
+		setIsCurrentLocal(isCurrent)
+	}, [isCurrent])
 
 	// Clear end date fields when "current" is checked
 	useEffect(() => {
-		if (isCurrent) {
+		if (isCurrentLocal) {
 			form.setValue(endMonthName, null)
 			form.setValue(endYearName, null)
 		}
-	}, [isCurrent, form, endMonthName, endYearName])
+	}, [isCurrentLocal, form, endMonthName, endYearName])
+
+	// Handle checkbox change
+	const handleCurrentChange = (checked: boolean) => {
+		// Update local state
+		setIsCurrentLocal(checked)
+
+		// Update form state with all needed flags
+		form.setValue(currentFieldName, checked, {
+			shouldValidate: true,
+			shouldDirty: true,
+			shouldTouch: true
+		})
+	}
 
 	return (
 		<>
@@ -93,7 +114,7 @@ const DateRangeFields = ({
 
 				<div className="col-span-2 grid grid-cols-2 gap-4">
 					<AnimatePresence>
-						{!isCurrent && (
+						{!isCurrentLocal && (
 							<>
 								<motion.div
 									initial={{opacity: 0, height: 0}}
@@ -170,9 +191,8 @@ const DateRangeFields = ({
 					<FormItem className="flex flex-row items-start space-x-3 space-y-0">
 						<FormControl>
 							<Checkbox
-								checked={field.value}
-								onCheckedChange={field.onChange}
-								disabled={isSubmitting}
+								checked={isCurrentLocal}
+								onCheckedChange={handleCurrentChange}
 							/>
 						</FormControl>
 						<div className="space-y-1 leading-none">
