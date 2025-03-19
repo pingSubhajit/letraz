@@ -188,9 +188,6 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 			type => type.label === experience.employment_type
 		)?.value || 'flt' // Default to full-time if not found
 
-		// Check if this should be treated as a current position
-		const isCurrent = experience.current || (!experience.finished_at_month && !experience.finished_at_year)
-
 		form.reset({
 			...experience,
 			country: experience.country.code,
@@ -199,7 +196,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 			started_from_year: experience.started_from_year?.toString() || null,
 			finished_at_month: experience.finished_at_month?.toString() || null,
 			finished_at_year: experience.finished_at_year?.toString() || null,
-			current: isCurrent // Set current flag based on our logic
+			current: experience.current
 		})
 		setEditingIndex(index)
 		setView('form')
@@ -367,7 +364,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								</p>
 								<p className="text-sm">
 									{experience.started_from_month && months.find(m => m.value === experience.started_from_month?.toString())?.label} {experience.started_from_year} - {' '}
-									{(experience.current || (!experience.finished_at_month && !experience.finished_at_year)) ? 'Present' : (
+									{experience.current ? 'Present' : (
 										<>
 											{experience.finished_at_month && months.find(m => m.value === experience.finished_at_month?.toString())?.label} {experience.finished_at_year}
 										</>
