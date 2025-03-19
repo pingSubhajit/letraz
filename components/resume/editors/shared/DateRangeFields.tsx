@@ -30,35 +30,35 @@ const DateRangeFields = ({
 	currentLabel = 'I currently study here'
 }: DateRangeFieldsProps) => {
 	// Use useState to track the current checkbox state locally in addition to form state
-	const [isCurrentLocal, setIsCurrentLocal] = useState(form.getValues(currentFieldName) || false);
+	const [isCurrentLocal, setIsCurrentLocal] = useState(form.getValues(currentFieldName) || false)
 	// Also watch the form value
-	const isCurrent = form.watch(currentFieldName);
+	const isCurrent = form.watch(currentFieldName)
 
 	// Keep local state in sync with form state
 	useEffect(() => {
-		setIsCurrentLocal(isCurrent);
-	}, [isCurrent]);
+		setIsCurrentLocal(isCurrent)
+	}, [isCurrent])
 
 	// Clear end date fields when "current" is checked
 	useEffect(() => {
 		if (isCurrentLocal) {
-			form.setValue(endMonthName, null);
-			form.setValue(endYearName, null);
+			form.setValue(endMonthName, null)
+			form.setValue(endYearName, null)
 		}
-	}, [isCurrentLocal, form, endMonthName, endYearName]);
+	}, [isCurrentLocal, form, endMonthName, endYearName])
 
 	// Handle checkbox change
 	const handleCurrentChange = (checked: boolean) => {
 		// Update local state
-		setIsCurrentLocal(checked);
-		
+		setIsCurrentLocal(checked)
+
 		// Update form state with all needed flags
-		form.setValue(currentFieldName, checked, { 
+		form.setValue(currentFieldName, checked, {
 			shouldValidate: true,
 			shouldDirty: true,
 			shouldTouch: true
-		});
-	};
+		})
+	}
 
 	return (
 		<>

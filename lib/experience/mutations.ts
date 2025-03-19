@@ -3,8 +3,8 @@ import {MutationOptions, useMutation} from '@tanstack/react-query'
 import {deleteExperienceFromDB, addExperienceToDB, updateExperienceInDB} from '@/lib/experience/actions'
 
 export const useAddUserExperienceMutation = (options?: MutationOptions<Experience, Error, ExperienceMutation>) => useMutation({
-		mutationFn: addExperienceToDB,
-		...options
+	mutationFn: addExperienceToDB,
+	...options
 })
 
 export const useUpdateExperienceMutation = (options?: MutationOptions<Experience, Error, {id: string, data: Partial<ExperienceMutation>}>) => useMutation({

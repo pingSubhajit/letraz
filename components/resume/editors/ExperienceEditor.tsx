@@ -163,8 +163,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 				...values,
 				finished_at_month: values.current ? null : values.finished_at_month,
 				finished_at_year: values.current ? null : values.finished_at_year
-			};
-			
+			}
+
 			if (editingIndex !== null) {
 				const experienceId = experiences[editingIndex]?.id
 				await updateExperience({id: experienceId, data: submissionValues})
@@ -182,15 +182,15 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 
 	const handleEdit = (index: number) => {
 		const experience = experiences[index]
-		
+
 		// Find the employment type code that matches the label in the data
 		const employmentTypeCode = employmentTypes.find(
 			type => type.label === experience.employment_type
-		)?.value || 'flt'; // Default to full-time if not found
-		
+		)?.value || 'flt' // Default to full-time if not found
+
 		// Check if this should be treated as a current position
-		const isCurrent = experience.current || (!experience.finished_at_month && !experience.finished_at_year);
-		
+		const isCurrent = experience.current || (!experience.finished_at_month && !experience.finished_at_year)
+
 		form.reset({
 			...experience,
 			country: experience.country.code,
