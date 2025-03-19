@@ -58,7 +58,6 @@ const DateRangeFields = ({
 			shouldDirty: true,
 			shouldTouch: true
 		})
-	}
 
 	return (
 		<>
@@ -193,6 +192,8 @@ const DateRangeFields = ({
 							<Checkbox
 								checked={isCurrentLocal}
 								onCheckedChange={handleCurrentChange}
+								checked={field.value}
+								onCheckedChange={field.onChange}
 								disabled={isSubmitting}
 							/>
 						</FormControl>
