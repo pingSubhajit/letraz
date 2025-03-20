@@ -1,123 +1,228 @@
 'use client'
 
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {months, years} from '@/constants'
-import {Pencil, Plus, X} from 'lucide-react'
-import {BrandedInput as Input} from '@/components/ui/input'
-import {
-	BrandedSelectTrigger as SelectTrigger,
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectValue
-} from '@/components/ui/select'
-import RichTextEditor from '@/components/richTextEditor'
-import PopConfirm from '@/components/ui/pop-confirm'
+import {Loader2, Plus} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
-import {Checkbox} from '@/components/ui/checkbox'
+import {employmentTypes, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
+import {useQueryClient} from '@tanstack/react-query'
+import {toast} from 'sonner'
+import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
+import {useAddUserExperienceMutation, useDeleteExperienceMutation, useUpdateExperienceMutation} from '@/lib/experience/mutations'
 import {countries} from '@/lib/constants'
-import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
-import {nanoid} from 'nanoid'
-import {Separator} from '@/components/ui/separator'
-import Image from 'next/image'
-import ButtonGroup from '@/components/ui/button-group'
+import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
+import DateRangeFields from '@/components/resume/editors/shared/DateRangeFields'
+import CountrySelect from '@/components/resume/editors/shared/CountrySelect'
+import TextFormField from '@/components/resume/editors/shared/TextFormField'
+import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
+import FormButtons from '@/components/resume/editors/shared/FormButtons'
+import ItemCard from '@/components/resume/editors/shared/ItemCard'
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 
 type ViewState = 'list' | 'form'
 
+const DEFAULT_EXPERIENCE_VALUES: ExperienceMutation = {
+	company_name: '',
+	job_title: '',
+	employment_type: 'flt',
+	city: '',
+	country: '',
+	started_from_month: null,
+	started_from_year: null,
+	finished_at_month: null,
+	finished_at_year: null,
+	current: false,
+	description: ''
+}
+
 const ExperienceEditor = ({className}: {className?: string}) => {
 	const [view, setView] = useState<ViewState>('list')
-	const [experiences, setExperiences] = useState<Experience[]>([])
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
-	const [headerParent] = useAutoAnimate()
-	const [endDateFieldsParent] = useAutoAnimate()
+	const queryClient = useQueryClient()
+	const [isMounted, setIsMounted] = useState(false)
+	const [deletingId, setDeletingId] = useState<string | null>(null)
 
-	const form = useForm<ExperienceMutation>({
-		resolver: zodResolver(ExperienceMutationSchema),
-		defaultValues: {
-			company_name: '',
-			job_title: '',
-			employment_type: employmentTypes[0].value,
-			city: '',
-			country: '',
-			started_from_month: '',
-			started_from_year: '',
-			finished_at_month: '',
-			finished_at_year: '',
-			current: false,
-			description: ''
+	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
+
+	const {mutateAsync: addExperience, isPending: isAddingPending} = useAddUserExperienceMutation({
+		onMutate: async (newExperience) => {
+			await queryClient.cancelQueries({queryKey: experienceQueryOptions.queryKey})
+
+			const prevAddExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+
+			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData: any) => {
+				const data = oldData || []
+				return [...data, {
+					...newExperience,
+					id: `temp-id-${Date.now()}`,
+					country: {
+						code: newExperience.country,
+						name: countries.find(c => c.code === newExperience.country)?.name || ''
+					},
+					created_at: new Date().toISOString(),
+					updated_at: new Date().toISOString()
+				}]
+			})
+
+			return {prevExperiences: prevAddExperiences}
+		},
+		onError: (err, _newExperience, context: any) => {
+			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+			toast.error(`Failed to save experience details: ${err.message}`)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+		},
+		onSuccess: () => {
+			toast.success('Experience added successfully!')
 		}
 	})
 
-	const onSubmit = (values: ExperienceMutation) => {
-		const newExperience: Experience = {
-			...values,
-			id: nanoid(),
-			user: 'user-id',
-			resume_section: 'resume-section-id',
-			country: {
-				code: values.country,
-				name: countries.find(c => c.name === values.country)?.name || ''
-			},
-			started_from_month: values.started_from_month ? parseInt(values.started_from_month) : null,
-			started_from_year: values.started_from_year ? parseInt(values.started_from_year) : null,
-			finished_at_month: values.finished_at_month ? parseInt(values.finished_at_month) : null,
-			finished_at_year: values.finished_at_year ? parseInt(values.finished_at_year) : null,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString()
-		}
+	const {mutateAsync: updateExperience, isPending: isUpdatingPending} = useUpdateExperienceMutation({
+		onMutate: async ({id, data}) => {
+			await queryClient.cancelQueries({queryKey: experienceQueryOptions.queryKey})
 
-		if (editingIndex !== null) {
-			setExperiences(prev => {
-				const updated = [...prev]
-				updated[editingIndex] = newExperience
-				return updated
+			const prevUpdateExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+
+			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData: any) => {
+				const dataArr = oldData || []
+				return dataArr.map((item: any) => item.id === id ? {
+					...item,
+					...data,
+					country: {
+						code: data.country || item.country.code,
+						name: data.country ? countries.find(c => c.code === data.country)?.name || '' : item.country.name
+					},
+					updated_at: new Date().toISOString()
+				} : item)
 			})
-			setEditingIndex(null)
-		} else {
-			setExperiences(prev => [...prev, newExperience])
-		}
 
-		form.reset()
-		setView('list')
+			return {prevExperiences: prevUpdateExperiences}
+		},
+		onError: (err, _updateData, context: any) => {
+			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+			toast.error(`Failed to update experience details: ${err.message}`)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+		},
+		onSuccess: () => {
+			toast.success('Experience updated successfully!')
+		}
+	})
+
+	const isSubmitting = isAddingPending || isUpdatingPending
+
+	const {mutateAsync: deleteExperience, isPending: isDeleting} = useDeleteExperienceMutation({
+		onMutate: async (experienceId) => {
+			setDeletingId(experienceId)
+
+			await queryClient.cancelQueries({queryKey: experienceQueryOptions.queryKey})
+
+			const prevDeleteExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+
+			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData: any) => {
+				const data = oldData || []
+				return data.filter((item: any) => item.id !== experienceId)
+			})
+
+			return {prevExperiences: prevDeleteExperiences}
+		},
+		onError: (err, _experienceId, context: any) => {
+			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+			toast.error(`Failed to delete experience: ${err.message}`)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+			setDeletingId(null)
+		},
+		onSuccess: () => {
+			toast.success('Experience deleted successfully!')
+		}
+	})
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
+
+	const form = useForm<ExperienceMutation>({
+		resolver: zodResolver(ExperienceMutationSchema),
+		defaultValues: DEFAULT_EXPERIENCE_VALUES
+	})
+
+	const onSubmit = async (values: ExperienceMutation) => {
+		try {
+			// If current is true, ensure end dates are null
+			const submissionValues = {
+				...values,
+				finished_at_month: values.current ? null : values.finished_at_month,
+				finished_at_year: values.current ? null : values.finished_at_year
+			}
+
+			if (editingIndex !== null) {
+				const experienceId = experiences[editingIndex]?.id
+				await updateExperience({id: experienceId, data: submissionValues})
+			} else {
+				await addExperience(submissionValues)
+			}
+
+			form.reset(DEFAULT_EXPERIENCE_VALUES)
+			setView('list')
+			setEditingIndex(null)
+		} catch (error) {
+			// Error already handled by the mutation's onError callback
+		}
 	}
 
 	const handleEdit = (index: number) => {
 		const experience = experiences[index]
+
+		// Find the employment type code that matches the label in the data
+		const employmentTypeCode = employmentTypes.find(
+			type => type.label === experience.employment_type
+		)?.value || 'flt' // Default to full-time if not found
+
 		form.reset({
 			...experience,
 			country: experience.country.code,
-			employment_type: employmentTypes.find(type => type.value === experience.employment_type)?.value,
-			started_from_month: experience.started_from_month?.toString(),
-			started_from_year: experience.started_from_year?.toString(),
-			finished_at_month: experience.finished_at_month?.toString() || '',
-			finished_at_year: experience.finished_at_year?.toString() || ''
+			employment_type: employmentTypeCode as 'flt' | 'prt' | 'con' | 'int' | 'fre' | 'sel' | 'vol' | 'tra',
+			started_from_month: experience.started_from_month?.toString() || null,
+			started_from_year: experience.started_from_year?.toString() || null,
+			finished_at_month: experience.finished_at_month?.toString() || null,
+			finished_at_year: experience.finished_at_year?.toString() || null,
+			current: experience.current
 		})
 		setEditingIndex(index)
 		setView('form')
 	}
 
-	const handleDelete = (index: number) => {
-		setExperiences(prev => prev.filter((_, i) => i !== index))
-		if (editingIndex === index) {
-			setEditingIndex(null)
-			form.reset()
+	const handleDelete = async (id: string) => {
+		try {
+			await deleteExperience(id)
+			if (editingIndex !== null && experiences[editingIndex]?.id === id) {
+				setEditingIndex(null)
+				form.reset(DEFAULT_EXPERIENCE_VALUES)
+				setView('list')
+			}
+		} catch (error) {
+			// Error already handled by the mutation's onError callback
 		}
 	}
 
 	const handleAddNew = () => {
-		form.reset()
+		form.reset(DEFAULT_EXPERIENCE_VALUES)
 		setEditingIndex(null)
 		setView('form')
 	}
 
 	const handleCancel = () => {
-		form.reset()
+		form.reset(DEFAULT_EXPERIENCE_VALUES)
 		setEditingIndex(null)
 		setView('list')
 	}
@@ -125,55 +230,31 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 	if (view === 'form') {
 		return (
 			<div className={cn('space-y-6', className)}>
-				<div className="mb-10 flex flex-col gap-1">
-					<h2 className="text-lg font-medium min-w-[16rem]">
-						{editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
-					</h2>
-
-					<p className="text-sm max-w-lg opacity-80">
-						{editingIndex !== null
-							? 'Ensure that the details are correct and reflect your previous experience'
-							: 'Mentioning your past employment details can increase the chance of your résumé getting selected upto 75%'
-						}
-					</p>
-				</div>
+				<EditorHeader
+					title={editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
+					description={editingIndex !== null
+						? 'Ensure that the details are correct and reflect your previous experience'
+						: 'Mentioning your past employment details can increase the chance of your résumé getting selected upto 75%'
+					}
+					className="mb-10"
+				/>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
 						<div className="grid grid-cols-2 gap-4">
-							<FormField
-								control={form.control}
+							<TextFormField
+								form={form}
 								name="company_name"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">Company Name</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												placeholder="e.g. Google"
-												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
-											/>
-										</FormControl>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
+								label="Company Name"
+								placeholder="e.g. Google"
+								disabled={isSubmitting}
 							/>
-							<FormField
-								control={form.control}
+							<TextFormField
+								form={form}
 								name="job_title"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">Job Title</FormLabel>
-										<FormControl>
-											<Input
-												{...field}
-												placeholder="e.g. Software Engineer"
-												className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0"
-											/>
-										</FormControl>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
+								label="Job Title"
+								placeholder="e.g. Software Engineer"
+								disabled={isSubmitting}
 							/>
 						</div>
 
@@ -184,7 +265,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								render={({field}) => (
 									<FormItem>
 										<FormLabel className="text-foreground">Employment Type</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
+										<Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Select type" />
@@ -202,211 +283,41 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 									</FormItem>
 								)}
 							/>
-							<FormField
-								control={form.control}
+							<TextFormField
+								form={form}
 								name="city"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">City</FormLabel>
-										<FormControl>
-											<Input {...field} value={field.value || ''} placeholder="e.g. San Francisco" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0" />
-										</FormControl>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
+								label="City"
+								placeholder="e.g. San Francisco"
+								disabled={isSubmitting}
 							/>
-							<FormField
-								control={form.control}
+							<CountrySelect
+								form={form}
 								name="country"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">Country</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value}>
-											<FormControl>
-												<SelectTrigger className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0">
-													<SelectValue placeholder="Select country">
-														{field.value && (
-															<span className="flex items-center">
-																<Image src={countries.find(c => c.name === field.value)?.flag || ''} width={64} height={64} alt={`The flag of ${countries.find(c => c.name === field.value)?.name}`} className="mr-2 w-6" />
-																{field.value}
-															</span>
-														)}
-													</SelectValue>
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent className="max-h-[300px]">
-												{countries.map(country => (
-													<SelectItem
-														key={country.code}
-														value={country.name}
-														className="flex items-center"
-													>
-														<Image src={country.flag} width={64} height={64} alt={`The flag of ${country.name}`} className="mr-2 w-6" />
-														{country.name}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
+								disabled={isSubmitting}
 							/>
 						</div>
 
-						<div className="grid grid-cols-4 gap-4">
-							<FormField
-								control={form.control}
-								name="started_from_month"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">Start Month</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value || ''}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Choose month" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{months.map(month => (
-													<SelectItem key={month.value} value={month.value || ''}>
-														{month.label}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="started_from_year"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel className="text-foreground">Start Year</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value || ''}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Choose year" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{years.map(year => (
-													<SelectItem key={year.value} value={year.value || ''}>
-														{year.label}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
-
-							<div ref={endDateFieldsParent} className="col-span-2 grid grid-cols-2 gap-4">
-								{!form.watch('current') && (
-									<>
-										<FormField
-											control={form.control}
-											name="finished_at_month"
-											render={({field}) => (
-												<FormItem>
-													<FormLabel className="text-foreground">End Month</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value || ''}>
-														<FormControl>
-															<SelectTrigger>
-																<SelectValue placeholder="Choose month" />
-															</SelectTrigger>
-														</FormControl>
-														<SelectContent>
-															{months.map(month => (
-																<SelectItem key={month.value} value={month.value || ''}>
-																	{month.label}
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
-													<FormMessage className="text-xs" />
-												</FormItem>
-											)}
-										/>
-										<FormField
-											control={form.control}
-											name="finished_at_year"
-											render={({field}) => (
-												<FormItem>
-													<FormLabel className="text-foreground">End Year</FormLabel>
-													<Select onValueChange={field.onChange} value={field.value || ''}>
-														<FormControl>
-															<SelectTrigger>
-																<SelectValue placeholder="Choose year" />
-															</SelectTrigger>
-														</FormControl>
-														<SelectContent>
-															{years.map(year => (
-																<SelectItem key={year.value} value={year.value || ''}>
-																	{year.label}
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
-													<FormMessage className="text-xs" />
-												</FormItem>
-											)}
-										/>
-									</>
-								)}
-							</div>
-						</div>
-
-						<FormField
-							control={form.control}
-							name="current"
-							render={({field}) => (
-								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
-									<FormControl>
-										<Checkbox
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-									<div className="space-y-1 leading-none">
-										<FormLabel>
-											I currently work here
-										</FormLabel>
-									</div>
-								</FormItem>
-							)}
+						<DateRangeFields
+							form={form}
+							isSubmitting={isSubmitting}
+							currentLabel="I currently work here"
 						/>
 
-						<FormField
-							control={form.control}
+						<RichTextFormField
+							form={form}
 							name="description"
-							render={({field}) => (
-								<FormItem className="flex-1">
-									<FormLabel className="text-foreground">Description</FormLabel>
-									<FormControl>
-										<RichTextEditor
-											value={field.value}
-											onChange={field.onChange}
-											className="h-60 mt-3"
-											placeholder="Describe your role, responsibilities, and key achievements..."
-											editorContentClassName="flex-1 h-[200px] overflow-y-auto"
-										/>
-									</FormControl>
-									<FormMessage className="text-xs" />
-								</FormItem>
-							)}
+							label="Description"
+							placeholder="Describe your role, responsibilities, and key achievements..."
+							disabled={isSubmitting}
 						/>
 
-						<ButtonGroup className="justify-end">
-							<Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-								Cancel
-							</Button>
-							<Button type="submit" size="sm">
-								{editingIndex !== null ? 'Update Experience' : 'Add Experience'}
-							</Button>
-						</ButtonGroup>
+						<FormButtons
+							onCancel={handleCancel}
+							isSubmitting={isSubmitting}
+							isEditing={editingIndex !== null}
+							editingSubmitLabel="Update Experience"
+							addingSubmitLabel="Add Experience"
+						/>
 					</form>
 				</Form>
 			</div>
@@ -415,80 +326,63 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 
 	return (
 		<div className={cn('space-y-6', className)}>
-			<div ref={headerParent} className="mb-6 flex items-center justify-between">
-				<h2 className="text-lg font-medium">Experience</h2>
-				{experiences.length > 0 && (
-					<Button
-						onClick={handleAddNew}
-						variant="outline"
-						size="sm"
-					>
-						<Plus className="h-4 w-4 mr-2" />
-						Add New Experience
-					</Button>
-				)}
-			</div>
+			<EditorHeader
+				title="Experience"
+				showAddButton={isMounted && !isLoading && experiences.length > 0}
+				onAddNew={handleAddNew}
+				isDisabled={isDeleting}
+				addButtonText="Add New Experience"
+			/>
 
-			<div ref={parent} className="space-y-4">
-				{experiences.map((experience, index) => (
-					<div key={index} className="flex items-start justify-between p-4 rounded-lg border bg-card">
-						<div className="space-y-1">
-							<h3 className="font-medium">{experience.job_title}</h3>
-							<p className="text-sm text-muted-foreground">
-								{experience.company_name} • {employmentTypes.find(type => type.value === experience.employment_type)?.label}
-							</p>
-							<div className="flex justify-between items-center">
+			{isLoading ? (
+				<div className="flex items-center justify-center py-10">
+					<Loader2 className="h-8 w-8 animate-spin text-primary" />
+					<span className="ml-2">Loading experience details...</span>
+				</div>
+			) : error ? (
+				<div className="text-center py-10 text-red-500">
+					Error loading experience details. Please try again later.
+				</div>
+			) : (
+				<div ref={parent} className="space-y-4">
+					{experiences.length > 0 ? (
+						experiences.map((experience, index) => (
+							<ItemCard
+								key={experience.id}
+								onEdit={() => handleEdit(index)}
+								onDelete={() => handleDelete(experience.id)}
+								isDeleting={isDeleting}
+								id={experience.id}
+								deletingId={deletingId}
+							>
+								<h3 className="font-medium">{experience.job_title} at {experience.company_name}</h3>
 								<p className="text-sm text-muted-foreground">
-									{[
+									{experience.employment_type} | {[
 										experience.city,
 										experience.country?.name
 									].filter(Boolean).join(', ')}
 								</p>
-								<Separator orientation="vertical" className="mx-2 h-4" />
 								<p className="text-sm">
-									{[
-										experience.started_from_month,
-										experience.started_from_year
-									].filter(Boolean).join(', ')} - {' '}
-									{experience.current ? 'Present' : [
-										experience.finished_at_month,
-										experience.finished_at_year
-									].filter(Boolean).join(', ')}
+									{experience.started_from_month && months.find(m => m.value === experience.started_from_month?.toString())?.label} {experience.started_from_year} - {' '}
+									{experience.current ? 'Present' : (
+										<>
+											{experience.finished_at_month && months.find(m => m.value === experience.finished_at_month?.toString())?.label} {experience.finished_at_year}
+										</>
+									)}
 								</p>
-							</div>
-						</div>
-						<div className="flex gap-2">
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={() => handleEdit(index)}
-							>
-								<span className="sr-only">Edit experience</span>
-								<Pencil className="h-4 w-4"/>
-							</Button>
-							<PopConfirm
-								triggerElement={
-									<Button variant="ghost" size="icon">
-										<span className="sr-only">Delete experience</span>
-										<X className="h-4 w-4"/>
-									</Button>
-								}
-								message="Are you sure you want to delete this experience?"
-								onYes={() => handleDelete(index)}
-							/>
-						</div>
-					</div>
-				))}
-			</div>
-			{experiences.length === 0 && (
-				<Button
-					onClick={handleAddNew}
-					className="w-full"
-					variant="outline"
-				>
-					<Plus className="h-4 w-4 mr-2" />
-					Add New Experience
-				</Button>
+							</ItemCard>
+						))
+					) : (
+						<Button
+							onClick={handleAddNew}
+							className="w-full"
+							variant="outline"
+						>
+							<Plus className="h-4 w-4 mr-2" />
+							Add New Experience
+						</Button>
+					)}
+				</div>
 			)}
 		</div>
 	)
