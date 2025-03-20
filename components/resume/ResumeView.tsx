@@ -3,14 +3,14 @@
 import ResumeEditor from '@/components/resume/ResumeEditor'
 import {useRef} from 'react'
 import dynamic from 'next/dynamic'
-import {useFetchBaseResumeQuery} from '@/lib/resume/queries'
+import {useBaseResume} from '@/lib/resume/queries'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
 const ResumeView = () => {
 	const resumeRef = useRef<HTMLDivElement>(null)
 
-	const {data: resume, isLoading, isError} = useFetchBaseResumeQuery()
+	const {data: resume, isLoading, isError} = useBaseResume()
 
 
 	return (

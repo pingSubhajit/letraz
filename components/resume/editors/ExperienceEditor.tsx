@@ -1,19 +1,23 @@
 'use client'
 
-import {useState, useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {months, years} from '@/constants'
+import {months} from '@/constants'
 import {Loader2, Plus} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {employmentTypes, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
-import {useAddUserExperienceMutation, useDeleteExperienceMutation, useUpdateExperienceMutation} from '@/lib/experience/mutations'
+import {
+	useAddUserExperienceMutation,
+	useDeleteExperienceMutation,
+	useUpdateExperienceMutation
+} from '@/lib/experience/mutations'
 import {countries} from '@/lib/constants'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import DateRangeFields from '@/components/resume/editors/shared/DateRangeFields'
@@ -23,6 +27,7 @@ import RichTextFormField from '@/components/resume/editors/shared/RichTextFormFi
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
+import {baseResumeQueryOptions} from '@/lib/resume/queries'
 
 type ViewState = 'list' | 'form'
 
@@ -49,6 +54,12 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 
 	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
+
+	const revalidate = () => {
+		queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+	}
+
 
 	const {mutateAsync: addExperience, isPending: isAddingPending} = useAddUserExperienceMutation({
 		onMutate: async (newExperience) => {
@@ -77,7 +88,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 			toast.error(`Failed to save experience details: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+			revalidate()
 		},
 		onSuccess: () => {
 			toast.success('Experience added successfully!')
@@ -110,7 +121,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 			toast.error(`Failed to update experience details: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+			revalidate()
 		},
 		onSuccess: () => {
 			toast.success('Experience updated successfully!')
@@ -139,7 +150,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 			toast.error(`Failed to delete experience: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+			revalidate()
 			setDeletingId(null)
 		},
 		onSuccess: () => {
