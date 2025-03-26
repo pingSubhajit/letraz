@@ -7,7 +7,7 @@ import {ReactNode} from 'react'
 const AppSidebarContainer = ({children, className}: {children: ReactNode, className?: string}) => {
 	const pathname = usePathname()
 
-	const shouldAnimate = pathname === '/app/onboarding'
+	const shouldAnimate = pathname.startsWith('/app/onboarding')
 
 	return (
 		<motion.aside
