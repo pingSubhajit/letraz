@@ -7,6 +7,11 @@ import {ReactNode} from 'react'
 const AppSidebarContainer = ({children, className}: {children: ReactNode, className?: string}) => {
 	const pathname = usePathname()
 
+
+	/*
+	 * Only animate the sidebar on onboarding pages for a smoother initial experience,
+	 * while keeping the UI snappy and immediate on all other application pages
+	 */
 	const shouldAnimate = pathname.startsWith('/app/onboarding')
 
 	return (
