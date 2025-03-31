@@ -68,8 +68,6 @@ const ResumeView = () => {
 
 	return (
 		<div className="flex h-screen" role="main">
-
-			{/* TODO component for loading and error handing */}
 			{/* View of the finalized resume */}
 			<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
 				<AnimatePresence mode="wait">
@@ -83,7 +81,7 @@ const ResumeView = () => {
 					</motion.div>}
 				</AnimatePresence>
 
-				{resume && <ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" />}
+				{resume && <ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" error={isError} />}
 			</div>
 
 			{/* Editor section for the resume */}
