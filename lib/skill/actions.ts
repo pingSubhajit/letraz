@@ -12,7 +12,7 @@ import {handleErrors} from '@/lib/misc/error-handler'
 export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
 	try {
 		const data = await api.get<GlobalSkill[]>('/skill/')
-		
+
 		// Map the data and log each skill parsing result
 		const parsedSkills = data.map(skill => {
 			try {
@@ -22,7 +22,7 @@ export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
 				throw parseError
 			}
 		})
-		
+
 		return parsedSkills
 	} catch (error) {
 		return handleErrors(error, 'fetch global skills')
@@ -59,7 +59,7 @@ export const addSkillToResume = async (
 		let apiPayload: any = {
 			level: skillData.level
 		}
-		
+
 		// Handle custom skill vs existing skill
 		if (skillData.skill_id.startsWith('custom:')) {
 			// For custom skills, extract the name from skill_id and use the provided category
@@ -70,7 +70,7 @@ export const addSkillToResume = async (
 			apiPayload.skill_id = skillData.skill_id
 			apiPayload.category = skillData.category
 		}
-		
+
 		const data = await api.post<ResumeSkill>(`/resume/${resumeId}/skill/`, apiPayload)
 		return ResumeSkillSchema.parse(data)
 	} catch (error) {
@@ -94,12 +94,12 @@ export const updateResumeSkill = async (
 	try {
 		// Format data for the API
 		let apiPayload: any = {}
-		
+
 		// Include level if provided
 		if (skillData.level) {
 			apiPayload.level = skillData.level
 		}
-		
+
 		// Handle skill name changes
 		if (skillData.skill_id) {
 			if (skillData.skill_id.startsWith('custom:')) {
@@ -110,12 +110,12 @@ export const updateResumeSkill = async (
 				apiPayload.skill_id = skillData.skill_id
 			}
 		}
-		
+
 		// Include category if provided
 		if (skillData.category !== undefined) {
 			apiPayload.category = skillData.category
 		}
-		
+
 		const data = await api.patch<ResumeSkill>(`/resume/${resumeId}/skill/${skillId}/`, apiPayload)
 		return ResumeSkillSchema.parse(data)
 	} catch (error) {

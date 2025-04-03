@@ -37,13 +37,13 @@ const SkillAutocomplete = ({
 	const inputRef = useRef<HTMLInputElement>(null)
 	const suggestionsRef = useRef<HTMLDivElement>(null)
 	const form = useFormContext()
-	
+
 	// Use the hook for searching skills without filtering for excludeSkillIds
 	const {results: allMatchingSkills, isSearching} = useSkillSearch({
 		skills,
 		searchQuery: inputValue
 	})
-	
+
 	// Mark skills as excluded but don't hide them
 	const suggestions = allMatchingSkills.map(skill => ({
 		...skill,
@@ -72,7 +72,7 @@ const SkillAutocomplete = ({
 	const handleSelectSuggestion = (skill: Skill & { isExcluded?: boolean }) => {
 		// Don't select excluded skills
 		if (skill.isExcluded) return
-		
+
 		setInputValue(skill.name)
 		setShowSuggestions(false)
 		form.setValue(name, skill.id, {shouldValidate: true})
@@ -86,7 +86,7 @@ const SkillAutocomplete = ({
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value
 		setInputValue(value)
-		
+
 		// Only show suggestions if the user has typed something
 		if (value.trim()) {
 			setShowSuggestions(true)
@@ -95,7 +95,7 @@ const SkillAutocomplete = ({
 			setShowSuggestions(false)
 			// Clear the skill ID when input is emptied
 			form.setValue(name, '', {shouldValidate: true})
-			
+
 			// Notify parent to clear category as well
 			if (onSkillSelect) {
 				onSkillSelect('', '', null)
@@ -106,7 +106,7 @@ const SkillAutocomplete = ({
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		// Don't handle keyboard navigation when suggestions aren't shown
 		if (!showSuggestions) return
-		
+
 		// Tab or Enter to select the current suggestion
 		if ((e.key === 'Tab' || e.key === 'Enter') && suggestions.length > 0) {
 			const activeSkill = suggestions[activeSuggestionIndex]
@@ -124,7 +124,7 @@ const SkillAutocomplete = ({
 				// Prevent infinite loop by checking if we've gone through all items
 				if (nextIndex === activeSuggestionIndex) break
 			} while (suggestions[nextIndex].isExcluded)
-			
+
 			setActiveSuggestionIndex(nextIndex)
 		} else if (e.key === 'ArrowUp' && suggestions.length > 0) {
 			// Arrow up to navigate suggestions
@@ -136,7 +136,7 @@ const SkillAutocomplete = ({
 				// Prevent infinite loop by checking if we've gone through all items
 				if (prevIndex === activeSuggestionIndex) break
 			} while (suggestions[prevIndex].isExcluded)
-			
+
 			setActiveSuggestionIndex(prevIndex)
 		} else if (e.key === 'Escape') {
 			// Escape to close suggestions
@@ -154,7 +154,7 @@ const SkillAutocomplete = ({
 				onSkillSelect('custom', inputValue, null)
 			}
 		}
-		
+
 		// Don't hide suggestions immediately to allow clicking on them
 		setTimeout(() => {
 			if (document.activeElement !== inputRef.current) {
@@ -179,7 +179,7 @@ const SkillAutocomplete = ({
 					className="w-full"
 				/>
 			</FormControl>
-			
+
 			{showSuggestions && suggestions.length > 0 && (
 				<div
 					ref={suggestionsRef}
@@ -187,16 +187,16 @@ const SkillAutocomplete = ({
 				>
 					{(() => {
 						let lastWasPreferred = true // Start with true to avoid separator at top
-						
+
 						return suggestions.map((skill, index) => {
 							const isActive = index === activeSuggestionIndex
 							const isExcluded = skill.isExcluded
-							
+
 							// Check if we need a separator (transition from preferred to non-preferred)
 							const needsSeparator = lastWasPreferred && !skill.preferred
 							// Update for next item
 							lastWasPreferred = skill.preferred
-							
+
 							return (
 								<div key={skill.id}>
 									{needsSeparator && (
@@ -226,7 +226,7 @@ const SkillAutocomplete = ({
 														preferred
 													</Badge>
 												)}
-												
+
 												{isExcluded && (
 													<Badge variant="outline" className="bg-neutral-50 text-neutral-500 border-neutral-200 text-[10px] px-1">
 														added

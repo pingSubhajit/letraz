@@ -40,7 +40,7 @@ export const useSkillSearch = ({skills, excludeSkillIds = [], searchQuery}: UseS
 	const filteredSkills = useMemo(() => {
 		// First exclude any skills that are already added
 		const availableSkills = skills.filter(skill => !excludeSkillIds.includes(skill.id))
-		
+
 		// Debug: Check what skills are available before filtering
 		if (process.env.NODE_ENV === 'development') {
 			// Use a more concise format that doesn't expand aliases
@@ -65,31 +65,31 @@ export const useSkillSearch = ({skills, excludeSkillIds = [], searchQuery}: UseS
 		}
 
 		const normalizedQuery = normalizeText(searchQuery)
-		
+
 		// Calculate matches with scoring - but much simpler now
 		const matchingSkills = availableSkills.filter(skill => {
 			const normalizedName = normalizeText(skill.name)
-			
+
 			// Match on name
 			if (normalizedName.includes(normalizedQuery)) {
 				return true
 			}
-			
+
 			// Match on category
 			if (skill.category && normalizeText(skill.category).includes(normalizedQuery)) {
 				return true
 			}
-			
+
 			// Match on aliases
 			if (skill.alias && skill.alias.length > 0) {
 				if (skill.alias.some(alias => normalizeText(alias.name).includes(normalizedQuery))) {
 					return true
 				}
 			}
-			
+
 			return false
 		})
-		
+
 		// Sort by preferred first, then alphabetically
 		return matchingSkills.sort((a, b) => {
 			// Preferred skills first
