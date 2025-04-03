@@ -6,17 +6,17 @@ import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {Resume} from '@/lib/resume/types'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
-import { GraduationCap, Briefcase, Wrench, FolderKanban } from 'lucide-react'
-import { useState } from 'react'
+import {GraduationCap, Briefcase, Wrench, FolderKanban} from 'lucide-react'
+import {useState} from 'react'
 
 const ResumeEditor = ({resume, className}: {resume: Resume, className?: string}) => {
 	const [activeTab, setActiveTab] = useState<number>(0) // Default to Education (index 0)
 
 	const tabs = [
-		{ title: "Education", icon: GraduationCap },
-		{ title: "Experience", icon: Briefcase },
-		{ title: "Skills", icon: Wrench },
-		{ title: "Projects", icon: FolderKanban },
+		{title: 'Education', icon: GraduationCap},
+		{title: 'Experience', icon: Briefcase},
+		{title: 'Skills', icon: Wrench},
+		{title: 'Projects', icon: FolderKanban}
 	]
 
 	// Handle tab changes, ignoring null values

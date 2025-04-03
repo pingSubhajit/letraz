@@ -49,18 +49,18 @@ const spanVariants = {
 
 const transition = {delay: 0.1, type: 'spring', bounce: 0, duration: 0.6}
 
-export function ExpandableTabs({
+export const ExpandableTabs = ({
 	tabs,
 	className,
 	activeColor = 'text-primary',
 	onChange,
-	collapseOnOutsideClick = true,
-}: ExpandableTabsProps) {
+	collapseOnOutsideClick = true
+}: ExpandableTabsProps) => {
 	const [selected, setSelected] = React.useState<number | null>(0)
 	const outsideClickRef = React.useRef<HTMLDivElement>(null)
 
 	React.useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
+		const handleClickOutside = (event: MouseEvent) => {
 			if (
 				outsideClickRef.current &&
 				!outsideClickRef.current.contains(event.target as Node) &&
