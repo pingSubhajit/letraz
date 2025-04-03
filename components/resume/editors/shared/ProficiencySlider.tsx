@@ -39,6 +39,7 @@ const ProficiencySlider = ({
 		: [0]
 
 	useEffect(() => {
+		if (sliderValue[0] >= 0) {
 		if (sliderValue[0] >= 0 && sliderValue[0] < levels.length) {
 			setActiveLevel(levels[sliderValue[0]])
 		}
