@@ -376,6 +376,10 @@ const SkillsEditor = ({className}: { className?: string }) => {
 													}
 												}}
 											/>
+											<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
+												<Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 px-1.5 py-0">Preferred</Badge>
+												<span>skills are recommended by ATS systems and frequently searched by recruiters.</span>
+											</div>
 										</FormItem>
 									)}
 								/>
