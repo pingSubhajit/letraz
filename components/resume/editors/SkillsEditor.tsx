@@ -230,7 +230,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 				// Check if the skill is already added to the resume
 				let isDuplicate = false
 				let skillName = ''
-				
+
 				if (values.skill_id.startsWith('custom:')) {
 					// For custom skills, extract the name from the ID
 					skillName = values.skill_id.substring(7)
@@ -240,20 +240,20 @@ const SkillsEditor = ({className}: { className?: string }) => {
 				} else {
 					// For existing skills, check by ID
 					isDuplicate = resumeSkills.some(rs => rs.skill.id === values.skill_id)
-					
+
 					// Get the skill name for the message
 					const globalSkill = globalSkills.find(gs => gs.id === values.skill_id)
 					if (globalSkill) {
 						skillName = globalSkill.name
 					}
 				}
-				
+
 				// If duplicate, show a warning and don't proceed
 				if (isDuplicate) {
 					toast.warning(`"${skillName}" is already added to your resume.`)
 					return
 				}
-				
+
 				await addSkill(values)
 			} else {
 				const skillId = resumeSkills[editingIndex]?.id
@@ -276,19 +276,19 @@ const SkillsEditor = ({className}: { className?: string }) => {
 
 	const handleEdit = (index: number) => {
 		const resumeSkill = resumeSkills[index]
-		
-		/* 
+
+		/*
 		 * For existing skills, use the ID
 		 * For custom skills that may have been added previously, construct a custom ID
 		 */
 		const skillIdValue = resumeSkill.skill.id || `custom:${resumeSkill.skill.name}`
-		
+
 		form.reset({
 			skill_id: skillIdValue,
 			level: resumeSkill.level,
 			category: resumeSkill.skill.category || ''
 		})
-		
+
 		// Store the index for reference
 		setEditingIndex(index)
 		setView('form')
@@ -383,7 +383,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 										</FormItem>
 									)}
 								/>
-								
+
 								<FormField
 									control={form.control}
 									name="category"
@@ -391,7 +391,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 										<FormItem>
 											<FormLabel>Category (optional)</FormLabel>
 											<FormControl>
-												<Input 
+												<Input
 													placeholder="E.g., Programming Languages, Tools, etc."
 													{...field}
 												/>
@@ -400,7 +400,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 										</FormItem>
 									)}
 								/>
-								
+
 								<p className="text-xs text-muted-foreground">
 									Skills with detailed proficiency levels stand out to both recruiters and ATS systems.
 								</p>
