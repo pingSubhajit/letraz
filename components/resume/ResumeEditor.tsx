@@ -1,46 +1,57 @@
 'use client'
 
 import {cn} from '@/lib/utils'
-import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {Resume} from '@/lib/resume/types'
+import {ExpandableTabs} from '@/components/ui/expandable-tabs'
+import { GraduationCap, Briefcase, Wrench, FolderKanban } from 'lucide-react'
+import { useState } from 'react'
 
 const ResumeEditor = ({resume, className}: {resume: Resume, className?: string}) => {
+	const [activeTab, setActiveTab] = useState<number>(0) // Default to Education (index 0)
+
+	const tabs = [
+		{ title: "Education", icon: GraduationCap },
+		{ title: "Experience", icon: Briefcase },
+		{ title: "Skills", icon: Wrench },
+		{ title: "Projects", icon: FolderKanban },
+	]
+
+	// Handle tab changes, ignoring null values
+	const handleTabChange = (index: number | null) => {
+		if (index !== null) {
+			setActiveTab(index)
+		}
+	}
+
 	return (
 		<div className={cn('p-6', className)}>
-			<Tabs defaultValue="education" className="w-full">
-				<TabsList className="grid w-full grid-cols-3 bg-neutral-100 p-1">
-					<TabsTrigger
-						value="education"
-						className="data-[state=active]:bg-white"
-					>
-						Education
-					</TabsTrigger>
-					<TabsTrigger
-						value="experience"
-						className="data-[state=active]:bg-white"
-					>
-						Experience
-					</TabsTrigger>
-					<TabsTrigger
-						value="skills"
-						className="data-[state=active]:bg-white"
-					>
-						Skills
-					</TabsTrigger>
-				</TabsList>
-				<TabsContent value="education">
-					<EducationEditor className="mt-6" />
-				</TabsContent>
-				<TabsContent value="experience">
-					<ExperienceEditor className="mt-6" />
-				</TabsContent>
-				<TabsContent value="skills">
-					<SkillsEditor className="mt-6" />
-				</TabsContent>
-			</Tabs>
+			<ExpandableTabs
+				tabs={tabs}
+				onChange={handleTabChange}
+				className="mb-6"
+				collapseOnOutsideClick={false}
+			/>
+
+			<div className="mt-6">
+				{/* Keep all editors mounted, but only display the active one */}
+				<div className={activeTab === 0 ? 'block' : 'hidden'}>
+					<EducationEditor />
+				</div>
+				<div className={activeTab === 1 ? 'block' : 'hidden'}>
+					<ExperienceEditor />
+				</div>
+				<div className={activeTab === 2 ? 'block' : 'hidden'}>
+					<SkillsEditor />
+				</div>
+				<div className={activeTab === 3 ? 'block' : 'hidden'}>
+					<div className="p-4">
+						<p className="text-center text-muted-foreground">Project editor is coming soon</p>
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }
