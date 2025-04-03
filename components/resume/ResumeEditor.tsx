@@ -1,118 +1,62 @@
 'use client'
 
 import {cn} from '@/lib/utils'
-import {Tabs, TabsList, TabsTrigger} from '@/components/ui/tabs'
-import {Award, Briefcase, GraduationCap, User} from 'lucide-react'
-import {AnimatePresence, motion} from 'motion/react'
-import {useState} from 'react'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {Resume} from '@/lib/resume/types'
+import {ExpandableTabs} from '@/components/ui/expandable-tabs'
+import { GraduationCap, Briefcase, Wrench, FolderKanban, User } from 'lucide-react'
+import { useState } from 'react'
 
-const ResumeEditor = ({className}: {className?: string}) => {
-	const [activeTab, setActiveTab] = useState('education')
+const ResumeEditor = ({resume, className}: {resume: Resume, className?: string}) => {
+	const [activeTab, setActiveTab] = useState<number>(0) // Default to Education (index 0)
 
-	const renderTabContent = () => {
-		switch (activeTab) {
-		case 'education':
-			return (
-				<motion.div
-					key="education"
-					initial={{opacity: 0, y: 10}}
-					animate={{opacity: 1, y: 0}}
-					exit={{opacity: 0, y: -10}}
-					transition={{duration: 0.2, ease: 'easeInOut'}}
-					className="mt-6"
-				>
-					<EducationEditor />
-				</motion.div>
-			)
-		case 'experience':
-			return (
-				<motion.div
-					key="experience"
-					initial={{opacity: 0, y: 10}}
-					animate={{opacity: 1, y: 0}}
-					exit={{opacity: 0, y: -10}}
-					transition={{duration: 0.2, ease: 'easeInOut'}}
-					className="mt-6"
-				>
-					<ExperienceEditor />
-				</motion.div>
-			)
-		case 'skills':
-			return (
-				<motion.div
-					key="skills"
-					initial={{opacity: 0, y: 10}}
-					animate={{opacity: 1, y: 0}}
-					exit={{opacity: 0, y: -10}}
-					transition={{duration: 0.2, ease: 'easeInOut'}}
-					className="mt-6"
-				>
-					<SkillsEditor className="mt-6" />
-				</motion.div>
-			)
-		case 'personal':
-			return (
-				<motion.div
-					key="personal"
-					initial={{opacity: 0, y: 10}}
-					animate={{opacity: 1, y: 0}}
-					exit={{opacity: 0, y: -10}}
-					transition={{duration: 0.2, ease: 'easeInOut'}}
-					className="mt-6"
-				>
-					<PersonalDetailsEditor />
-				</motion.div>
-			)
-		default:
-			return null
+	const tabs = [
+		{ title: "Personal Info", icon: User },
+		{ title: "Education", icon: GraduationCap },
+		{ title: "Experience", icon: Briefcase },
+		{ title: "Skills", icon: Wrench },
+		{ title: "Projects", icon: FolderKanban },
+	]
+
+	// Handle tab changes, ignoring null values
+	const handleTabChange = (index: number | null) => {
+		if (index !== null) {
+			setActiveTab(index)
 		}
 	}
 
 	return (
 		<div className={cn('p-6', className)}>
-			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-				<TabsList className="grid w-full grid-cols-4 bg-neutral-100 p-1">
-					<TabsTrigger
-						value="personal"
-						className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
-					>
-						<User className="w-4 h-4" />
-						Personal Info
-					</TabsTrigger>
-					<TabsTrigger
-						value="education"
-						className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
-					>
-						<GraduationCap className="w-4 h-4" />
-						Education
-					</TabsTrigger>
-					<TabsTrigger
-						value="experience"
-						className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
-					>
-						<Briefcase className="w-4 h-4" />
-						Experience
-					</TabsTrigger>
-					<TabsTrigger
-						value="skills"
-						className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
-					>
-						<Award className="w-4 h-4" />
-						Skills
-					</TabsTrigger>
-				</TabsList>
+			<ExpandableTabs
+				tabs={tabs}
+				onChange={handleTabChange}
+				className="mb-6"
+				collapseOnOutsideClick={false}
+			/>
 
-				<div className="mt-8">
-					<AnimatePresence mode="wait">
-						{renderTabContent()}
-					</AnimatePresence>
+			<div className="mt-6">
+				{/* Keep all editors mounted, but only display the active one */}
+				<div className={activeTab === 0 ? 'block' : 'hidden'}>
+					<PersonalDetailsEditor />
 				</div>
-			</Tabs>
+				<div className={activeTab === 0 ? 'block' : 'hidden'}>
+					<EducationEditor />
+				</div>
+				<div className={activeTab === 1 ? 'block' : 'hidden'}>
+					<ExperienceEditor />
+				</div>
+				<div className={activeTab === 2 ? 'block' : 'hidden'}>
+					<SkillsEditor />
+				</div>
+				<div className={activeTab === 3 ? 'block' : 'hidden'}>
+					<div className="p-4">
+						<p className="text-center text-muted-foreground">Project editor is coming soon</p>
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }
