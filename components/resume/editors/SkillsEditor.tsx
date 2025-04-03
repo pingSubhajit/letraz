@@ -6,17 +6,20 @@ import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {Loader2, Pencil, Plus, Trash2, ChevronDown} from 'lucide-react'
+import {Loader2, Pencil, Plus, Search, Trash2, ChevronDown} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from '@/components/ui/command'
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import {Badge} from '@/components/ui/badge'
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger
 } from '@/components/ui/collapsible'
-import {resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills} from '@/lib/skill/queries'
+import {globalSkillsQueryOptions, resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills} from '@/lib/skill/queries'
 import {useAddSkillMutation, useRemoveSkillMutation, useUpdateSkillMutation} from '@/lib/skill/mutations'
 import {SkillMutation, SkillMutationSchema, skillLevels} from '@/lib/skill/types'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
@@ -43,6 +46,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
+	const [openSkillSearch, setOpenSkillSearch] = useState(false)
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const queryClient = useQueryClient()
@@ -56,7 +60,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		const categories: SkillsByCategory = {}
 		const uncategorized = 'Other Skills'
 
-		resumeSkills.forEach((skill:any, index:number) => {
+		resumeSkills.forEach((skill, index) => {
 			const category = skill.skill.category || uncategorized
 			if (!categories[category]) {
 				categories[category] = []
@@ -263,6 +267,11 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
+	}
+
+	const handleSkillSelect = (skillId: string) => {
+		form.setValue('skill_id', skillId)
+		setOpenSkillSearch(false)
 	}
 
 	const handleEdit = (index: number) => {

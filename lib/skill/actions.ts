@@ -14,7 +14,14 @@ export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
 		const data = await api.get<GlobalSkill[]>('/skill/')
 
 		// Map the data and log each skill parsing result
-		const parsedSkills = data.map(skill => GlobalSkillSchema.parse(skill))
+		const parsedSkills = data.map(skill => {
+			try {
+				const parsed = GlobalSkillSchema.parse(skill)
+				return parsed
+			} catch (parseError) {
+				throw parseError
+			}
+		})
 
 		return parsedSkills
 	} catch (error) {
