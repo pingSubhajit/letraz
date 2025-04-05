@@ -4,10 +4,10 @@ import {cn} from '@/lib/utils'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
-import {Resume} from '@/lib/resume/types'
+
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
 
-const ResumeEditor = ({className}: {resume: Resume, className?: string}) => {
+const ResumeEditor = ({className}: {className?: string}) => {
 	return (
 		<div className={cn('p-6', className)}>
 			<Tabs defaultValue="education" className="w-full">

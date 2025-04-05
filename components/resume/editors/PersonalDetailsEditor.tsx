@@ -61,7 +61,7 @@ const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 	address: '',
 	city: '',
 	country: {
-		code: 'IN',
+		code: 'IND',
 		name: 'India'
 	},
 	nationality: '',
@@ -293,7 +293,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 
 						<TextFormField
 							form={form}
-							name="profileText"
+							name="profile_text"
 							label="Bio"
 							placeholder="Enter your bio"
 							disabled={isSubmitting}
@@ -362,6 +362,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 						<ItemCard
 							onEdit={() => setView('form')}
 							onDelete={() => {
+								// this is a placeholder
 								toast.error('Deleting...')
 							}}
 							isDeleting={false}
@@ -385,9 +386,9 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 							</p>
 							<p className="text-sm">
 								{userInfo.address ||
-                userInfo.city ||
-                userInfo.postal ||
-                userInfo.country?.name
+									userInfo.city ||
+									userInfo.postal ||
+									userInfo.country?.name
 									? `Address: ${userInfo.address || 'N/A'}, ${
 										userInfo.city || 'N/A'
 									}, ${userInfo.postal || 'N/A'}, ${
