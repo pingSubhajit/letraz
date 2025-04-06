@@ -31,26 +31,3 @@ export const useRemoveSkillMutation = (options?: MutationOptions<void, Error, st
 		...options
 	})
 }
-
-// Add a mutation for creating a new global skill
-export const useCreateGlobalSkillMutation = (options: any = {}) => {
-	return useMutation({
-		mutationFn: async (data: { name: string; category?: string; preferred?: boolean }) => {
-			const response = await fetch('/api/v1/skill/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(data)
-			})
-
-			if (!response.ok) {
-				const errorData = await response.json()
-				throw new Error(errorData.message || 'Failed to create skill')
-			}
-
-			return response.json()
-		},
-		...options
-	})
-}
