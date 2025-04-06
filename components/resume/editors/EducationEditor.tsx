@@ -1,6 +1,6 @@
 'use client'
 
-import {useState, useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form} from '@/components/ui/form'
@@ -13,7 +13,11 @@ import {EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
-import {useAddEducationMutation, useDeleteEducationMutation, useUpdateEducationMutation} from '@/lib/education/mutations'
+import {
+	useAddEducationMutation,
+	useDeleteEducationMutation,
+	useUpdateEducationMutation
+} from '@/lib/education/mutations'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import DateRangeFields from '@/components/resume/editors/shared/DateRangeFields'
 import CountrySelect from '@/components/resume/editors/shared/CountrySelect'
@@ -22,6 +26,7 @@ import RichTextFormField from '@/components/resume/editors/shared/RichTextFormFi
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {countries} from '@/lib/constants'
+import {baseResumeQueryOptions} from '@/lib/resume/queries'
 
 type ViewState = 'list' | 'form'
 
@@ -47,6 +52,11 @@ const EducationEditor = ({className}: {className?: string}) => {
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 
 	const {data: educations = [], isLoading, error} = useCurrentEducations()
+
+	const revalidate = () => {
+		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+	}
 
 	const {mutateAsync: addEducation, isPending: isAddingPending} = useAddEducationMutation({
 		onMutate: async (newEducation) => {
@@ -75,7 +85,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 			toast.error(`Failed to save education details: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+			revalidate()
 		},
 		onSuccess: () => {
 			toast.success('Education added successfully!')
@@ -108,7 +118,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 			toast.error(`Failed to update education details: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+			revalidate()
 		},
 		onSuccess: () => {
 			toast.success('Education updated successfully!')
@@ -137,7 +147,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 			toast.error(`Failed to delete education: ${err.message}`)
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+			revalidate()
 			setDeletingId(null)
 		},
 		onSuccess: () => {
@@ -221,6 +231,8 @@ const EducationEditor = ({className}: {className?: string}) => {
 					}
 					className="mb-10"
 				/>
+
+				{baseResumeQueryOptions.queryKey} {typeof baseResumeQueryOptions.queryKey[0]}
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
