@@ -62,13 +62,31 @@ export const addSkillToResume = async (
 
 		// Handle custom skill vs existing skill
 		if (skillData.skill_id.startsWith('custom:')) {
-			// For custom skills, extract the name from skill_id and use the provided category
 			apiPayload.name = skillData.skill_id.substring(7) // Remove 'custom:' prefix
-			apiPayload.category = skillData.category
+			if (skillData.category?.trim()) {
+				apiPayload.category = skillData.category.trim()
+			}
 		} else {
-			// For existing skills, send the skill_id
-			apiPayload.skill_id = skillData.skill_id
-			apiPayload.category = skillData.category
+			let skillDetails: GlobalSkill | null = null
+			try {
+				skillDetails = await api.get<GlobalSkill>(`/skill/${skillData.skill_id}/`)
+			} catch {
+				// Fallback: fetch all global skills and find the matching one
+				const allSkills = await api.get<GlobalSkill[]>(`/skill/`)
+				skillDetails = allSkills.find(s => s.id === skillData.skill_id) || null
+			}
+			if (skillDetails) {
+				apiPayload.name = skillDetails.name
+				if (!skillData.category && skillDetails.category) {
+					apiPayload.category = skillDetails.category
+				}
+			}
+		}
+
+		// Only include category when it has a non-empty value. Sending an empty
+		// string causes a validation error on the backend for existing skills.
+		if (skillData.category?.trim()) {
+			apiPayload.category = skillData.category.trim()
 		}
 
 		const data = await api.post<ResumeSkill>(`/resume/${resumeId}/skill/`, apiPayload)
@@ -104,19 +122,21 @@ export const updateResumeSkill = async (
 		if (skillData.skill_id) {
 			if (skillData.skill_id.startsWith('custom:')) {
 				// For custom skills, extract the name
-				apiPayload.name = skillData.skill_id.substring(7) // Remove 'custom:' prefix
+				apiPayload.name = skillData.skill_id.substring(7) 
 			} else {
-				// For existing skills, use the skill_id
+				// Existing global skill: backend expects `skill_id` to switch to a different global skill
 				apiPayload.skill_id = skillData.skill_id
 			}
 		}
 
-		// Include category if provided
-		if (skillData.category !== undefined) {
-			apiPayload.category = skillData.category
+		// Include category only when it is provided with a non-empty value.
+		if (skillData.category?.trim()) {
+			apiPayload.category = skillData.category.trim()
 		}
 
 		const data = await api.patch<ResumeSkill>(`/resume/${resumeId}/skill/${skillId}/`, apiPayload)
+		console.log('data', data)
+		console.log('apiPayload', apiPayload)
 		return ResumeSkillSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'update resume skill')
