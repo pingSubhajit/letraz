@@ -38,10 +38,16 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 				</div>
 
 				{/* DOB */}
-				{personalInfoData?.dob && <div className="flex items-center">
-					<Calendar className="'w-4 h-4 mr-1"/>
-					<p>{DateTime.fromJSDate(personalInfoData?.dob).toLocaleString()}</p>
-				</div>}
+				{personalInfoData?.dob && (() => {
+					const dateTime = DateTime.fromISO(personalInfoData.dob?.toString())
+
+					return dateTime.isValid ? (
+						<div className="flex items-center">
+							<Calendar className="'w-4 h-4 mr-1"/>
+							<p>{dateTime.toLocaleString()}</p>
+						</div>
+					) : null
+				})()}
 
 				{/* WEBSITE */}
 				{personalInfoData?.website && <div className="flex items-center">

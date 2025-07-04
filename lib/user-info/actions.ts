@@ -10,8 +10,24 @@ import {api} from '@/lib/config/api-client'
  */
 export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation): Promise<UserInfo> => {
 	const params = UserInfoMutationSchema.parse(userInfoValues)
-	const response = await api.patch<UserInfo>('/user/', params)
-	return UserInfoSchema.parse(response)
+
+	// Transform date for API compatibility (preserve local timezone)
+	const apiParams = {
+		...params,
+		dob: params.dob ?
+			`${params.dob.getFullYear()}-${String(params.dob.getMonth() + 1).padStart(2, '0')}-${String(params.dob.getDate()).padStart(2, '0')}`
+			: null
+	}
+
+	const response = await api.patch<UserInfo>('/user/', apiParams)
+
+	// Transform string dates back to Date objects for schema validation
+	const transformedResponse = {
+		...response,
+		dob: response.dob ? new Date(response.dob) : null
+	}
+
+	return UserInfoSchema.parse(transformedResponse)
 }
 
 /**
@@ -20,5 +36,12 @@ export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation):
  */
 export const getPersonalInfoFromDB = async (): Promise<UserInfo> => {
 	const response = await api.get<UserInfo>('/user/')
-	return UserInfoSchema.parse(response)
+
+	// Transform string dates back to Date objects for schema validation
+	const transformedResponse = {
+		...response,
+		dob: response.dob ? new Date(response.dob) : null
+	}
+
+	return UserInfoSchema.parse(transformedResponse)
 }

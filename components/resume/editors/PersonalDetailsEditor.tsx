@@ -99,21 +99,25 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 	const isSubmitting = isUpdatingPending
 
 	const onSubmit = async (values: UserInfoMutation) => {
-		// console.log(values)
-
-		try {
-			await updateInfo(values)
-		} catch (error) {
-			// Error already handled by the mutation's onError callback
-		}
+		await updateInfo(values)
+		setView('list')
 	}
 
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
 
+	// Reset form when userInfo data is loaded
+	useEffect(() => {
+		if (userInfo) {
+			form.reset(userInfo)
+		}
+	}, [userInfo, form])
+
 	const handleUpdate = () => {
-		form.reset(userInfo || DEFAULT_DETAILS_VALUES)
+		if (userInfo) {
+			form.reset(userInfo)
+		}
 		setView('form')
 	}
 
@@ -181,7 +185,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 									form={form}
 									name="last_name"
 									label="Last Name"
-									placeholder="e.g. Doe"
+									placeholder="e.g. Smith"
 									disabled={isSubmitting}
 								/>
 							</div>
@@ -190,8 +194,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 									form={form}
 									name="email"
 									label="Email"
-									// TODO place holder can be change
-									placeholder="Enter your email"
+									placeholder="e.g. john.smith@email.com"
 									disabled={isSubmitting}
 								/>
 
@@ -199,7 +202,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 									form={form}
 									name="phone"
 									label="Phone Number"
-									placeholder="Enter your phone number"
+									placeholder="e.g. +1 (555) 123-4567"
 									disabled={isSubmitting}
 								/>
 
@@ -210,7 +213,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 								form={form}
 								name="website"
 								label="Website"
-								placeholder="Enter your website"
+								placeholder="e.g. https://johnsmith.dev"
 								disabled={isSubmitting}
 							/>
 
@@ -218,7 +221,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 								form={form}
 								name="profile_text"
 								label="Bio"
-								placeholder="Enter your bio"
+								placeholder="Write a brief professional summary highlighting your key skills, experience, and career goals..."
 								disabled={isSubmitting}
 							/>
 
@@ -228,7 +231,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 								form={form}
 								name="address"
 								label="Address"
-								placeholder="Enter your address"
+								placeholder="e.g. 123 Main Street, Apartment 4B"
 								disabled={isSubmitting}
 							/>
 
@@ -237,7 +240,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 									form={form}
 									name="city"
 									label="City"
-									placeholder="Enter your city"
+									placeholder="e.g. New York"
 									disabled={isSubmitting}
 								/>
 
@@ -245,7 +248,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 									form={form}
 									name="postal"
 									label="Postal code"
-									placeholder="Enter your postal"
+									placeholder="e.g. 10001"
 									disabled={isSubmitting}
 								/>
 
@@ -254,13 +257,14 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 										disabled={isSubmitting}
 										control={form.control}
 										name="country"
-										render={() => (
+										render={({field}) => (
 											<FormItem className="w-full">
 												<FormLabel className="text-foreground">Country</FormLabel>
 
 												<CountryDropdown
+													key={field.value?.code || 'default'}
 													placeholder="Select country"
-													defaultValue="IND"
+													defaultValue={field.value?.code || 'IND'}
 													onChange={({ioc, name}) => {
 														form.setValue('country.code', ioc)
 														form.setValue('country.name', name)
