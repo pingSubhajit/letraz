@@ -26,9 +26,7 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 				{/* LOCATION */}
 				<div className="flex items-center gap-1">
 					{/* ICON */}
-					{(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) &&
-            <MapPin className="w-4 h-4"/>
-					}
+					{(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) && <MapPin className="w-4 h-4"/>}
 
 					{/* LOCATION INFO */}
 					{personalInfoData?.address && <p>{personalInfoData?.address}, </p>}
@@ -65,7 +63,10 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 					{/* DIVIDER */}
 					<Divider className="mb-1.5" />
 				</div>
-				<p className="text-justify leading-snug text-sm">{personalInfoData?.profile_text}</p>
+				<div 
+					className="text-justify leading-snug text-sm"
+					dangerouslySetInnerHTML={{__html: personalInfoData?.profile_text}}
+				/>
 			</div>}
 		</div>
 	)

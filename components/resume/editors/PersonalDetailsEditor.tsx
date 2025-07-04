@@ -23,6 +23,7 @@ import {useUpdateUserInfoMutation} from '@/lib/user-info/mutations'
 import {useQueryClient} from '@tanstack/react-query'
 import {CountryDropdown} from '@/components/ui/country-dropdown'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {baseResumeQueryOptions} from '@/lib/resume/queries'
 
 interface Props {
   className?: string;
@@ -59,7 +60,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: userInfoQueryOptions.queryKey})
-
+		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
 	const {data: userInfo, isLoading, isError, error} = useUserInfoQuery()
@@ -67,19 +68,34 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 		{
 			onMutate: async (newData: UserInfoMutation) => {
 				await queryClient.cancelQueries({queryKey: userInfoQueryOptions.queryKey})
+				await queryClient.cancelQueries({queryKey: baseResumeQueryOptions.queryKey})
 
-				const previousData = queryClient.getQueryData(userInfoQueryOptions.queryKey)
+				const previousUserData = queryClient.getQueryData(userInfoQueryOptions.queryKey)
+				const previousResumeData = queryClient.getQueryData(baseResumeQueryOptions.queryKey)
 
+				// Update user info cache
 				queryClient.setQueryData(userInfoQueryOptions.queryKey, (oldData: any) => ({
 					...oldData,
 					...newData
 				}))
 
-				return {previousData}
+				// Update resume cache to reflect personal info changes
+				queryClient.setQueryData(baseResumeQueryOptions.queryKey, (oldData: any) => ({
+					...oldData,
+					user: {
+						...oldData?.user,
+						...newData
+					}
+				}))
+
+				return {previousUserData, previousResumeData}
 			},
 			onError: (err, newData, context:any) => {
-				if (context?.previousData) {
-					queryClient.setQueryData(userInfoQueryOptions.queryKey, context.previousData)
+				if (context?.previousUserData) {
+					queryClient.setQueryData(userInfoQueryOptions.queryKey, context.previousUserData)
+				}
+				if (context?.previousResumeData) {
+					queryClient.setQueryData(baseResumeQueryOptions.queryKey, context.previousResumeData)
 				}
 				toast.error('Failed to update personal details. Please try again.')
 			},
@@ -344,7 +360,13 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 									: 'Address: N/A'}
 							</p>
 							<p className="text-sm">Website: {userInfo.website || 'N/A'}</p>
-							<p className="text-sm">Bio: {userInfo.profile_text || 'N/A'}</p>
+							<div className="text-sm">
+								Bio: {userInfo.profile_text ? (
+									<span dangerouslySetInnerHTML={{__html: userInfo.profile_text}} />
+								) : (
+									'N/A'
+								)}
+							</div>
 						</ItemCard>
 					) : (
 						<Button onClick={handleUpdate} className="w-full" variant="outline">
