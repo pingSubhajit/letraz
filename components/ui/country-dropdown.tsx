@@ -1,27 +1,16 @@
 'use client'
 
-import React, {useCallback, useState, forwardRef, useEffect} from 'react'
+import React, {forwardRef, useCallback, useEffect, useState} from 'react'
 
 // shadcn
-import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList
-} from '@/components/ui/command'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger
-} from '@/components/ui/popover'
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from '@/components/ui/command'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 
 // utils
 import {cn} from '@/lib/utils'
 
 // assets
-import {ChevronDown, CheckIcon, Globe} from 'lucide-react'
+import {CheckIcon, ChevronDown, Globe} from 'lucide-react'
 import {CircleFlag} from 'react-circle-flags'
 
 // data
@@ -97,7 +86,7 @@ const CountryDropdownComponent = (
 	)
 
 	const triggerClasses = cn(
-		'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+		'flex h-12 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
 		slim === true && 'w-20'
 	)
 
@@ -148,10 +137,10 @@ const CountryDropdownComponent = (
 						<CommandGroup>
 							{options
 								.filter((x) => x.name)
-								.map((option, key: number) => (
+								.map(option => (
 									<CommandItem
 										className="flex items-center w-full gap-2"
-										key={key}
+										key={option.alpha3}
 										onSelect={() => handleSelect(option)}
 									>
 										<div className="flex flex-grow w-0 space-x-2 overflow-hidden">

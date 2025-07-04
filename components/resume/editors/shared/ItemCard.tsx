@@ -1,16 +1,16 @@
 'use client'
 
 import {Button} from '@/components/ui/button'
-import {Pencil, X, Loader2} from 'lucide-react'
+import {Loader2, Pencil, X} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {ReactNode} from 'react'
 
 interface ItemCardProps {
   onEdit: () => void
-  onDelete: () => void
-  isDeleting: boolean
+  onDelete?: () => void
+  isDeleting?: boolean
   id: string
-  deletingId: string | null
+  deletingId?: string | null
   children: ReactNode
   className?: string
 }
@@ -41,7 +41,7 @@ const ItemCard = ({
 					<span className="sr-only">Edit item</span>
 					<Pencil className="h-4 w-4" />
 				</Button>
-				<PopConfirm
+				{onDelete && <PopConfirm
 					triggerElement={
 						<Button variant="ghost" size="icon" disabled={isDeleting}>
 							{isThisItemDeleting ? (
@@ -54,7 +54,7 @@ const ItemCard = ({
 					}
 					message="Are you sure you want to delete this item?"
 					onYes={onDelete}
-				/>
+				/>}
 			</div>
 		</div>
 	)

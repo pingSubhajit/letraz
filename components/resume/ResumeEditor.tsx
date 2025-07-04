@@ -13,6 +13,12 @@ const ResumeEditor = ({className}: {className?: string}) => {
 			<Tabs defaultValue="education" className="w-full">
 				<TabsList className="grid w-full grid-cols-4 bg-neutral-100 p-1">
 					<TabsTrigger
+						value="personal"
+						className="data-[state=active]:bg-white"
+					>
+						Personal Info
+					</TabsTrigger>
+					<TabsTrigger
 						value="education"
 						className="data-[state=active]:bg-white"
 					>
@@ -29,12 +35,6 @@ const ResumeEditor = ({className}: {className?: string}) => {
 						className="data-[state=active]:bg-white"
 					>
 						Skills
-					</TabsTrigger>
-					<TabsTrigger
-						value="personal"
-						className="data-[state=active]:bg-white"
-					>
-						Personal Info
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="education">

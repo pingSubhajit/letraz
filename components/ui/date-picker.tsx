@@ -5,11 +5,7 @@ import * as React from 'react'
 
 import {Button} from '@/components/ui/button'
 import {Calendar} from '@/components/ui/calendar'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger
-} from '@/components/ui/popover'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import {cn} from '@/lib/utils'
 import {CalendarIcon} from 'lucide-react'
 import {UseFormReturn} from 'react-hook-form'
@@ -47,13 +43,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
 	return (
 		<div className={cn('flex flex-col', className)}>
-			<label className="mb-2 text-sm font-medium">{label}</label>
+			<label className="mb-1 text-sm font-medium">{label}</label>
 			<Popover>
 				<PopoverTrigger asChild>
 					<Button
 						variant="outline"
 						className={cn(
-							'w-[240px] justify-start text-left font-normal',
+							'min-w-[240px] justify-start text-left font-normal h-12',
 							!date && 'text-muted-foreground'
 						)}
 						aria-label="Pick a date"
