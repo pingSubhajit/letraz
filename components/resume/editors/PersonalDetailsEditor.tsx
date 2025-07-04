@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {cn} from '@/lib/utils'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
@@ -56,10 +56,17 @@ const SALUTATIONS = ['Mr.', 'Ms.', 'Mrs.', 'Miss', 'Dr.', 'Prof.', 'Rev.', 'Hon.
 
 const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 	const [parent] = useAutoAnimate()
+	const scrollRef = useRef<HTMLDivElement>(null)
 	const [view, setView] = useState<ViewState>('list')
 	const [isMounted, setIsMounted] = useState(false)
 	const queryClient = useQueryClient()
 	const {user: clerkUser} = useUser()
+
+	// Combine both refs
+	const setRefs = (element: HTMLDivElement | null) => {
+		parent(element)
+		scrollRef.current = element
+	}
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: userInfoQueryOptions.queryKey})
@@ -137,341 +144,349 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 		if (userInfo) {
 			form.reset(userInfo)
 		}
+		// Reset scroll position when transitioning to form view
+		if (scrollRef.current) {
+			scrollRef.current.scrollTop = 0
+		}
 		setView('form')
 	}
 
 	const handleCancel = () => {
 		form.reset(userInfo || DEFAULT_DETAILS_VALUES)
+		// Reset scroll position when transitioning to list view
+		if (scrollRef.current) {
+			scrollRef.current.scrollTop = 0
+		}
 		setView('list')
 	}
 
-	if (view === 'form') {
-		return (
-			<ScrollMask
-				className={cn('space-y-6', className)}
-				style={{
-					height: 'calc(100vh - 162px)'
-				}}
-				data-lenis-prevent
-			>
-				<div className="space-y-6 px-1">
-					<EditorHeader
-						title="Update Personal Information"
-						description="Ensure that the details are correct and reflect your previous personal information"
-					/>
+	return (
+		<div ref={setRefs} className={cn('space-y-6', className)}>
+			{view === 'form' ? (
+				<ScrollMask
+					className="space-y-6"
+					style={{
+						height: 'calc(100vh - 162px)'
+					}}
+					data-lenis-prevent
+				>
+					<div className="space-y-6 px-1">
+						<EditorHeader
+							title="Update Personal Information"
+							description="Ensure that the details are correct and reflect your previous personal information"
+						/>
 
-					<div className="rounded-xl p-6 mb-6 shadow-sm border border-accent">
-						<div className="flex items-start gap-4">
-							<div className="flex-shrink-0">
-								<div className="w-10 h-10 bg-flame-500 rounded-lg flex items-center justify-center">
-									<FileText className="h-5 w-5 text-white" />
+						<div className="rounded-xl p-6 mb-6 shadow-sm border border-accent">
+							<div className="flex items-start gap-4">
+								<div className="flex-shrink-0">
+									<div className="w-10 h-10 bg-flame-500 rounded-lg flex items-center justify-center">
+										<FileText className="h-5 w-5 text-white" />
+									</div>
+								</div>
+								<div className="flex-1">
+									<h3 className="text-base font-semibold text-flame-950 leading-none mb-1">Global Information</h3>
+									<p className="text-sm text-flame-900 leading-relaxed">
+										Changes made to your personal information will be applied across all of your resumes.
+										This ensures your details stay consistent throughout your profile.
+									</p>
 								</div>
 							</div>
-							<div className="flex-1">
-								<h3 className="text-base font-semibold text-flame-950 leading-none mb-1">Global Information</h3>
-								<p className="text-sm text-flame-900 leading-relaxed">
-									Changes made to your personal information will be applied across all of your resumes.
-									This ensures your details stay consistent throughout your profile.
-								</p>
-							</div>
 						</div>
-					</div>
 
-					<Form {...form}>
-						<form
-							onSubmit={form.handleSubmit(onSubmit)}
-							className="flex flex-col gap-4"
-						>
-							<div className="grid grid-cols-3 gap-4">
-								<FormField
-									control={form.control}
-									name="title"
-									render={({field}) => (
-										<FormItem>
-											<FormLabel className="text-foreground">Title</FormLabel>
-											<Select
-												onValueChange={field.onChange}
-												value={field.value as string}
-												disabled={isSubmitting}
-											>
-												<FormControl>
-													<SelectTrigger className="h-12">
-														<SelectValue placeholder="e.g., Mr., Mrs., Dr." />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{SALUTATIONS.map(salutation => (
-														<SelectItem key={salutation} value={salutation}>{salutation}</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<FormMessage className="text-xs" />
-										</FormItem>
-									)}
-								/>
-								<TextFormField
-									form={form}
-									name="first_name"
-									label="First Name"
-									placeholder="e.g. John"
-									disabled={isSubmitting}
-								/>
-								<TextFormField
-									form={form}
-									name="last_name"
-									label="Last Name"
-									placeholder="e.g. Smith"
-									disabled={isSubmitting}
-								/>
-							</div>
-							<div className="grid grid-cols-3 gap-4">
-								<TextFormField
-									form={form}
-									name="email"
-									label="Email"
-									placeholder="e.g. john.smith@email.com"
-									disabled={isSubmitting}
-								/>
-
-								<TextFormField
-									form={form}
-									name="phone"
-									label="Phone Number"
-									placeholder="e.g. +1 (555) 123-4567"
-									disabled={isSubmitting}
-								/>
-
-								<DatePicker form={form} label="Date of birth" name="dob" />
-							</div>
-
-							<TextFormField
-								form={form}
-								name="website"
-								label="Website"
-								placeholder="e.g. https://johnsmith.dev"
-								disabled={isSubmitting}
-							/>
-
-							<RichTextFormField
-								form={form}
-								name="profile_text"
-								label="Bio"
-								placeholder="Write a brief professional summary highlighting your key skills, experience, and career goals..."
-								disabled={isSubmitting}
-								editorClassName="h-32"
-							/>
-
-							<hr className="my-3" />
-
-							<TextFormField
-								form={form}
-								name="address"
-								label="Address"
-								placeholder="e.g. 123 Main Street, Apartment 4B"
-								disabled={isSubmitting}
-							/>
-
-							<div className="grid grid-cols-3 gap-4">
-								<TextFormField
-									form={form}
-									name="city"
-									label="City"
-									placeholder="e.g. New York"
-									disabled={isSubmitting}
-								/>
-
-								<TextFormField
-									form={form}
-									name="postal"
-									label="Postal code"
-									placeholder="e.g. 10001"
-									disabled={isSubmitting}
-								/>
-
-								<div className="">
+						<Form {...form}>
+							<form
+								onSubmit={form.handleSubmit(onSubmit)}
+								className="flex flex-col gap-4"
+							>
+								<div className="grid grid-cols-3 gap-4">
 									<FormField
-										disabled={isSubmitting}
 										control={form.control}
-										name="country"
+										name="title"
 										render={({field}) => (
-											<FormItem className="w-full">
-												<FormLabel className="text-foreground">Country</FormLabel>
-
-												<CountryDropdown
-													key={field.value?.code || 'default'}
-													placeholder="Select country"
-													defaultValue={field.value?.code || 'IND'}
-													onChange={({ioc, name}) => {
-														form.setValue('country.code', ioc)
-														form.setValue('country.name', name)
-													}}
-												/>
-												<FormMessage />
+											<FormItem>
+												<FormLabel className="text-foreground">Title</FormLabel>
+												<Select
+													onValueChange={field.onChange}
+													value={field.value as string}
+													disabled={isSubmitting}
+												>
+													<FormControl>
+														<SelectTrigger className="h-12">
+															<SelectValue placeholder="e.g., Mr., Mrs., Dr." />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent>
+														{SALUTATIONS.map(salutation => (
+															<SelectItem key={salutation} value={salutation}>{salutation}</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<FormMessage className="text-xs" />
 											</FormItem>
 										)}
 									/>
+									<TextFormField
+										form={form}
+										name="first_name"
+										label="First Name"
+										placeholder="e.g. John"
+										disabled={isSubmitting}
+									/>
+									<TextFormField
+										form={form}
+										name="last_name"
+										label="Last Name"
+										placeholder="e.g. Smith"
+										disabled={isSubmitting}
+									/>
 								</div>
-							</div>
+								<div className="grid grid-cols-3 gap-4">
+									<TextFormField
+										form={form}
+										name="email"
+										label="Email"
+										placeholder="e.g. john.smith@email.com"
+										disabled={isSubmitting}
+									/>
 
-							<FormButtons
-								onCancel={handleCancel}
-								isSubmitting={isSubmitting}
-								isEditing={view === 'form'}
-								editingSubmitLabel="Update Personal Info"
-							/>
-						</form>
-					</Form>
-				</div>
-			</ScrollMask>
-		)
-	}
+									<TextFormField
+										form={form}
+										name="phone"
+										label="Phone Number"
+										placeholder="e.g. +1 (555) 123-4567"
+										disabled={isSubmitting}
+									/>
 
-	return (
-		<div className={cn('space-y-6', className)}>
-			<EditorHeader
-				title="Personal Information"
-				showAddButton={isMounted && !isLoading}
-				// TODO can be modified to non-delete data like personal info with only update action and update icon
-				onAddNew={handleUpdate}
-				addButtonText="Update your personal info"
-			/>
+									<DatePicker form={form} label="Date of birth" name="dob" />
+								</div>
 
-			{isLoading ? (
-				<div className="flex items-center justify-center py-10">
-					<Loader2 className="h-8 w-8 animate-spin text-primary" />
-					<span className="ml-2">Loading personal details...</span>
-				</div>
-			) : error ? (
-				<div className="text-center py-10 text-red-500">
-					Error loading personal details. Please try again later.
-				</div>
+								<TextFormField
+									form={form}
+									name="website"
+									label="Website"
+									placeholder="e.g. https://johnsmith.dev"
+									disabled={isSubmitting}
+								/>
+
+								<RichTextFormField
+									form={form}
+									name="profile_text"
+									label="Bio"
+									placeholder="Write a brief professional summary highlighting your key skills, experience, and career goals..."
+									disabled={isSubmitting}
+									editorClassName="h-32"
+								/>
+
+								<hr className="my-3" />
+
+								<TextFormField
+									form={form}
+									name="address"
+									label="Address"
+									placeholder="e.g. 123 Main Street, Apartment 4B"
+									disabled={isSubmitting}
+								/>
+
+								<div className="grid grid-cols-3 gap-4">
+									<TextFormField
+										form={form}
+										name="city"
+										label="City"
+										placeholder="e.g. New York"
+										disabled={isSubmitting}
+									/>
+
+									<TextFormField
+										form={form}
+										name="postal"
+										label="Postal code"
+										placeholder="e.g. 10001"
+										disabled={isSubmitting}
+									/>
+
+									<div className="">
+										<FormField
+											disabled={isSubmitting}
+											control={form.control}
+											name="country"
+											render={({field}) => (
+												<FormItem className="w-full">
+													<FormLabel className="text-foreground">Country</FormLabel>
+
+													<CountryDropdown
+														key={field.value?.code || 'default'}
+														placeholder="Select country"
+														defaultValue={field.value?.code || 'IND'}
+														onChange={({ioc, name}) => {
+															form.setValue('country.code', ioc)
+															form.setValue('country.name', name)
+														}}
+													/>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+								</div>
+
+								<FormButtons
+									onCancel={handleCancel}
+									isSubmitting={isSubmitting}
+									isEditing={view === 'form'}
+									editingSubmitLabel="Update Personal Info"
+								/>
+							</form>
+						</Form>
+					</div>
+				</ScrollMask>
 			) : (
-				<div ref={parent} className="space-y-4">
-					{userInfo ? (
-						<ItemCard
-							onEdit={() => setView('form')}
-							id={userInfo.id}
-						>
-							<div className="space-y-6 p-4">
-								{/* Header Section */}
-								<div className="flex items-center space-x-3">
-									<div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full overflow-hidden">
-										{clerkUser?.hasImage && clerkUser.imageUrl && clerkUser.imageUrl.length > 0 ? (
-											<Image
-												src={clerkUser.imageUrl}
-												alt={`${clerkUser.firstName || 'User'}'s profile`}
-												width={48}
-												height={48}
-												className="w-full h-full object-cover"
-												priority={false}
-												unoptimized={false}
-											/>
-										) : (
-											<User className="w-6 h-6 text-primary" />
-										)}
-									</div>
-									<div>
-										<h3 className="text-lg font-semibold text-foreground">
-											{userInfo?.title && `${userInfo.title} `}
-											{userInfo.first_name || 'First Name'} {userInfo.last_name || 'Last Name'}
-										</h3>
-										<p className="text-sm text-muted-foreground">Personal Information</p>
-									</div>
-								</div>
+				<>
+					<EditorHeader
+						title="Personal Information"
+						showAddButton={isMounted && !isLoading}
+						// TODO can be modified to non-delete data like personal info with only update action and update icon
+						onAddNew={handleUpdate}
+						addButtonText="Update your personal info"
+					/>
 
-								{/* Contact Information */}
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-									{/* Email */}
-									<div className="flex items-center space-x-3">
-										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-											<Mail className="w-4 h-4 text-flame-600" />
-										</div>
-										<div className="min-w-0 flex-1">
-											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
-											<p className="text-sm text-foreground truncate">{userInfo.email || 'Not provided'}</p>
-										</div>
-									</div>
-
-									{/* Phone */}
-									<div className="flex items-center space-x-3">
-										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-											<Phone className="w-4 h-4 text-flame-600" />
-										</div>
-										<div className="min-w-0 flex-1">
-											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
-											<p className="text-sm text-foreground">{userInfo.phone || 'Not provided'}</p>
-										</div>
-									</div>
-
-									{/* Date of Birth */}
-									<div className="flex items-center space-x-3">
-										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-											<Calendar className="w-4 h-4 text-flame-600" />
-										</div>
-										<div className="min-w-0 flex-1">
-											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</p>
-											<p className="text-sm text-foreground">
-												{userInfo.dob ? userInfo.dob.toLocaleDateString() : 'Not provided'}
-											</p>
-										</div>
-									</div>
-
-									{/* Website */}
-									<div className="flex items-center space-x-3">
-										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-											<Globe className="w-4 h-4 text-flame-600" />
-										</div>
-										<div className="min-w-0 flex-1">
-											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</p>
-											<p className="text-sm text-foreground truncate">{userInfo.website || 'Not provided'}</p>
-										</div>
-									</div>
-								</div>
-
-								{/* Address Section */}
-								{(userInfo.address || userInfo.city || userInfo.postal || userInfo.country?.name) && (
-									<div className="flex items-start space-x-3">
-										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg my-1">
-											<MapPin className="w-4 h-4 text-flame-600" />
-										</div>
-										<div className="min-w-0 flex-1">
-											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
-											<div className="text-sm text-foreground space-y-1">
-												{userInfo.address && <p>{userInfo.address}</p>}
-												<p>
-													{[userInfo.city, userInfo.postal, userInfo.country?.name]
-														.filter(Boolean)
-														.join(', ') || 'Not provided'}
-												</p>
+					{isLoading ? (
+						<div className="flex items-center justify-center py-10">
+							<Loader2 className="h-8 w-8 animate-spin text-primary" />
+							<span className="ml-2">Loading personal details...</span>
+						</div>
+					) : error ? (
+						<div className="text-center py-10 text-red-500">
+							Error loading personal details. Please try again later.
+						</div>
+					) : (
+						<div className="space-y-4">
+							{userInfo ? (
+								<ItemCard
+									onEdit={() => setView('form')}
+									id={userInfo.id}
+								>
+									<div className="space-y-6 p-4">
+										{/* Header Section */}
+										<div className="flex items-center space-x-3">
+											<div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full overflow-hidden">
+												{clerkUser?.hasImage && clerkUser.imageUrl && clerkUser.imageUrl.length > 0 ? (
+													<Image
+														src={clerkUser.imageUrl}
+														alt={`${clerkUser.firstName || 'User'}'s profile`}
+														width={48}
+														height={48}
+														className="w-full h-full object-cover"
+														priority={false}
+														unoptimized={false}
+													/>
+												) : (
+													<User className="w-6 h-6 text-primary" />
+												)}
+											</div>
+											<div>
+												<h3 className="text-lg font-semibold text-foreground">
+													{userInfo?.title && `${userInfo.title} `}
+													{userInfo.first_name || 'First Name'} {userInfo.last_name || 'Last Name'}
+												</h3>
+												<p className="text-sm text-muted-foreground">Personal Information</p>
 											</div>
 										</div>
-									</div>
-								)}
 
-								{/* Bio Section */}
-								{userInfo.profile_text && (
-									<div className="flex items-start space-x-3">
-										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mt-1">
-											<FileText className="w-4 h-4 text-flame-600" />
+										{/* Contact Information */}
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											{/* Email */}
+											<div className="flex items-center space-x-3">
+												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+													<Mail className="w-4 h-4 text-flame-600" />
+												</div>
+												<div className="min-w-0 flex-1">
+													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
+													<p className="text-sm text-foreground truncate">{userInfo.email || 'Not provided'}</p>
+												</div>
+											</div>
+
+											{/* Phone */}
+											<div className="flex items-center space-x-3">
+												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+													<Phone className="w-4 h-4 text-flame-600" />
+												</div>
+												<div className="min-w-0 flex-1">
+													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
+													<p className="text-sm text-foreground">{userInfo.phone || 'Not provided'}</p>
+												</div>
+											</div>
+
+											{/* Date of Birth */}
+											<div className="flex items-center space-x-3">
+												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+													<Calendar className="w-4 h-4 text-flame-600" />
+												</div>
+												<div className="min-w-0 flex-1">
+													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</p>
+													<p className="text-sm text-foreground">
+														{userInfo.dob ? userInfo.dob.toLocaleDateString() : 'Not provided'}
+													</p>
+												</div>
+											</div>
+
+											{/* Website */}
+											<div className="flex items-center space-x-3">
+												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+													<Globe className="w-4 h-4 text-flame-600" />
+												</div>
+												<div className="min-w-0 flex-1">
+													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</p>
+													<p className="text-sm text-foreground truncate">{userInfo.website || 'Not provided'}</p>
+												</div>
+											</div>
 										</div>
-										<div className="min-w-0 flex-1">
-											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
-											<div
-												className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
-												dangerouslySetInnerHTML={{__html: userInfo.profile_text}}
-											/>
-										</div>
+
+										{/* Address Section */}
+										{(userInfo.address || userInfo.city || userInfo.postal || userInfo.country?.name) && (
+											<div className="flex items-start space-x-3">
+												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg my-1">
+													<MapPin className="w-4 h-4 text-flame-600" />
+												</div>
+												<div className="min-w-0 flex-1">
+													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
+													<div className="text-sm text-foreground space-y-1">
+														{userInfo.address && <p>{userInfo.address}</p>}
+														<p>
+															{[userInfo.city, userInfo.postal, userInfo.country?.name]
+																.filter(Boolean)
+																.join(', ') || 'Not provided'}
+														</p>
+													</div>
+												</div>
+											</div>
+										)}
+
+										{/* Bio Section */}
+										{userInfo.profile_text && (
+											<div className="flex items-start space-x-3">
+												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mt-1">
+													<FileText className="w-4 h-4 text-flame-600" />
+												</div>
+												<div className="min-w-0 flex-1">
+													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
+													<div
+														className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
+														dangerouslySetInnerHTML={{__html: userInfo.profile_text}}
+													/>
+												</div>
+											</div>
+										)}
 									</div>
-								)}
-							</div>
-						</ItemCard>
-					) : (
-						<Button onClick={handleUpdate} className="w-full" variant="outline">
-							<Edit2Icon className="h-4 w-4 mr-2" />
-							Edit Personal Details
-						</Button>
+								</ItemCard>
+							) : (
+								<Button onClick={handleUpdate} className="w-full" variant="outline">
+									<Edit2Icon className="h-4 w-4 mr-2" />
+									Edit Personal Details
+								</Button>
+							)}
+						</div>
 					)}
-				</div>
+				</>
 			)}
 		</div>
 	)
