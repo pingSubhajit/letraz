@@ -344,7 +344,6 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 					<EditorHeader
 						title="Personal Information"
 						showAddButton={isMounted && !isLoading}
-						// TODO can be modified to non-delete data like personal info with only update action and update icon
 						onAddNew={handleUpdate}
 						addButtonText="Update your personal info"
 					/>
