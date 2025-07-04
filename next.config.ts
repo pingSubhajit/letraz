@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
 				port: '',
 				pathname: '*/**',
 				search: ''
+			},
+			{
+				protocol: 'https',
+				hostname: 'img.clerk.com',
+				port: '',
+				pathname: '*/**',
+				search: ''
 			}
 		]
 	}

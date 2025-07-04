@@ -16,8 +16,10 @@ import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import DatePicker from '@/components/ui/date-picker'
 import {userInfoQueryOptions, useUserInfoQuery} from '@/lib/user-info/queries'
-import {Edit2Icon, Loader2} from 'lucide-react'
+import {Calendar, Edit2Icon, FileText, Globe, Loader2, Mail, MapPin, Phone, User} from 'lucide-react'
+import {useUser} from '@clerk/nextjs'
 import {Button} from '@/components/ui/button'
+import Image from 'next/image'
 import {toast} from 'sonner'
 import {useUpdateUserInfoMutation} from '@/lib/user-info/mutations'
 import {useQueryClient} from '@tanstack/react-query'
@@ -57,6 +59,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 	const [view, setView] = useState<ViewState>('list')
 	const [isMounted, setIsMounted] = useState(false)
 	const queryClient = useQueryClient()
+	const {user: clerkUser} = useUser()
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: userInfoQueryOptions.queryKey})
@@ -332,39 +335,116 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 							onEdit={() => setView('form')}
 							id={userInfo.id}
 						>
-							<h3 className="font-medium">
-								{userInfo?.title} {userInfo.first_name || 'N/A'}{' '}
-								{userInfo.last_name || 'N/A'}
-							</h3>
-							<p className="text-sm text-muted-foreground">
-								Email: {userInfo.email || 'N/A'} | Phone:{' '}
-								{userInfo.phone || 'N/A'}
-							</p>
-							<p className="text-sm">
-								Nationality: {userInfo.nationality || 'N/A'}
-							</p>
-							<p className="text-sm">
-								Date of Birth:{' '}
-								{userInfo.dob ? userInfo.dob.toLocaleDateString() : 'N/A'}
-							</p>
-							<p className="text-sm">
-								{userInfo.address ||
-									userInfo.city ||
-									userInfo.postal ||
-									userInfo.country?.name
-									? `Address: ${userInfo.address || 'N/A'}, ${
-										userInfo.city || 'N/A'
-									}, ${userInfo.postal || 'N/A'}, ${
-										userInfo.country?.name || 'N/A'
-									}`
-									: 'Address: N/A'}
-							</p>
-							<p className="text-sm">Website: {userInfo.website || 'N/A'}</p>
-							<div className="text-sm">
-								Bio: {userInfo.profile_text ? (
-									<span dangerouslySetInnerHTML={{__html: userInfo.profile_text}} />
-								) : (
-									'N/A'
+							<div className="space-y-6 p-4">
+								{/* Header Section */}
+								<div className="flex items-center space-x-3">
+									<div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full overflow-hidden">
+										{clerkUser?.hasImage && clerkUser.imageUrl && clerkUser.imageUrl.length > 0 ? (
+											<Image
+												src={clerkUser.imageUrl}
+												alt={`${clerkUser.firstName || 'User'}'s profile`}
+												width={48}
+												height={48}
+												className="w-full h-full object-cover"
+												priority={false}
+												unoptimized={false}
+											/>
+										) : (
+											<User className="w-6 h-6 text-primary" />
+										)}
+									</div>
+									<div>
+										<h3 className="text-lg font-semibold text-foreground">
+											{userInfo?.title && `${userInfo.title} `}
+											{userInfo.first_name || 'First Name'} {userInfo.last_name || 'Last Name'}
+										</h3>
+										<p className="text-sm text-muted-foreground">Personal Information</p>
+									</div>
+								</div>
+
+								{/* Contact Information */}
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									{/* Email */}
+									<div className="flex items-center space-x-3">
+										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+											<Mail className="w-4 h-4 text-flame-600" />
+										</div>
+										<div className="min-w-0 flex-1">
+											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
+											<p className="text-sm text-foreground truncate">{userInfo.email || 'Not provided'}</p>
+										</div>
+									</div>
+
+									{/* Phone */}
+									<div className="flex items-center space-x-3">
+										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+											<Phone className="w-4 h-4 text-flame-600" />
+										</div>
+										<div className="min-w-0 flex-1">
+											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
+											<p className="text-sm text-foreground">{userInfo.phone || 'Not provided'}</p>
+										</div>
+									</div>
+
+									{/* Date of Birth */}
+									<div className="flex items-center space-x-3">
+										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+											<Calendar className="w-4 h-4 text-flame-600" />
+										</div>
+										<div className="min-w-0 flex-1">
+											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</p>
+											<p className="text-sm text-foreground">
+												{userInfo.dob ? userInfo.dob.toLocaleDateString() : 'Not provided'}
+											</p>
+										</div>
+									</div>
+
+									{/* Website */}
+									<div className="flex items-center space-x-3">
+										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+											<Globe className="w-4 h-4 text-flame-600" />
+										</div>
+										<div className="min-w-0 flex-1">
+											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</p>
+											<p className="text-sm text-foreground truncate">{userInfo.website || 'Not provided'}</p>
+										</div>
+									</div>
+								</div>
+
+								{/* Address Section */}
+								{(userInfo.address || userInfo.city || userInfo.postal || userInfo.country?.name) && (
+									<div className="flex items-start space-x-3">
+										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg my-1">
+											<MapPin className="w-4 h-4 text-flame-600" />
+										</div>
+										<div className="min-w-0 flex-1">
+											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
+											<div className="text-sm text-foreground space-y-1">
+												{userInfo.address && <p>{userInfo.address}</p>}
+												<p>
+													{[userInfo.city, userInfo.postal, userInfo.country?.name]
+														.filter(Boolean)
+														.join(', ') || 'Not provided'}
+												</p>
+											</div>
+										</div>
+									</div>
+								)}
+
+								{/* Bio Section */}
+								{userInfo.profile_text && (
+									<div className="flex items-start space-x-3">
+										<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mt-1">
+											<FileText className="w-4 h-4 text-flame-600" />
+										</div>
+										<div className="min-w-0 flex-1">
+											<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
+											<div
+												className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
+												dangerouslySetInnerHTML={{__html: userInfo.profile_text}}
+											/>
+										</div>
+									</div>
 								)}
 							</div>
 						</ItemCard>
