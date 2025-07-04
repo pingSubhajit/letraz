@@ -1,8 +1,9 @@
 'use client'
 
-import {FormField, FormItem, FormLabel, FormControl, FormMessage} from '@/components/ui/form'
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import RichTextEditor from '@/components/richTextEditor'
 import {UseFormReturn} from 'react-hook-form'
+import {cn} from '@/lib/utils'
 
 interface RichTextFormFieldProps {
   form: UseFormReturn<any>
@@ -11,7 +12,7 @@ interface RichTextFormFieldProps {
   placeholder?: string
   disabled?: boolean
   className?: string
-  height?: string
+  editorClassName?: string
 }
 
 const RichTextFormField = ({
@@ -21,7 +22,7 @@ const RichTextFormField = ({
 	placeholder = '',
 	disabled = false,
 	className,
-	height = 'h-60'
+	editorClassName
 }: RichTextFormFieldProps) => {
 	return (
 		<FormField
@@ -34,9 +35,9 @@ const RichTextFormField = ({
 						<RichTextEditor
 							value={field.value || ''}
 							onChange={field.onChange}
-							className={disabled ? `${height} mt-3 opacity-60 pointer-events-none` : `${height} mt-3`}
+							className={cn('mt-3', disabled && 'opacity-60 pointer-events-none')}
 							placeholder={placeholder}
-							editorContentClassName="flex-1 h-[200px] overflow-y-auto"
+							editorContentClassName={cn('h-[200px] overflow-y-auto', editorClassName)}
 						/>
 					</FormControl>
 					<FormMessage className="text-xs" />

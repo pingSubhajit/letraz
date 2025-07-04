@@ -158,8 +158,24 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 					<EditorHeader
 						title="Update Personal Information"
 						description="Ensure that the details are correct and reflect your previous personal information"
-						className="mb-10"
 					/>
+
+					<div className="rounded-xl p-6 mb-6 shadow-sm border border-accent">
+						<div className="flex items-start gap-4">
+							<div className="flex-shrink-0">
+								<div className="w-10 h-10 bg-flame-500 rounded-lg flex items-center justify-center">
+									<FileText className="h-5 w-5 text-white" />
+								</div>
+							</div>
+							<div className="flex-1">
+								<h3 className="text-base font-semibold text-flame-950 leading-none mb-1">Global Information</h3>
+								<p className="text-sm text-flame-900 leading-relaxed">
+									Changes made to your personal information will be applied across all of your resumes.
+									This ensures your details stay consistent throughout your profile.
+								</p>
+							</div>
+						</div>
+					</div>
 
 					<Form {...form}>
 						<form
@@ -242,6 +258,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 								label="Bio"
 								placeholder="Write a brief professional summary highlighting your key skills, experience, and career goals..."
 								disabled={isSubmitting}
+								editorClassName="h-32"
 							/>
 
 							<hr className="my-3" />
