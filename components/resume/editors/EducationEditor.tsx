@@ -75,7 +75,6 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to add education. Please try again.')
-			console.error('Error adding education:', error)
 		}
 	})
 
@@ -86,7 +85,6 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to update education. Please try again.')
-			console.error('Error updating education:', error)
 		}
 	})
 
@@ -97,7 +95,6 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to delete education. Please try again.')
-			console.error('Error deleting education:', error)
 		}
 	})
 

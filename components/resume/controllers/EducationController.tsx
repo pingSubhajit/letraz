@@ -1,10 +1,11 @@
 import React from 'react'
-import {ResumeSection} from '@/lib/resume/types'
+import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
 import {Education} from '@/lib/education/types'
 import {sanitizeHtml} from '@/lib/utils'
 
 // Types for the processed data
 export interface EducationData {
+  showSectionTitle: boolean
   institution: {
     hasInstitution: boolean
     name?: string
@@ -33,10 +34,13 @@ export interface EducationData {
 // Controller hook that processes raw Education data into display-ready data
 export const useEducationController = (
 	section: ResumeSection & { type: 'Education', data: Education },
-	isFirstInGroup: boolean
+	previousSectionType?: typeof ResumeSectionSchema._type.type
 ): EducationData => {
 	return React.useMemo(() => {
 		const {data: education} = section
+
+		// Determine if we should show section title
+		const showSectionTitle = previousSectionType !== 'Education'
 
 		// Process institution information
 		const institutionParts = [
@@ -92,33 +96,34 @@ export const useEducationController = (
 				: undefined
 		}
 
-		// Spacing only between sections within the same group
+		// Determine spacing
 		const spacing = {
-			marginTop: !isFirstInGroup
+			marginTop: previousSectionType === 'Education'
 		}
 
 		return {
+			showSectionTitle,
 			institution,
 			dates,
 			degree,
 			description,
 			spacing
 		}
-	}, [section, isFirstInGroup])
+	}, [section, previousSectionType])
 }
 
 // HOC wrapper for theme components
 export interface EducationControllerProps {
   section: ResumeSection & { type: 'Education', data: Education }
-  isFirstInGroup: boolean
+  previousSectionType?: typeof ResumeSectionSchema._type.type
   children: (data: EducationData) => React.ReactNode
 }
 
 export const EducationController: React.FC<EducationControllerProps> = ({
 	section,
-	isFirstInGroup,
+	previousSectionType,
 	children
 }) => {
-	const processedData = useEducationController(section, isFirstInGroup)
+	const processedData = useEducationController(section, previousSectionType)
 	return <>{children(processedData)}</>
 }

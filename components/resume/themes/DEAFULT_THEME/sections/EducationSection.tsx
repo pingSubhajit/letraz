@@ -1,20 +1,13 @@
-import {cn, sanitizeHtml} from '@/lib/utils'
+import {cn} from '@/lib/utils'
 import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
-import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
-import {Education} from '@/lib/education/types'
+import {EducationData} from '@/components/resume/controllers/EducationController'
 
-type EducationSectionProps = {
-	section: ResumeSection & { type: 'Education', data: Education }
-	previousSectionType?: typeof ResumeSectionSchema._type.type
-}
-
-const EducationSection = ({section, previousSectionType}: EducationSectionProps) => {
-	const {data: education} = section
-
+// Pure UI component - no logic, just presentation
+const EducationSection = ({data}: { data: EducationData }) => {
 	return (
-		<div className={cn('flex flex-col items-stretch pl-4', previousSectionType === 'Education' && 'mt-2')}>
+		<div className={cn('flex flex-col items-stretch pl-4', data.spacing.marginTop && 'mt-2')}>
 			{/* TITLE */}
-			{previousSectionType !== 'Education' && <div className="mt-2 -ml-4">
+			{data.showSectionTitle && <div className="mt-2 -ml-4">
 				<SectionTitle>Education</SectionTitle>
 
 				{/* DIVIDER */}
@@ -24,33 +17,25 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 			{/* INSTITUTION & DATES */}
 			<div className="w-full flex flex-row items-center justify-between gap-4">
 				{/* INSTITUTION */}
-				<p className="text-sm leading-normal">
-					{education?.institution_name && <span className="font-bold">{education.institution_name}</span>}
-					{education?.institution_name && education?.country && <span>, </span>}
-					{education?.country && <span>{education.country?.name}</span>}
-				</p>
+				{data.institution.hasInstitution && <p className="text-sm leading-normal font-bold">
+					{data.institution.formatted}
+				</p>}
 
-				<p className="text-sm">
-					{education.started_from_month && education.started_from_year &&
-            <span>From {education.started_from_month}/{education.started_from_year}</span>}
-					{education.started_from_month && education.started_from_year && education.finished_at_month && education.finished_at_year &&
-            <span>&nbsp; &nbsp;</span>}
-					{education.finished_at_month && education.finished_at_year &&
-            <span>To {education.finished_at_month}/{education.finished_at_year}</span>}
-				</p>
+				{/* DATES */}
+				{data.dates.hasDates && <p className="text-sm">
+					{data.dates.formatted}
+				</p>}
 			</div>
 
 			{/* DEGREE */}
-			<p className="text-sm italic">
-				{education.degree && <span>{education.degree}</span>}
-				{education.degree && education.field_of_study && <span> in </span>}
-				{education.field_of_study && <span>{education.field_of_study}</span>}
-			</p>
+			{data.degree.hasDegree && <p className="text-sm italic">
+				{data.degree.formatted}
+			</p>}
 
 			{/* DESCRIPTION */}
-			{education.description && <div
+			{data.description.hasDescription && <div
 				className="text-sm mt-0.5 pl-2 prose prose-sm leading-snug prose-p:m-0 max-w-none"
-				dangerouslySetInnerHTML={{__html: sanitizeHtml(education.description)}}
+				dangerouslySetInnerHTML={{__html: data.description.sanitizedHtml || ''}}
 			/>}
 		</div>
 	)

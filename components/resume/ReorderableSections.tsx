@@ -22,15 +22,12 @@ import {GripVertical} from 'lucide-react'
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import {useRearrangeResumeSectionsMutation} from '@/lib/resume/mutations'
-import {Education} from '@/lib/education/types'
-import {Experience} from '@/lib/experience/types'
-import EducationSection from '@/components/resume/themes/DEAFULT_THEME/sections/EducationSection'
-import ExperienceSection from '@/components/resume/themes/DEAFULT_THEME/sections/ExperienceSection'
 
 interface ReorderableSectionsProps {
 	sections: ResumeSection[]
 	resumeId: string
 	className?: string
+	renderSection: (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => React.ReactNode
 }
 
 interface SortableItemProps {
@@ -39,6 +36,7 @@ interface SortableItemProps {
 	index: number
 	totalSections: number
 	previousSectionType?: typeof ResumeSectionSchema._type.type
+	renderSection: (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => React.ReactNode
 }
 
 const SortableItem: React.FC<SortableItemProps> = ({
@@ -46,7 +44,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	section,
 	index,
 	totalSections,
-	previousSectionType
+	previousSectionType,
+	renderSection
 }) => {
 	const {
 		attributes,
@@ -64,22 +63,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	}
 
 	const renderSectionContent = () => {
-		if (section.type === 'Education') {
-			return (
-				<EducationSection
-					section={section as ResumeSection & { type: 'Education', data: Education }}
-					previousSectionType={previousSectionType}
-				/>
-			)
-		} else if (section.type === 'Experience') {
-			return (
-				<ExperienceSection
-					section={section as ResumeSection & { type: 'Experience', data: Experience }}
-					previousSectionType={previousSectionType}
-				/>
-			)
-		}
-		return null
+		return renderSection(section, previousSectionType)
 	}
 
 	return (
@@ -129,7 +113,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
 const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 	sections,
 	resumeId,
-	className
+	className,
+	renderSection
 }) => {
 	const [localSections, setLocalSections] = useState(sections)
 	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
@@ -176,22 +161,7 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 	const activeSection = localSections.find(section => section.id === activeId)
 
 	const renderDragPreview = (section: ResumeSection) => {
-		if (section.type === 'Education') {
-			return (
-				<EducationSection
-					section={section as ResumeSection & { type: 'Education', data: Education }}
-					previousSectionType={undefined}
-				/>
-			)
-		} else if (section.type === 'Experience') {
-			return (
-				<ExperienceSection
-					section={section as ResumeSection & { type: 'Experience', data: Experience }}
-					previousSectionType={undefined}
-				/>
-			)
-		}
-		return null
+		return renderSection(section, undefined)
 	}
 
 	return (
@@ -216,6 +186,7 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 								index={index}
 								totalSections={localSections.length}
 								previousSectionType={localSections[index - 1]?.type}
+								renderSection={renderSection}
 							/>
 						))}
 					</motion.div>
