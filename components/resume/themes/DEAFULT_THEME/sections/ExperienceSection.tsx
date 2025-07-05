@@ -14,7 +14,7 @@ const ExperienceSection = ({section, previousSectionType}: ExperienceSectionProp
 	return (
 		<div className={cn('flex flex-col items-stretch pl-4', previousSectionType === 'Experience' && 'mt-2')}>
 			{/* TITLE */}
-			{previousSectionType !== 'Experience' && <div className="mt-8 -ml-4">
+			{previousSectionType !== 'Experience' && <div className="mt-2 -ml-4">
 				<SectionTitle>Experience</SectionTitle>
 
 				{/* DIVIDER */}

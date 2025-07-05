@@ -9,7 +9,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {months} from '@/constants'
 import {Loader2, Plus} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
-import {EducationMutation, EducationMutationSchema} from '@/lib/education/types'
+import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
@@ -25,16 +25,13 @@ import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
-import {countries} from '@/lib/constants'
-import {baseResumeQueryOptions} from '@/lib/resume/queries'
-
-type ViewState = 'list' | 'form'
+import ReorderableList from '@/components/resume/editors/shared/ReorderableList'
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
 	institution_name: '',
-	country: '',
 	field_of_study: '',
 	degree: '',
+	country: '',
 	started_from_month: null,
 	started_from_year: null,
 	finished_at_month: null,
@@ -43,131 +40,120 @@ const DEFAULT_EDUCATION_VALUES: EducationMutation = {
 	description: ''
 }
 
-const EducationEditor = ({className}: {className?: string}) => {
-	const [view, setView] = useState<ViewState>('list')
-	const [parent] = useAutoAnimate()
-	const [editingIndex, setEditingIndex] = useState<number | null>(null)
-	const queryClient = useQueryClient()
+type ViewState = 'list' | 'form'
+
+interface EducationEditorProps {
+	className?: string
+}
+
+const EducationEditor = ({className}: EducationEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+	const [view, setView] = useState<ViewState>('list')
+	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
+	const [localEducations, setLocalEducations] = useState<Education[]>([])
+	const [parent] = useAutoAnimate()
+
+	const queryClient = useQueryClient()
+
+	const revalidate = () => {
+		queryClient.invalidateQueries(educationOptions)
+	}
+
+	const form = useForm<EducationMutation>({
+		resolver: zodResolver(EducationMutationSchema),
+		defaultValues: DEFAULT_EDUCATION_VALUES,
+		mode: 'onChange'
+	})
 
 	const {data: educations = [], isLoading, error} = useCurrentEducations()
 
-	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
-		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
-	}
-
-	const {mutateAsync: addEducation, isPending: isAddingPending} = useAddEducationMutation({
-		onMutate: async (newEducation) => {
-			await queryClient.cancelQueries({queryKey: educationOptions.queryKey})
-
-			const prevAddEducations = queryClient.getQueryData(educationOptions.queryKey)
-
-			queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
-				const data = oldData || []
-				return [...data, {
-					...newEducation,
-					id: `temp-id-${Date.now()}`,
-					country: {
-						code: newEducation.country,
-						name: countries.find(c => c.code === newEducation.country)?.name || ''
-					},
-					created_at: new Date().toISOString(),
-					updated_at: new Date().toISOString()
-				}]
-			})
-
-			return {prevEducations: prevAddEducations}
-		},
-		onError: (err, _newEducation, context: any) => {
-			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
-			toast.error(`Failed to save education details: ${err.message}`)
-		},
-		onSettled: () => {
-			revalidate()
-		},
+	const {mutateAsync: addEducation, isPending: isAdding} = useAddEducationMutation({
 		onSuccess: () => {
+			revalidate()
 			toast.success('Education added successfully!')
+		},
+		onError: (error) => {
+			toast.error('Failed to add education. Please try again.')
+			console.error('Error adding education:', error)
 		}
 	})
 
-	const {mutateAsync: updateEducation, isPending: isUpdatingPending} = useUpdateEducationMutation({
-		onMutate: async ({id, data}) => {
-			await queryClient.cancelQueries({queryKey: educationOptions.queryKey})
-
-			const prevUpdateEducations = queryClient.getQueryData(educationOptions.queryKey)
-
-			queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
-				const dataArr = oldData || []
-				return dataArr.map((item: any) => item.id === id ? {
-					...item,
-					...data,
-					country: {
-						code: data.country || item.country.code,
-						name: data.country ? countries.find(c => c.code === data.country)?.name || '' : item.country.name
-					},
-					updated_at: new Date().toISOString()
-				} : item)
-			})
-
-			return {prevEducations: prevUpdateEducations}
-		},
-		onError: (err, _updateData, context: any) => {
-			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
-			toast.error(`Failed to update education details: ${err.message}`)
-		},
-		onSettled: () => {
-			revalidate()
-		},
+	const {mutateAsync: updateEducation, isPending: isUpdating} = useUpdateEducationMutation({
 		onSuccess: () => {
+			revalidate()
 			toast.success('Education updated successfully!')
+		},
+		onError: (error) => {
+			toast.error('Failed to update education. Please try again.')
+			console.error('Error updating education:', error)
 		}
 	})
-
-	const isSubmitting = isAddingPending || isUpdatingPending
 
 	const {mutateAsync: deleteEducation, isPending: isDeleting} = useDeleteEducationMutation({
-		onMutate: async (educationId) => {
-			setDeletingId(educationId)
-
-			await queryClient.cancelQueries({queryKey: educationOptions.queryKey})
-
-			const prevDeleteEducations = queryClient.getQueryData(educationOptions.queryKey)
-
-			queryClient.setQueryData(educationOptions.queryKey, (oldData: any) => {
-				const data = oldData || []
-				return data.filter((item: any) => item.id !== educationId)
-			})
-
-			return {prevEducations: prevDeleteEducations}
-		},
-		onError: (err, _educationId, context: any) => {
-			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
-			toast.error(`Failed to delete education: ${err.message}`)
-		},
-		onSettled: () => {
-			revalidate()
-			setDeletingId(null)
-		},
 		onSuccess: () => {
+			revalidate()
 			toast.success('Education deleted successfully!')
+		},
+		onError: (error) => {
+			toast.error('Failed to delete education. Please try again.')
+			console.error('Error deleting education:', error)
 		}
 	})
+
+	const isSubmitting = isAdding || isUpdating
+
+	useEffect(() => {
+		if (educations.length > 0) {
+			setLocalEducations(educations)
+		}
+	}, [educations])
 
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
 
-	const form = useForm<EducationMutation>({
-		resolver: zodResolver(EducationMutationSchema),
-		defaultValues: DEFAULT_EDUCATION_VALUES
-	})
+	const handleReorder = (newOrder: Education[]) => {
+		setLocalEducations(newOrder)
+		/*
+		 * Note: This is client-side only reordering since the API doesn't support education reordering
+		 * You could implement a backend endpoint for this if needed
+		 */
+	}
+
+	const renderEducationItem = (education: Education, index: number) => (
+		<ItemCard
+			key={education.id}
+			onEdit={() => handleEdit(index)}
+			onDelete={() => handleDelete(education.id)}
+			isDeleting={isDeleting}
+			id={education.id}
+			deletingId={deletingId}
+		>
+			<h3 className="font-medium">
+				{education.degree} {education.degree && education.field_of_study && 'in'} {education.field_of_study}
+			</h3>
+			<p className="text-sm text-muted-foreground">
+				{[
+					education.institution_name,
+					education.country?.name
+				].filter(Boolean).join(', ')}
+			</p>
+			<p className="text-sm">
+				{education.started_from_month && months.find(m => m.value === education.started_from_month?.toString())?.label} {education.started_from_year} - {' '}
+				{education.current ? 'Present' : (
+					<>
+						{education.finished_at_month && months.find(m => m.value === education.finished_at_month?.toString())?.label} {education.finished_at_year}
+					</>
+				)}
+			</p>
+		</ItemCard>
+	)
 
 	const onSubmit = async (values: EducationMutation) => {
 		try {
 			if (editingIndex !== null) {
-				const educationId = educations[editingIndex]?.id
+				const educationId = localEducations[editingIndex]?.id
 				await updateEducation({id: educationId, data: values})
 			} else {
 				await addEducation(values)
@@ -182,7 +168,7 @@ const EducationEditor = ({className}: {className?: string}) => {
 	}
 
 	const handleEdit = (index: number) => {
-		const education = educations[index]
+		const education = localEducations[index]
 		form.reset({
 			...education,
 			country: education.country.code,
@@ -197,14 +183,17 @@ const EducationEditor = ({className}: {className?: string}) => {
 
 	const handleDelete = async (id: string) => {
 		try {
+			setDeletingId(id)
 			await deleteEducation(id)
-			if (editingIndex !== null && educations[editingIndex]?.id === id) {
+			if (editingIndex !== null && localEducations[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_EDUCATION_VALUES)
 				setView('list')
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
+		} finally {
+			setDeletingId(null)
 		}
 	}
 
@@ -231,8 +220,6 @@ const EducationEditor = ({className}: {className?: string}) => {
 					}
 					className="mb-10"
 				/>
-
-				{baseResumeQueryOptions.queryKey} {typeof baseResumeQueryOptions.queryKey[0]}
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -315,36 +302,15 @@ const EducationEditor = ({className}: {className?: string}) => {
 					Error loading education details. Please try again later.
 				</div>
 			) : (
-				<div ref={parent} className="space-y-4">
-					{educations.length > 0 ? (
-						educations.map((education, index) => (
-							<ItemCard
-								key={education.id}
-								onEdit={() => handleEdit(index)}
-								onDelete={() => handleDelete(education.id)}
-								isDeleting={isDeleting}
-								id={education.id}
-								deletingId={deletingId}
-							>
-								<h3 className="font-medium">
-									{education.degree} {education.degree && education.field_of_study && 'in'} {education.field_of_study}
-								</h3>
-								<p className="text-sm text-muted-foreground">
-									{[
-										education.institution_name,
-										education.country?.name
-									].filter(Boolean).join(', ')}
-								</p>
-								<p className="text-sm">
-									{education.started_from_month && months.find(m => m.value === education.started_from_month?.toString())?.label} {education.started_from_year} - {' '}
-									{education.current ? 'Present' : (
-										<>
-											{education.finished_at_month && months.find(m => m.value === education.finished_at_month?.toString())?.label} {education.finished_at_year}
-										</>
-									)}
-								</p>
-							</ItemCard>
-						))
+				<div ref={parent}>
+					{localEducations.length > 0 ? (
+						<ReorderableList
+							items={localEducations}
+							onReorder={handleReorder}
+							renderItem={renderEducationItem}
+							label="Education Entries"
+							className="space-y-4"
+						/>
 					) : (
 						<Button
 							onClick={handleAddNew}

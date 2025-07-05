@@ -14,7 +14,7 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 	return (
 		<div className={cn('flex flex-col items-stretch pl-4', previousSectionType === 'Education' && 'mt-2')}>
 			{/* TITLE */}
-			{previousSectionType !== 'Education' && <div className="mt-8 -ml-4">
+			{previousSectionType !== 'Education' && <div className="mt-2 -ml-4">
 				<SectionTitle>Education</SectionTitle>
 
 				{/* DIVIDER */}
