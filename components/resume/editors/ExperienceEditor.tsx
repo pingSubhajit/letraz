@@ -73,7 +73,6 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to add experience. Please try again.')
-			console.error('Error adding experience:', error)
 		}
 	})
 
@@ -84,7 +83,6 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to update experience. Please try again.')
-			console.error('Error updating experience:', error)
 		}
 	})
 
@@ -95,7 +93,6 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to delete experience. Please try again.')
-			console.error('Error deleting experience:', error)
 		}
 	})
 

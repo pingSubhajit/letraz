@@ -37,13 +37,13 @@ interface SortableItemProps<T extends { id: string }> {
 	children: React.ReactNode
 }
 
-function SortableItem<T extends { id: string }>({
+const SortableItem = <T extends { id: string }>({
 	id,
 	item,
 	index,
 	totalItems,
 	children
-}: SortableItemProps<T>) {
+}: SortableItemProps<T>) => {
 	const {
 		attributes,
 		listeners,
@@ -100,13 +100,13 @@ function SortableItem<T extends { id: string }>({
 	)
 }
 
-function ReorderableList<T extends { id: string }>({
+const ReorderableList = <T extends { id: string }>({
 	items,
 	onReorder,
 	renderItem,
 	className,
 	label = 'items'
-}: ReorderableListProps<T>) {
+}: ReorderableListProps<T>) => {
 	const [localItems, setLocalItems] = useState(items)
 	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
 
