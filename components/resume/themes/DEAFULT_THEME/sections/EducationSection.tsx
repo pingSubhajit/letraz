@@ -1,8 +1,7 @@
-import {cn} from '@/lib/utils'
+import {cn, sanitizeHtml} from '@/lib/utils'
 import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
 import {Education} from '@/lib/education/types'
-import DOMPurify from 'dompurify'
 
 type EducationSectionProps = {
 	section: ResumeSection & { type: 'Education', data: Education }
@@ -51,7 +50,7 @@ const EducationSection = ({section, previousSectionType}: EducationSectionProps)
 			{/* DESCRIPTION */}
 			{education.description && <div
 				className="text-sm mt-0.5 pl-2 prose prose-sm leading-snug prose-p:m-0 max-w-none"
-				dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(education.description)}}
+				dangerouslySetInnerHTML={{__html: sanitizeHtml(education.description)}}
 			/>}
 		</div>
 	)

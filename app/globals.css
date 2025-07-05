@@ -90,3 +90,9 @@ body {
     @apply font-serif
   }
 }
+
+/* Hide scrollbar for WebKit browsers */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+

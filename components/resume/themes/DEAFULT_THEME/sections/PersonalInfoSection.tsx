@@ -2,6 +2,7 @@ import {Calendar, Globe, Mail, MapPin, Phone} from 'lucide-react'
 import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 import {UserInfo} from '@/lib/user-info/types'
 import {DateTime} from 'luxon'
+import {sanitizeHtml} from '@/lib/utils'
 
 const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }) => {
 	return (
@@ -26,9 +27,7 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 				{/* LOCATION */}
 				<div className="flex items-center gap-1">
 					{/* ICON */}
-					{(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) &&
-            <MapPin className="w-4 h-4"/>
-					}
+					{(personalInfoData?.address || personalInfoData?.city || personalInfoData?.country || personalInfoData?.postal) && <MapPin className="w-4 h-4"/>}
 
 					{/* LOCATION INFO */}
 					{personalInfoData?.address && <p>{personalInfoData?.address}, </p>}
@@ -38,10 +37,16 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 				</div>
 
 				{/* DOB */}
-				{personalInfoData?.dob && <div className="flex items-center">
-					<Calendar className="'w-4 h-4 mr-1"/>
-					<p>{DateTime.fromJSDate(personalInfoData?.dob).toLocaleString()}</p>
-				</div>}
+				{personalInfoData?.dob && (() => {
+					const dateTime = DateTime.fromISO(personalInfoData.dob?.toString())
+
+					return dateTime.isValid ? (
+						<div className="flex items-center">
+							<Calendar className="w-4 h-4 mr-1"/>
+							<p>{dateTime.toLocaleString()}</p>
+						</div>
+					) : null
+				})()}
 
 				{/* WEBSITE */}
 				{personalInfoData?.website && <div className="flex items-center">
@@ -59,7 +64,10 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 					{/* DIVIDER */}
 					<Divider className="mb-1.5" />
 				</div>
-				<p className="text-justify leading-snug text-sm">{personalInfoData?.profile_text}</p>
+				<div
+					className="text-justify leading-snug text-sm"
+					dangerouslySetInnerHTML={{__html: sanitizeHtml(personalInfoData?.profile_text || '')}}
+				/>
 			</div>}
 		</div>
 	)
