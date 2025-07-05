@@ -18,7 +18,7 @@ import {CSS} from '@dnd-kit/utilities'
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers'
 import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
 import {Button} from '@/components/ui/button'
-import {ChevronDown, ChevronUp, GripVertical} from 'lucide-react'
+import {GripVertical} from 'lucide-react'
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import {useRearrangeResumeSectionsMutation} from '@/lib/resume/mutations'
@@ -38,8 +38,6 @@ interface SortableItemProps {
 	section: ResumeSection
 	index: number
 	totalSections: number
-	onMoveUp: (id: string) => void
-	onMoveDown: (id: string) => void
 	previousSectionType?: typeof ResumeSectionSchema._type.type
 }
 
@@ -48,8 +46,6 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	section,
 	index,
 	totalSections,
-	onMoveUp,
-	onMoveDown,
 	previousSectionType
 }) => {
 	const {
@@ -95,20 +91,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
 				isDragging && 'opacity-30 z-[999] transition-opacity duration-150'
 			)}
 		>
-			{/* Drag Handle and Buttons - Nested hover behavior */}
-			<div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:opacity-100 group/controls">
-				{index > 0 && (
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => onMoveUp(section.id)}
-						className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 opacity-0 group-hover/controls:opacity-100 transition-opacity duration-150"
-						aria-label="Move section up"
-					>
-						<ChevronUp className="h-3 w-3" />
-					</Button>
-				)}
-
+			{/* Drag Handle */}
+			<div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 				<Button
 					variant="outline"
 					size="sm"
@@ -119,18 +103,6 @@ const SortableItem: React.FC<SortableItemProps> = ({
 				>
 					<GripVertical className="h-3 w-3" />
 				</Button>
-
-				{index < totalSections - 1 && (
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => onMoveDown(section.id)}
-						className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 opacity-0 group-hover/controls:opacity-100 transition-opacity duration-150"
-						aria-label="Move section down"
-					>
-						<ChevronDown className="h-3 w-3" />
-					</Button>
-				)}
 			</div>
 
 			{/* Section Content */}
@@ -200,27 +172,6 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		}
 	}
 
-	const handleMoveUp = (id: string) => {
-		const currentIndex = localSections.findIndex(section => section.id === id)
-		if (currentIndex > 0) {
-			const newSections = arrayMove(localSections, currentIndex, currentIndex - 1)
-			setLocalSections(newSections)
-
-			const sectionIds = newSections.map(section => section.id)
-			rearrangeMutation.mutate({resumeId, sectionIds})
-		}
-	}
-
-	const handleMoveDown = (id: string) => {
-		const currentIndex = localSections.findIndex(section => section.id === id)
-		if (currentIndex < localSections.length - 1) {
-			const newSections = arrayMove(localSections, currentIndex, currentIndex + 1)
-			setLocalSections(newSections)
-
-			const sectionIds = newSections.map(section => section.id)
-			rearrangeMutation.mutate({resumeId, sectionIds})
-		}
-	}
 
 	const activeSection = localSections.find(section => section.id === activeId)
 
@@ -264,8 +215,6 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 								section={section}
 								index={index}
 								totalSections={localSections.length}
-								onMoveUp={handleMoveUp}
-								onMoveDown={handleMoveDown}
 								previousSectionType={localSections[index - 1]?.type}
 							/>
 						))}
