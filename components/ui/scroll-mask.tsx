@@ -8,7 +8,6 @@ interface ScrollMaskProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
   className?: string
   maskHeight?: number
-  maskColor?: string
   showTop?: boolean
   showBottom?: boolean
 }
@@ -17,7 +16,6 @@ const ScrollMask: React.FC<ScrollMaskProps> = ({
 	children,
 	className,
 	maskHeight = 48,
-	maskColor = 'white',
 	showTop = true,
 	showBottom = true,
 	...rest

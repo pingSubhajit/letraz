@@ -2,6 +2,7 @@ import {Calendar, Globe, Mail, MapPin, Phone} from 'lucide-react'
 import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 import {UserInfo} from '@/lib/user-info/types'
 import {DateTime} from 'luxon'
+import {sanitizeHtml} from '@/lib/utils'
 
 const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }) => {
 	return (
@@ -41,7 +42,7 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 
 					return dateTime.isValid ? (
 						<div className="flex items-center">
-							<Calendar className="'w-4 h-4 mr-1"/>
+							<Calendar className="w-4 h-4 mr-1"/>
 							<p>{dateTime.toLocaleString()}</p>
 						</div>
 					) : null
@@ -63,9 +64,9 @@ const PersonalInfoSection = ({personalInfoData}: { personalInfoData?: UserInfo }
 					{/* DIVIDER */}
 					<Divider className="mb-1.5" />
 				</div>
-				<div 
+				<div
 					className="text-justify leading-snug text-sm"
-					dangerouslySetInnerHTML={{__html: personalInfoData?.profile_text}}
+					dangerouslySetInnerHTML={{__html: sanitizeHtml(personalInfoData?.profile_text || '')}}
 				/>
 			</div>}
 		</div>

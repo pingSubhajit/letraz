@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, useState} from 'react'
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
-import {cn} from '@/lib/utils'
+import {cn, sanitizeHtml} from '@/lib/utils'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -121,7 +121,6 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 			userInfo || DEFAULT_DETAILS_VALUES
 	})
 
-	// const isSubmitting = false
 	const isSubmitting = isUpdatingPending
 
 	const onSubmit = async (values: UserInfoMutation) => {
@@ -470,7 +469,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
 													<div
 														className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
-														dangerouslySetInnerHTML={{__html: userInfo.profile_text}}
+														dangerouslySetInnerHTML={{__html: sanitizeHtml(userInfo.profile_text)}}
 													/>
 												</div>
 											</div>
