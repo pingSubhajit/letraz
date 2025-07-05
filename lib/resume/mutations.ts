@@ -10,6 +10,7 @@ export const useRearrangeResumeSectionsMutation = () => {
 		mutationFn: ({resumeId, sectionIds}: {resumeId: string, sectionIds: string[]}) => rearrangeResumeSections(resumeId, sectionIds),
 		onSuccess: () => {
 			queryClient.invalidateQueries({queryKey: BASE_RESUME_KEYS})
+			toast.success('Section order updated successfully')
 		},
 		onError: (error) => {
 			toast.error('Failed to update section order')

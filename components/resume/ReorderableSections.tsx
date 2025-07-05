@@ -16,18 +16,21 @@ import {
 import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy} from '@dnd-kit/sortable'
 import {CSS} from '@dnd-kit/utilities'
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers'
-import {ResumeSection} from '@/lib/resume/types'
+import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
 import {Button} from '@/components/ui/button'
-import {GripVertical} from 'lucide-react'
+import {ChevronDown, ChevronUp, GripVertical} from 'lucide-react'
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import {useRearrangeResumeSectionsMutation} from '@/lib/resume/mutations'
+import {Education} from '@/lib/education/types'
+import {Experience} from '@/lib/experience/types'
+import EducationSection from '@/components/resume/themes/DEAFULT_THEME/sections/EducationSection'
+import ExperienceSection from '@/components/resume/themes/DEAFULT_THEME/sections/ExperienceSection'
 
 interface ReorderableSectionsProps {
 	sections: ResumeSection[]
 	resumeId: string
 	className?: string
-	renderSection: (section: ResumeSection, isFirstInGroup: boolean) => { title: React.ReactNode; content: React.ReactNode }
 }
 
 interface SortableItemProps {
@@ -35,24 +38,9 @@ interface SortableItemProps {
 	section: ResumeSection
 	index: number
 	totalSections: number
-	isFirstInGroup: boolean
-	renderSection: (section: ResumeSection, isFirstInGroup: boolean) => { title: React.ReactNode; content: React.ReactNode }
-}
-
-// Group sections by type
-const groupSectionsByType = (sections: ResumeSection[]) => {
-	const groups: { [key: string]: ResumeSection[] } = {}
-	const groupOrder: string[] = []
-
-	sections.forEach(section => {
-		if (!groups[section.type]) {
-			groups[section.type] = []
-			groupOrder.push(section.type)
-		}
-		groups[section.type].push(section)
-	})
-
-	return {groups, groupOrder}
+	onMoveUp: (id: string) => void
+	onMoveDown: (id: string) => void
+	previousSectionType?: typeof ResumeSectionSchema._type.type
 }
 
 const SortableItem: React.FC<SortableItemProps> = ({
@@ -60,8 +48,9 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	section,
 	index,
 	totalSections,
-	isFirstInGroup,
-	renderSection
+	onMoveUp,
+	onMoveDown,
+	previousSectionType
 }) => {
 	const {
 		attributes,
@@ -78,7 +67,24 @@ const SortableItem: React.FC<SortableItemProps> = ({
 		zIndex: isDragging ? 999 : 1
 	}
 
-	const sectionData = renderSection(section, isFirstInGroup)
+	const renderSectionContent = () => {
+		if (section.type === 'Education') {
+			return (
+				<EducationSection
+					section={section as ResumeSection & { type: 'Education', data: Education }}
+					previousSectionType={previousSectionType}
+				/>
+			)
+		} else if (section.type === 'Experience') {
+			return (
+				<ExperienceSection
+					section={section as ResumeSection & { type: 'Experience', data: Experience }}
+					previousSectionType={previousSectionType}
+				/>
+			)
+		}
+		return null
+	}
 
 	return (
 		<div
@@ -89,8 +95,20 @@ const SortableItem: React.FC<SortableItemProps> = ({
 				isDragging && 'opacity-30 z-[999] transition-opacity duration-150'
 			)}
 		>
-			{/* Drag Handle - positioned relative to content */}
-			<div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+			{/* Drag Handle and Buttons - Nested hover behavior */}
+			<div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:opacity-100 group/controls">
+				{index > 0 && (
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => onMoveUp(section.id)}
+						className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 opacity-0 group-hover/controls:opacity-100 transition-opacity duration-150"
+						aria-label="Move section up"
+					>
+						<ChevronUp className="h-3 w-3" />
+					</Button>
+				)}
+
 				<Button
 					variant="outline"
 					size="sm"
@@ -101,196 +119,37 @@ const SortableItem: React.FC<SortableItemProps> = ({
 				>
 					<GripVertical className="h-3 w-3" />
 				</Button>
+
+				{index < totalSections - 1 && (
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => onMoveDown(section.id)}
+						className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 opacity-0 group-hover/controls:opacity-100 transition-opacity duration-150"
+						aria-label="Move section down"
+					>
+						<ChevronDown className="h-3 w-3" />
+					</Button>
+				)}
 			</div>
 
 			{/* Section Content */}
 			<motion.div
 				className={cn(
-					'transition-all duration-200',
+					'space-y-4 transition-all duration-200',
 					index === totalSections - 1 ? 'pb-4' : ''
 				)}
-				layout="position"
+				layout
 				transition={{
-					duration: 0.2,
-					ease: 'easeOut',
-					type: 'tween'
+					duration: 0.3,
+					ease: 'easeInOut',
+					type: 'spring',
+					stiffness: 300,
+					damping: 30
 				}}
 			>
-				{sectionData.content}
+				{renderSectionContent()}
 			</motion.div>
-		</div>
-	)
-}
-
-interface SectionGroupProps {
-	groupType: string
-	sections: ResumeSection[]
-	resumeId: string
-	renderSection: (section: ResumeSection, isFirstInGroup: boolean) => { title: React.ReactNode; content: React.ReactNode }
-	onReorder: (groupType: string, newOrder: ResumeSection[]) => void
-	isFirstGroup: boolean
-	groupDragHandle?: {
-		attributes: any
-		listeners: any
-		isDragging: boolean
-	}
-}
-
-interface SortableGroupProps extends SectionGroupProps {
-	id: UniqueIdentifier
-	index: number
-	totalGroups: number
-}
-
-const SectionGroup: React.FC<SectionGroupProps> = ({
-	groupType,
-	sections,
-	resumeId,
-	renderSection,
-	onReorder,
-	isFirstGroup,
-	groupDragHandle
-}) => {
-	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-
-	const sensors = useSensors(
-		useSensor(PointerSensor, {
-			activationConstraint: {
-				distance: 8
-			}
-		}),
-		useSensor(KeyboardSensor)
-	)
-
-	const handleDragStart = (event: DragStartEvent) => {
-		const {active} = event
-		setActiveId(active.id)
-	}
-
-	const handleDragEnd = (event: DragEndEvent) => {
-		const {active, over} = event
-		setActiveId(null)
-
-		if (!over) return
-
-		if (active.id !== over.id) {
-			const oldIndex = sections.findIndex(section => section.id === active.id)
-			const newIndex = sections.findIndex(section => section.id === over.id)
-
-			const newOrder = arrayMove(sections, oldIndex, newIndex)
-			onReorder(groupType, newOrder)
-		}
-	}
-
-	const activeSection = sections.find(section => section.id === activeId)
-
-	const renderDragPreview = (section: ResumeSection) => {
-		const sectionData = renderSection(section, false)
-		// Only render content in drag preview, not title
-		return sectionData.content
-	}
-
-	// Get the title from the first section
-	const firstSectionData = renderSection(sections[0], true)
-	const groupTitle = firstSectionData.title
-
-	return (
-		<div className={cn('relative')}>
-			{/* Group Title with optional drag handle */}
-			<div className="relative group/group-title">
-				{groupDragHandle && (
-					<div className="absolute -left-8 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover/group-title:opacity-100 transition-opacity duration-200">
-						<Button
-							variant="outline"
-							size="sm"
-							{...groupDragHandle.attributes}
-							{...groupDragHandle.listeners}
-							className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
-							aria-label="Drag to reorder section group"
-						>
-							<GripVertical className="h-3 w-3" />
-						</Button>
-					</div>
-				)}
-				{groupTitle}
-			</div>
-
-			<DndContext
-				sensors={sensors}
-				collisionDetection={closestCenter}
-				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
-				modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-			>
-				<SortableContext
-					items={sections.map(section => section.id)}
-					strategy={verticalListSortingStrategy}
-				>
-					<div className="space-y-0">
-						{sections.map((section, index) => (
-							<SortableItem
-								key={section.id}
-								id={section.id}
-								section={section}
-								index={index}
-								totalSections={sections.length}
-								isFirstInGroup={false} // Always false now since title is handled at group level
-								renderSection={renderSection}
-							/>
-						))}
-					</div>
-				</SortableContext>
-
-				<DragOverlay>
-					{activeSection ? (
-						<div className="bg-white shadow-lg rounded-lg opacity-90 scale-105 p-4">
-							{renderDragPreview(activeSection)}
-						</div>
-					) : null}
-				</DragOverlay>
-			</DndContext>
-		</div>
-	)
-}
-
-const SortableGroup: React.FC<SortableGroupProps> = ({
-	id,
-	index,
-	totalGroups,
-	...groupProps
-}) => {
-	const {
-		attributes,
-		listeners,
-		setNodeRef,
-		transform,
-		transition,
-		isDragging
-	} = useSortable({id})
-
-	const style = {
-		transform: CSS.Transform.toString(transform),
-		transition,
-		zIndex: isDragging ? 999 : 1
-	}
-
-	return (
-		<div
-			ref={setNodeRef}
-			style={style}
-			className={cn(
-				'relative',
-				isDragging && 'opacity-30 z-[999] transition-opacity duration-150'
-			)}
-		>
-			<SectionGroup
-				{...groupProps}
-				groupDragHandle={{
-					attributes,
-					listeners,
-					isDragging
-				}}
-			/>
 		</div>
 	)
 }
@@ -298,11 +157,10 @@ const SortableGroup: React.FC<SortableGroupProps> = ({
 const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 	sections,
 	resumeId,
-	className,
-	renderSection
+	className
 }) => {
 	const [localSections, setLocalSections] = useState(sections)
-	const [activeGroupId, setActiveGroupId] = useState<UniqueIdentifier | null>(null)
+	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
 	const rearrangeMutation = useRearrangeResumeSectionsMutation()
 
 	const sensors = useSensors(
@@ -318,50 +176,22 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		setLocalSections(sections)
 	}, [sections])
 
-	// Handle individual section reordering within groups
-	const handleGroupReorder = (groupType: string, newOrder: ResumeSection[]) => {
-		const {groups, groupOrder} = groupSectionsByType(localSections)
-		groups[groupType] = newOrder
-
-		// Rebuild the sections array maintaining group order
-		const newSections: ResumeSection[] = []
-		groupOrder.forEach(type => {
-			newSections.push(...groups[type])
-		})
-
-		// Update local state
-		setLocalSections(newSections)
-
-		// Send API request with the new order
-		const sectionIds = newSections.map(section => section.id)
-		rearrangeMutation.mutate({resumeId, sectionIds})
-	}
-
-	// Handle group reordering
-	const handleGroupDragStart = (event: DragStartEvent) => {
+	const handleDragStart = (event: DragStartEvent) => {
 		const {active} = event
-		setActiveGroupId(active.id)
+		setActiveId(active.id)
 	}
 
-	const handleGroupDragEnd = (event: DragEndEvent) => {
+	const handleDragEnd = (event: DragEndEvent) => {
 		const {active, over} = event
-		setActiveGroupId(null)
+		setActiveId(null)
 
 		if (!over) return
 
 		if (active.id !== over.id) {
-			const {groups, groupOrder} = groupSectionsByType(localSections)
-			const oldIndex = groupOrder.findIndex(type => type === active.id)
-			const newIndex = groupOrder.findIndex(type => type === over.id)
+			const oldIndex = localSections.findIndex(section => section.id === active.id)
+			const newIndex = localSections.findIndex(section => section.id === over.id)
 
-			const newGroupOrder = arrayMove(groupOrder, oldIndex, newIndex)
-
-			// Rebuild sections array with new group order
-			const newSections: ResumeSection[] = []
-			newGroupOrder.forEach(type => {
-				newSections.push(...groups[type])
-			})
-
+			const newSections = arrayMove(localSections, oldIndex, newIndex)
 			setLocalSections(newSections)
 
 			// Send API request
@@ -370,20 +200,47 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		}
 	}
 
-	const {groups, groupOrder} = groupSectionsByType(localSections)
-	const activeGroupType = activeGroupId as string
-	const activeGroup = activeGroupType ? groups[activeGroupType] : null
+	const handleMoveUp = (id: string) => {
+		const currentIndex = localSections.findIndex(section => section.id === id)
+		if (currentIndex > 0) {
+			const newSections = arrayMove(localSections, currentIndex, currentIndex - 1)
+			setLocalSections(newSections)
 
-	const renderGroupDragPreview = (groupType: string, groupSections: ResumeSection[]) => {
-		const firstSectionData = renderSection(groupSections[0], true)
-		return (
-			<div className="space-y-2">
-				{firstSectionData.title}
-				<div className="text-sm text-gray-500">
-					{groupSections.length} item{groupSections.length !== 1 ? 's' : ''}
-				</div>
-			</div>
-		)
+			const sectionIds = newSections.map(section => section.id)
+			rearrangeMutation.mutate({resumeId, sectionIds})
+		}
+	}
+
+	const handleMoveDown = (id: string) => {
+		const currentIndex = localSections.findIndex(section => section.id === id)
+		if (currentIndex < localSections.length - 1) {
+			const newSections = arrayMove(localSections, currentIndex, currentIndex + 1)
+			setLocalSections(newSections)
+
+			const sectionIds = newSections.map(section => section.id)
+			rearrangeMutation.mutate({resumeId, sectionIds})
+		}
+	}
+
+	const activeSection = localSections.find(section => section.id === activeId)
+
+	const renderDragPreview = (section: ResumeSection) => {
+		if (section.type === 'Education') {
+			return (
+				<EducationSection
+					section={section as ResumeSection & { type: 'Education', data: Education }}
+					previousSectionType={undefined}
+				/>
+			)
+		} else if (section.type === 'Experience') {
+			return (
+				<ExperienceSection
+					section={section as ResumeSection & { type: 'Experience', data: Experience }}
+					previousSectionType={undefined}
+				/>
+			)
+		}
+		return null
 	}
 
 	return (
@@ -391,36 +248,34 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 			<DndContext
 				sensors={sensors}
 				collisionDetection={closestCenter}
-				onDragStart={handleGroupDragStart}
-				onDragEnd={handleGroupDragEnd}
+				onDragStart={handleDragStart}
+				onDragEnd={handleDragEnd}
 				modifiers={[restrictToVerticalAxis, restrictToParentElement]}
 			>
 				<SortableContext
-					items={groupOrder}
+					items={localSections.map(section => section.id)}
 					strategy={verticalListSortingStrategy}
 				>
-					<div className="space-y-0">
-						{groupOrder.map((groupType, groupIndex) => (
-							<SortableGroup
-								key={groupType}
-								id={groupType}
-								index={groupIndex}
-								totalGroups={groupOrder.length}
-								groupType={groupType}
-								sections={groups[groupType]}
-								resumeId={resumeId}
-								renderSection={renderSection}
-								onReorder={handleGroupReorder}
-								isFirstGroup={groupIndex === 0}
+					<motion.div layout>
+						{localSections.map((section, index) => (
+							<SortableItem
+								key={section.id}
+								id={section.id}
+								section={section}
+								index={index}
+								totalSections={localSections.length}
+								onMoveUp={handleMoveUp}
+								onMoveDown={handleMoveDown}
+								previousSectionType={localSections[index - 1]?.type}
 							/>
 						))}
-					</div>
+					</motion.div>
 				</SortableContext>
 
 				<DragOverlay>
-					{activeGroup ? (
+					{activeSection ? (
 						<div className="bg-white shadow-lg rounded-lg opacity-90 scale-105 p-4">
-							{renderGroupDragPreview(activeGroupType, activeGroup)}
+							{renderDragPreview(activeSection)}
 						</div>
 					) : null}
 				</DragOverlay>

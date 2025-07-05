@@ -13,7 +13,6 @@ import {Education, EducationMutation, EducationMutationSchema} from '@/lib/educa
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
-import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {
 	useAddEducationMutation,
 	useDeleteEducationMutation,
@@ -26,7 +25,7 @@ import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
-
+import ReorderableList from '@/components/resume/editors/shared/ReorderableList'
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
 	institution_name: '',
@@ -58,8 +57,7 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 	const queryClient = useQueryClient()
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
-		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		queryClient.invalidateQueries(educationOptions)
 	}
 
 	const form = useForm<EducationMutation>({
@@ -77,6 +75,7 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to add education. Please try again.')
+			console.error('Error adding education:', error)
 		}
 	})
 
@@ -87,6 +86,7 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to update education. Please try again.')
+			console.error('Error updating education:', error)
 		}
 	})
 
@@ -97,19 +97,29 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 		},
 		onError: (error) => {
 			toast.error('Failed to delete education. Please try again.')
+			console.error('Error deleting education:', error)
 		}
 	})
 
 	const isSubmitting = isAdding || isUpdating
 
 	useEffect(() => {
-		setLocalEducations(educations)
+		if (educations.length > 0) {
+			setLocalEducations(educations)
+		}
 	}, [educations])
 
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
 
+	const handleReorder = (newOrder: Education[]) => {
+		setLocalEducations(newOrder)
+		/*
+		 * Note: This is client-side only reordering since the API doesn't support education reordering
+		 * You could implement a backend endpoint for this if needed
+		 */
+	}
 
 	const renderEducationItem = (education: Education, index: number) => (
 		<ItemCard
@@ -294,9 +304,13 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 			) : (
 				<div ref={parent}>
 					{localEducations.length > 0 ? (
-						<div className="space-y-4">
-							{localEducations.map((education, index) => renderEducationItem(education, index))}
-						</div>
+						<ReorderableList
+							items={localEducations}
+							onReorder={handleReorder}
+							renderItem={renderEducationItem}
+							label="Education Entries"
+							className="space-y-4"
+						/>
 					) : (
 						<Button
 							onClick={handleAddNew}
