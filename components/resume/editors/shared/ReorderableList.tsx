@@ -17,7 +17,7 @@ import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy} fr
 import {CSS} from '@dnd-kit/utilities'
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers'
 import {Button} from '@/components/ui/button'
-import {ChevronDown, ChevronUp, GripVertical} from 'lucide-react'
+import {GripVertical} from 'lucide-react'
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 
@@ -34,8 +34,6 @@ interface SortableItemProps<T extends { id: string }> {
 	item: T
 	index: number
 	totalItems: number
-	onMoveUp: (id: string) => void
-	onMoveDown: (id: string) => void
 	children: React.ReactNode
 }
 
@@ -44,8 +42,6 @@ function SortableItem<T extends { id: string }>({
 	item,
 	index,
 	totalItems,
-	onMoveUp,
-	onMoveDown,
 	children
 }: SortableItemProps<T>) {
 	const {
@@ -72,20 +68,8 @@ function SortableItem<T extends { id: string }>({
 				isDragging && 'opacity-30 z-[999] transition-opacity duration-150'
 			)}
 		>
-			{/* Drag Handle and Buttons - Nested hover behavior */}
-			<div className="absolute -left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:opacity-100 group/controls">
-				{index > 0 && (
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => onMoveUp(item.id)}
-						className="h-6 w-6 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 opacity-0 group-hover/controls:opacity-100 transition-opacity duration-150"
-						aria-label="Move item up"
-					>
-						<ChevronUp className="h-3 w-3" />
-					</Button>
-				)}
-
+			{/* Drag Handle */}
+			<div className="absolute -left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 				<Button
 					variant="outline"
 					size="sm"
@@ -96,18 +80,6 @@ function SortableItem<T extends { id: string }>({
 				>
 					<GripVertical className="h-3 w-3" />
 				</Button>
-
-				{index < totalItems - 1 && (
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => onMoveDown(item.id)}
-						className="h-6 w-6 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 opacity-0 group-hover/controls:opacity-100 transition-opacity duration-150"
-						aria-label="Move item down"
-					>
-						<ChevronDown className="h-3 w-3" />
-					</Button>
-				)}
 			</div>
 
 			{/* Item Content */}
@@ -172,23 +144,6 @@ function ReorderableList<T extends { id: string }>({
 		}
 	}
 
-	const handleMoveUp = (id: string) => {
-		const currentIndex = localItems.findIndex(item => item.id === id)
-		if (currentIndex > 0) {
-			const newItems = arrayMove(localItems, currentIndex, currentIndex - 1)
-			setLocalItems(newItems)
-			onReorder(newItems)
-		}
-	}
-
-	const handleMoveDown = (id: string) => {
-		const currentIndex = localItems.findIndex(item => item.id === id)
-		if (currentIndex < localItems.length - 1) {
-			const newItems = arrayMove(localItems, currentIndex, currentIndex + 1)
-			setLocalItems(newItems)
-			onReorder(newItems)
-		}
-	}
 
 	const activeItem = localItems.find(item => item.id === activeId)
 	const activeItemIndex = localItems.findIndex(item => item.id === activeId)
@@ -218,8 +173,6 @@ function ReorderableList<T extends { id: string }>({
 								item={item}
 								index={index}
 								totalItems={localItems.length}
-								onMoveUp={handleMoveUp}
-								onMoveDown={handleMoveDown}
 							>
 								{renderItem(item, index)}
 							</SortableItem>
