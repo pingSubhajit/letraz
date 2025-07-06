@@ -1,11 +1,10 @@
 import React from 'react'
-import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
+import {ResumeSection} from '@/lib/resume/types'
 import {Education} from '@/lib/education/types'
 import {sanitizeHtml} from '@/lib/utils'
 
 // Types for the processed data
 export interface EducationData {
-  showSectionTitle: boolean
   institution: {
     hasInstitution: boolean
     name?: string
@@ -34,13 +33,10 @@ export interface EducationData {
 // Controller hook that processes raw Education data into display-ready data
 export const useEducationController = (
 	section: ResumeSection & { type: 'Education', data: Education },
-	previousSectionType?: typeof ResumeSectionSchema._type.type
+	isFirstInGroup: boolean
 ): EducationData => {
 	return React.useMemo(() => {
 		const {data: education} = section
-
-		// Determine if we should show section title
-		const showSectionTitle = previousSectionType !== 'Education'
 
 		// Process institution information
 		const institutionParts = [
@@ -96,34 +92,33 @@ export const useEducationController = (
 				: undefined
 		}
 
-		// Determine spacing
+		// Spacing only between sections within the same group
 		const spacing = {
-			marginTop: previousSectionType === 'Education'
+			marginTop: !isFirstInGroup
 		}
 
 		return {
-			showSectionTitle,
 			institution,
 			dates,
 			degree,
 			description,
 			spacing
 		}
-	}, [section, previousSectionType])
+	}, [section, isFirstInGroup])
 }
 
 // HOC wrapper for theme components
 export interface EducationControllerProps {
   section: ResumeSection & { type: 'Education', data: Education }
-  previousSectionType?: typeof ResumeSectionSchema._type.type
+  isFirstInGroup: boolean
   children: (data: EducationData) => React.ReactNode
 }
 
 export const EducationController: React.FC<EducationControllerProps> = ({
 	section,
-	previousSectionType,
+	isFirstInGroup,
 	children
 }) => {
-	const processedData = useEducationController(section, previousSectionType)
+	const processedData = useEducationController(section, isFirstInGroup)
 	return <>{children(processedData)}</>
 }

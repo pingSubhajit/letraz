@@ -1,19 +1,10 @@
 import {cn} from '@/lib/utils'
-import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 import {ExperienceData} from '@/components/resume/controllers/ExperienceController'
 
 // Pure UI component - no logic, just presentation
 const ExperienceSection = ({data}: { data: ExperienceData }) => {
 	return (
 		<div className={cn('flex flex-col items-stretch pl-4', data.spacing.marginTop && 'mt-2')}>
-			{/* TITLE */}
-			{data.showSectionTitle && <div className="mt-2 -ml-4">
-				<SectionTitle>Experience</SectionTitle>
-
-				{/* DIVIDER */}
-				<Divider className="mb-1.5"/>
-			</div>}
-
 			{/* COMPANY & DATES */}
 			<div className="w-full flex flex-row items-center justify-between gap-4">
 				{/* COMPANY */}
