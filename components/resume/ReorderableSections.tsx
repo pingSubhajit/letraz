@@ -106,16 +106,14 @@ const SortableItem: React.FC<SortableItemProps> = ({
 			{/* Section Content */}
 			<motion.div
 				className={cn(
-					'space-y-4 transition-all duration-200',
+					'transition-all duration-200',
 					index === totalSections - 1 ? 'pb-4' : ''
 				)}
-				layout
+				layout="position"
 				transition={{
-					duration: 0.3,
-					ease: 'easeInOut',
-					type: 'spring',
-					stiffness: 300,
-					damping: 30
+					duration: 0.2,
+					ease: 'easeOut',
+					type: 'tween'
 				}}
 			>
 				{sectionData.content}
@@ -131,6 +129,17 @@ interface SectionGroupProps {
 	renderSection: (section: ResumeSection, isFirstInGroup: boolean) => { title: React.ReactNode; content: React.ReactNode }
 	onReorder: (groupType: string, newOrder: ResumeSection[]) => void
 	isFirstGroup: boolean
+	groupDragHandle?: {
+		attributes: any
+		listeners: any
+		isDragging: boolean
+	}
+}
+
+interface SortableGroupProps extends SectionGroupProps {
+	id: UniqueIdentifier
+	index: number
+	totalGroups: number
 }
 
 const SectionGroup: React.FC<SectionGroupProps> = ({
@@ -139,7 +148,8 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 	resumeId,
 	renderSection,
 	onReorder,
-	isFirstGroup
+	isFirstGroup,
+	groupDragHandle
 }) => {
 	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
 
@@ -185,9 +195,25 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 	const groupTitle = firstSectionData.title
 
 	return (
-		<div className={cn('relative', !isFirstGroup && 'mt-6')}>
-			{/* Group Title - stays in place during drag */}
-			{groupTitle}
+		<div className={cn('relative')}>
+			{/* Group Title with optional drag handle */}
+			<div className="relative group/group-title">
+				{groupDragHandle && (
+					<div className="absolute -left-8 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover/group-title:opacity-100 transition-opacity duration-200">
+						<Button
+							variant="outline"
+							size="sm"
+							{...groupDragHandle.attributes}
+							{...groupDragHandle.listeners}
+							className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
+							aria-label="Drag to reorder section group"
+						>
+							<GripVertical className="h-3 w-3" />
+						</Button>
+					</div>
+				)}
+				{groupTitle}
+			</div>
 
 			<DndContext
 				sensors={sensors}
@@ -200,7 +226,7 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 					items={sections.map(section => section.id)}
 					strategy={verticalListSortingStrategy}
 				>
-					<motion.div layout>
+					<div className="space-y-0">
 						{sections.map((section, index) => (
 							<SortableItem
 								key={section.id}
@@ -212,7 +238,7 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 								renderSection={renderSection}
 							/>
 						))}
-					</motion.div>
+					</div>
 				</SortableContext>
 
 				<DragOverlay>
@@ -227,6 +253,48 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 	)
 }
 
+const SortableGroup: React.FC<SortableGroupProps> = ({
+	id,
+	index,
+	totalGroups,
+	...groupProps
+}) => {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging
+	} = useSortable({id})
+
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+		zIndex: isDragging ? 999 : 1
+	}
+
+	return (
+		<div
+			ref={setNodeRef}
+			style={style}
+			className={cn(
+				'relative',
+				isDragging && 'opacity-30 z-[999] transition-opacity duration-150'
+			)}
+		>
+			<SectionGroup
+				{...groupProps}
+				groupDragHandle={{
+					attributes,
+					listeners,
+					isDragging
+				}}
+			/>
+		</div>
+	)
+}
+
 const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 	sections,
 	resumeId,
@@ -234,12 +302,23 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 	renderSection
 }) => {
 	const [localSections, setLocalSections] = useState(sections)
+	const [activeGroupId, setActiveGroupId] = useState<UniqueIdentifier | null>(null)
 	const rearrangeMutation = useRearrangeResumeSectionsMutation()
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 8
+			}
+		}),
+		useSensor(KeyboardSensor)
+	)
 
 	React.useEffect(() => {
 		setLocalSections(sections)
 	}, [sections])
 
+	// Handle individual section reordering within groups
 	const handleGroupReorder = (groupType: string, newOrder: ResumeSection[]) => {
 		// Update local state by replacing the sections of the specific group
 		setLocalSections(prevSections => {
@@ -268,21 +347,94 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		rearrangeMutation.mutate({resumeId, sectionIds})
 	}
 
+	// Handle group reordering
+	const handleGroupDragStart = (event: DragStartEvent) => {
+		const {active} = event
+		setActiveGroupId(active.id)
+	}
+
+	const handleGroupDragEnd = (event: DragEndEvent) => {
+		const {active, over} = event
+		setActiveGroupId(null)
+
+		if (!over) return
+
+		if (active.id !== over.id) {
+			const {groups, groupOrder} = groupSectionsByType(localSections)
+			const oldIndex = groupOrder.findIndex(type => type === active.id)
+			const newIndex = groupOrder.findIndex(type => type === over.id)
+
+			const newGroupOrder = arrayMove(groupOrder, oldIndex, newIndex)
+
+			// Rebuild sections array with new group order
+			const newSections: ResumeSection[] = []
+			newGroupOrder.forEach(type => {
+				newSections.push(...groups[type])
+			})
+
+			setLocalSections(newSections)
+
+			// Send API request
+			const sectionIds = newSections.map(section => section.id)
+			rearrangeMutation.mutate({resumeId, sectionIds})
+		}
+	}
+
 	const {groups, groupOrder} = groupSectionsByType(localSections)
+	const activeGroupType = activeGroupId as string
+	const activeGroup = activeGroupType ? groups[activeGroupType] : null
+
+	const renderGroupDragPreview = (groupType: string, groupSections: ResumeSection[]) => {
+		const firstSectionData = renderSection(groupSections[0], true)
+		return (
+			<div className="space-y-2">
+				{firstSectionData.title}
+				<div className="text-sm text-gray-500">
+					{groupSections.length} item{groupSections.length !== 1 ? 's' : ''}
+				</div>
+			</div>
+		)
+	}
 
 	return (
 		<div className={cn('relative', className)}>
-			{groupOrder.map((groupType, groupIndex) => (
-				<SectionGroup
-					key={groupType}
-					groupType={groupType}
-					sections={groups[groupType]}
-					resumeId={resumeId}
-					renderSection={renderSection}
-					onReorder={handleGroupReorder}
-					isFirstGroup={groupIndex === 0}
-				/>
-			))}
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				onDragStart={handleGroupDragStart}
+				onDragEnd={handleGroupDragEnd}
+				modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+			>
+				<SortableContext
+					items={groupOrder}
+					strategy={verticalListSortingStrategy}
+				>
+					<div className="space-y-0">
+						{groupOrder.map((groupType, groupIndex) => (
+							<SortableGroup
+								key={groupType}
+								id={groupType}
+								index={groupIndex}
+								totalGroups={groupOrder.length}
+								groupType={groupType}
+								sections={groups[groupType]}
+								resumeId={resumeId}
+								renderSection={renderSection}
+								onReorder={handleGroupReorder}
+								isFirstGroup={groupIndex === 0}
+							/>
+						))}
+					</div>
+				</SortableContext>
+
+				<DragOverlay>
+					{activeGroup ? (
+						<div className="bg-white shadow-lg rounded-lg opacity-90 scale-105 p-4">
+							{renderGroupDragPreview(activeGroupType, activeGroup)}
+						</div>
+					) : null}
+				</DragOverlay>
+			</DndContext>
 		</div>
 	)
 }
