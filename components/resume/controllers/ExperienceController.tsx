@@ -57,6 +57,12 @@ export const useExperienceController = (
 			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
 				'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 			const monthIndex = month - 1
+			
+			// Add bounds checking to prevent undefined month names
+			if (monthIndex < 0 || monthIndex >= monthNames.length) {
+				return year.toString() // Fallback to year only if month is invalid
+			}
+			
 			return `${monthNames[monthIndex]} ${year}`
 		}
 

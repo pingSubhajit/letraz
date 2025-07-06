@@ -254,7 +254,7 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 								render={({field}) => (
 									<FormItem>
 										<FormLabel>Employment Type</FormLabel>
-										<Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+										<Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
 											<FormControl>
 												<SelectTrigger>
 													<SelectValue placeholder="Select employment type" />

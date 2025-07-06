@@ -130,8 +130,8 @@ interface SectionGroupProps {
 	onReorder: (groupType: string, newOrder: ResumeSection[]) => void
 	isFirstGroup: boolean
 	groupDragHandle?: {
-		attributes: any
-		listeners: any
+		attributes: ReturnType<typeof useSortable>['attributes']
+		listeners: ReturnType<typeof useSortable>['listeners']
 		isDragging: boolean
 	}
 }
