@@ -96,7 +96,6 @@ export const createTheme = (config: ThemeConfig) => {
 					<ReorderableSections
 						sections={sections}
 						resumeId={resumeId}
-						className="mt-6"
 						renderSection={renderSection}
 					/>
 				)}

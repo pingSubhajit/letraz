@@ -13,6 +13,7 @@ import {Education, EducationMutation, EducationMutationSchema} from '@/lib/educa
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
+import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {
 	useAddEducationMutation,
 	useDeleteEducationMutation,
@@ -57,7 +58,8 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 	const queryClient = useQueryClient()
 
 	const revalidate = () => {
-		queryClient.invalidateQueries(educationOptions)
+		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
 	const form = useForm<EducationMutation>({

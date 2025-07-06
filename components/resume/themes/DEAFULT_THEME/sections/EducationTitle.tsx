@@ -2,7 +2,7 @@ import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/sh
 
 const EducationTitle = () => {
 	return (
-		<div className="mt-2 -ml-4">
+		<div className="mt-2">
 			<SectionTitle>Education</SectionTitle>
 			<Divider className="mb-1.5"/>
 		</div>

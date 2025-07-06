@@ -4,7 +4,7 @@ import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoCont
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 	return (
-		<div className="flex flex-col gap-3 items-center">
+		<div className="flex flex-col gap-3 items-center mb-4">
 			{/* NAME */}
 			<p className="text-3xl font-bold">{data.name.full}</p>
 
