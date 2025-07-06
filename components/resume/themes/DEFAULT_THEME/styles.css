@@ -1,0 +1,92 @@
+/* DEFAULT_THEME Custom Styles */
+.default-theme-container {
+  font-family: "Charter", "Times New Roman", Times, serif;
+  background-color: white;
+  color: black;
+  line-height: 1.4;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 60px;
+}
+
+.default-theme-container * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.default-theme-container .header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.default-theme-container .name {
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: 0.015em;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.default-theme-container .contact-info {
+  font-size: 14px;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+
+.default-theme-container .contact-info span {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  justify-content: left;
+}
+
+.default-theme-container .social-info {
+  font-size: 14px;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+}
+
+.default-theme-container .social-info span {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  justify-content: left;
+}
+
+.default-theme-container .info-separator {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.default-theme-container .section {
+  margin-bottom: 10px;
+}
+
+.default-theme-container .section-header {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  padding-bottom: 2px;
+  line-height: 1.2;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.5);
+}
+
+.default-theme-container .profile-text {
+  font-size: 14px;
+  line-height: 1.27;
+  font-weight: 400;
+}
+
+/* FontAwesome icons in contact and social info */
+.default-theme-container .contact-info svg,
+.default-theme-container .social-info svg {
+  font-size: 14px;
+  width: 16px;
+  height: 14px;
+  text-align: center;
+} 
