@@ -99,9 +99,7 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 	const isSubmitting = isAdding || isUpdating
 
 	useEffect(() => {
-		if (experiences.length > 0) {
-			setLocalExperiences(experiences)
-		}
+		setLocalExperiences(experiences)
 	}, [experiences])
 
 	useEffect(() => {
