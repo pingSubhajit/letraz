@@ -1,5 +1,5 @@
 import {Calendar, Globe, Mail, MapPin, Phone} from 'lucide-react'
-import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
+import {Divider, SectionTitle} from '@/components/resume/themes/DEFAULT_THEME/shared/Components'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {

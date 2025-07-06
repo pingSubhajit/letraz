@@ -2,7 +2,7 @@
 
 import {cn} from '@/lib/utils'
 import {RefObject} from 'react'
-import DefaultTheme from '@/components/resume/themes/DEAFULT_THEME/DefaultTheme'
+import DefaultTheme from '@/components/resume/themes/DEFAULT_THEME/DefaultTheme'
 import {Resume} from '@/lib/resume/types'
 import {motion} from 'motion/react'
 
