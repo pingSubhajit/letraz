@@ -6,13 +6,14 @@
   line-height: 1.4;
   max-width: 800px;
   margin: 0 auto;
-  padding: 40px 60px;
+  padding: 40px 50px;
 }
 
 .default-theme-container * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: inherit; /* Ensure all elements inherit Charter font */
 }
 
 .default-theme-container .header {
@@ -26,15 +27,17 @@
   letter-spacing: 0.015em;
   line-height: 1;
   margin-bottom: 12px;
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .contact-info {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   display: flex;
   justify-content: center;
   gap: 7px;
   margin-bottom: 4px;
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .contact-info span {
@@ -42,14 +45,16 @@
   align-items: center;
   gap: 2px;
   justify-content: left;
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .social-info {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   display: flex;
   justify-content: center;
   gap: 7px;
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .social-info span {
@@ -57,6 +62,7 @@
   align-items: center;
   gap: 2px;
   justify-content: left;
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .info-separator {
@@ -68,24 +74,108 @@
 }
 
 .default-theme-container .section-header {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   margin-bottom: 6px;
   padding-bottom: 2px;
   line-height: 1.2;
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.5);
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .profile-text {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.27;
   font-weight: 400;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .title-bold {
+  font-weight: 700;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .education-item {
+  margin-bottom: 8px;
+}
+
+.default-theme-container .education-item:last-child {
+  margin-bottom: 0;
+}
+
+.default-theme-container .education-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.default-theme-container .education-title {
+  font-size: 13px;
+  line-height: 1.27;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .education-date {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.27;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .education-details {
+  font-size: 13px;
+  margin-left: 0;
+  line-height: 1.27;
+  font-weight: 400;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+/* Ensure proper list styling in education details with bigger bullets and closer spacing */
+.default-theme-container .education-details ul {
+  margin-left: 4px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.default-theme-container .education-details li {
+  font-size: 13px;
+  margin-bottom: 2.5px;
+  line-height: 1.27;
+  font-weight: 400;
+  position: relative;
+  padding-left: 8px;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .education-details li::before {
+  content: "•";
+  font-size: 16px;
+  font-weight: bold;
+  position: absolute;
+  left: -4px;
+  top: -1px;
+  color: black;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .education-details p {
+  margin: 0;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+/* Ensure numbers and all text use Charter font */
+.default-theme-container span,
+.default-theme-container div,
+.default-theme-container p,
+.default-theme-container li {
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 /* FontAwesome icons in contact and social info */
 .default-theme-container .contact-info svg,
 .default-theme-container .social-info svg {
-  font-size: 14px;
+  font-size: 13px;
   width: 16px;
   height: 14px;
   text-align: center;

@@ -1,11 +1,12 @@
 import '../fontawesome'
+import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faEnvelope, faGlobe, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 	return (
-		<>
+		<div className={charter.className}>
 			{/* HEADER */}
 			<div className="header">
 				{/* NAME */}
@@ -62,7 +63,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 					/>
 				</div>
 			)}
-		</>
+		</div>
 	)
 }
 
