@@ -2,7 +2,6 @@ import {Calendar, Globe, Mail, MapPin, Phone} from 'lucide-react'
 import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 
-// Pure UI component - no logic, just presentation
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 	return (
 		<div className="flex flex-col gap-3 items-center">

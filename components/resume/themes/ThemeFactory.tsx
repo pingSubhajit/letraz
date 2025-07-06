@@ -1,7 +1,7 @@
 'use client'
 
 import {RefObject} from 'react'
-import {ResumeSection} from '@/lib/resume/types'
+import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
 import {UserInfo} from '@/lib/user-info/types'
 import {Education} from '@/lib/education/types'
 import {Experience} from '@/lib/experience/types'
@@ -25,8 +25,6 @@ export interface ThemeComponents {
 	PersonalInfoSection: React.ComponentType<{data: PersonalInfoData}>
 	EducationSection: React.ComponentType<{data: EducationData}>
 	ExperienceSection: React.ComponentType<{data: ExperienceData}>
-	EducationTitle: React.ComponentType
-	ExperienceTitle: React.ComponentType
 }
 
 // Theme configuration interface
@@ -42,47 +40,27 @@ export interface ThemeConfig {
 // Theme factory function
 export const createTheme = (config: ThemeConfig) => {
 	return ({sections, personalInfoData, resumeRef, resumeId}: ThemeProps) => {
-		const renderSection = (section: ResumeSection, isFirstInGroup: boolean) => {
-			// Return title and content separately
-			const titleComponent = (() => {
-				if (!isFirstInGroup) return null
-
-				if (section.type === 'Education') {
-					return <config.components.EducationTitle />
-				} else if (section.type === 'Experience') {
-					return <config.components.ExperienceTitle />
-				}
-				return null
-			})()
-
-			// Render section content
-			const contentComponent = (() => {
-				if (section.type === 'Education') {
-					return (
-						<EducationController
-							section={section as ResumeSection & { type: 'Education', data: Education }}
-							isFirstInGroup={isFirstInGroup}
-						>
-							{(data) => <config.components.EducationSection data={data} />}
-						</EducationController>
-					)
-				} else if (section.type === 'Experience') {
-					return (
-						<ExperienceController
-							section={section as ResumeSection & { type: 'Experience', data: Experience }}
-							isFirstInGroup={isFirstInGroup}
-						>
-							{(data) => <config.components.ExperienceSection data={data} />}
-						</ExperienceController>
-					)
-				}
-				return null
-			})()
-
-			return {
-				title: titleComponent,
-				content: contentComponent
+		const renderSection = (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => {
+			if (section.type === 'Education') {
+				return (
+					<EducationController
+						section={section as ResumeSection & { type: 'Education', data: Education }}
+						previousSectionType={previousSectionType}
+					>
+						{(data) => <config.components.EducationSection data={data} />}
+					</EducationController>
+				)
+			} else if (section.type === 'Experience') {
+				return (
+					<ExperienceController
+						section={section as ResumeSection & { type: 'Experience', data: Experience }}
+						previousSectionType={previousSectionType}
+					>
+						{(data) => <config.components.ExperienceSection data={data} />}
+					</ExperienceController>
+				)
 			}
+			return null
 		}
 
 		// Common theme structure - consistent across all themes
@@ -96,6 +74,7 @@ export const createTheme = (config: ThemeConfig) => {
 					<ReorderableSections
 						sections={sections}
 						resumeId={resumeId}
+						className="mt-6"
 						renderSection={renderSection}
 					/>
 				)}
