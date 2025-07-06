@@ -103,9 +103,7 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 	const isSubmitting = isAdding || isUpdating
 
 	useEffect(() => {
-		if (educations.length > 0) {
-			setLocalEducations(educations)
-		}
+		setLocalEducations(educations)
 	}, [educations])
 
 	useEffect(() => {
