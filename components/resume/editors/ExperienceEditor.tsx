@@ -25,7 +25,7 @@ import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
-import ReorderableList from '@/components/resume/editors/shared/ReorderableList'
+
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 
@@ -114,13 +114,6 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 		mode: 'onChange'
 	})
 
-	const handleReorder = (newOrder: Experience[]) => {
-		setLocalExperiences(newOrder)
-		/*
-		 * Note: This is client-side only reordering since the API doesn't support experience reordering
-		 * You could implement a backend endpoint for this if needed
-		 */
-	}
 
 	const renderExperienceItem = (experience: Experience, index: number) => (
 		<ItemCard
@@ -345,13 +338,9 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 			) : (
 				<div ref={parent}>
 					{localExperiences.length > 0 ? (
-						<ReorderableList
-							items={localExperiences}
-							onReorder={handleReorder}
-							renderItem={renderExperienceItem}
-							label="Experience Entries"
-							className="space-y-4"
-						/>
+						<div className="space-y-4">
+							{localExperiences.map((experience, index) => renderExperienceItem(experience, index))}
+						</div>
 					) : (
 						<Button
 							onClick={handleAddNew}
