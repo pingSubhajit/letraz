@@ -53,10 +53,10 @@ export const useExperienceController = (
 		}
 
 		// Process dates - format like "Jul 2023 – Present" or "May 2023 – Jul 2024"
-		const formatDate = (month: string, year: string) => {
+		const formatDate = (month: number, year: number) => {
 			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
 				'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-			const monthIndex = parseInt(month) - 1
+			const monthIndex = month - 1
 			return `${monthNames[monthIndex]} ${year}`
 		}
 
