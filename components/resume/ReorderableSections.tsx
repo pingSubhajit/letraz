@@ -39,6 +39,22 @@ interface SortableItemProps {
 	renderSection: (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => React.ReactNode
 }
 
+// Group sections by type
+const groupSectionsByType = (sections: ResumeSection[]) => {
+	const groups: { [key: string]: ResumeSection[] } = {}
+	const groupOrder: string[] = []
+
+	sections.forEach(section => {
+		if (!groups[section.type]) {
+			groups[section.type] = []
+			groupOrder.push(section.type)
+		}
+		groups[section.type].push(section)
+	})
+
+	return {groups, groupOrder}
+}
+
 const SortableItem: React.FC<SortableItemProps> = ({
 	id,
 	section,
@@ -110,15 +126,24 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	)
 }
 
-const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
+interface SectionGroupProps {
+	groupType: string
+	sections: ResumeSection[]
+	resumeId: string
+	renderSection: (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => React.ReactNode
+	onReorder: (groupType: string, newOrder: ResumeSection[]) => void
+	isFirstGroup: boolean
+}
+
+const SectionGroup: React.FC<SectionGroupProps> = ({
+	groupType,
 	sections,
 	resumeId,
-	className,
-	renderSection
+	renderSection,
+	onReorder,
+	isFirstGroup
 }) => {
-	const [localSections, setLocalSections] = useState(sections)
 	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-	const rearrangeMutation = useRearrangeResumeSectionsMutation()
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -128,10 +153,6 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		}),
 		useSensor(KeyboardSensor)
 	)
-
-	React.useEffect(() => {
-		setLocalSections(sections)
-	}, [sections])
 
 	const handleDragStart = (event: DragStartEvent) => {
 		const {active} = event
@@ -145,27 +166,22 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		if (!over) return
 
 		if (active.id !== over.id) {
-			const oldIndex = localSections.findIndex(section => section.id === active.id)
-			const newIndex = localSections.findIndex(section => section.id === over.id)
+			const oldIndex = sections.findIndex(section => section.id === active.id)
+			const newIndex = sections.findIndex(section => section.id === over.id)
 
-			const newSections = arrayMove(localSections, oldIndex, newIndex)
-			setLocalSections(newSections)
-
-			// Send API request
-			const sectionIds = newSections.map(section => section.id)
-			rearrangeMutation.mutate({resumeId, sectionIds})
+			const newOrder = arrayMove(sections, oldIndex, newIndex)
+			onReorder(groupType, newOrder)
 		}
 	}
 
-
-	const activeSection = localSections.find(section => section.id === activeId)
+	const activeSection = sections.find(section => section.id === activeId)
 
 	const renderDragPreview = (section: ResumeSection) => {
 		return renderSection(section, undefined)
 	}
 
 	return (
-		<div className={cn('relative', className)}>
+		<div className={cn('relative', !isFirstGroup && 'mt-6')}>
 			<DndContext
 				sensors={sensors}
 				collisionDetection={closestCenter}
@@ -174,18 +190,18 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 				modifiers={[restrictToVerticalAxis, restrictToParentElement]}
 			>
 				<SortableContext
-					items={localSections.map(section => section.id)}
+					items={sections.map(section => section.id)}
 					strategy={verticalListSortingStrategy}
 				>
 					<motion.div layout>
-						{localSections.map((section, index) => (
+						{sections.map((section, index) => (
 							<SortableItem
 								key={section.id}
 								id={section.id}
 								section={section}
 								index={index}
-								totalSections={localSections.length}
-								previousSectionType={localSections[index - 1]?.type}
+								totalSections={sections.length}
+								previousSectionType={index === 0 ? undefined : section.type}
 								renderSection={renderSection}
 							/>
 						))}
@@ -200,6 +216,66 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 					) : null}
 				</DragOverlay>
 			</DndContext>
+		</div>
+	)
+}
+
+const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
+	sections,
+	resumeId,
+	className,
+	renderSection
+}) => {
+	const [localSections, setLocalSections] = useState(sections)
+	const rearrangeMutation = useRearrangeResumeSectionsMutation()
+
+	React.useEffect(() => {
+		setLocalSections(sections)
+	}, [sections])
+
+	const handleGroupReorder = (groupType: string, newOrder: ResumeSection[]) => {
+		// Update local state by replacing the sections of the specific group
+		setLocalSections(prevSections => {
+			const {groups, groupOrder} = groupSectionsByType(prevSections)
+			groups[groupType] = newOrder
+
+			// Rebuild the sections array maintaining group order
+			const newSections: ResumeSection[] = []
+			groupOrder.forEach(type => {
+				newSections.push(...groups[type])
+			})
+
+			return newSections
+		})
+
+		// Send API request with the new complete order
+		const {groups, groupOrder} = groupSectionsByType(localSections)
+		groups[groupType] = newOrder
+
+		const newSections: ResumeSection[] = []
+		groupOrder.forEach(type => {
+			newSections.push(...groups[type])
+		})
+
+		const sectionIds = newSections.map(section => section.id)
+		rearrangeMutation.mutate({resumeId, sectionIds})
+	}
+
+	const {groups, groupOrder} = groupSectionsByType(localSections)
+
+	return (
+		<div className={cn('relative', className)}>
+			{groupOrder.map((groupType, groupIndex) => (
+				<SectionGroup
+					key={groupType}
+					groupType={groupType}
+					sections={groups[groupType]}
+					resumeId={resumeId}
+					renderSection={renderSection}
+					onReorder={handleGroupReorder}
+					isFirstGroup={groupIndex === 0}
+				/>
+			))}
 		</div>
 	)
 }
