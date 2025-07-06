@@ -320,29 +320,19 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 
 	// Handle individual section reordering within groups
 	const handleGroupReorder = (groupType: string, newOrder: ResumeSection[]) => {
-		// Update local state by replacing the sections of the specific group
-		setLocalSections(prevSections => {
-			const {groups, groupOrder} = groupSectionsByType(prevSections)
-			groups[groupType] = newOrder
-
-			// Rebuild the sections array maintaining group order
-			const newSections: ResumeSection[] = []
-			groupOrder.forEach(type => {
-				newSections.push(...groups[type])
-			})
-
-			return newSections
-		})
-
-		// Send API request with the new complete order
 		const {groups, groupOrder} = groupSectionsByType(localSections)
 		groups[groupType] = newOrder
 
+		// Rebuild the sections array maintaining group order
 		const newSections: ResumeSection[] = []
 		groupOrder.forEach(type => {
 			newSections.push(...groups[type])
 		})
 
+		// Update local state
+		setLocalSections(newSections)
+
+		// Send API request with the new order
 		const sectionIds = newSections.map(section => section.id)
 		rearrangeMutation.mutate({resumeId, sectionIds})
 	}
