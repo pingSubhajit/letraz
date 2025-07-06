@@ -1,3 +1,6 @@
+import './fontawesome'
+import './styles.css'
+import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {createTheme} from '@/components/resume/themes/ThemeFactory'
 import PersonalInfoSection from '@/components/resume/themes/DEFAULT_THEME/sections/PersonalInfoSection'
 import EducationSection from '@/components/resume/themes/DEFAULT_THEME/sections/EducationSection'
@@ -13,11 +16,9 @@ const DefaultTheme = createTheme({
 		ExperienceSection,
 		EducationTitle,
 		ExperienceTitle
-	}
-	/*
-	 * Additional theme-specific configuration can be added here
-	 * className: 'custom-default-theme-styles'
-	 */
+	},
+	// Apply Charter font and custom container class
+	className: `${charter.className} default-theme-container`
 })
 
 export default DefaultTheme
