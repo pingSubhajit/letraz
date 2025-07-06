@@ -1,19 +1,10 @@
 import {cn} from '@/lib/utils'
-import {Divider, SectionTitle} from '@/components/resume/themes/DEAFULT_THEME/shared/Components'
 import {EducationData} from '@/components/resume/controllers/EducationController'
 
 // Pure UI component - no logic, just presentation
 const EducationSection = ({data}: { data: EducationData }) => {
 	return (
 		<div className={cn('flex flex-col items-stretch pl-4', data.spacing.marginTop && 'mt-2')}>
-			{/* TITLE */}
-			{data.showSectionTitle && <div className="mt-2 -ml-4">
-				<SectionTitle>Education</SectionTitle>
-
-				{/* DIVIDER */}
-				<Divider className="mb-1.5"/>
-			</div>}
-
 			{/* INSTITUTION & DATES */}
 			<div className="w-full flex flex-row items-center justify-between gap-4">
 				{/* INSTITUTION */}

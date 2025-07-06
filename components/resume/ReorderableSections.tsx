@@ -16,7 +16,7 @@ import {
 import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy} from '@dnd-kit/sortable'
 import {CSS} from '@dnd-kit/utilities'
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers'
-import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
+import {ResumeSection} from '@/lib/resume/types'
 import {Button} from '@/components/ui/button'
 import {GripVertical} from 'lucide-react'
 import {cn} from '@/lib/utils'
@@ -27,7 +27,7 @@ interface ReorderableSectionsProps {
 	sections: ResumeSection[]
 	resumeId: string
 	className?: string
-	renderSection: (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => React.ReactNode
+	renderSection: (section: ResumeSection, isFirstInGroup: boolean) => { title: React.ReactNode; content: React.ReactNode }
 }
 
 interface SortableItemProps {
@@ -35,8 +35,8 @@ interface SortableItemProps {
 	section: ResumeSection
 	index: number
 	totalSections: number
-	previousSectionType?: typeof ResumeSectionSchema._type.type
-	renderSection: (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => React.ReactNode
+	isFirstInGroup: boolean
+	renderSection: (section: ResumeSection, isFirstInGroup: boolean) => { title: React.ReactNode; content: React.ReactNode }
 }
 
 // Group sections by type
@@ -60,7 +60,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 	section,
 	index,
 	totalSections,
-	previousSectionType,
+	isFirstInGroup,
 	renderSection
 }) => {
 	const {
@@ -78,9 +78,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 		zIndex: isDragging ? 999 : 1
 	}
 
-	const renderSectionContent = () => {
-		return renderSection(section, previousSectionType)
-	}
+	const sectionData = renderSection(section, isFirstInGroup)
 
 	return (
 		<div
@@ -91,7 +89,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 				isDragging && 'opacity-30 z-[999] transition-opacity duration-150'
 			)}
 		>
-			{/* Drag Handle */}
+			{/* Drag Handle - positioned relative to content */}
 			<div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 				<Button
 					variant="outline"
@@ -120,7 +118,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 					damping: 30
 				}}
 			>
-				{renderSectionContent()}
+				{sectionData.content}
 			</motion.div>
 		</div>
 	)
@@ -130,7 +128,7 @@ interface SectionGroupProps {
 	groupType: string
 	sections: ResumeSection[]
 	resumeId: string
-	renderSection: (section: ResumeSection, previousSectionType?: typeof ResumeSectionSchema._type.type) => React.ReactNode
+	renderSection: (section: ResumeSection, isFirstInGroup: boolean) => { title: React.ReactNode; content: React.ReactNode }
 	onReorder: (groupType: string, newOrder: ResumeSection[]) => void
 	isFirstGroup: boolean
 }
@@ -177,11 +175,20 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 	const activeSection = sections.find(section => section.id === activeId)
 
 	const renderDragPreview = (section: ResumeSection) => {
-		return renderSection(section, undefined)
+		const sectionData = renderSection(section, false)
+		// Only render content in drag preview, not title
+		return sectionData.content
 	}
+
+	// Get the title from the first section
+	const firstSectionData = renderSection(sections[0], true)
+	const groupTitle = firstSectionData.title
 
 	return (
 		<div className={cn('relative', !isFirstGroup && 'mt-6')}>
+			{/* Group Title - stays in place during drag */}
+			{groupTitle}
+
 			<DndContext
 				sensors={sensors}
 				collisionDetection={closestCenter}
@@ -201,7 +208,7 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 								section={section}
 								index={index}
 								totalSections={sections.length}
-								previousSectionType={index === 0 ? undefined : section.type}
+								isFirstInGroup={false} // Always false now since title is handled at group level
 								renderSection={renderSection}
 							/>
 						))}

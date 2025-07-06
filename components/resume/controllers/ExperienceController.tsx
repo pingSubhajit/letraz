@@ -1,11 +1,10 @@
 import React from 'react'
-import {ResumeSection, ResumeSectionSchema} from '@/lib/resume/types'
+import {ResumeSection} from '@/lib/resume/types'
 import {Experience} from '@/lib/experience/types'
 import {sanitizeHtml} from '@/lib/utils'
 
 // Types for the processed data
 export interface ExperienceData {
-  showSectionTitle: boolean
   company: {
     hasCompany: boolean
     name?: string
@@ -34,24 +33,22 @@ export interface ExperienceData {
 // Controller hook that processes raw Experience data into display-ready data
 export const useExperienceController = (
 	section: ResumeSection & { type: 'Experience', data: Experience },
-	previousSectionType?: typeof ResumeSectionSchema._type.type
+	isFirstInGroup: boolean
 ): ExperienceData => {
 	return React.useMemo(() => {
 		const {data: experience} = section
 
-		// Determine if we should show section title
-		const showSectionTitle = previousSectionType !== 'Experience'
-
 		// Process company information
 		const companyParts = [
 			experience.company_name,
+			experience.city,
 			experience.country?.name
 		].filter(Boolean)
 
 		const company = {
-			hasCompany: companyParts.length > 0,
+			hasCompany: Boolean(experience.company_name),
 			name: experience.company_name || undefined,
-			location: experience.country?.name || undefined,
+			location: [experience.city, experience.country?.name].filter(Boolean).join(', ') || undefined,
 			formatted: companyParts.join(', ')
 		}
 
@@ -62,6 +59,8 @@ export const useExperienceController = (
 		}
 		if (experience.finished_at_month && experience.finished_at_year) {
 			dateParts.push(`To ${experience.finished_at_month}/${experience.finished_at_year}`)
+		} else if (experience.current) {
+			dateParts.push('To Present')
 		}
 
 		const dates = {
@@ -70,16 +69,19 @@ export const useExperienceController = (
 		}
 
 		// Process role information
-		const roleParts = [
-			experience.job_title,
-			experience.employment_type
-		].filter(Boolean)
+		const roleParts = []
+		if (experience.job_title) {
+			roleParts.push(experience.job_title)
+		}
+		if (experience.employment_type) {
+			roleParts.push(`(${experience.employment_type})`)
+		}
 
 		const role = {
-			hasRole: roleParts.length > 0,
+			hasRole: Boolean(experience.job_title),
 			title: experience.job_title || undefined,
 			employmentType: experience.employment_type || undefined,
-			formatted: roleParts.join(', ')
+			formatted: roleParts.join(' ')
 		}
 
 		// Process description
@@ -90,34 +92,33 @@ export const useExperienceController = (
 				: undefined
 		}
 
-		// Determine spacing
+		// Spacing only between sections within the same group
 		const spacing = {
-			marginTop: previousSectionType === 'Experience'
+			marginTop: !isFirstInGroup
 		}
 
 		return {
-			showSectionTitle,
 			company,
 			dates,
 			role,
 			description,
 			spacing
 		}
-	}, [section, previousSectionType])
+	}, [section, isFirstInGroup])
 }
 
 // HOC wrapper for theme components
 export interface ExperienceControllerProps {
   section: ResumeSection & { type: 'Experience', data: Experience }
-  previousSectionType?: typeof ResumeSectionSchema._type.type
+  isFirstInGroup: boolean
   children: (data: ExperienceData) => React.ReactNode
 }
 
 export const ExperienceController: React.FC<ExperienceControllerProps> = ({
 	section,
-	previousSectionType,
+	isFirstInGroup,
 	children
 }) => {
-	const processedData = useExperienceController(section, previousSectionType)
+	const processedData = useExperienceController(section, isFirstInGroup)
 	return <>{children(processedData)}</>
 }
