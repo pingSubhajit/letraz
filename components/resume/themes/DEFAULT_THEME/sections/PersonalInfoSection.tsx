@@ -1,6 +1,6 @@
 import '../fontawesome'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faEnvelope, faGlobe, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
+import {faEnvelope, faGlobe, faLocationDot, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
@@ -18,7 +18,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 					{data.location.hasLocation && (
 						<>
 							<span>
-								<FontAwesomeIcon icon={faGlobe} /> {data.location.formatted}
+								<FontAwesomeIcon icon={faLocationDot} /> {data.location.formatted}
 							</span>
 							<span className="info-separator">|</span>
 						</>
@@ -27,7 +27,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 					{data.contact.email && (
 						<>
 							<span>
-								<FontAwesomeIcon icon={faEnvelope} /> {data.contact.email}
+								<FontAwesomeIcon icon={faEnvelope} /> <a href={`mailto:${data.contact.email}`}>{data.contact.email}</a>
 							</span>
 							<span className="info-separator">|</span>
 						</>
@@ -35,7 +35,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 
 					{data.contact.phone && (
 						<span>
-							<FontAwesomeIcon icon={faPhoneFlip} /> {data.contact.phone}
+							<FontAwesomeIcon icon={faPhoneFlip} /> <a href={`tel:${data.contact.phone}`}>{data.contact.phone}</a>
 						</span>
 					)}
 				</div>
@@ -44,7 +44,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 				{data.contact.website && (
 					<div className="social-info">
 						<span>
-							<FontAwesomeIcon icon={faGlobe} /> {data.contact.website}
+							<FontAwesomeIcon icon={faGlobe} /> <a href={data.contact.website} target="_blank" rel="noopener noreferrer">{data.contact.website}</a>
 						</span>
 					</div>
 				)}
