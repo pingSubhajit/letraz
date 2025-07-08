@@ -1,11 +1,12 @@
 import '../fontawesome'
+import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faEnvelope, faGlobe, faLocationDot, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
+import {faEnvelope, faGlobe, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 	return (
-		<>
+		<div className={charter.className}>
 			{/* HEADER */}
 			<div className="header">
 				{/* NAME */}
@@ -18,7 +19,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 					{data.location.hasLocation && (
 						<>
 							<span>
-								<FontAwesomeIcon icon={faLocationDot} /> {data.location.formatted}
+								<FontAwesomeIcon icon={faGlobe} /> {data.location.formatted}
 							</span>
 							<span className="info-separator">|</span>
 						</>
@@ -27,7 +28,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 					{data.contact.email && (
 						<>
 							<span>
-								<FontAwesomeIcon icon={faEnvelope} /> <a href={`mailto:${data.contact.email}`}>{data.contact.email}</a>
+								<FontAwesomeIcon icon={faEnvelope} /> {data.contact.email}
 							</span>
 							<span className="info-separator">|</span>
 						</>
@@ -35,7 +36,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 
 					{data.contact.phone && (
 						<span>
-							<FontAwesomeIcon icon={faPhoneFlip} /> <a href={`tel:${data.contact.phone}`}>{data.contact.phone}</a>
+							<FontAwesomeIcon icon={faPhoneFlip} /> {data.contact.phone}
 						</span>
 					)}
 				</div>
@@ -44,7 +45,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 				{data.contact.website && (
 					<div className="social-info">
 						<span>
-							<FontAwesomeIcon icon={faGlobe} /> <a href={data.contact.website} target="_blank" rel="noopener noreferrer">{data.contact.website}</a>
+							<FontAwesomeIcon icon={faGlobe} /> {data.contact.website}
 						</span>
 					</div>
 				)}
@@ -62,7 +63,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 					/>
 				</div>
 			)}
-		</>
+		</div>
 	)
 }
 

@@ -51,18 +51,20 @@ export const useEducationController = (
 			formatted: institutionParts.join(', ')
 		}
 
-		// Process dates
+		// Process dates - format like HTML: 2015 – 2019
 		const dateParts = []
-		if (education.started_from_month && education.started_from_year) {
-			dateParts.push(`From ${education.started_from_month}/${education.started_from_year}`)
+		if (education.started_from_year) {
+			dateParts.push(education.started_from_year.toString())
 		}
-		if (education.finished_at_month && education.finished_at_year) {
-			dateParts.push(`To ${education.finished_at_month}/${education.finished_at_year}`)
+		if (education.finished_at_year) {
+			dateParts.push(education.finished_at_year.toString())
+		} else if (education.current) {
+			dateParts.push('Present')
 		}
 
 		const dates = {
 			hasDates: dateParts.length > 0,
-			formatted: dateParts.join('    ')
+			formatted: dateParts.join(' – ')
 		}
 
 		// Process degree information
