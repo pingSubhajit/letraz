@@ -99,7 +99,7 @@ export const useExperienceController = (
 		}
 
 		const role = {
-			hasRole: Boolean(experience.job_title),
+			hasRole: Boolean(experience.job_title || experience.employment_type),
 			title: experience.job_title || undefined,
 			employmentType: experience.employment_type || undefined,
 			formatted: roleParts.join(' ')
