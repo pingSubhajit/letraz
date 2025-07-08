@@ -52,8 +52,12 @@ export const useExperienceController = (
 			formatted: companyParts.join(', ')
 		}
 
-		// Process dates - format like "Jul 2023 – Present" or "May 2023 – Jul 2024"
-		const formatDate = (month: number, year: number) => {
+		// Process dates - format like "Jul 2023 – Present" or "May 2023 – Jul 2024" or "2023 – 2024"
+		const formatDate = (month: number | null | undefined, year: number) => {
+			if (!month) {
+				return year.toString() // Return year only if no month provided
+			}
+			
 			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
 				'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 			const monthIndex = month - 1
@@ -67,11 +71,12 @@ export const useExperienceController = (
 		}
 
 		let dateRange = ''
-		if (experience.started_from_month && experience.started_from_year) {
+		// Show dates if at least the start year is provided
+		if (experience.started_from_year) {
 			const startDate = formatDate(experience.started_from_month, experience.started_from_year)
 			if (experience.current) {
 				dateRange = `${startDate} – Present`
-			} else if (experience.finished_at_month && experience.finished_at_year) {
+			} else if (experience.finished_at_year) {
 				const endDate = formatDate(experience.finished_at_month, experience.finished_at_year)
 				dateRange = `${startDate} – ${endDate}`
 			} else {
