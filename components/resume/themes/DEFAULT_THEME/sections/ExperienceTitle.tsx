@@ -1,11 +1,8 @@
-import {Divider, SectionTitle} from '@/components/resume/themes/DEFAULT_THEME/shared/Components'
+import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 
 const ExperienceTitle = () => {
 	return (
-		<div className="mt-2">
-			<SectionTitle>Experience</SectionTitle>
-			<Divider className="mb-1.5"/>
-		</div>
+		<div className={`${charter.className} section-header`}>Experience</div>
 	)
 }
 

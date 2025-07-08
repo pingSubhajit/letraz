@@ -1,33 +1,34 @@
-import {cn} from '@/lib/utils'
+import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {ExperienceData} from '@/components/resume/controllers/ExperienceController'
 
 // Pure UI component - no logic, just presentation
 const ExperienceSection = ({data}: { data: ExperienceData }) => {
 	return (
-		<div className={cn('flex flex-col items-stretch pl-4', data.spacing.marginTop && 'mt-2')}>
-			{/* COMPANY & DATES */}
-			<div className="w-full flex flex-row items-center justify-between gap-4">
-				{/* COMPANY */}
-				{data.company.hasCompany && <p className="text-sm leading-normal font-bold">
-					{data.company.formatted}
-				</p>}
+		<div className={`${charter.className} experience-item ${data.spacing.marginTop ? 'mt-2' : ''}`}>
+			{/* JOB HEADER */}
+			<div className="job-header">
+				{/* JOB TITLE (Role + Company) */}
+				<span className="job-title">
+					{data.role.hasRole && (
+						<span className="title-bold">{data.role.formatted}</span>
+					)}
+					{data.role.hasRole && data.company.hasCompany && ', '}
+					{data.company.hasCompany && data.company.formatted}
+				</span>
 
-				{/* DATES */}
-				{data.dates.hasDates && <p className="text-sm">
-					{data.dates.formatted}
-				</p>}
+				{/* JOB DATE */}
+				{data.dates.hasDates && (
+					<span className="job-date">{data.dates.formatted}</span>
+				)}
 			</div>
 
-			{/* Role */}
-			{data.role.hasRole && <p className="text-sm italic">
-				{data.role.formatted}
-			</p>}
-
-			{/* DESCRIPTION */}
-			{data.description.hasDescription && <div
-				className="text-sm mt-0.5 pl-2 prose prose-sm leading-snug prose-p:m-0 max-w-none"
-				dangerouslySetInnerHTML={{__html: data.description.sanitizedHtml || ''}}
-			/>}
+			{/* JOB DETAILS */}
+			{data.description.hasDescription && (
+				<div
+					className="job-details"
+					dangerouslySetInnerHTML={{__html: data.description.sanitizedHtml || ''}}
+				/>
+			)}
 		</div>
 	)
 }

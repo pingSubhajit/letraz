@@ -52,20 +52,41 @@ export const useExperienceController = (
 			formatted: companyParts.join(', ')
 		}
 
-		// Process dates
-		const dateParts = []
-		if (experience.started_from_month && experience.started_from_year) {
-			dateParts.push(`From ${experience.started_from_month}/${experience.started_from_year}`)
+		// Process dates - format like "Jul 2023 – Present" or "May 2023 – Jul 2024" or "2023 – 2024"
+		const formatDate = (month: number | null | undefined, year: number) => {
+			if (!month) {
+				return year.toString() // Return year only if no month provided
+			}
+
+			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+				'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+			const monthIndex = month - 1
+
+			// Add bounds checking to prevent undefined month names
+			if (monthIndex < 0 || monthIndex >= monthNames.length) {
+				return year.toString() // Fallback to year only if month is invalid
+			}
+
+			return `${monthNames[monthIndex]} ${year}`
 		}
-		if (experience.finished_at_month && experience.finished_at_year) {
-			dateParts.push(`To ${experience.finished_at_month}/${experience.finished_at_year}`)
-		} else if (experience.current) {
-			dateParts.push('To Present')
+
+		let dateRange = ''
+		// Show dates if at least the start year is provided
+		if (experience.started_from_year) {
+			const startDate = formatDate(experience.started_from_month, experience.started_from_year)
+			if (experience.current) {
+				dateRange = `${startDate} – Present`
+			} else if (experience.finished_at_year) {
+				const endDate = formatDate(experience.finished_at_month, experience.finished_at_year)
+				dateRange = `${startDate} – ${endDate}`
+			} else {
+				dateRange = startDate
+			}
 		}
 
 		const dates = {
-			hasDates: dateParts.length > 0,
-			formatted: dateParts.join('    ')
+			hasDates: Boolean(dateRange),
+			formatted: dateRange
 		}
 
 		// Process role information
@@ -78,7 +99,7 @@ export const useExperienceController = (
 		}
 
 		const role = {
-			hasRole: Boolean(experience.job_title),
+			hasRole: Boolean(experience.job_title || experience.employment_type),
 			title: experience.job_title || undefined,
 			employmentType: experience.employment_type || undefined,
 			formatted: roleParts.join(' ')

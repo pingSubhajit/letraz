@@ -130,8 +130,8 @@ interface SectionGroupProps {
 	onReorder: (groupType: string, newOrder: ResumeSection[]) => void
 	isFirstGroup: boolean
 	groupDragHandle?: {
-		attributes: any
-		listeners: any
+		attributes: ReturnType<typeof useSortable>['attributes']
+		listeners: ReturnType<typeof useSortable>['listeners']
 		isDragging: boolean
 	}
 }
@@ -196,59 +196,62 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 
 	return (
 		<div className={cn('relative')}>
-			{/* Group Title with optional drag handle */}
-			<div className="relative group/group-title">
-				{groupDragHandle && (
-					<div className="absolute -left-8 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover/group-title:opacity-100 transition-opacity duration-200">
-						<Button
-							variant="outline"
-							size="sm"
-							{...groupDragHandle.attributes}
-							{...groupDragHandle.listeners}
-							className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
-							aria-label="Drag to reorder section group"
-						>
-							<GripVertical className="h-3 w-3" />
-						</Button>
-					</div>
-				)}
-				{groupTitle}
-			</div>
-
-			<DndContext
-				sensors={sensors}
-				collisionDetection={closestCenter}
-				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
-				modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-			>
-				<SortableContext
-					items={sections.map(section => section.id)}
-					strategy={verticalListSortingStrategy}
-				>
-					<div className="space-y-0">
-						{sections.map((section, index) => (
-							<SortableItem
-								key={section.id}
-								id={section.id}
-								section={section}
-								index={index}
-								totalSections={sections.length}
-								isFirstInGroup={false} // Always false now since title is handled at group level
-								renderSection={renderSection}
-							/>
-						))}
-					</div>
-				</SortableContext>
-
-				<DragOverlay>
-					{activeSection ? (
-						<div className="bg-white shadow-lg rounded-lg opacity-90 scale-105 p-4">
-							{renderDragPreview(activeSection)}
+			{/* Wrap entire section group in .section for proper spacing */}
+			<div className="section">
+				{/* Group Title with optional drag handle */}
+				<div className="relative group/group-title">
+					{groupDragHandle && (
+						<div className="absolute -left-8 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover/group-title:opacity-100 transition-opacity duration-200">
+							<Button
+								variant="outline"
+								size="sm"
+								{...groupDragHandle.attributes}
+								{...groupDragHandle.listeners}
+								className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
+								aria-label="Drag to reorder section group"
+							>
+								<GripVertical className="h-3 w-3" />
+							</Button>
 						</div>
-					) : null}
-				</DragOverlay>
-			</DndContext>
+					)}
+					{groupTitle}
+				</div>
+
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCenter}
+					onDragStart={handleDragStart}
+					onDragEnd={handleDragEnd}
+					modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+				>
+					<SortableContext
+						items={sections.map(section => section.id)}
+						strategy={verticalListSortingStrategy}
+					>
+						<div className="space-y-0">
+							{sections.map((section, index) => (
+								<SortableItem
+									key={section.id}
+									id={section.id}
+									section={section}
+									index={index}
+									totalSections={sections.length}
+									isFirstInGroup={false} // Always false now since title is handled at group level
+									renderSection={renderSection}
+								/>
+							))}
+						</div>
+					</SortableContext>
+
+					<DragOverlay>
+						{activeSection ? (
+							<div className="bg-white shadow-lg rounded-lg opacity-90 scale-105 p-4">
+								{renderDragPreview(activeSection)}
+							</div>
+						) : null}
+					</DragOverlay>
+				</DndContext>
+			</div>
 		</div>
 	)
 }
