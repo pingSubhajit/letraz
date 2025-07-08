@@ -9,7 +9,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {months} from '@/constants'
 import {Loader2, Plus} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
-import {employmentTypes, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
+import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
@@ -18,7 +18,6 @@ import {
 	useDeleteExperienceMutation,
 	useUpdateExperienceMutation
 } from '@/lib/experience/mutations'
-import {countries} from '@/lib/constants'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import DateRangeFields from '@/components/resume/editors/shared/DateRangeFields'
 import CountrySelect from '@/components/resume/editors/shared/CountrySelect'
@@ -26,6 +25,7 @@ import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
+
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 
@@ -45,13 +45,19 @@ const DEFAULT_EXPERIENCE_VALUES: ExperienceMutation = {
 	description: ''
 }
 
-const ExperienceEditor = ({className}: {className?: string}) => {
-	const [view, setView] = useState<ViewState>('list')
-	const [parent] = useAutoAnimate()
-	const [editingIndex, setEditingIndex] = useState<number | null>(null)
-	const queryClient = useQueryClient()
+interface ExperienceEditorProps {
+	className?: string
+}
+
+const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+	const [view, setView] = useState<ViewState>('list')
+	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
+	const [localExperiences, setLocalExperiences] = useState<Experience[]>([])
+	const [parent] = useAutoAnimate()
+
+	const queryClient = useQueryClient()
 
 	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
 
@@ -60,103 +66,41 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
-
-	const {mutateAsync: addExperience, isPending: isAddingPending} = useAddUserExperienceMutation({
-		onMutate: async (newExperience) => {
-			await queryClient.cancelQueries({queryKey: experienceQueryOptions.queryKey})
-
-			const prevAddExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
-
-			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData: any) => {
-				const data = oldData || []
-				return [...data, {
-					...newExperience,
-					id: `temp-id-${Date.now()}`,
-					country: {
-						code: newExperience.country,
-						name: countries.find(c => c.code === newExperience.country)?.name || ''
-					},
-					created_at: new Date().toISOString(),
-					updated_at: new Date().toISOString()
-				}]
-			})
-
-			return {prevExperiences: prevAddExperiences}
-		},
-		onError: (err, _newExperience, context: any) => {
-			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
-			toast.error(`Failed to save experience details: ${err.message}`)
-		},
-		onSettled: () => {
-			revalidate()
-		},
+	const {mutateAsync: addExperience, isPending: isAdding} = useAddUserExperienceMutation({
 		onSuccess: () => {
+			revalidate()
 			toast.success('Experience added successfully!')
+		},
+		onError: (error) => {
+			toast.error('Failed to add experience. Please try again.')
 		}
 	})
 
-	const {mutateAsync: updateExperience, isPending: isUpdatingPending} = useUpdateExperienceMutation({
-		onMutate: async ({id, data}) => {
-			await queryClient.cancelQueries({queryKey: experienceQueryOptions.queryKey})
-
-			const prevUpdateExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
-
-			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData: any) => {
-				const dataArr = oldData || []
-				return dataArr.map((item: any) => item.id === id ? {
-					...item,
-					...data,
-					country: {
-						code: data.country || item.country.code,
-						name: data.country ? countries.find(c => c.code === data.country)?.name || '' : item.country.name
-					},
-					updated_at: new Date().toISOString()
-				} : item)
-			})
-
-			return {prevExperiences: prevUpdateExperiences}
-		},
-		onError: (err, _updateData, context: any) => {
-			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
-			toast.error(`Failed to update experience details: ${err.message}`)
-		},
-		onSettled: () => {
-			revalidate()
-		},
+	const {mutateAsync: updateExperience, isPending: isUpdating} = useUpdateExperienceMutation({
 		onSuccess: () => {
+			revalidate()
 			toast.success('Experience updated successfully!')
+		},
+		onError: (error) => {
+			toast.error('Failed to update experience. Please try again.')
 		}
 	})
-
-	const isSubmitting = isAddingPending || isUpdatingPending
 
 	const {mutateAsync: deleteExperience, isPending: isDeleting} = useDeleteExperienceMutation({
-		onMutate: async (experienceId) => {
-			setDeletingId(experienceId)
-
-			await queryClient.cancelQueries({queryKey: experienceQueryOptions.queryKey})
-
-			const prevDeleteExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
-
-			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData: any) => {
-				const data = oldData || []
-				return data.filter((item: any) => item.id !== experienceId)
-			})
-
-			return {prevExperiences: prevDeleteExperiences}
-		},
-		onError: (err, _experienceId, context: any) => {
-			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
-			toast.error(`Failed to delete experience: ${err.message}`)
-		},
-		onSettled: () => {
-			revalidate()
-			setDeletingId(null)
-		},
 		onSuccess: () => {
+			revalidate()
 			toast.success('Experience deleted successfully!')
+		},
+		onError: (error) => {
+			toast.error('Failed to delete experience. Please try again.')
 		}
 	})
+
+	const isSubmitting = isAdding || isUpdating
+
+	useEffect(() => {
+		setLocalExperiences(experiences)
+	}, [experiences])
 
 	useEffect(() => {
 		setIsMounted(true)
@@ -164,8 +108,40 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 
 	const form = useForm<ExperienceMutation>({
 		resolver: zodResolver(ExperienceMutationSchema),
-		defaultValues: DEFAULT_EXPERIENCE_VALUES
+		defaultValues: DEFAULT_EXPERIENCE_VALUES,
+		mode: 'onChange'
 	})
+
+
+	const renderExperienceItem = (experience: Experience, index: number) => (
+		<ItemCard
+			key={experience.id}
+			onEdit={() => handleEdit(index)}
+			onDelete={() => handleDelete(experience.id)}
+			isDeleting={isDeleting}
+			id={experience.id}
+			deletingId={deletingId}
+		>
+			<h3 className="font-medium">
+				{experience.job_title} {experience.job_title && experience.company_name && 'at'} {experience.company_name}
+			</h3>
+			<p className="text-sm text-muted-foreground">
+				{[
+					employmentTypes.find(type => type.value === experience.employment_type)?.label,
+					experience.city,
+					experience.country?.name
+				].filter(Boolean).join(', ')}
+			</p>
+			<p className="text-sm">
+				{experience.started_from_month && months.find(m => m.value === experience.started_from_month?.toString())?.label} {experience.started_from_year} - {' '}
+				{experience.current ? 'Present' : (
+					<>
+						{experience.finished_at_month && months.find(m => m.value === experience.finished_at_month?.toString())?.label} {experience.finished_at_year}
+					</>
+				)}
+			</p>
+		</ItemCard>
+	)
 
 	const onSubmit = async (values: ExperienceMutation) => {
 		try {
@@ -177,7 +153,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 			}
 
 			if (editingIndex !== null) {
-				const experienceId = experiences[editingIndex]?.id
+				const experienceId = localExperiences[editingIndex]?.id
 				await updateExperience({id: experienceId, data: submissionValues})
 			} else {
 				await addExperience(submissionValues)
@@ -192,7 +168,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 	}
 
 	const handleEdit = (index: number) => {
-		const experience = experiences[index]
+		const experience = localExperiences[index]
 
 		// Find the employment type code that matches the label in the data
 		const employmentTypeCode = employmentTypes.find(
@@ -201,13 +177,12 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 
 		form.reset({
 			...experience,
+			employment_type: employmentTypeCode,
 			country: experience.country.code,
-			employment_type: employmentTypeCode as 'flt' | 'prt' | 'con' | 'int' | 'fre' | 'sel' | 'vol' | 'tra',
 			started_from_month: experience.started_from_month?.toString() || null,
 			started_from_year: experience.started_from_year?.toString() || null,
 			finished_at_month: experience.finished_at_month?.toString() || null,
-			finished_at_year: experience.finished_at_year?.toString() || null,
-			current: experience.current
+			finished_at_year: experience.finished_at_year?.toString() || null
 		})
 		setEditingIndex(index)
 		setView('form')
@@ -215,14 +190,17 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 
 	const handleDelete = async (id: string) => {
 		try {
+			setDeletingId(id)
 			await deleteExperience(id)
-			if (editingIndex !== null && experiences[editingIndex]?.id === id) {
+			if (editingIndex !== null && localExperiences[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_EXPERIENCE_VALUES)
 				setView('list')
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
+		} finally {
+			setDeletingId(null)
 		}
 	}
 
@@ -244,8 +222,8 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 				<EditorHeader
 					title={editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
 					description={editingIndex !== null
-						? 'Ensure that the details are correct and reflect your previous experience'
-						: 'Mentioning your past employment details can increase the chance of your résumé getting selected upto 75%'
+						? 'Ensure that the details are correct and reflect your professional background'
+						: 'Adding detailed work experience helps employers understand your qualifications and achievements'
 					}
 					className="mb-10"
 				/>
@@ -255,51 +233,44 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 						<div className="grid grid-cols-2 gap-4">
 							<TextFormField
 								form={form}
+								name="job_title"
+								label="Job Title"
+								placeholder="e.g. Senior Software Engineer"
+								disabled={isSubmitting}
+							/>
+							<TextFormField
+								form={form}
 								name="company_name"
 								label="Company Name"
 								placeholder="e.g. Google"
 								disabled={isSubmitting}
 							/>
-							<TextFormField
-								form={form}
-								name="job_title"
-								label="Job Title"
-								placeholder="e.g. Software Engineer"
-								disabled={isSubmitting}
-							/>
 						</div>
 
-						<div className="grid grid-cols-3 gap-4">
+						<div className="grid grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
 								name="employment_type"
 								render={({field}) => (
 									<FormItem>
-										<FormLabel className="text-foreground">Employment Type</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
+										<FormLabel>Employment Type</FormLabel>
+										<Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="Select type" />
+													<SelectValue placeholder="Select employment type" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
 												{employmentTypes.map(type => (
-													<SelectItem key={type.value} value={type.value || ''}>
+													<SelectItem key={type.value} value={type.value}>
 														{type.label}
 													</SelectItem>
 												))}
 											</SelectContent>
 										</Select>
-										<FormMessage className="text-xs" />
+										<FormMessage />
 									</FormItem>
 								)}
-							/>
-							<TextFormField
-								form={form}
-								name="city"
-								label="City"
-								placeholder="e.g. San Francisco"
-								disabled={isSubmitting}
 							/>
 							<CountrySelect
 								form={form}
@@ -307,6 +278,14 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 								disabled={isSubmitting}
 							/>
 						</div>
+
+						<TextFormField
+							form={form}
+							name="city"
+							label="City"
+							placeholder="e.g. New York"
+							disabled={isSubmitting}
+						/>
 
 						<DateRangeFields
 							form={form}
@@ -318,7 +297,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 							form={form}
 							name="description"
 							label="Description"
-							placeholder="Describe your role, responsibilities, and key achievements..."
+							placeholder="Describe your key responsibilities, accomplishments, and the impact you made in this role..."
 							disabled={isSubmitting}
 						/>
 
@@ -339,7 +318,7 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 		<div className={cn('space-y-6', className)}>
 			<EditorHeader
 				title="Experience"
-				showAddButton={isMounted && !isLoading && experiences.length > 0}
+				showAddButton={isMounted && !isLoading}
 				onAddNew={handleAddNew}
 				isDisabled={isDeleting}
 				addButtonText="Add New Experience"
@@ -355,34 +334,11 @@ const ExperienceEditor = ({className}: {className?: string}) => {
 					Error loading experience details. Please try again later.
 				</div>
 			) : (
-				<div ref={parent} className="space-y-4">
-					{experiences.length > 0 ? (
-						experiences.map((experience, index) => (
-							<ItemCard
-								key={experience.id}
-								onEdit={() => handleEdit(index)}
-								onDelete={() => handleDelete(experience.id)}
-								isDeleting={isDeleting}
-								id={experience.id}
-								deletingId={deletingId}
-							>
-								<h3 className="font-medium">{experience.job_title} at {experience.company_name}</h3>
-								<p className="text-sm text-muted-foreground">
-									{experience.employment_type} | {[
-										experience.city,
-										experience.country?.name
-									].filter(Boolean).join(', ')}
-								</p>
-								<p className="text-sm">
-									{experience.started_from_month && months.find(m => m.value === experience.started_from_month?.toString())?.label} {experience.started_from_year} - {' '}
-									{experience.current ? 'Present' : (
-										<>
-											{experience.finished_at_month && months.find(m => m.value === experience.finished_at_month?.toString())?.label} {experience.finished_at_year}
-										</>
-									)}
-								</p>
-							</ItemCard>
-						))
+				<div ref={parent}>
+					{localExperiences.length > 0 ? (
+						<div className="space-y-4">
+							{localExperiences.map((experience, index) => renderExperienceItem(experience, index))}
+						</div>
 					) : (
 						<Button
 							onClick={handleAddNew}

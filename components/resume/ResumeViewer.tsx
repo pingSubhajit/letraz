@@ -2,7 +2,7 @@
 
 import {cn} from '@/lib/utils'
 import {RefObject} from 'react'
-import DefaultTheme from '@/components/resume/themes/DEAFULT_THEME/DefaultTheme'
+import DefaultTheme from '@/components/resume/themes/DEFAULT_THEME/DefaultTheme'
 import {Resume} from '@/lib/resume/types'
 import {motion} from 'motion/react'
 
@@ -46,16 +46,13 @@ const ResumeViewer = ({resume, resumeRef, className}: ResumeViewerProps) => {
 				resumeRef={resumeRef}
 				sections={resume.sections || []}
 				personalInfoData={resume.user}
+				resumeId={resume.id}
 				aria-label="Resume preview"
 				data-prefers-reduced-motion={
 					typeof window !== 'undefined'
 					&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
 				}
 			/>
-
-			<div className={cn('size-a4 relative rounded-l-2xl resume p-2', className)}>
-				<DefaultTheme resumeRef={resumeRef} sections={resume.sections || []} personalInfoData={resume.user} />
-			</div>
 		</div>
 	)
 }
