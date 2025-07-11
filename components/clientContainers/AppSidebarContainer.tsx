@@ -56,7 +56,7 @@ const AppSidebarContainer = ({children, className}: {
 
 				<AnimatePresence>
 					{isExpanded && <motion.div
-						className="h-full w-[400px] px-4 pt-4 flex flex-col items-center justify-between absolute z-20 inset-0"
+						className="h-full w-[400px] flex flex-col items-center justify-between absolute z-20 inset-0"
 						initial={{x: -400}}
 						animate={{x: 0}}
 						exit={{x: -400}}

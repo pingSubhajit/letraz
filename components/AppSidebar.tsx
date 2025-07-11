@@ -8,12 +8,9 @@ import {Cog6ToothIcon} from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import logo from '@/public/logo_mono_rotated.svg'
 import NotificationBell from '@/components/notifications/NotificationBell'
-import {useSidebar} from '@/components/providers/SidebarProvider'
 
 const AppSidebar = () => {
 	const auth = useAuth()
-	const {openNotification, openSettings} = useSidebar()
-
 	return (
 		<AppSidebarContainer className="h-full px-4 pt-24 pb-8 flex flex-col items-center justify-between">
 			<Link href="/app"><Image src={logo} alt="Letraz logo" className=""/></Link>

@@ -1,10 +1,10 @@
 'use client'
 
 import {useKnockFeed} from '@knocklabs/react'
-import {format} from 'date-fns'
+import {formatDistanceToNow} from 'date-fns'
 import {Button} from '@/components/ui/button'
-import {Separator} from '@/components/ui/separator'
-import {ChevronRightIcon} from '@heroicons/react/20/solid'
+import {Check, CheckCheck, ChevronLeft, X} from 'lucide-react'
+import {BellIcon as Bell} from '@heroicons/react/20/solid'
 import {useSidebar} from '@/components/providers/SidebarProvider'
 import ScrollMask from '@/components/ui/scroll-mask'
 import {NotificationSender, senders} from './NOTIFICATION_MAPPING'
@@ -32,6 +32,16 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 		feedClient.markAllAsRead()
 	}
 
+	const handleMarkAsRead = (notification: any, event: React.MouseEvent) => {
+		event.stopPropagation()
+		feedClient.markAsRead([notification])
+	}
+
+	const handleDismiss = (notification: any, event: React.MouseEvent) => {
+		event.stopPropagation()
+		feedClient.markAsArchived([notification])
+	}
+
 	// Helper function to get notification content
 	const getNotificationContent = (notification: any) => {
 		const firstBlock = notification.blocks?.[0]
@@ -57,85 +67,156 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 	}
 
 	return (
-		<div className="h-full w-full flex flex-col justify-between items-start">
-			<div className="flex items-center justify-between border-b">
+		<div className="h-full w-full flex flex-col bg-background">
+			{/* Header */}
+			<div className="flex items-center justify-between py-4 px-6 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 				<div className="flex items-center">
 					<Button
 						variant="ghost"
-						className="p-1 aspect-square w-full"
+						size="icon"
 						onClick={collapseSidebar}
 					>
-						<ChevronRightIcon
-							className={`fill-primary size-[70%] transition-transform duration-200 ${
-								isExpanded ? 'rotate-180' : ''
-							}`}
+						<ChevronLeft
+							className="h-4 w-4"
 						/>
 					</Button>
-					<h3 className="font-semibold">Notifications</h3>
+					<div className="flex items-center gap-2">
+						<h3 className="font-semibold text-lg">Notifications</h3>
+						{metadata?.unread_count > 0 && (
+							<div className="bg-flame-500 text-primary-foreground text-xs font-medium px-1.5 py-0.5 rounded-full">
+								{metadata.unread_count}
+							</div>
+						)}
+					</div>
 				</div>
 				{metadata?.unread_count > 0 && (
 					<Button
-						variant="secondary"
+						variant="outline"
 						size="sm"
 						onClick={handleMarkAllAsRead}
-						className="text-xs"
+						className="text-xs h-8 px-3 hover:bg-accent/50"
 					>
-						Mark all as read
+						<CheckCheck className="h-3 w-3 mr-1" />
+						Mark all read
 					</Button>
 				)}
 			</div>
 
-			{loading && <div className="text-center text-muted-foreground">
-				Loading notifications...
-			</div>}
-
-			{(!items || items.length === 0) && <div className="text-center text-muted-foreground">
-				<p>No notifications yet</p>
-			</div>}
-
-			<ScrollMask
-				className="h-[95%] font-jakarta"
-				data-lenis-prevent
-			>
-				{items.map((notification) => {
-					const {title, body} = getNotificationContent(notification)
-
-					return (
-						<div key={notification.id}>
-							<div
-								className={`py-3 cursor-pointer hover:bg-accent/50 transition-colors ${
-									notification.read_at ? 'opacity-75' : ''
-								}`}
-								onClick={() => handleNotificationClick(notification)}
-							>
-								<div className="flex items-start justify-between gap-3">
-									<Image
-										src={getSender(notification.source.categories).avatar}
-										alt={getSender(notification.source.categories).name}
-										width={256} height={256}
-										className="w-12 rounded-full"
-									/>
-									<div className="min-w-0 space-y-0.5">
-										<div className="flex items-center justify-between">
-											<p className="text-sm font-medium">
-												{getSender(notification.source.categories).name}
-											</p>
-											<p className="text-xs text-muted-foreground">
-												{format(new Date(notification.inserted_at), 'MMM d, h:mm a')}
-											</p>
-										</div>
-										<div
-											className="text-sm"
-											dangerouslySetInnerHTML={{__html: body}}
-										/>
-									</div>
+			{/* Loading State */}
+			{loading && (
+				<div className="flex-1 p-4 space-y-4">
+					{[...Array(3)].map((_, i) => (
+						<div key={i} className="flex items-start gap-3 animate-pulse">
+							<div className="w-12 h-12 bg-muted rounded-full" />
+							<div className="flex-1 space-y-2">
+								<div className="flex items-center justify-between">
+									<div className="h-4 bg-muted rounded w-24" />
+									<div className="h-3 bg-muted rounded w-16" />
 								</div>
+								<div className="h-4 bg-muted rounded w-full" />
+								<div className="h-4 bg-muted rounded w-2/3" />
 							</div>
-							<Separator />
 						</div>
-					)
-				})}
-			</ScrollMask>
+					))}
+				</div>
+			)}
+
+			{/* Empty State */}
+			{!loading && (!items || items.length === 0) && (
+				<div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
+					<div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+						<Bell className="h-8 w-8" />
+					</div>
+					<div className="space-y-2">
+						<h3 className="font-medium text-foreground">No notifications yet</h3>
+						<p className="text-sm text-muted-foreground max-w-xs">
+							You'll see updates about your resumes, jobs, and account activity here.
+						</p>
+					</div>
+				</div>
+			)}
+
+			{/* Notifications List */}
+			{!loading && items && items.length > 0 && (
+				<ScrollMask
+					className="flex-1 font-jakarta"
+					data-lenis-prevent
+				>
+					<div className="divide-y divide-border">
+						{items.map((notification) => {
+							const {title, body} = getNotificationContent(notification)
+							const sender = getSender(notification.source.categories)
+
+							return (
+								<div
+									key={notification.id}
+									className={`group relative p-4 px-6 cursor-pointer hover:bg-accent/50 transition-all duration-200 ${
+										notification.read_at ? 'opacity-75' : 'bg-accent/20'
+									}`}
+									onClick={() => handleNotificationClick(notification)}
+								>
+									{/* Hover Overlay */}
+									<div className="absolute bottom-0 left-0 right-0 h-full bg-gradient-to-t from-primary-foreground to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 flex items-end justify-end pb-3 pr-3">
+										<div className="flex items-center gap-1">
+											{!notification.read_at && (
+												<button
+													className="p-1.5 rounded-full opacity-60 hover:opacity-100 hover:text-flame-600 transition-all duration-200"
+													onClick={(e) => handleMarkAsRead(notification, e)}
+													title="Mark as read"
+												>
+													<Check className="h-4 w-4" />
+												</button>
+											)}
+											<button
+												className="p-1.5 rounded-full opacity-60 hover:opacity-100 transition-all duration-200"
+												onClick={(e) => handleDismiss(notification, e)}
+												title="Dismiss"
+											>
+												<X className="h-4 w-4" />
+											</button>
+										</div>
+									</div>
+
+									<div className="flex items-start gap-3 pl-2">
+										{/* Avatar */}
+										<div className="relative">
+											<Image
+												src={sender.avatar}
+												alt={sender.name}
+												width={48}
+												height={48}
+												className="w-12 h-12 rounded-full ring-2 ring-transparent group-hover:ring-flame-500/80 transition-all duration-200"
+											/>
+											{!notification.read_at && (
+												<div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-flame-500 rounded-full border-2 border-flame-500" />
+											)}
+										</div>
+
+										{/* Content */}
+										<div className="flex-1 min-w-0 space-y-1">
+											<div className="flex items-start justify-between gap-2">
+												<p className="text-sm font-medium text-foreground leading-tight">
+													{sender.name}
+												</p>
+												<p className="text-xs text-muted-foreground shrink-0">
+													{formatDistanceToNow(new Date(notification.inserted_at), {addSuffix: true})}
+												</p>
+											</div>
+											<div
+												className="text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none [&>*]:my-0"
+												dangerouslySetInnerHTML={{__html: body}}
+											/>
+										</div>
+									</div>
+
+									{/* Hover indicator */}
+									<div className="absolute inset-y-0 right-0 w-1 bg-flame-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+								</div>
+							)
+						})}
+					</div>
+				</ScrollMask>
+			)}
 		</div>
 	)
 }
