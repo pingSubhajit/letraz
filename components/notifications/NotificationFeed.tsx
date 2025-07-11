@@ -7,6 +7,8 @@ import {Separator} from '@/components/ui/separator'
 import {ChevronRightIcon} from '@heroicons/react/20/solid'
 import {useSidebar} from '@/components/providers/SidebarProvider'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {NotificationSender, senders} from './NOTIFICATION_MAPPING'
+import Image from 'next/image'
 
 interface NotificationFeedProps {
 	onNotificationClick?: () => void
@@ -44,6 +46,14 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 			title: title.replace(/[#*]/g, '').trim(), // Remove markdown formatting
 			body: content
 		}
+	}
+
+	// Helper function to find matching sender from categories
+	const getSender = (categories: string[]): NotificationSender => {
+		if (!categories || categories.length === 0) return senders.default
+
+		const matchingCategory = categories.find(category => Object.keys(senders).includes(category)) as keyof typeof senders
+		return matchingCategory ? senders[matchingCategory] : senders.default // Default fallback
 	}
 
 	return (
@@ -84,7 +94,7 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 			</div>}
 
 			<ScrollMask
-				className="h-[95%]"
+				className="h-[95%] font-jakarta"
 				data-lenis-prevent
 			>
 				{items.map((notification) => {
@@ -93,28 +103,31 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 					return (
 						<div key={notification.id}>
 							<div
-								className={`p-3 cursor-pointer hover:bg-accent/50 transition-colors ${
+								className={`py-3 cursor-pointer hover:bg-accent/50 transition-colors ${
 									notification.read_at ? 'opacity-75' : ''
 								}`}
 								onClick={() => handleNotificationClick(notification)}
 							>
-								<div className="flex items-start justify-between gap-2">
-									<div className="min-w-0">
-										{/* <div className="flex items-center gap-2 mb-1">*/}
-										{/*	<h4 className="font-medium text-sm truncate">*/}
-										{/*		{title}*/}
-										{/*	</h4>*/}
-										{/*	{!notification.read_at && (*/}
-										{/*		<Badge variant="destructive" className="h-2 w-2 rounded-full p-0" />*/}
-										{/*	)}*/}
-										{/* </div>*/}
+								<div className="flex items-start justify-between gap-3">
+									<Image
+										src={getSender(notification.source.categories).avatar}
+										alt={getSender(notification.source.categories).name}
+										width={256} height={256}
+										className="w-12 rounded-full"
+									/>
+									<div className="min-w-0 space-y-0.5">
+										<div className="flex items-center justify-between">
+											<p className="text-sm font-medium">
+												{getSender(notification.source.categories).name}
+											</p>
+											<p className="text-xs text-muted-foreground">
+												{format(new Date(notification.inserted_at), 'MMM d, h:mm a')}
+											</p>
+										</div>
 										<div
-											className="text-sm line-clamp-2 font-jakarta"
+											className="text-sm"
 											dangerouslySetInnerHTML={{__html: body}}
 										/>
-										<p className="text-xs text-muted-foreground mt-1">
-											{format(new Date(notification.inserted_at), 'MMM d, h:mm a')}
-										</p>
 									</div>
 								</div>
 							</div>
