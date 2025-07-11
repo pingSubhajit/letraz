@@ -2,6 +2,7 @@
 
 import {useKnockFeed} from '@knocklabs/react'
 import {formatDistanceToNow} from 'date-fns'
+import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Button} from '@/components/ui/button'
 import {Check, CheckCheck, ChevronLeft, X} from 'lucide-react'
 import {BellIcon as Bell} from '@heroicons/react/20/solid'
@@ -16,6 +17,7 @@ interface NotificationFeedProps {
 
 const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 	const {collapseSidebar, isExpanded} = useSidebar()
+	const [parent] = useAutoAnimate()
 
 	const {useFeedStore, feedClient} = useKnockFeed()
 	const items = useFeedStore((state) => state.items)
@@ -142,7 +144,7 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 					className="flex-1 font-jakarta"
 					data-lenis-prevent
 				>
-					<div className="divide-y divide-border">
+					<div className="divide-y divide-border" ref={parent}>
 						{items.map((notification) => {
 							const {title, body} = getNotificationContent(notification)
 							const sender = getSender(notification.source.categories)
