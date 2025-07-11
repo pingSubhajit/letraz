@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server'
 import {getPosts} from '@/lib/posts.method'
-import {defaultUrl, discordAnnouncementChannelId, discordBlogUrl} from '@/config'
+import {defaultUrl, discordAnnouncementChannelId, discordBotUrl} from '@/config'
 import TurndownService from 'turndown'
 import {revalidatePath} from 'next/cache'
 
@@ -9,7 +9,7 @@ export const POST = async (req: NextRequest) => {
 		revalidatePath('/changes')
 		const post = (await getPosts()).posts[0]
 		const turndownService = new TurndownService()
-		const response = await fetch(`${discordBlogUrl}/main/announcement`, {
+		const response = await fetch(`${discordBotUrl}/main/announcement`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
