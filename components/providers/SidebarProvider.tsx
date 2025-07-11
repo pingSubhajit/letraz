@@ -35,7 +35,7 @@ export const SidebarProvider = ({children}: {children: ReactNode}) => {
 	}
 
 	const openSettings = () => {
-		setIsExpanded(false)
+		setIsExpanded(true)
 		setCurrentPage('SETTINGS')
 	}
 

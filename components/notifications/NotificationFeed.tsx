@@ -10,6 +10,8 @@ import {useSidebar} from '@/components/providers/SidebarProvider'
 import ScrollMask from '@/components/ui/scroll-mask'
 import {NotificationSender, senders} from './NOTIFICATION_MAPPING'
 import Image from 'next/image'
+import {FeedItem} from '@knocklabs/client'
+import {sanitizeHtml} from '@/lib/utils'
 
 interface NotificationFeedProps {
 	onNotificationClick?: () => void
@@ -24,7 +26,7 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 	const metadata = useFeedStore((state) => state.metadata)
 	const loading = useFeedStore((state) => state.loading)
 
-	const handleNotificationClick = (notification: any) => {
+	const handleNotificationClick = (notification: FeedItem) => {
 		// Mark notification as read
 		feedClient.markAsRead([notification])
 		onNotificationClick?.()
@@ -34,30 +36,28 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 		feedClient.markAllAsRead()
 	}
 
-	const handleMarkAsRead = (notification: any, event: React.MouseEvent) => {
+	const handleMarkAsRead = (notification: FeedItem, event: React.MouseEvent) => {
 		event.stopPropagation()
 		feedClient.markAsRead([notification])
 	}
 
-	const handleDismiss = (notification: any, event: React.MouseEvent) => {
+	const handleDismiss = (notification: FeedItem, event: React.MouseEvent) => {
 		event.stopPropagation()
 		feedClient.markAsArchived([notification])
 	}
 
 	// Helper function to get notification content
-	const getNotificationContent = (notification: any) => {
+	const getNotificationContent = (notification: FeedItem) => {
 		const firstBlock = notification.blocks?.[0]
-		if (!firstBlock) return {title: 'Notification', body: 'No content'}
+		if (!firstBlock) return 'No content'
 
-		const content = firstBlock.rendered || firstBlock.content || 'No content'
+		let content = 'No content'
 
-		// Extract title from content (first sentence or first 50 chars)
-		const title = content.split('.')[0] || content.substring(0, 50) + (content.length > 50 ? '...' : '')
-
-		return {
-			title: title.replace(/[#*]/g, '').trim(), // Remove markdown formatting
-			body: content
+		if ('rendered' in firstBlock) {
+			content = firstBlock.rendered || firstBlock.content || 'No content'
 		}
+
+		return sanitizeHtml(content)
 	}
 
 	// Helper function to find matching sender from categories
@@ -146,7 +146,7 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 				>
 					<div className="divide-y divide-border" ref={parent}>
 						{items.map((notification) => {
-							const {title, body} = getNotificationContent(notification)
+							const content = getNotificationContent(notification)
 							const sender = getSender(notification.source.categories)
 
 							return (
@@ -158,21 +158,23 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 									onClick={() => handleNotificationClick(notification)}
 								>
 									{/* Hover Overlay */}
-									<div className="absolute bottom-0 left-0 right-0 h-full bg-gradient-to-t from-primary-foreground to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 flex items-end justify-end pb-3 pr-3">
+									<div className="absolute bottom-0 left-0 right-0 h-full bg-gradient-to-t from-primary-foreground to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 z-10 flex items-end justify-end pb-3 pr-3">
 										<div className="flex items-center gap-1">
 											{!notification.read_at && (
 												<button
-													className="p-1.5 rounded-full opacity-60 hover:opacity-100 hover:text-flame-600 transition-all duration-200"
+													className="p-1.5 rounded-full opacity-60 hover:opacity-100 focus-visible:opacity-100 hover:text-flame-600 focus-visible:text-flame-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flame-500 focus-visible:ring-offset-2 transition-all duration-200"
 													onClick={(e) => handleMarkAsRead(notification, e)}
 													title="Mark as read"
+													aria-label="Mark notification as read"
 												>
 													<Check className="h-4 w-4" />
 												</button>
 											)}
 											<button
-												className="p-1.5 rounded-full opacity-60 hover:opacity-100 transition-all duration-200"
+												className="p-1.5 rounded-full opacity-60 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flame-500 focus-visible:ring-offset-2 transition-all duration-200"
 												onClick={(e) => handleDismiss(notification, e)}
 												title="Dismiss"
+												aria-label="Dismiss notification"
 											>
 												<X className="h-4 w-4" />
 											</button>
@@ -206,7 +208,7 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 											</div>
 											<div
 												className="text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none [&>*]:my-0"
-												dangerouslySetInnerHTML={{__html: body}}
+												dangerouslySetInnerHTML={{__html: content}}
 											/>
 										</div>
 									</div>

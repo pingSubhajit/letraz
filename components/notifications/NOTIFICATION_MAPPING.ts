@@ -3,12 +3,17 @@ export type NotificationSender = {
 	avatar: string
 }
 
+export const SENDER_KEYS = {
+	DEFAULT: 'default',
+	FROM_SUBHAJIT: 'from-subhajit'
+} as const
+
 export const senders: Record<string, NotificationSender> = {
-	'default': {
+	[SENDER_KEYS.DEFAULT]: {
 		name: 'Letraz',
 		avatar: '/letraz.png'
 	},
-	'from-subhajit': {
+	[SENDER_KEYS.FROM_SUBHAJIT]: {
 		name: 'Subhajit Kundu',
 		avatar: '/subhajit.png'
 	}
