@@ -4,7 +4,6 @@ import {useKnockFeed} from '@knocklabs/react'
 import {format} from 'date-fns'
 import {ScrollArea} from '@/components/ui/scroll-area'
 import {Button} from '@/components/ui/button'
-import {Badge} from '@/components/ui/badge'
 import {Separator} from '@/components/ui/separator'
 
 interface NotificationFeedProps {
@@ -88,18 +87,19 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 									onClick={() => handleNotificationClick(notification)}
 								>
 									<div className="flex items-start justify-between gap-2">
-										<div className="flex-1 min-w-0">
-											<div className="flex items-center gap-2 mb-1">
-												<h4 className="font-medium text-sm truncate">
-													{title}
-												</h4>
-												{!notification.read_at && (
-													<Badge variant="destructive" className="h-2 w-2 rounded-full p-0" />
-												)}
-											</div>
-											<p className="text-xs text-muted-foreground line-clamp-2">
-												{body}
-											</p>
+										<div className="min-w-0">
+											{/* <div className="flex items-center gap-2 mb-1">*/}
+											{/*	<h4 className="font-medium text-sm truncate">*/}
+											{/*		{title}*/}
+											{/*	</h4>*/}
+											{/*	{!notification.read_at && (*/}
+											{/*		<Badge variant="destructive" className="h-2 w-2 rounded-full p-0" />*/}
+											{/*	)}*/}
+											{/* </div>*/}
+											<div
+												className="text-sm line-clamp-2 font-jakarta"
+												dangerouslySetInnerHTML={{__html: notification.blocks[0].rendered!}}
+											/>
 											<p className="text-xs text-muted-foreground mt-1">
 												{format(new Date(notification.inserted_at), 'MMM d, h:mm a')}
 											</p>

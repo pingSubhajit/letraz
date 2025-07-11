@@ -3,7 +3,7 @@ import './globals.css'
 import 'lenis/dist/lenis.css'
 import '@knocklabs/react/dist/index.css'
 import {ClerkProvider} from '@clerk/nextjs'
-import {defaultUrl, modelica, portfolio} from '@/config'
+import {defaultUrl, modelica, plusJakartaSans, portfolio} from '@/config'
 import {Toaster} from '@/components/ui/sonner'
 import {ViewTransitions} from 'next-view-transitions'
 import PosthogProvider from '@/components/providers/PosthogProvider'
@@ -32,7 +32,7 @@ const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <Cle
 	<ViewTransitions>
 		<html lang="en">
 			<PosthogProvider>
-				<body className={modelica.className}>
+				<body className={`${modelica.className} ${plusJakartaSans.variable}`}>
 					<APIProvider>
 						<KnockProvider>
 							<TooltipProvider>

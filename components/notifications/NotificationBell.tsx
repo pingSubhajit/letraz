@@ -29,7 +29,7 @@ const NotificationBell = () => {
 			<PopoverContent
 				side="right"
 				align="end"
-				className="w-80 p-0"
+				className="p-0 rounded-xl w-full max-w-lg"
 				sideOffset={8}
 			>
 				<NotificationFeed onNotificationClick={() => setIsOpen(false)} />

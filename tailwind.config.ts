@@ -66,7 +66,8 @@ const config: Config = {
 			},
 			fontFamily: {
 				sans: ['var(--font-geist-sans)'],
-				mono: ['var(--font-geist-mono)']
+				mono: ['var(--font-geist-mono)'],
+				jakarta: ['var(--font-plus-jakarta-sans)', 'system-ui', 'sans-serif']
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
