@@ -2,12 +2,12 @@
 
 import {cn} from '@/lib/utils'
 import {Tabs, TabsList, TabsTrigger} from '@/components/ui/tabs'
-import {Award, Briefcase, GraduationCap, User} from 'lucide-react'
+import {Award, Briefcase, GraduationCap, User, Medal} from 'lucide-react'
 import {AnimatePresence, motion} from 'motion/react'
 import {useState} from 'react'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
-
+import CertificationEditor from '@/components/resume/editors/CertificationEditor'
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
 
 const ResumeEditor = ({className}: {className?: string}) => {
@@ -39,6 +39,19 @@ const ResumeEditor = ({className}: {className?: string}) => {
 					className="mt-6"
 				>
 					<ExperienceEditor />
+				</motion.div>
+			)
+		case 'certifications':
+			return (
+				<motion.div
+					key="certifications"
+					initial={{opacity: 0, y: 10}}
+					animate={{opacity: 1, y: 0}}
+					exit={{opacity: 0, y: -10}}
+					transition={{duration: 0.2, ease: 'easeInOut'}}
+					className="mt-6"
+				>
+					<CertificationEditor />
 				</motion.div>
 			)
 		case 'skills':
@@ -78,7 +91,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 	return (
 		<div className={cn('p-6', className)}>
 			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-				<TabsList className="grid w-full grid-cols-4 bg-neutral-100 p-1">
+				<TabsList className="grid w-full grid-cols-5 bg-neutral-100 p-1">
 					<TabsTrigger
 						value="personal"
 						className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
@@ -99,6 +112,13 @@ const ResumeEditor = ({className}: {className?: string}) => {
 					>
 						<Briefcase className="w-4 h-4" />
 						Experience
+					</TabsTrigger>
+					<TabsTrigger
+						value="certifications"
+						className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
+					>
+						<Medal className="w-4 h-4" />
+						Certifications
 					</TabsTrigger>
 					<TabsTrigger
 						value="skills"
