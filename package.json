@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev --turbopack",
     "email": "email dev",
-    "build": "next build",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix"
@@ -70,14 +70,14 @@
     "lucide-react": "^0.441.0",
     "luxon": "^3.5.0",
     "motion": "^11.16.1",
-    "next": "^15.2.4",
+    "next": "15.3.5",
     "next-themes": "^0.3.0",
     "next-view-transitions": "^0.3.1",
     "posthog-js": "^1.164.1",
-    "react": "^19.0.0",
+    "react": "19.1.0",
     "react-circle-flags": "^0.0.23",
     "react-day-picker": "^9.6.4",
-    "react-dom": "^19.0.0",
+    "react-dom": "19.1.0",
     "react-hook-form": "^7.53.0",
     "react-icons": "^5.3.0",
     "react-pdf-tailwind": "^2.3.0",
@@ -94,11 +94,11 @@
     "@tailwindcss/typography": "^0.5.15",
     "@types/dompurify": "^3.2.0",
     "@types/node": "^20",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
     "@types/turndown": "^5.0.5",
     "eslint": "^8",
-    "eslint-config-next": "15.0.0",
+    "eslint-config-next": "15.3.5",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "postcss": "^8",
@@ -106,5 +106,9 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
-  "packageManager": "bun@1.1.42"
+  "packageManager": "bun@1.1.42",
+  "overrides": {
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6"
+  }
 }
