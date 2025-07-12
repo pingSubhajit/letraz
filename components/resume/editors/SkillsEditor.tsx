@@ -438,7 +438,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	}
 
 	return (
-		<div className={cn('space-y-6', className)}>
+		<div className={cn('space-y-6 bg-green-300', className)}>
 			<EditorHeader
 				title="Skills"
 				showAddButton={isMounted && !isLoadingResumeSkills}
@@ -457,11 +457,10 @@ const SkillsEditor = ({className}: { className?: string }) => {
 					Error loading skills. Please try again later.
 				</div>
 			) : (
-				<div ref={parent} className="space-y-6">
+				<div ref={parent} className="space-y-6 bg-red-400 overflow-y-auto">
 					{Object.keys(skillsByCategory).length > 0 ? (
-						<div className="max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400 pr-2">
-							<div className="space-y-4">
-								{Object.entries(skillsByCategory).map(([category, skills]) => (
+						<div className="space-y-4">
+							{Object.entries(skillsByCategory).map(([category, skills]) => (
 								<Collapsible key={category} defaultOpen={true} className="rounded-lg border bg-card overflow-hidden">
 									<CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-100 focus:outline-none border-b">
 										<h3 className="font-medium text-foreground">{category}</h3>
