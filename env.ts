@@ -84,7 +84,19 @@ const envSchema = z.object({
 		.regex(/^https:\/\/[a-zA-Z0-9]+@[a-zA-Z0-9]+\.ingest\.(us|uk)\.sentry\.io\/[0-9]+$/, {
 			message: 'Invalid Sentry DSN format'
 		})
-		.transform(url => url.toString())
+		.transform(url => url.toString()),
+
+	// Required Knock public API key for client-side usage
+	NEXT_PUBLIC_KNOCK_PUBLIC_API_KEY: z.string({
+		required_error: 'Knock public API key is required',
+		invalid_type_error: 'Knock public API key must be a string'
+	}),
+
+	// Required Knock feed channel ID
+	NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID: z.string({
+		required_error: 'Knock feed channel ID is required',
+		invalid_type_error: 'Knock feed channel ID must be a string'
+	})
 })
 
 

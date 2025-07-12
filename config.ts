@@ -1,7 +1,16 @@
 import localFont from 'next/font/local'
+import {Plus_Jakarta_Sans} from 'next/font/google'
 import {anthropic} from '@ai-sdk/anthropic'
 
 // Fonts
+export const plusJakartaSans = Plus_Jakarta_Sans({
+	subsets: ['latin'],
+	weight: ['200', '300', '400', '500', '600', '700', '800'],
+	style: ['normal', 'italic'],
+	display: 'swap',
+	variable: '--font-plus-jakarta-sans'
+})
+
 export const modelica = localFont({
 	src: [
 		// Regular fonts
