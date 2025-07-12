@@ -438,7 +438,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	}
 
 	return (
-		<div className={cn('space-y-6 bg-green-300', className)}>
+		<div className={cn('space-y-6', className)}>
 			<EditorHeader
 				title="Skills"
 				showAddButton={isMounted && !isLoadingResumeSkills}
@@ -457,7 +457,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 					Error loading skills. Please try again later.
 				</div>
 			) : (
-				<div ref={parent} className="space-y-6 bg-red-400 overflow-y-auto">
+				<div ref={parent} className="space-y-6 overflow-y-auto">
 					{Object.keys(skillsByCategory).length > 0 ? (
 						<div className="space-y-4">
 							{Object.entries(skillsByCategory).map(([category, skills]) => (
