@@ -150,7 +150,7 @@ const SkillAutocomplete = ({
 		if (inputValue.trim()) {
 			// Check if the input matches any existing skill name
 			const matchingSkill = suggestions.find(skill => skill.name.toLowerCase() === inputValue.toLowerCase())
-			
+
 			// If no exact match found, treat as custom skill
 			if (!matchingSkill) {
 				// Tell the parent about the custom skill
