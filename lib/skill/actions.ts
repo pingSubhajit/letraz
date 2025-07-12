@@ -72,7 +72,7 @@ export const addSkillToResume = async (
 				skillDetails = await api.get<GlobalSkill>(`/skill/${skillData.skill_id}/`)
 			} catch {
 				// Fallback: fetch all global skills and find the matching one
-				const allSkills = await api.get<GlobalSkill[]>(`/skill/`)
+				const allSkills = await api.get<GlobalSkill[]>('/skill/')
 				skillDetails = allSkills.find(s => s.id === skillData.skill_id) || null
 			}
 			if (skillDetails) {
@@ -83,8 +83,10 @@ export const addSkillToResume = async (
 			}
 		}
 
-		// Only include category when it has a non-empty value. Sending an empty
-		// string causes a validation error on the backend for existing skills.
+		/*
+		 * Only include category when it has a non-empty value. Sending an empty
+		 * string causes a validation error on the backend for existing skills.
+		 */
 		if (skillData.category?.trim()) {
 			apiPayload.category = skillData.category.trim()
 		}
@@ -121,22 +123,33 @@ export const updateResumeSkill = async (
 		// Handle skill name changes
 		if (skillData.skill_id) {
 			if (skillData.skill_id.startsWith('custom:')) {
-				// For custom skills, extract the name
-				apiPayload.name = skillData.skill_id.substring(7) 
+				// For custom skills, extract the name from the custom format
+				apiPayload.name = skillData.skill_id.substring(7)
 			} else {
-				// Existing global skill: backend expects `skill_id` to switch to a different global skill
-				apiPayload.skill_id = skillData.skill_id
+				// For existing global skills, fetch the skill details to get the name
+				let skillDetails: GlobalSkill | null = null
+				try {
+					skillDetails = await api.get<GlobalSkill>(`/skill/${skillData.skill_id}/`)
+				} catch {
+					// Fallback: fetch all global skills and find the matching one
+					const allSkills = await api.get<GlobalSkill[]>('/skill/')
+					skillDetails = allSkills.find(s => s.id === skillData.skill_id) || null
+				}
+				if (skillDetails) {
+					apiPayload.name = skillDetails.name
+				}
 			}
 		}
 
-		// Include category only when it is provided with a non-empty value.
-		if (skillData.category?.trim()) {
-			apiPayload.category = skillData.category.trim()
+		/*
+		 * Always include category if provided, even if empty (user might want to clear it)
+		 * Use the category from the form, not from the global skill
+		 */
+		if (skillData.category !== undefined) {
+			apiPayload.category = skillData.category.trim() || null
 		}
 
 		const data = await api.patch<ResumeSkill>(`/resume/${resumeId}/skill/${skillId}/`, apiPayload)
-		console.log('data', data)
-		console.log('apiPayload', apiPayload)
 		return ResumeSkillSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'update resume skill')
