@@ -1,6 +1,6 @@
 'use server'
 
-import {GlobalSkill, GlobalSkillSchema, ResumeSkill, ResumeSkillSchema, SkillMutation} from '@/lib/skill/types'
+import {GlobalSkill, GlobalSkillSchema, ResumeSkill, ResumeSkillSchema, SkillMutation, NewSkill} from '@/lib/skill/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 
@@ -13,15 +13,8 @@ export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
 	try {
 		const data = await api.get<GlobalSkill[]>('/skill/')
 
-		// Map the data and log each skill parsing result
-		const parsedSkills = data.map(skill => {
-			try {
-				const parsed = GlobalSkillSchema.parse(skill)
-				return parsed
-			} catch (parseError) {
-				throw parseError
-			}
-		})
+		// Parse each skill
+		const parsedSkills = data.map(skill => GlobalSkillSchema.parse(skill))
 
 		return parsedSkills
 	} catch (error) {
@@ -171,5 +164,20 @@ export const removeSkillFromResume = async (
 		await api.delete(`/resume/${resumeId}/skill/${skillId}/`)
 	} catch (error) {
 		handleErrors(error, 'remove skill from resume')
+	}
+}
+
+/**
+ * Creates a new global skill in the database.
+ * @param {NewSkill} skillData - The skill data to create.
+ * @returns {Promise<GlobalSkill>} The newly created global skill.
+ * @throws {Error} If API request fails.
+ */
+export const createGlobalSkill = async (skillData: NewSkill): Promise<GlobalSkill> => {
+	try {
+		const data = await api.post<GlobalSkill>('/skill/', skillData)
+		return GlobalSkillSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'create global skill')
 	}
 }
