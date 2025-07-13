@@ -77,7 +77,11 @@ const WelcomeToBetaEmail = () => (
 					<Section>
 						<Text>
 							Got questions or spot a bug? Just hit reply or drop us a message in
-							our <a href="https://discord.gg/jTkyKCYz2M"></a>Discord server or directly from the
+							our{' '}
+							<Link href="https://discord.gg/jTkyKCYz2M" className="text-flame-500 underline">
+								Discord server
+							</Link>{' '}
+							or directly from the
 							app — we’d love to hear from you.
 						</Text>
 
