@@ -1,26 +1,8 @@
 import {useState, useEffect, useMemo} from 'react'
-
-interface SkillAlias {
-  id: string
-  category: string | null
-  name: string
-  preferred: boolean
-  created_at: string
-  updated_at: string
-}
-
-export interface Skill {
-  id: string
-  name: string
-  category: string | null
-  preferred: boolean
-  alias: SkillAlias[]
-  created_at: string
-  updated_at: string
-}
+import {GlobalSkill} from './types'
 
 interface UseSkillSearchProps {
-  skills: Skill[]
+  skills: GlobalSkill[]
   excludeSkillIds?: string[]
   searchQuery: string
 }
@@ -49,8 +31,6 @@ export const useSkillSearch = ({skills, excludeSkillIds = [], searchQuery}: UseS
 				name: s.name,
 				preferred: s.preferred
 			}))
-			// eslint-disable-next-line no-console
-			console.log(`Available skills (${availableSkills.length}):`, debugSkills)
 		}
 
 		// If no search query, return all skills sorted by preferred first, then alphabetically

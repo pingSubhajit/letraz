@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion} from 'motion/react'
 import {useOnClickOutside} from 'usehooks-ts'
 import {cn} from '@/lib/utils'
 import {LucideIcon} from 'lucide-react'
@@ -59,23 +59,14 @@ export const ExpandableTabs = ({
 	const [selected, setSelected] = React.useState<number | null>(0)
 	const outsideClickRef = React.useRef<HTMLDivElement>(null)
 
-	React.useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				outsideClickRef.current &&
-				!outsideClickRef.current.contains(event.target as Node) &&
-				collapseOnOutsideClick
-			) {
-				setSelected(null)
-				onChange?.(null)
-			}
-		}
-
-		document.addEventListener('mousedown', handleClickOutside)
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside)
+	const handleClickOutside = React.useCallback(() => {
+		if (collapseOnOutsideClick) {
+			setSelected(null)
+			onChange?.(null)
 		}
 	}, [collapseOnOutsideClick, onChange])
+
+	useOnClickOutside(outsideClickRef as React.RefObject<HTMLElement>, handleClickOutside)
 
 	const handleSelect = (index: number) => {
 		setSelected(index)
