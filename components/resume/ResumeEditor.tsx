@@ -5,12 +5,11 @@ import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
-import {Resume} from '@/lib/resume/types'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
 import {Briefcase, FolderKanban, GraduationCap, User, Wrench} from 'lucide-react'
 import {useState} from 'react'
 
-const ResumeEditor = ({resume, className}: {resume: Resume, className?: string}) => {
+const ResumeEditor = ({className}: {className?: string}) => {
 	const [activeTab, setActiveTab] = useState<number>(0) // Default to Education (index 0)
 
 	const tabs = [
