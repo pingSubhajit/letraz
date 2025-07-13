@@ -7,8 +7,9 @@ import {AnimatePresence, motion} from 'motion/react'
 import {useState} from 'react'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
-
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
+import SkillsEditor from '@/components/resume/editors/SkillsEditor'
+import {Resume} from '@/lib/resume/types'
 
 const ResumeEditor = ({className}: {className?: string}) => {
 	const [activeTab, setActiveTab] = useState('education')
@@ -51,10 +52,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 					transition={{duration: 0.2, ease: 'easeInOut'}}
 					className="mt-6"
 				>
-					<div className="text-center py-8">
-						<div className="text-lg font-medium mb-2">Skills editor coming soon...</div>
-						<div className="text-sm">We're working on bringing you an amazing skills editing experience.</div>
-					</div>
+					<SkillsEditor className="mt-6" />
 				</motion.div>
 			)
 		case 'personal':
