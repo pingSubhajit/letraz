@@ -6,10 +6,11 @@ import {Input} from '@/components/ui/input'
 import {FormControl, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useFormContext} from 'react-hook-form'
 import {cn} from '@/lib/utils'
-import {Skill, useSkillSearch} from '@/lib/skill/hooks'
+import {useSkillSearch} from '@/lib/skill/hooks'
+import {GlobalSkill} from '@/lib/skill/types'
 
 interface SkillAutocompleteProps {
-	skills: Skill[]
+	skills: GlobalSkill[]
 	excludeSkillIds?: string[]
 	name: string
 	label?: string
@@ -69,7 +70,7 @@ const SkillAutocomplete = ({
 		}
 	}, [])
 
-	const handleSelectSuggestion = (skill: Skill & { isExcluded?: boolean }) => {
+	const handleSelectSuggestion = (skill: GlobalSkill & { isExcluded?: boolean }) => {
 		// Don't select excluded skills
 		if (skill.isExcluded) return
 
