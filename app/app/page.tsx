@@ -1,8 +1,14 @@
 import NewResumeInput from '@/components/NewResumeInput'
+import OnboardingWelcome from '@/components/OnboardingWelcome'
+import {Suspense} from 'react'
 
 const AppHome = () => {
 	return (
 		<div className="p-8">
+			<Suspense fallback={null}>
+				<OnboardingWelcome />
+			</Suspense>
+
 			<h1>Dashboard</h1>
 			<p>Welcome to the dashboard page!</p>
 
