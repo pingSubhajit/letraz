@@ -4,6 +4,50 @@ import {useEffect, useState} from 'react'
 import {useSearchParams} from 'next/navigation'
 import {AnimatePresence, motion} from 'motion/react'
 
+// Define StaggeredText component outside to prevent recreation on every render
+const StaggeredText = ({text, show}: { text: string; show: boolean }) => {
+	const letters = Array.from(text)
+
+	return (
+		<motion.h2
+			className="text-5xl leading-normal flex overflow-hidden"
+			initial="hidden"
+			animate={show ? 'visible' : 'exit'}
+			variants={{
+				hidden: {},
+				visible: {
+					transition: {staggerChildren: 0.01, delayChildren: 0.2}
+				},
+				exit: {
+					transition: {staggerChildren: 0.01, delayChildren: 0}
+				}
+			}}
+		>
+			{letters.map((letter, index) => (
+				<motion.span
+					key={index}
+					variants={{
+						hidden: {
+							y: '200%',
+							transition: {ease: [0.455, 0.03, 0.515, 0.955], duration: 0.85}
+						},
+						visible: {
+							y: 0,
+							transition: {ease: [0.125, 0.92, 0.69, 0.975], duration: 0.75}
+						},
+						exit: {
+							y: '-200%',
+							transition: {ease: [0.455, 0.03, 0.515, 0.955], duration: 0.75}
+						}
+					}}
+				>
+					{letter === ' ' ? '\u00A0' : letter}
+				</motion.span>
+			))}
+		</motion.h2>
+	)
+}
+
 const OnboardingWelcome = () => {
 	const searchParams = useSearchParams()
 	const fromOnboarding = searchParams.get('from')
@@ -47,50 +91,6 @@ const OnboardingWelcome = () => {
 
 	if (!fromOnboarding || fromOnboarding !== 'onboarding' || isComplete) {
 		return null
-	}
-
-	// Custom staggered text component that mirrors calmInUp for both entrance and exit
-	const StaggeredText = ({text, show}: { text: string; show: boolean }) => {
-		const letters = Array.from(text)
-
-		return (
-			<motion.h2
-				className="text-5xl leading-normal flex overflow-hidden"
-				initial="hidden"
-				animate={show ? 'visible' : 'exit'}
-				variants={{
-					hidden: {},
-					visible: {
-						transition: {staggerChildren: 0.01, delayChildren: 0.2}
-					},
-					exit: {
-						transition: {staggerChildren: 0.01, delayChildren: 0}
-					}
-				}}
-			>
-				{letters.map((letter, index) => (
-					<motion.span
-						key={index}
-						variants={{
-							hidden: {
-								y: '200%',
-								transition: {ease: [0.455, 0.03, 0.515, 0.955], duration: 0.85}
-							},
-							visible: {
-								y: 0,
-								transition: {ease: [0.125, 0.92, 0.69, 0.975], duration: 0.75}
-							},
-							exit: {
-								y: '-200%',
-								transition: {ease: [0.455, 0.03, 0.515, 0.955], duration: 0.75}
-							}
-						}}
-					>
-						{letter === ' ' ? '\u00A0' : letter}
-					</motion.span>
-				))}
-			</motion.h2>
-		)
 	}
 
 	return (
