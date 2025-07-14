@@ -61,7 +61,7 @@ const OnboardingCompletionButton = () => {
 						<Button
 							onClick={handleGoToDashboard}
 							size="lg"
-							className="rounded-full h-14 text-base"
+							className="rounded-full h-14 text-base group"
 						>
 							Finish & Start Building
 							<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
