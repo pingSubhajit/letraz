@@ -1,13 +1,13 @@
 'use client'
 
-import {useRouter} from 'next/navigation'
+import {useTransitionRouter} from 'next-view-transitions'
 import {useEffect, useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import {Button} from '@/components/ui/button'
 import {ArrowRight} from 'lucide-react'
 
 const OnboardingCompletionButton = () => {
-	const router = useRouter()
+	const router = useTransitionRouter()
 	const [isVisible, setIsVisible] = useState(false)
 	const [isHovered, setIsHovered] = useState(false)
 
