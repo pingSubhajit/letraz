@@ -68,7 +68,6 @@ const AdminResumePage = async (props: PageProps) => {
 			</div>
 		)
 	} catch (error) {
-		console.error('Error fetching resume:', error)
 		notFound()
 	}
 }
