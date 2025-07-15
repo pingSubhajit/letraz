@@ -192,7 +192,24 @@ beforeAll(() => {
 	 */
 
 	// Mock fetch for API testing
-	global.fetch = vi.fn()
+	global.fetch = vi.fn().mockResolvedValue({
+		ok: true,
+		status: 200,
+		statusText: 'OK',
+		json: vi.fn().mockResolvedValue({}),
+		text: vi.fn().mockResolvedValue('{}'),
+		headers: new Headers(),
+		url: '',
+		redirected: false,
+		type: 'basic' as ResponseType,
+		body: null,
+		bodyUsed: false,
+		clone: vi.fn(),
+		arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(0)),
+		blob: vi.fn().mockResolvedValue(new Blob()),
+		formData: vi.fn().mockResolvedValue(new FormData()),
+		bytes: vi.fn().mockResolvedValue(new Uint8Array())
+	} as Response) as any
 
 	// Mock localStorage and sessionStorage
 	const localStorageMock = {
@@ -276,12 +293,12 @@ export const restoreConsole = () => {
 
 // Helper to create mock fetch responses
 export const createMockResponse = (data: any, status = 200) => {
-	return Promise.resolve({
+	return {
 		ok: status >= 200 && status < 300,
 		status,
 		statusText: status === 200 ? 'OK' : 'Error',
-		json: () => Promise.resolve(data),
-		text: () => Promise.resolve(JSON.stringify(data)),
+		json: vi.fn().mockResolvedValue(data),
+		text: vi.fn().mockResolvedValue(JSON.stringify(data)),
 		headers: new Headers(),
 		url: '',
 		redirected: false,
@@ -289,23 +306,24 @@ export const createMockResponse = (data: any, status = 200) => {
 		body: null,
 		bodyUsed: false,
 		clone: vi.fn(),
-		arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
-		blob: () => Promise.resolve(new Blob()),
-		formData: () => Promise.resolve(new FormData()),
-		bytes: () => Promise.resolve(new Uint8Array())
-	} as Response)
+		arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(0)),
+		blob: vi.fn().mockResolvedValue(new Blob()),
+		formData: vi.fn().mockResolvedValue(new FormData()),
+		bytes: vi.fn().mockResolvedValue(new Uint8Array())
+	} as Response
 }
 
 // Helper to mock successful API responses
-export const mockApiSuccess = (data: any) => {
-	;(global.fetch as any).mockResolvedValueOnce(createMockResponse(data))
+export const mockApiSuccess = (data: any, status = 200) => {
+	;(global.fetch as any).mockResolvedValueOnce(createMockResponse(data, status))
 }
 
 // Helper to mock API errors
 export const mockApiError = (status = 500, message = 'Internal Server Error') => {
-	;(global.fetch as any).mockRejectedValueOnce(
-		new Error(`HTTP ${status}: ${message}`)
-	)
+	;(global.fetch as any).mockResolvedValueOnce(createMockResponse(
+		{error: {message}}, 
+		status
+	))
 }
 
 // Helper to reset all mocks
