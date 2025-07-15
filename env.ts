@@ -96,6 +96,18 @@ const envSchema = z.object({
 	NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID: z.string({
 		required_error: 'Knock feed channel ID is required',
 		invalid_type_error: 'Knock feed channel ID must be a string'
+	}),
+
+	// Required backend admin API key for accessing admin endpoints
+	BACKEND_ADMIN_API_KEY: z.string({
+		required_error: 'Backend admin API key is required',
+		invalid_type_error: 'Backend admin API key must be a string'
+	}),
+
+	// Required self secret key for API route authentication
+	SELF_SECRET_KEY: z.string({
+		required_error: 'Self secret key is required',
+		invalid_type_error: 'Self secret key must be a string'
 	})
 })
 
