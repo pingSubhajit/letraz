@@ -12,7 +12,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:watch": "vitest --coverage",
+    "test:coverage:open": "vitest run --coverage && open coverage/index.html",
+    "test:debug": "vitest --inspect-brk --no-coverage --reporter=verbose",
+    "test:silent": "vitest run --silent",
+    "test:verbose": "vitest run --reporter=verbose",
+    "test:changed": "vitest run --changed",
+    "test:related": "vitest run --related",
+    "test:bail": "vitest run --bail=1",
+    "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=test-results.xml"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.50",

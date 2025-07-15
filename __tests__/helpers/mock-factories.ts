@@ -1,4 +1,4 @@
-import {vi} from 'vitest'
+import {type MockedFunction, vi} from 'vitest'
 
 // Mock data factories for creating test data
 
@@ -267,8 +267,8 @@ export const createMockKeyboardEvent = (
 }
 
 // Mock function factories
-export const createMockFunction = <T extends (...args: any[]) => any>(): vi.MockedFunction<T> => {
-	return vi.fn() as vi.MockedFunction<T>
+export const createMockFunction = <T extends (...args: any[]) => any>(): MockedFunction<T> => {
+	return vi.fn() as MockedFunction<T>
 }
 
 export const createMockPromise = <T>(

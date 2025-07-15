@@ -338,7 +338,7 @@ describe('Test Utilities', () => {
 			await testHelpers.form.fillAndSubmitForm({
 				Name: 'John Doe',
 				Email: 'john@example.com'
-			}, 'Submit Form')
+			}, /Submit Form/)
 
 			expect(screen.getByText('Form Submitted')).toBeInTheDocument()
 		})

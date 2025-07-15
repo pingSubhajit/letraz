@@ -1,4 +1,4 @@
-import {expect, vi} from 'vitest'
+import {expect, type MockedFunction, vi} from 'vitest'
 import {createMockApiError, MockApiError} from './mock-factories'
 
 // API mocking utilities for testing HTTP requests
@@ -226,7 +226,7 @@ export const apiMocks = {
 
 	// Verify fetch was called
 	verifyFetchCalled: (url?: string | RegExp, times?: number): void => {
-		const fetchMock = global.fetch as vi.MockedFunction<typeof fetch>
+		const fetchMock = global.fetch as MockedFunction<typeof fetch>
 
 		if (url) {
 			const calls = fetchMock.mock.calls.filter(call => {
@@ -253,7 +253,7 @@ export const apiMocks = {
 
 	// Get fetch call arguments
 	getFetchCalls: (): Array<[string, RequestInit?]> => {
-		const fetchMock = global.fetch as vi.MockedFunction<typeof fetch>
+		const fetchMock = global.fetch as MockedFunction<typeof fetch>
 		return fetchMock.mock.calls as Array<[string, RequestInit?]>
 	},
 

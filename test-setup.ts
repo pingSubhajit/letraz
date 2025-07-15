@@ -159,17 +159,18 @@ beforeAll(() => {
 	})
 
 	// Mock window.ResizeObserver for components that use it
-	global.ResizeObserver = vi.fn().mockImplementation(() => ({
+	global.ResizeObserver = vi.fn((callback) => ({
 		observe: vi.fn(),
 		unobserve: vi.fn(),
 		disconnect: vi.fn()
 	}))
 
 	// Mock IntersectionObserver for components that use it
-	global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+	global.IntersectionObserver = vi.fn((callback) => ({
 		observe: vi.fn(),
 		unobserve: vi.fn(),
 		disconnect: vi.fn(),
+		takeRecords: vi.fn(() => []),
 		root: null,
 		rootMargin: '',
 		thresholds: []

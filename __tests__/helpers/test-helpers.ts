@@ -1,4 +1,4 @@
-import {vi} from 'vitest'
+import {type MockedFunction, vi} from 'vitest'
 import {screen, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -158,7 +158,7 @@ export const asyncHelpers = {
 	},
 
 	// Wait for API call to complete
-	async waitForApiCall(mockFn: vi.MockedFunction<any>, times = 1): Promise<void> {
+	async waitForApiCall(mockFn: MockedFunction<any>, times = 1): Promise<void> {
 		await waitFor(() => {
 			expect(mockFn).toHaveBeenCalledTimes(times)
 		})
@@ -275,12 +275,12 @@ export const mockHelpers = {
 	},
 
 	// Mock React hooks
-	mockUseState: <T>(initialValue: T): [T, vi.MockedFunction<any>] => {
+	mockUseState: <T>(initialValue: T): [T, MockedFunction<any>] => {
 		const setState = vi.fn()
 		return [initialValue, setState]
 	},
 
-	mockUseEffect: (): vi.MockedFunction<any> => {
+	mockUseEffect: (): MockedFunction<any> => {
 		return vi.fn()
 	},
 
