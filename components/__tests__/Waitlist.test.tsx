@@ -40,7 +40,10 @@ describe('Waitlist Component', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks()
-		vi.mocked(signUpForWaitlist).mockResolvedValue(undefined)
+		vi.mocked(signUpForWaitlist).mockResolvedValue({
+			email: 'test@example.com',
+			referrer: null
+		})
 	})
 
 	afterEach(() => {
@@ -294,7 +297,10 @@ describe('Waitlist Component', () => {
 			// First attempt fails
 			vi.mocked(signUpForWaitlist).mockRejectedValueOnce(new Error('First error'))
 			// Second attempt succeeds
-			vi.mocked(signUpForWaitlist).mockResolvedValueOnce(undefined)
+			vi.mocked(signUpForWaitlist).mockResolvedValueOnce({
+				email: 'test@example.com',
+				referrer: null
+			})
 
 			render(<Waitlist {...defaultProps} />)
 

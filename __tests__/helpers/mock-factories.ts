@@ -1,4 +1,5 @@
 import {type MockedFunction, vi} from 'vitest'
+import {Job} from '@/lib/job/types'
 
 // Mock data factories for creating test data
 
@@ -130,41 +131,45 @@ export interface MockEducation {
 }
 
 // Job-related mock data
-export const createMockJob = (overrides: Partial<MockJob> = {}): MockJob => ({
-	id: 'job_123',
-	title: 'Senior Frontend Developer',
-	company: 'Awesome Company',
+export const createMockJob = (overrides?: Partial<Job>): Job => ({
+	title: 'Software Engineer',
+	company_name: 'Test Company',
+	description: 'Test job description',
+	requirements: ['React', 'TypeScript'],
 	location: 'Remote',
-	type: 'Full-time',
-	description: 'We are looking for a senior frontend developer...',
-	requirements: [
-		'5+ years of React experience',
-		'TypeScript proficiency',
-		'Experience with testing frameworks'
-	],
-	salary: {
-		min: 120000,
-		max: 150000,
-		currency: 'USD'
-	},
-	postedAt: new Date('2024-01-01'),
+	job_url: 'https://example.com/job',
+	currency: 'USD',
+	salary_min: 80000,
+	salary_max: 120000,
+	responsibilities: ['Build web applications'],
+	benefits: ['Health insurance', 'Remote work'],
 	...overrides
 })
 
-export interface MockJob {
-  id: string
-  title: string
-  company: string
-  location: string
-  type: string
-  description: string
-  requirements: string[]
-  salary: {
-    min: number
-    max: number
-    currency: string
-  }
-  postedAt: Date
+// Helper function to create a mock parsed job (the format returned by parseJobFromRawJD)
+export const createMockParsedJob = (overrides?: Partial<ParsedJob>): ParsedJob => ({
+	title: 'Software Engineer',
+	companyName: 'Test Company',
+	description: 'Test job description',
+	requirements: ['React', 'TypeScript'],
+	location: 'Remote',
+	salaryMin: '$80,000',
+	salaryMax: '$120,000',
+	responsibilities: ['Build web applications'],
+	benefits: ['Health insurance', 'Remote work'],
+	...overrides
+})
+
+export type ParsedJob = {
+	title: string
+	companyName: string
+	location: string
+	salaryMax: string
+	salaryMin: string
+	requirements: string[]
+	description: string
+	responsibilities: string[]
+	benefits: string[]
 }
 
 // API Response mock data

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type {ShouldShowProps} from '../../types'
+import type {ShouldShowProps} from '@/components/richTextEditor/types'
 import type {Editor} from '@tiptap/react'
 import {BubbleMenu} from '@tiptap/react'
 import {LinkEditBlock} from '../link/link-edit-block'
