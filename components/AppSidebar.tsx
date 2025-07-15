@@ -24,7 +24,6 @@ const AppSidebar = () => {
 				</Link>
 				<UserButton
 					appearance={{elements: {button: 'w-full'}}}
-					afterSignOutUrl="/"
 				/>
 			</div>
 		</AppSidebarContainer>
