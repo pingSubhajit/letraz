@@ -19,6 +19,8 @@ export const CertificationSchema = z.object({
 /**
  * Schema for CertificationMutation
  * Derived by omitting read-only fields from CertificationSchema
+ * Required fields: name, issuing_organization, issue_date
+ * Optional field: credential_url
  */
 export const CertificationMutationSchema = CertificationSchema.omit({
 	id: true,
@@ -26,6 +28,16 @@ export const CertificationMutationSchema = CertificationSchema.omit({
 	updated_at: true,
 	user: true,
 	resume_section: true
+}).extend({
+	name: z.string().min(1, {message: 'Required'}).max(255).describe('Name of the certification.'),
+	issuing_organization: z.string().min(1, {message: 'Required'}).max(255).describe('Organization that issued the certification'),
+	issue_date: z.union([
+		z.date(),
+		z.undefined()
+	]).refine((val) => val !== undefined, {
+		message: 'Required'
+	}).describe('Date when the certification was issued.'),
+	credential_url: z.string().max(200).nullable().optional().describe('Link to the certification credential.')
 })
 
 // Infer TypeScript types from the schema

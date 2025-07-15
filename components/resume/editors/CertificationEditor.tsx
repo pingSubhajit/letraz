@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState, useMemo} from 'react'
+import {useEffect, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form} from '@/components/ui/form'
@@ -24,12 +24,14 @@ import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {FormField, FormItem, FormLabel, FormControl, FormMessage} from '@/components/ui/form'
 import {Input} from '@/components/ui/input'
+import DatePicker from '@/components/ui/date-picker'
+import {apiDateToDate} from '@/lib/utils'
 
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
 	name: '',
 	issuing_organization: '',
-	issue_date: '',
+	issue_date: undefined as any,
 	credential_url: ''
 }
 
@@ -44,7 +46,6 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
-	const [localCertifications, setLocalCertifications] = useState<Certification[]>([])
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
@@ -61,21 +62,6 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 	})
 
 	const {data: certifications = [], isLoading, error} = useCurrentCertifications()
-
-	// Create stable reference for certifications to prevent infinite re-renders
-	const stableCertifications = useMemo(() => {
-		console.log('🔍 [CERTIFICATION EDITOR] Creating stable certifications:', certifications)
-		return certifications
-	}, [JSON.stringify(certifications)])
-
-	// Debug React Query state
-	console.log('🔍 [CERTIFICATION EDITOR] React Query State:', { 
-		certifications, 
-		isLoading, 
-		error,
-		certificationsLength: certifications?.length,
-		certificationsType: typeof certifications
-	})
 
 	const {mutateAsync: addCertification, isPending: isAdding} = useAddCertificationMutation({
 		onSuccess: () => {
@@ -108,13 +94,6 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 	})
 
 	const isSubmitting = isAdding || isUpdating
-
-	useEffect(() => {
-		console.log('🔍 [CERTIFICATION EDITOR] useEffect triggered with stableCertifications:', stableCertifications)
-		console.log('🔍 [CERTIFICATION EDITOR] Previous localCertifications:', localCertifications)
-		setLocalCertifications(stableCertifications)
-		console.log('🔍 [CERTIFICATION EDITOR] Updated localCertifications to:', stableCertifications)
-	}, [stableCertifications])
 
 	useEffect(() => {
 		setIsMounted(true)
@@ -155,7 +134,7 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 	const onSubmit = async (values: CertificationMutation) => {
 		try {
 			if (editingIndex !== null) {
-				const certificationId = localCertifications[editingIndex]?.id
+				const certificationId = certifications[editingIndex]?.id
 				await updateCertification({id: certificationId, data: values})
 			} else {
 				await addCertification(values)
@@ -170,9 +149,12 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 	}
 
 	const handleEdit = (index: number) => {
-		const certification = localCertifications[index]
+		const certification = certifications[index]
 		form.reset({
-			...certification
+			name: certification.name,
+			issuing_organization: certification.issuing_organization || '',
+			issue_date: apiDateToDate(certification.issue_date) || undefined,
+			credential_url: certification.credential_url || ''
 		})
 		setEditingIndex(index)
 		setView('form')
@@ -182,7 +164,7 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 		try {
 			setDeletingId(id)
 			await deleteCertification(id)
-			if (editingIndex !== null && localCertifications[editingIndex]?.id === id) {
+			if (editingIndex !== null && certifications[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_CERTIFICATION_VALUES)
 				setView('list')
@@ -236,24 +218,11 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 							disabled={isSubmitting}
 						/>
 
-						<FormField
-							control={form.control}
+						<DatePicker
+							form={form}
+							label="Issue Date"
 							name="issue_date"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel className="text-foreground">Issue Date</FormLabel>
-									<FormControl>
-										<Input
-											type="date"
-											placeholder="Select issue date"
-											disabled={isSubmitting}
-											{...field}
-											value={field.value || ''}
-										/>
-									</FormControl>
-									<FormMessage className="text-xs" />
-								</FormItem>
-							)}
+							disabled={isSubmitting}
 						/>
 
 						<FormField
@@ -310,9 +279,9 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 				</div>
 			) : (
 				<div ref={parent}>
-					{localCertifications.length > 0 ? (
+					{certifications.length > 0 ? (
 						<div className="space-y-4">
-							{localCertifications.map((certification, index) => renderCertificationItem(certification, index))}
+							{certifications.map((certification, index) => renderCertificationItem(certification, index))}
 						</div>
 					) : (
 						<Button
