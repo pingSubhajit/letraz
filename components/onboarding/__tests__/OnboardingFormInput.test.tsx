@@ -116,7 +116,16 @@ describe('OnboardingFormInput', () => {
 		// Reset the mocked function
 		const {useFormField} = await import('@/components/ui/form')
 		vi.mocked(useFormField).mockReturnValue({
-			error: undefined
+			invalid: false,
+			isDirty: false,
+			isTouched: false,
+			isValidating: false,
+			error: undefined,
+			id: 'test-id',
+			name: 'test-name',
+			formItemId: 'test-form-item-id',
+			formDescriptionId: 'test-form-description-id',
+			formMessageId: 'test-form-message-id'
 		})
 	})
 
@@ -161,7 +170,16 @@ describe('OnboardingFormInput', () => {
 		it('shows error animation when field has error', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: {message: 'Test error'}
+				invalid: true,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: {message: 'Test error', type: 'required'},
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(<OnboardingFormInput />)
@@ -173,7 +191,16 @@ describe('OnboardingFormInput', () => {
 		it('shows no error animation when field is valid', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: undefined
+				invalid: false,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: undefined,
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(<OnboardingFormInput />)
@@ -231,7 +258,16 @@ describe('OnboardingFormTextArea', () => {
 		// Reset the mocked function
 		const {useFormField} = await import('@/components/ui/form')
 		vi.mocked(useFormField).mockReturnValue({
-			error: undefined
+			invalid: false,
+			isDirty: false,
+			isTouched: false,
+			isValidating: false,
+			error: undefined,
+			id: 'test-id',
+			name: 'test-name',
+			formItemId: 'test-form-item-id',
+			formDescriptionId: 'test-form-description-id',
+			formMessageId: 'test-form-message-id'
 		})
 	})
 
@@ -276,7 +312,16 @@ describe('OnboardingFormTextArea', () => {
 		it('shows error animation when field has error', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: {message: 'Test error'}
+				invalid: true,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: {message: 'Test error', type: 'required'},
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(<OnboardingFormTextArea />)
@@ -288,7 +333,16 @@ describe('OnboardingFormTextArea', () => {
 		it('shows no error animation when field is valid', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: undefined
+				invalid: false,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: undefined,
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(<OnboardingFormTextArea />)
@@ -328,7 +382,16 @@ describe('OnboardingRichTextInput', () => {
 		// Reset the mocked function
 		const {useFormField} = await import('@/components/ui/form')
 		vi.mocked(useFormField).mockReturnValue({
-			error: undefined
+			invalid: false,
+			isDirty: false,
+			isTouched: false,
+			isValidating: false,
+			error: undefined,
+			id: 'test-id',
+			name: 'test-name',
+			formItemId: 'test-form-item-id',
+			formDescriptionId: 'test-form-description-id',
+			formMessageId: 'test-form-message-id'
 		})
 	})
 
@@ -368,7 +431,16 @@ describe('OnboardingRichTextInput', () => {
 		it('shows error animation when field has error', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: {message: 'Test error'}
+				invalid: true,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: {message: 'Test error', type: 'required'},
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(<OnboardingRichTextInput placeholder="Test" />)
@@ -380,7 +452,16 @@ describe('OnboardingRichTextInput', () => {
 		it('shows no error animation when field is valid', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: undefined
+				invalid: false,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: undefined,
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(<OnboardingRichTextInput placeholder="Test" />)
@@ -394,7 +475,16 @@ describe('OnboardingRichTextInput', () => {
 		it('integrates with form validation', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: {message: 'Required field'}
+				invalid: true,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: {message: 'Required field', type: 'required'},
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(<OnboardingRichTextInput placeholder="Test" />)
@@ -411,7 +501,16 @@ describe('OnboardingFormSelect', () => {
 		// Reset the mocked function
 		const {useFormField} = await import('@/components/ui/form')
 		vi.mocked(useFormField).mockReturnValue({
-			error: undefined
+			invalid: false,
+			isDirty: false,
+			isTouched: false,
+			isValidating: false,
+			error: undefined,
+			id: 'test-id',
+			name: 'test-name',
+			formItemId: 'test-form-item-id',
+			formDescriptionId: 'test-form-description-id',
+			formMessageId: 'test-form-message-id'
 		})
 	})
 
@@ -531,7 +630,16 @@ describe('OnboardingFormSelect', () => {
 		it('shows error animation when field has error', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: {message: 'Test error'}
+				invalid: true,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: {message: 'Test error', type: 'required'},
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(
@@ -549,7 +657,16 @@ describe('OnboardingFormSelect', () => {
 		it('shows no error animation when field is valid', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: undefined
+				invalid: false,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: undefined,
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(
@@ -568,7 +685,16 @@ describe('OnboardingFormSelect', () => {
 		it('integrates with form validation', async () => {
 			const {useFormField} = await import('@/components/ui/form')
 			vi.mocked(useFormField).mockReturnValue({
-				error: {message: 'Required field'}
+				invalid: true,
+				isDirty: false,
+				isTouched: false,
+				isValidating: false,
+				error: {message: 'Required field', type: 'required'},
+				id: 'test-id',
+				name: 'test-name',
+				formItemId: 'test-form-item-id',
+				formDescriptionId: 'test-form-description-id',
+				formMessageId: 'test-form-message-id'
 			})
 
 			render(

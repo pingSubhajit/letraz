@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from 'vitest'
-import {createMockResponse, mockApiSuccess, TestError} from '../test-setup'
+import {createMockResponse, mockApiSuccess, TestError} from '@/test-setup'
 
 describe('Test Setup Configuration', () => {
 	it('should have jest-dom matchers available', () => {

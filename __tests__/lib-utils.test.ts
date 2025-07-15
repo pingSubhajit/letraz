@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, describe, expect, it} from 'vitest'
-import {apiDateToDate, cn, dateToApiFormat, deepCopy, sanitizeHtml, stripNullFields} from '../lib/utils'
+import {apiDateToDate, cn, dateToApiFormat, deepCopy, sanitizeHtml, stripNullFields} from '@/lib/utils'
 
 describe('lib/utils.ts', () => {
 	describe('cn function', () => {

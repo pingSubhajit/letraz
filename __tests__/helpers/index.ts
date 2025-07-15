@@ -28,6 +28,7 @@ export {
   createMockExperience,
   createMockEducation,
   createMockJob,
+  createMockParsedJob,
   createMockApiResponse,
   createMockApiError,
   createMockFormData,

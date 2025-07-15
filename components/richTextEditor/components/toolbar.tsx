@@ -3,7 +3,7 @@ import {FormatAction} from '../types'
 import {Editor} from '@tiptap/react'
 
 import {DotsHorizontalIcon, FontBoldIcon, FontItalicIcon, ListBulletIcon, UnderlineIcon} from '@radix-ui/react-icons'
-import {toggleVariants} from '../../ui/toggle'
+import {toggleVariants} from '@/components/ui/toggle'
 import ToolbarSection from './toolbar-section'
 import {LinkEditPopover} from './link/link-edit-popover'
 

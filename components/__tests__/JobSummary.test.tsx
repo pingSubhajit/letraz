@@ -2,12 +2,27 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {render, screen} from '@testing-library/react'
 import {useCompletion} from 'ai/react'
 import {JobSummary, JobSummaryFromJson} from '../JobSummary'
-import {Job} from '@/lib/job/types'
+import {createMockJob} from '@/__tests__/helpers'
 
 // Mock external dependencies
 vi.mock('ai/react', () => ({
 	useCompletion: vi.fn()
 }))
+
+// Helper function to create a complete mock UseCompletion return value
+const createMockUseCompletion = (overrides?: any) => ({
+	completion: '',
+	isLoading: false,
+	handleSubmit: vi.fn(),
+	complete: vi.fn(),
+	error: null,
+	stop: vi.fn(),
+	setCompletion: vi.fn(),
+	input: '',
+	setInput: vi.fn(),
+	data: undefined,
+	...overrides
+})
 
 vi.mock('@/components/utilities/AiLoading', () => ({
 	__esModule: true,
@@ -171,21 +186,11 @@ describe('JobSummaryFromJson Component', () => {
 
 	describe('Basic Rendering', () => {
 		it('renders with job details and initializes completion', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
-				completion: '<h1>Software Engineer at Test Company</h1><p>Great opportunity!</p>',
-				isLoading: false,
-				handleSubmit: vi.fn()
-			})
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
+				completion: '<h1>Software Engineer at Test Company</h1><p>Great opportunity!</p>'
+			}))
 
 			render(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -194,21 +199,12 @@ describe('JobSummaryFromJson Component', () => {
 		})
 
 		it('shows loading state initially', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '',
-				isLoading: true,
-				handleSubmit: vi.fn()
-			})
+				isLoading: true
+			}))
 
 			render(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -217,22 +213,14 @@ describe('JobSummaryFromJson Component', () => {
 		})
 
 		it('calls handleSubmit on mount', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
 			const mockHandleSubmit = vi.fn()
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '',
 				isLoading: false,
 				handleSubmit: mockHandleSubmit
-			})
+			}))
 
 			render(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -242,21 +230,12 @@ describe('JobSummaryFromJson Component', () => {
 
 	describe('useCompletion Integration', () => {
 		it('configures useCompletion with correct API endpoint', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '',
-				isLoading: false,
-				handleSubmit: vi.fn()
-			})
+				isLoading: false
+			}))
 
 			render(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -267,21 +246,12 @@ describe('JobSummaryFromJson Component', () => {
 		})
 
 		it('passes job details as JSON string to initialInput', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '',
-				isLoading: false,
-				handleSubmit: vi.fn()
-			})
+				isLoading: false
+			}))
 
 			render(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -292,31 +262,21 @@ describe('JobSummaryFromJson Component', () => {
 		})
 
 		it('handles completion state changes', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: 'Initial completion',
-				isLoading: false,
-				handleSubmit: vi.fn()
-			})
+				isLoading: false
+			}))
 
 			const {rerender} = render(<JobSummaryFromJson jobDetails={mockJob} />)
 
 			expect(screen.getByText('Initial completion')).toBeInTheDocument()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: 'Updated completion',
-				isLoading: false,
-				handleSubmit: vi.fn()
-			})
+				isLoading: false
+			}))
 
 			rerender(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -324,31 +284,21 @@ describe('JobSummaryFromJson Component', () => {
 		})
 
 		it('handles loading state transitions', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '',
-				isLoading: true,
-				handleSubmit: vi.fn()
-			})
+				isLoading: true
+			}))
 
 			const {rerender} = render(<JobSummaryFromJson jobDetails={mockJob} />)
 
 			expect(screen.getByTestId('ai-loading')).toBeInTheDocument()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '<h1>Completed summary</h1>',
-				isLoading: false,
-				handleSubmit: vi.fn()
-			})
+				isLoading: false
+			}))
 
 			rerender(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -359,42 +309,36 @@ describe('JobSummaryFromJson Component', () => {
 
 	describe('Error Handling', () => {
 		it('handles useCompletion errors gracefully', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '',
 				isLoading: false,
-				handleSubmit: vi.fn(),
 				error: new Error('API Error')
-			})
+			}))
 
 			expect(() => render(<JobSummaryFromJson jobDetails={mockJob} />)).not.toThrow()
 		})
 
 		it('handles empty job details', () => {
-			const emptyJob: Job = {
-				id: '',
+			const emptyJob = createMockJob({
 				title: '',
-				company: '',
+				company_name: '',
 				description: '',
 				requirements: [],
 				location: '',
-				salary: ''
-			}
-
-			mockUseCompletion.mockReturnValue({
-				completion: '',
-				isLoading: false,
-				handleSubmit: vi.fn()
+				job_url: '',
+				currency: '',
+				salary_min: null,
+				salary_max: null,
+				responsibilities: [],
+				benefits: []
 			})
+
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
+				completion: '',
+				isLoading: false
+			}))
 
 			render(<JobSummaryFromJson jobDetails={emptyJob} />)
 
@@ -407,21 +351,12 @@ describe('JobSummaryFromJson Component', () => {
 
 	describe('Integration with JobSummary', () => {
 		it('passes completion and loading state to JobSummary', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '<h1>Generated Summary</h1>',
-				isLoading: false,
-				handleSubmit: vi.fn()
-			})
+				isLoading: false
+			}))
 
 			render(<JobSummaryFromJson jobDetails={mockJob} />)
 
@@ -429,21 +364,12 @@ describe('JobSummaryFromJson Component', () => {
 		})
 
 		it('shows loading state in JobSummary when completion is loading', () => {
-			const mockJob: Job = {
-				id: 'test-job-id',
-				title: 'Software Engineer',
-				company: 'Test Company',
-				description: 'Test job description',
-				requirements: ['React', 'TypeScript'],
-				location: 'Remote',
-				salary: '$100,000'
-			}
+			const mockJob = createMockJob()
 
-			mockUseCompletion.mockReturnValue({
+			mockUseCompletion.mockReturnValue(createMockUseCompletion({
 				completion: '',
-				isLoading: true,
-				handleSubmit: vi.fn()
-			})
+				isLoading: true
+			}))
 
 			render(<JobSummaryFromJson jobDetails={mockJob} />)
 

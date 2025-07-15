@@ -60,7 +60,6 @@ export default defineConfig({
 			},
 
 			// Enforce thresholds - fail tests if coverage is below thresholds
-			thresholdAutoUpdate: false,
 
 			// Clean coverage directory before each run
 			clean: true,

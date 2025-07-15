@@ -3,9 +3,10 @@ import userEvent from '@testing-library/user-event'
 import {vi} from 'vitest'
 import React from 'react'
 import NewResumeInput from '../NewResumeInput'
+import {createMockParsedJob} from '@/__tests__/helpers'
 
 // Mock react-hook-form with proper form state control
-const mockHandleSubmit = vi.fn((onSubmit) => (e) => {
+const mockHandleSubmit = vi.fn((onSubmit) => (e: React.FormEvent) => {
 	e.preventDefault()
 	onSubmit({input: 'test'})
 })
@@ -154,7 +155,7 @@ describe('NewResumeInput Component', () => {
 
 		// Reset the mocked function
 		const {parseJobFromRawJD} = await import('@/app/app/craft/parseJD')
-		vi.mocked(parseJobFromRawJD).mockResolvedValue({})
+		vi.mocked(parseJobFromRawJD).mockResolvedValue(createMockParsedJob())
 	})
 
 	describe('Basic Rendering', () => {
