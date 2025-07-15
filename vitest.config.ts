@@ -106,7 +106,18 @@ export default defineConfig({
 				maxThreads: 4,
 				minThreads: 1
 			}
-		}
+		},
+
+
+
+		// Clear mocks between tests
+		clearMocks: true,
+
+		// Restore mocks after each test
+		restoreMocks: true,
+
+		// Mock reset between tests
+		mockReset: true
 	},
 
 	// Path resolution to match tsconfig.json
