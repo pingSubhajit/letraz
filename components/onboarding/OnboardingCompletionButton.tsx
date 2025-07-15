@@ -6,6 +6,7 @@ import {useEffect, useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import {Button} from '@/components/ui/button'
 import {ArrowRight} from 'lucide-react'
+import {completeOnboarding} from '@/lib/onboarding/actions'
 
 const OnboardingCompletionButton = () => {
 	const router = useTransitionRouter()
@@ -27,9 +28,16 @@ const OnboardingCompletionButton = () => {
 		return () => clearTimeout(timer)
 	}, [isOnboarding])
 
-	const handleGoToDashboard = () => {
-		// Use router.replace to prevent back navigation to onboarding
-		router.replace('/app?from=onboarding')
+	const handleGoToDashboard = async () => {
+		try {
+			// Mark onboarding as complete and update step to 'resume'
+			await completeOnboarding()
+			// Use router.replace to prevent back navigation to onboarding
+			router.replace('/app?from=onboarding')
+		} catch (error) {
+			// Still navigate even if metadata update fails
+			router.replace('/app?from=onboarding')
+		}
 	}
 
 	return (
