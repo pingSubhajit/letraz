@@ -21,7 +21,9 @@
     "test:changed": "vitest run --changed",
     "test:related": "vitest run --related",
     "test:bail": "vitest run --bail=1",
-    "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=test-results.xml"
+    "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=test-results.xml",
+    "test:coverage:threshold": "vitest run --coverage --reporter=verbose && echo 'Coverage thresholds check completed'",
+    "coverage:open": "open coverage/index.html"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.50",

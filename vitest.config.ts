@@ -32,16 +32,24 @@ export default defineConfig({
 
 		// Coverage configuration
 		coverage: {
-			// Use v8 provider for better performance
+			// Use v8 provider for better performance and accuracy
 			provider: 'v8',
 
-			// Coverage reporters
-			reporter: ['text', 'json', 'html', 'lcov'],
+			// Coverage reporters - multiple formats for different use cases
+			reporter: [
+				'text',        // Console output
+				'text-summary', // Brief summary
+				'json',        // Machine readable
+				'json-summary', // Brief machine readable
+				'html',        // Interactive HTML report
+				'lcov',        // For external tools
+				'clover'       // XML format for CI tools
+			],
 
 			// Coverage output directory
 			reportsDirectory: './coverage',
 
-			// Coverage thresholds
+			// Coverage thresholds - enforce minimum coverage requirements
 			thresholds: {
 				global: {
 					branches: 75,
@@ -50,6 +58,18 @@ export default defineConfig({
 					statements: 80
 				}
 			},
+
+			// Enforce thresholds - fail tests if coverage is below thresholds
+			thresholdAutoUpdate: false,
+
+			// Clean coverage directory before each run
+			clean: true,
+
+			// Skip coverage for files with no tests
+			skipFull: false,
+
+			// Include all files in coverage, even if not tested
+			all: true,
 
 			// Files to include in coverage
 			include: [
@@ -61,20 +81,36 @@ export default defineConfig({
 
 			// Files to exclude from coverage
 			exclude: [
+				// Test files
 				'**/__tests__/**',
 				'**/*.test.{js,jsx,ts,tsx}',
 				'**/*.spec.{js,jsx,ts,tsx}',
+				'**/test-setup.ts',
+				'**/vitest.config.ts',
+				
+				// Build and dependency directories
 				'**/node_modules/**',
 				'**/.next/**',
 				'**/coverage/**',
-				'**/*.config.{js,ts}',
+				'**/dist/**',
+				'**/build/**',
+				
+				// Configuration files
+				'**/*.config.{js,ts,mjs}',
 				'**/*.d.ts',
 				'**/types/**',
+				
+				// Next.js specific files
 				'app/layout.tsx',
 				'app/global-error.tsx',
 				'app/globals.css',
 				'app/robots.ts',
 				'app/sitemap.ts',
+				'app/opengraph-image.png',
+				'app/twitter-image.png',
+				'app/favicon.ico',
+				
+				// Infrastructure files
 				'middleware.ts',
 				'instrumentation.ts',
 				'next.config.ts',
@@ -84,7 +120,25 @@ export default defineConfig({
 				'env.ts',
 				'config.ts',
 				'constants.ts',
-				'routes.ts'
+				'routes.ts',
+				
+				// Font and asset files
+				'app/fonts/**',
+				'public/**',
+				
+				// Email templates (often not unit testable)
+				'emails/**',
+				
+				// Generated or external code
+				'components.json',
+				'bun.lock',
+				'package.json',
+				'tsconfig.json',
+				'README.md',
+				'LICENSE',
+				
+				// PDF and document files
+				'documents/**'
 			]
 		},
 
