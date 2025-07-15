@@ -1,6 +1,6 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {api} from '../api-client'
-import {mockApiError, mockApiSuccess} from '../../../test-setup'
+import {api} from '@/lib/config/api-client'
+import {mockApiError, mockApiSuccess} from '@/test-setup'
 
 // Mock next/headers
 vi.mock('next/headers', () => ({

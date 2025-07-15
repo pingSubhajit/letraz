@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import {addOrUpdateUserInfoToDB, getPersonalInfoFromDB} from '../actions'
+import {addOrUpdateUserInfoToDB, getPersonalInfoFromDB} from '@/lib/user-info/actions'
 import {api} from '@/lib/config/api-client'
 import {apiDateToDate, dateToApiFormat} from '@/lib/utils'
 
