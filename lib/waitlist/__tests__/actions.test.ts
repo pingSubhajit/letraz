@@ -1,4 +1,6 @@
-import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {signUpForWaitlist} from '@/lib/waitlist/actions'
+import * as Sentry from '@sentry/nextjs'
 
 // Create a hoisted mock that's available during module import time
 const mockEmailSend = vi.hoisted(() => vi.fn())
@@ -13,11 +15,6 @@ vi.mock('resend', () => {
 		}))
 	}
 })
-
-import {signUpForWaitlist} from '../actions'
-import {Resend} from 'resend'
-import WaitlistWelcomeEmail from '@/emails/welcome'
-import * as Sentry from '@sentry/nextjs'
 
 // Mock Sentry
 vi.mock('@sentry/nextjs', () => ({

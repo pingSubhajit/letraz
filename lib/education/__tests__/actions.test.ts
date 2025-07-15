@@ -1,8 +1,13 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import {addEducationToDB, deleteEducationFromDB, getEducationsFromDB, updateEducationInDB} from '../actions'
+import {
+	addEducationToDB,
+	deleteEducationFromDB,
+	getEducationsFromDB,
+	updateEducationInDB
+} from '@/lib/education/actions'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
-import {Education, EducationMutation} from '../types'
+import {Education, EducationMutation} from '@/lib/education/types'
 
 // Mock dependencies
 vi.mock('@/lib/config/api-client', () => ({
