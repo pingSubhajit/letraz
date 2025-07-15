@@ -21,6 +21,7 @@ const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 			<FormControl>
 				<Input
 					className="text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2"
+					type={type}
 					{...props}
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
