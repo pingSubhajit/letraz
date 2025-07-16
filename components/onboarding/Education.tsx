@@ -13,7 +13,6 @@ import {ScrollArea} from '@/components/ui/scroll-area'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
 import {useQueryClient} from '@tanstack/react-query'
 import {useDeleteEducationMutation} from '@/lib/education/mutations'
-import SmoothScrollProvider from '../providers/SmoothScrollProvider'
 import {sanitizeHtml} from '@/lib/utils'
 
 /**
@@ -89,9 +88,9 @@ const Education = (): JSX.Element => {
 					type: 'tween',
 					ease: 'easeInOut'
 				}}
-				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
+				className="absolute h-[700px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
 			>
-				<SmoothScrollProvider className="h-full w-full overflow-y-auto hide-scrollbar">
+				<div className="h-full w-full overflow-y-auto hide-scrollbar" data-lenis-prevent>
 					<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 						{currentEducations?.map(
 							(education) => (
@@ -140,7 +139,7 @@ const Education = (): JSX.Element => {
 							)
 						)}
 					</ul>
-				</SmoothScrollProvider>
+				</div>
 			</motion.div>
 		</div>
 	)

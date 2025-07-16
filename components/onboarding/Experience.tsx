@@ -12,7 +12,6 @@ import PopConfirm from '@/components/ui/pop-confirm'
 import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
 import {useDeleteExperienceMutation} from '@/lib/experience/mutations'
 import {useQueryClient} from '@tanstack/react-query'
-import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 import {sanitizeHtml} from '@/lib/utils'
 
 /**
@@ -83,9 +82,9 @@ const Experience = (): JSX.Element => {
 					type: 'tween',
 					ease: 'easeInOut'
 				}}
-				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2"
+				className="absolute h-[700px] w-[40%] right-16 top-1/2 -translate-y-1/2"
 			>
-				<SmoothScrollProvider className="h-full w-full overflow-y-auto hide-scrollbar">
+				<div className="h-full w-full overflow-y-auto hide-scrollbar" data-lenis-prevent>
 					<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 						{currentExperiences?.map(
 							(experience) => (
@@ -131,7 +130,7 @@ const Experience = (): JSX.Element => {
 							)
 						)}
 					</ul>
-				</SmoothScrollProvider>
+				</div>
 			</motion.div>
 		</div>
 	)
