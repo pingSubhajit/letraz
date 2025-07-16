@@ -1,23 +1,24 @@
 'use client'
 
-import {motion} from 'motion/react'
+import {AnimatePresence, motion} from 'motion/react'
 import {z} from 'zod'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {cn} from '@/lib/utils'
-import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {
 	OnboardingFormInput,
 	OnboardingFormSelect,
 	OnboardingRichTextInput
 } from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
+import {Checkbox} from '@/components/ui/checkbox'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {employmentTypes, Experience, ExperienceMutation, ExperienceMutationSchema} from '@/lib/experience/types'
-import {JSX} from 'react'
+import {JSX, useEffect, useState} from 'react'
 import {countries} from '@/lib/constants'
 import {useQueryClient} from '@tanstack/react-query'
 import {experienceQueryOptions} from '@/lib/experience/queries'
@@ -42,6 +43,24 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 	const router = useTransitionRouter()
 
 	const queryClient = useQueryClient()
+	const [formKey, setFormKey] = useState(0)
+	const [isCurrentLocal, setIsCurrentLocal] = useState(false)
+	const [userCountry, setUserCountry] = useState('IND')
+
+	// Get user's country from IP
+	useEffect(() => {
+		fetch('https://ipapi.co/json/')
+			.then(res => res.json())
+			.then(data => {
+				if (data.country_code) {
+					setUserCountry(data.country_code_iso3)
+				}
+			})
+			.catch(() => {
+				// Fallback to India if detection fails
+				setUserCountry('IND')
+			})
+	}, [])
 
 	const {mutateAsync, isPending} = useAddUserExperienceMutation({
 		onMutate: async (newExperience) => {
@@ -66,18 +85,50 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 		resolver: zodResolver(ExperienceMutationSchema),
 		defaultValues: {
 			company_name: '',
-			country: 'IND',
+			country: userCountry,
 			job_title: '',
 			city: '',
 			employment_type: employmentTypes[0].value,
-			started_from_month: null,
-			started_from_year: null,
-			finished_at_month: null,
-			finished_at_year: null,
+			started_from_month: undefined,
+			started_from_year: undefined,
+			finished_at_month: undefined,
+			finished_at_year: undefined,
 			current: false,
 			description: ''
 		}
 	})
+
+	// Watch the current field and keep local state in sync
+	const isCurrent = form.watch('current')
+
+	useEffect(() => {
+		setIsCurrentLocal(isCurrent)
+	}, [isCurrent])
+
+	// Update form country when userCountry changes
+	useEffect(() => {
+		if (userCountry) {
+			form.setValue('country', userCountry)
+		}
+	}, [userCountry, form])
+
+	// Clear end date fields when "current" is checked
+	useEffect(() => {
+		if (isCurrentLocal) {
+			form.setValue('finished_at_month', undefined)
+			form.setValue('finished_at_year', undefined)
+		}
+	}, [isCurrentLocal, form])
+
+	// Handle checkbox change
+	const handleCurrentChange = (checked: boolean) => {
+		setIsCurrentLocal(checked)
+		form.setValue('current', checked, {
+			shouldValidate: true,
+			shouldDirty: true,
+			shouldTouch: true
+		})
+	}
 
 	/**
 	 * Function to insert experience details into the database.
@@ -99,6 +150,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 			const newExperience = await insertExperience(values)
 			if (newExperience){
 				form.reset()
+				setFormKey(prev => prev + 1)
 			} else {
 				throw new Error('Failed to add experience')
 			}
@@ -220,7 +272,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between"
+						className="grid grid-cols-4 gap-8"
 					>
 						{/* Form field for start month */}
 						<FormField
@@ -261,39 +313,81 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 						/>
 
 						{/* Form field for end month */}
-						<FormField
-							disabled={isPending}
-							control={form.control}
-							name="finished_at_month"
-							render={({field}) => (
-								<FormItem className="w-full">
-									<OnboardingFormSelect
-										onChange={field.onChange}
-										value={field.value || ''}
-										options={months}
-										placeholder="End month"
-									/>
-									<FormLabel className="transition">Month of end</FormLabel>
-									<FormMessage/>
-								</FormItem>
-							)}
-						/>
+						<AnimatePresence>
+							{!isCurrentLocal && <motion.div
+								initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: 20}}
+								transition={{duration: 0.3}}
+							>
+								<FormField
+									disabled={isPending}
+									control={form.control}
+									name="finished_at_month"
+									render={({field}) => (
+										<FormItem className="w-full">
+											<OnboardingFormSelect
+												onChange={field.onChange}
+												value={field.value || ''}
+												options={months}
+												placeholder="End month"
+											/>
+											<FormLabel className="transition">Month of end</FormLabel>
+											<FormMessage/>
+										</FormItem>
+									)}
+								/>
+							</motion.div>}
+						</AnimatePresence>
 
 						{/* Form field for end year */}
+						<AnimatePresence>
+							{!isCurrentLocal && <motion.div
+								initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: 20}}
+								transition={{duration: 0.3}}
+							>
+								<FormField
+									disabled={isPending}
+									control={form.control}
+									name="finished_at_year"
+									render={({field}) => (
+										<FormItem className="w-full">
+											<OnboardingFormSelect
+												onChange={field.onChange}
+												value={field.value || ''}
+												options={years}
+												placeholder="End year"
+											/>
+											<FormLabel className="transition">Year of end</FormLabel>
+											<FormMessage/>
+										</FormItem>
+									)}
+								/>
+							</motion.div>}
+						</AnimatePresence>
+					</motion.div>
+
+					{/* Current checkbox */}
+					<motion.div
+						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+						transition={{delay: 0.4, duration: 0.7}}
+						className="flex items-center gap-8 justify-between"
+					>
 						<FormField
 							disabled={isPending}
 							control={form.control}
-							name="finished_at_year"
+							name="current"
 							render={({field}) => (
-								<FormItem className="w-full">
-									<OnboardingFormSelect
-										onChange={field.onChange}
-										value={field.value || ''}
-										options={years}
-										placeholder="End year"
-									/>
-									<FormLabel className="transition">Year of end</FormLabel>
-									<FormMessage/>
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={handleCurrentChange}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none">
+										<FormLabel className="text-sm font-medium cursor-pointer transition">
+											I currently work here
+										</FormLabel>
+									</div>
 								</FormItem>
 							)}
 						/>
@@ -310,7 +404,9 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 							name="description"
 							render={({field}) => (
 								<FormItem className="w-full">
-									<OnboardingRichTextInput placeholder="write a few things about what you learnt, the things you've build etc."
+									<OnboardingRichTextInput
+										key={formKey}
+										placeholder="write a few things about what you learnt, the things you've build etc."
 										value={field?.value || ''}
 										onChange={field?.onChange}
 									/>
