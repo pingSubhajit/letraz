@@ -34,6 +34,9 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
 // Helper to get next step
 export const getNextStep = (currentStep: OnboardingStep): OnboardingStep | null => {
 	const currentIndex = ONBOARDING_STEPS.indexOf(currentStep)
+	if (currentIndex === -1) {
+		throw new Error(`Invalid onboarding step: ${currentStep}`)
+	}
 	const nextIndex = currentIndex + 1
 	return nextIndex < ONBOARDING_STEPS.length ? ONBOARDING_STEPS[nextIndex] : null
 }
@@ -41,6 +44,9 @@ export const getNextStep = (currentStep: OnboardingStep): OnboardingStep | null 
 // Helper to get previous step
 export const getPreviousStep = (currentStep: OnboardingStep): OnboardingStep | null => {
 	const currentIndex = ONBOARDING_STEPS.indexOf(currentStep)
+	if (currentIndex === -1) {
+		throw new Error(`Invalid onboarding step: ${currentStep}`)
+	}
 	const previousIndex = currentIndex - 1
 	return previousIndex >= 0 ? ONBOARDING_STEPS[previousIndex] : null
 }

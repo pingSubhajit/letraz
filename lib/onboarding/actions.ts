@@ -1,7 +1,7 @@
 'use server'
 
 import {auth, clerkClient} from '@clerk/nextjs/server'
-import {getNextStep, ONBOARDING_STEPS, OnboardingMetadata, OnboardingStep} from './types'
+import {getNextStep, ONBOARDING_STEPS, OnboardingMetadata, OnboardingMetadataSchema, OnboardingStep} from './types'
 
 /**
  * Updates the user's current onboarding step
@@ -16,7 +16,7 @@ export const updateOnboardingStep = async (step: OnboardingStep): Promise<Onboar
 	const client = await clerkClient()
 	const user = await client.users.getUser(userId)
 
-	const currentMetadata = user.publicMetadata as OnboardingMetadata
+	const currentMetadata = OnboardingMetadataSchema.parse(user.publicMetadata || {})
 	const completedSteps = currentMetadata.completedSteps || []
 
 	// Add current step to completed steps if not already there

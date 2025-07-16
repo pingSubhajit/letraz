@@ -2,6 +2,7 @@
 
 import {useUser} from '@clerk/nextjs'
 import {OnboardingMetadata, OnboardingStep} from './types'
+import {ONBOARDING_STEPS} from '@/app/app/onboarding/types'
 
 /**
  * Hook to get the current onboarding state from the user's metadata
@@ -48,7 +49,7 @@ export const useIsStepCompleted = (step: OnboardingStep) => {
  */
 export const useOnboardingProgress = () => {
 	const {completedSteps} = useOnboardingState()
-	const totalSteps = 6 // welcome, about, personal-details, education, experience, resume
+	const totalSteps = ONBOARDING_STEPS.length // welcome, about, personal-details, education, experience, resume
 	const completedCount = completedSteps.length
 
 	return Math.round((completedCount / totalSteps) * 100)

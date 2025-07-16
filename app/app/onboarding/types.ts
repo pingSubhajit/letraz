@@ -1,8 +1,3 @@
-export enum OnboardingStep {
-	WELCOME = 'welcome',
-	ABOUT = 'about',
-	PERSONAL_DETAILS = 'personal-details',
-	EDUCATION = 'education',
-	EXPERIENCE = 'experience',
-	RESUME = 'resume'
-}
+import {OnboardingStep, OnboardingStepSchema} from '@/lib/onboarding/types'
+
+export const ONBOARDING_STEPS: OnboardingStep[] = OnboardingStepSchema.options
