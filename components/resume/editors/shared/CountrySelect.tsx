@@ -1,10 +1,11 @@
 'use client'
 
-import {FormField, FormItem, FormLabel, FormControl, FormMessage} from '@/components/ui/form'
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {countries} from '@/lib/constants'
 import Image from 'next/image'
 import {UseFormReturn} from 'react-hook-form'
+import {useEffect, useState} from 'react'
 
 interface CountrySelectProps {
   form: UseFormReturn<any>
@@ -21,6 +22,30 @@ const CountrySelect = ({
 	disabled = false,
 	placeholder = 'Select country'
 }: CountrySelectProps) => {
+	const [userCountry, setUserCountry] = useState<string | null>(null)
+
+	// Get user's country from IP
+	useEffect(() => {
+		fetch('https://ipapi.co/json/')
+			.then(res => res.json())
+			.then(data => {
+				if (data.country_code_iso3) {
+					setUserCountry(data.country_code_iso3)
+				}
+			})
+			.catch(() => {
+				// Fallback to India if detection fails
+				setUserCountry('IND')
+			})
+	}, [])
+
+	// Set form value when country is detected and field is empty
+	useEffect(() => {
+		if (userCountry && !form.getValues(name)) {
+			form.setValue(name, userCountry)
+		}
+	}, [userCountry, form, name])
+
 	return (
 		<FormField
 			control={form.control}
