@@ -11,6 +11,7 @@ import NotificationBell from '@/components/notifications/NotificationBell'
 
 const AppSidebar = () => {
 	const auth = useAuth()
+
 	return (
 		<AppSidebarContainer className="h-full px-4 pt-24 pb-8 flex flex-col items-center justify-between">
 			<Link href="/app"><Image src={logo} alt="Letraz logo" className=""/></Link>
@@ -21,7 +22,9 @@ const AppSidebar = () => {
 						<Cog6ToothIcon className="fill-primary size-[70%]"/>
 					</Button>
 				</Link>
-				<UserButton appearance={{elements: {button: 'w-full'}}}/>
+				<UserButton
+					appearance={{elements: {button: 'w-full'}}}
+				/>
 			</div>
 		</AppSidebarContainer>
 	)

@@ -22,6 +22,7 @@ import {countries} from '@/lib/constants'
 import {useQueryClient} from '@tanstack/react-query'
 import {experienceQueryOptions} from '@/lib/experience/queries'
 import {useAddUserExperienceMutation} from '@/lib/experience/mutations'
+import {updateOnboardingStep} from '@/lib/onboarding/actions'
 
 // Define the props for the ExperienceForm component
 type ExperienceFormProps = {
@@ -116,6 +117,8 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 				await insertExperience(values)
 			}
 
+			// Update onboarding progress
+			await updateOnboardingStep('experience')
 			router.push('/app/onboarding?step=resume')
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')

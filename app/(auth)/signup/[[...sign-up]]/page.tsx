@@ -1,7 +1,7 @@
 import {SignUp} from '@clerk/nextjs'
 
 const Page = () => {
-	return <SignUp />
+	return <SignUp fallbackRedirectUrl="/app" />
 }
 
 export default Page

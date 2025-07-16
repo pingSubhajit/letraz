@@ -28,7 +28,9 @@ export const metadata: Metadata = {
 	authors: [{name: 'Subhajit Kundu', url: portfolio}]
 }
 
-const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <ClerkProvider>
+const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <ClerkProvider
+	afterSignOutUrl="/"
+>
 	<ViewTransitions>
 		<html lang="en" suppressHydrationWarning suppressContentEditableWarning>
 			<PosthogProvider>
