@@ -36,7 +36,7 @@ const CategoryAutocomplete = ({
 
 	// Watch for changes in the form value and update input accordingly
 	const formValue = form.watch(name)
-	
+
 	useEffect(() => {
 		// Update input value when form value changes (e.g., from skill selection)
 		if (formValue !== inputValue) {
@@ -46,17 +46,15 @@ const CategoryAutocomplete = ({
 
 	// Filter categories based on input value
 	const suggestions = categories
-		.filter(category => 
-			category.toLowerCase().includes(inputValue.toLowerCase().trim())
-		)
+		.filter(category => category.toLowerCase().includes(inputValue.toLowerCase().trim()))
 		.sort((a, b) => {
 			// Exact matches first
 			const aExact = a.toLowerCase() === inputValue.toLowerCase()
 			const bExact = b.toLowerCase() === inputValue.toLowerCase()
-			
+
 			if (aExact && !bExact) return -1
 			if (!aExact && bExact) return 1
-			
+
 			// Then alphabetically
 			return a.localeCompare(b)
 		})

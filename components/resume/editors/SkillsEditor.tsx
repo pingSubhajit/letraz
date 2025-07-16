@@ -397,8 +397,10 @@ const SkillsEditor = ({className}: { className?: string }) => {
 											showLabel
 											defaultValue={field.value || ''}
 											onCategorySelect={(category) => {
-												// CategoryAutocomplete already updates the form value
-												// This callback can be used for additional logic if needed
+												/*
+												 * CategoryAutocomplete already updates the form value
+												 * This callback can be used for additional logic if needed
+												 */
 											}}
 										/>
 									)}
