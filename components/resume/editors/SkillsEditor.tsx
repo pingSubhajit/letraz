@@ -435,6 +435,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 							editingSubmitLabel="Update Skill"
 							addingSubmitLabel="Add Skill"
 							className="mt-2"
+							disabled={!form.watch('skill_id')}
 						/>
 					</form>
 				</Form>
