@@ -16,12 +16,13 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger
 } from '@/components/ui/collapsible'
-import {resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills} from '@/lib/skill/queries'
+import {resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills, useSkillCategories} from '@/lib/skill/queries'
 import {useAddSkillMutation, useRemoveSkillMutation, useUpdateSkillMutation} from '@/lib/skill/mutations'
 import {SkillMutation, SkillMutationSchema, skillLevels, ResumeSkill} from '@/lib/skill/types'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
+import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ProficiencySlider from '@/components/resume/editors/shared/ProficiencySlider'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {Input} from '@/components/ui/input'
@@ -51,6 +52,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	// Load skills data
 	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills()
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} = useGlobalSkills()
+	const {data: skillCategories = [], isLoading: isLoadingCategories} = useSkillCategories()
 
 	// Group skills by category
 	const skillsByCategory = useMemo(() => {
@@ -386,16 +388,19 @@ const SkillsEditor = ({className}: { className?: string }) => {
 									control={form.control}
 									name="category"
 									render={({field}) => (
-										<FormItem>
-											<FormLabel>Category (optional)</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="E.g., Programming Languages, Tools, etc."
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
+										<CategoryAutocomplete
+											categories={skillCategories}
+											name="category"
+											label="Category (optional)"
+											placeholder="E.g., Programming Languages, Tools, etc."
+											disabled={isSubmitting || isLoadingCategories}
+											showLabel
+											defaultValue={field.value || ''}
+											onCategorySelect={(category) => {
+												// CategoryAutocomplete already updates the form value
+												// This callback can be used for additional logic if needed
+											}}
+										/>
 									)}
 								/>
 

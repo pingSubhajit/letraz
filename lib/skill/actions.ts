@@ -181,3 +181,18 @@ export const createGlobalSkill = async (skillData: NewSkill): Promise<GlobalSkil
 		return handleErrors(error, 'create global skill')
 	}
 }
+
+/**
+ * Fetches all skill categories for a resume.
+ * @param {string} [resumeId='base'] - The ID of the resume. Defaults to 'base'.
+ * @returns {Promise<string[]>} Array of category names.
+ * @throws {Error} If API request fails.
+ */
+export const fetchSkillCategories = async (resumeId: string = 'base'): Promise<string[]> => {
+	try {
+		const data = await api.get<string[]>(`/resume/${resumeId}/skill/categories/`)
+		return data
+	} catch (error) {
+		return handleErrors(error, 'fetch skill categories')
+	}
+}
