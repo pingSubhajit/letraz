@@ -6,10 +6,11 @@ import {Input} from '@/components/ui/input'
 import {FormControl, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useFormContext} from 'react-hook-form'
 import {cn} from '@/lib/utils'
-import {Skill, useSkillSearch} from '@/lib/skill/hooks'
+import {useSkillSearch} from '@/lib/skill/hooks'
+import {GlobalSkill} from '@/lib/skill/types'
 
 interface SkillAutocompleteProps {
-	skills: Skill[]
+	skills: GlobalSkill[]
 	excludeSkillIds?: string[]
 	name: string
 	label?: string
@@ -69,7 +70,7 @@ const SkillAutocomplete = ({
 		}
 	}, [])
 
-	const handleSelectSuggestion = (skill: Skill & { isExcluded?: boolean }) => {
+	const handleSelectSuggestion = (skill: GlobalSkill & { isExcluded?: boolean }) => {
 		// Don't select excluded skills
 		if (skill.isExcluded) return
 
@@ -146,12 +147,18 @@ const SkillAutocomplete = ({
 
 	// Allow custom skills by using the input value directly
 	const handleBlur = () => {
-		// Only handle if there's input but no selection was made
-		if (inputValue.trim() && !form.getValues(name)) {
-			// Tell the parent about the custom skill
-			if (onSkillSelect) {
-				// For custom skills, pass null as ID and category
-				onSkillSelect('custom', inputValue, null)
+		// Handle custom skills when user types something that doesn't match existing skills
+		if (inputValue.trim()) {
+			// Check if the input matches any existing skill name
+			const matchingSkill = suggestions.find(skill => skill.name.toLowerCase() === inputValue.toLowerCase())
+
+			// If no exact match found, treat as custom skill
+			if (!matchingSkill) {
+				// Tell the parent about the custom skill
+				if (onSkillSelect) {
+					// For custom skills, pass 'custom' as ID and null as category
+					onSkillSelect('custom', inputValue, null)
+				}
 			}
 		}
 

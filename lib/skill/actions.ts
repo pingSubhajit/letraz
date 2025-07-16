@@ -1,6 +1,6 @@
 'use server'
 
-import {GlobalSkill, GlobalSkillSchema, ResumeSkill, ResumeSkillSchema, SkillMutation} from '@/lib/skill/types'
+import {GlobalSkill, GlobalSkillSchema, ResumeSkill, ResumeSkillSchema, SkillMutation, NewSkill} from '@/lib/skill/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 
@@ -13,7 +13,7 @@ export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
 	try {
 		const data = await api.get<GlobalSkill[]>('/skill/')
 
-		// Map the data and log each skill parsing result
+		// Parse each skill
 		const parsedSkills = data.map(skill => GlobalSkillSchema.parse(skill))
 
 		return parsedSkills
@@ -55,13 +55,33 @@ export const addSkillToResume = async (
 
 		// Handle custom skill vs existing skill
 		if (skillData.skill_id.startsWith('custom:')) {
-			// For custom skills, extract the name from skill_id and use the provided category
 			apiPayload.name = skillData.skill_id.substring(7) // Remove 'custom:' prefix
-			apiPayload.category = skillData.category
+			if (skillData.category?.trim()) {
+				apiPayload.category = skillData.category.trim()
+			}
 		} else {
-			// For existing skills, send the skill_id
-			apiPayload.skill_id = skillData.skill_id
-			apiPayload.category = skillData.category
+			let skillDetails: GlobalSkill | null = null
+			try {
+				skillDetails = await api.get<GlobalSkill>(`/skill/${skillData.skill_id}/`)
+			} catch {
+				// Fallback: fetch all global skills and find the matching one
+				const allSkills = await api.get<GlobalSkill[]>('/skill/')
+				skillDetails = allSkills.find(s => s.id === skillData.skill_id) || null
+			}
+			if (skillDetails) {
+				apiPayload.name = skillDetails.name
+				if (!skillData.category && skillDetails.category) {
+					apiPayload.category = skillDetails.category
+				}
+			}
+		}
+
+		/*
+		 * Only include category when it has a non-empty value. Sending an empty
+		 * string causes a validation error on the backend for existing skills.
+		 */
+		if (skillData.category?.trim()) {
+			apiPayload.category = skillData.category.trim()
 		}
 
 		const data = await api.post<ResumeSkill>(`/resume/${resumeId}/skill/`, apiPayload)
@@ -96,17 +116,30 @@ export const updateResumeSkill = async (
 		// Handle skill name changes
 		if (skillData.skill_id) {
 			if (skillData.skill_id.startsWith('custom:')) {
-				// For custom skills, extract the name
-				apiPayload.name = skillData.skill_id.substring(7) // Remove 'custom:' prefix
+				// For custom skills, extract the name from the custom format
+				apiPayload.name = skillData.skill_id.substring(7)
 			} else {
-				// For existing skills, use the skill_id
-				apiPayload.skill_id = skillData.skill_id
+				// For existing global skills, fetch the skill details to get the name
+				let skillDetails: GlobalSkill | null = null
+				try {
+					skillDetails = await api.get<GlobalSkill>(`/skill/${skillData.skill_id}/`)
+				} catch {
+					// Fallback: fetch all global skills and find the matching one
+					const allSkills = await api.get<GlobalSkill[]>('/skill/')
+					skillDetails = allSkills.find(s => s.id === skillData.skill_id) || null
+				}
+				if (skillDetails) {
+					apiPayload.name = skillDetails.name
+				}
 			}
 		}
 
-		// Include category if provided
+		/*
+		 * Always include category if provided, even if empty (user might want to clear it)
+		 * Use the category from the form, not from the global skill
+		 */
 		if (skillData.category !== undefined) {
-			apiPayload.category = skillData.category
+			apiPayload.category = skillData.category.trim() || null
 		}
 
 		const data = await api.patch<ResumeSkill>(`/resume/${resumeId}/skill/${skillId}/`, apiPayload)
@@ -131,5 +164,35 @@ export const removeSkillFromResume = async (
 		await api.delete(`/resume/${resumeId}/skill/${skillId}/`)
 	} catch (error) {
 		handleErrors(error, 'remove skill from resume')
+	}
+}
+
+/**
+ * Creates a new global skill in the database.
+ * @param {NewSkill} skillData - The skill data to create.
+ * @returns {Promise<GlobalSkill>} The newly created global skill.
+ * @throws {Error} If API request fails.
+ */
+export const createGlobalSkill = async (skillData: NewSkill): Promise<GlobalSkill> => {
+	try {
+		const data = await api.post<GlobalSkill>('/skill/', skillData)
+		return GlobalSkillSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'create global skill')
+	}
+}
+
+/**
+ * Fetches all skill categories for a resume.
+ * @param {string} [resumeId='base'] - The ID of the resume. Defaults to 'base'.
+ * @returns {Promise<string[]>} Array of category names.
+ * @throws {Error} If API request fails.
+ */
+export const fetchSkillCategories = async (resumeId: string = 'base'): Promise<string[]> => {
+	try {
+		const data = await api.get<string[]>(`/resume/${resumeId}/skill/categories/`)
+		return data
+	} catch (error) {
+		return handleErrors(error, 'fetch skill categories')
 	}
 }

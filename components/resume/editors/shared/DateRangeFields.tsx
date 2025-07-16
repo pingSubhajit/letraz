@@ -5,7 +5,7 @@ import {FormField, FormItem, FormLabel, FormControl, FormMessage} from '@/compon
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Checkbox} from '@/components/ui/checkbox'
 import {months, years} from '@/constants'
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion} from 'motion/react'
 import {UseFormReturn} from 'react-hook-form'
 
 interface DateRangeFieldsProps {
