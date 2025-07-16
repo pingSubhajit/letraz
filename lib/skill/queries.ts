@@ -1,5 +1,5 @@
 import {queryOptions, useQuery} from '@tanstack/react-query'
-import {fetchGlobalSkills, fetchResumeSkills} from '@/lib/skill/actions'
+import {fetchGlobalSkills, fetchResumeSkills, fetchSkillCategories} from '@/lib/skill/actions'
 import {GlobalSkill, ResumeSkill} from '@/lib/skill/types'
 
 /**
@@ -33,5 +33,22 @@ export const resumeSkillsQueryOptions = (resumeId: string = 'base') => queryOpti
 export const useCurrentResumeSkills = () => {
 	return useQuery<ResumeSkill[]>({
 		...resumeSkillsQueryOptions()
+	})
+}
+
+/**
+ * Query options for fetching skill categories for a resume
+ */
+export const skillCategoriesQueryOptions = (resumeId: string = 'base') => queryOptions<string[]>({
+	queryKey: ['skills', 'categories', resumeId],
+	queryFn: () => fetchSkillCategories(resumeId)
+})
+
+/**
+ * Query hook for fetching skill categories for the current resume
+ */
+export const useSkillCategories = () => {
+	return useQuery<string[]>({
+		...skillCategoriesQueryOptions()
 	})
 }

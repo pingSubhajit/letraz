@@ -16,12 +16,13 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger
 } from '@/components/ui/collapsible'
-import {resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills} from '@/lib/skill/queries'
+import {resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills, useSkillCategories} from '@/lib/skill/queries'
 import {useAddSkillMutation, useRemoveSkillMutation, useUpdateSkillMutation} from '@/lib/skill/mutations'
-import {SkillMutation, SkillMutationSchema, skillLevels} from '@/lib/skill/types'
+import {SkillMutation, SkillMutationSchema, skillLevels, ResumeSkill} from '@/lib/skill/types'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
+import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ProficiencySlider from '@/components/resume/editors/shared/ProficiencySlider'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {Input} from '@/components/ui/input'
@@ -43,6 +44,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
+	const [openSkillSearch, setOpenSkillSearch] = useState(false)
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const queryClient = useQueryClient()
@@ -50,13 +52,14 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	// Load skills data
 	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills()
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} = useGlobalSkills()
+	const {data: skillCategories = [], isLoading: isLoadingCategories} = useSkillCategories()
 
 	// Group skills by category
 	const skillsByCategory = useMemo(() => {
 		const categories: SkillsByCategory = {}
 		const uncategorized = 'Other Skills'
 
-		resumeSkills.forEach((skill:any, index:number) => {
+		resumeSkills.forEach((skill, index) => {
 			const category = skill.skill.category || uncategorized
 			if (!categories[category]) {
 				categories[category] = []
@@ -103,7 +106,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 			const skillDetails = globalSkills.find(gs => gs.id === newSkill.skill_id)
 
 			if (skillDetails) {
-				queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, (oldData: any) => {
+				queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, (oldData: ResumeSkill[] | undefined) => {
 					const data = oldData || []
 					return [...data, {
 						id: `temp-id-${Date.now()}`,
@@ -134,18 +137,19 @@ const SkillsEditor = ({className}: { className?: string }) => {
 
 			const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions().queryKey)
 
-			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, (oldData: any) => {
+			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, (oldData: ResumeSkill[] | undefined) => {
 				const dataArr = oldData || []
-				return dataArr.map((item: any) => item.id === id ? {
+				return dataArr.map((item: ResumeSkill) => item.id === id ? {
 					...item,
-					level: data.level
+					level: data.level ?? null
 				} : item)
 			})
 
 			return {prevSkills}
 		},
-		onError: (err, _updateData, context: any) => {
-			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, context?.prevSkills)
+		onError: (err, _updateData, context: unknown) => {
+			const contextData = context as { prevSkills: ResumeSkill[] | undefined } | undefined
+			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, contextData?.prevSkills)
 			toast.error(`Failed to update skill: ${err.message}`)
 		},
 		onSettled: () => {
@@ -166,15 +170,16 @@ const SkillsEditor = ({className}: { className?: string }) => {
 
 			const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions().queryKey)
 
-			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, (oldData: any) => {
+			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, (oldData: ResumeSkill[] | undefined) => {
 				const data = oldData || []
-				return data.filter((item: any) => item.id !== skillId)
+				return data.filter((item: ResumeSkill) => item.id !== skillId)
 			})
 
 			return {prevSkills}
 		},
-		onError: (err, _skillId, context: any) => {
-			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, context?.prevSkills)
+		onError: (err, _skillId, context: unknown) => {
+			const contextData = context as { prevSkills: ResumeSkill[] | undefined } | undefined
+			queryClient.setQueryData(resumeSkillsQueryOptions().queryKey, contextData?.prevSkills)
 			toast.error(`Failed to remove skill: ${err.message}`)
 		},
 		onSettled: () => {
@@ -220,49 +225,50 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		})
 
 	const onSubmit = async (values: SkillMutation) => {
-		try {
-			// Check if we're adding a new skill (not editing)
-			if (editingIndex === null) {
-				// Check if the skill is already added to the resume
-				let isDuplicate = false
-				let skillName = ''
+		// Check if we're adding a new skill (not editing)
+		if (editingIndex === null) {
+			// Check if the skill is already added to the resume
+			let isDuplicate = false
+			let skillName = ''
 
-				if (values.skill_id.startsWith('custom:')) {
-					// For custom skills, extract the name from the ID
-					skillName = values.skill_id.substring(7)
-					isDuplicate = resumeSkills.some(
-						rs => rs.skill.name.toLowerCase() === skillName.toLowerCase()
-					)
-				} else {
-					// For existing skills, check by ID
-					isDuplicate = resumeSkills.some(rs => rs.skill.id === values.skill_id)
-
-					// Get the skill name for the message
-					const globalSkill = globalSkills.find(gs => gs.id === values.skill_id)
-					if (globalSkill) {
-						skillName = globalSkill.name
-					}
-				}
-
-				// If duplicate, show a warning and don't proceed
-				if (isDuplicate) {
-					toast.warning(`"${skillName}" is already added to your resume.`)
-					return
-				}
-
-				await addSkill(values)
+			if (values.skill_id.startsWith('custom:')) {
+				// For custom skills, extract the name from the ID
+				skillName = values.skill_id.substring(7)
+				isDuplicate = resumeSkills.some(
+					rs => rs.skill.name.toLowerCase() === skillName.toLowerCase()
+				)
 			} else {
-				const skillId = resumeSkills[editingIndex]?.id
-				await updateSkill({id: skillId, data: values})
+				// For existing skills, check by ID
+				isDuplicate = resumeSkills.some(rs => rs.skill.id === values.skill_id)
+
+				// Get the skill name for the message
+				const globalSkill = globalSkills.find(gs => gs.id === values.skill_id)
+				if (globalSkill) {
+					skillName = globalSkill.name
+				}
 			}
 
-			form.reset({skill_id: '', level: 'INT', category: ''})
-			setView('list')
-			setEditingIndex(null)
-			setSearchQuery('')
-		} catch (error) {
-			// Error already handled by the mutation's onError callback
+			// If duplicate, show a warning and don't proceed
+			if (isDuplicate) {
+				toast.warning(`"${skillName}" is already added to your resume.`)
+				return
+			}
+
+			await addSkill(values)
+		} else {
+			const skillId = resumeSkills[editingIndex]?.id
+			await updateSkill({id: skillId, data: values})
 		}
+
+		form.reset({skill_id: '', level: 'INT', category: ''})
+		setView('list')
+		setEditingIndex(null)
+		setSearchQuery('')
+	}
+
+	const handleSkillSelect = (skillId: string) => {
+		form.setValue('skill_id', skillId)
+		setOpenSkillSearch(false)
 	}
 
 	const handleEdit = (index: number) => {
@@ -286,19 +292,15 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	}
 
 	const handleDelete = async (id: string) => {
-		try {
-			await removeSkill(id)
-			if (editingIndex !== null && resumeSkills[editingIndex]?.id === id) {
-				setEditingIndex(null)
-				form.reset({
-					skill_id: '',
-					level: 'INT',
-					category: ''
-				})
-				setView('list')
-			}
-		} catch (error) {
-			// Error already handled by the mutation's onError callback
+		await removeSkill(id)
+		if (editingIndex !== null && resumeSkills[editingIndex]?.id === id) {
+			setEditingIndex(null)
+			form.reset({
+				skill_id: '',
+				level: 'INT',
+				category: ''
+			})
+			setView('list')
 		}
 	}
 
@@ -356,15 +358,22 @@ const SkillsEditor = ({className}: { className?: string }) => {
 												disabled={isSubmitting || isLoadingGlobalSkills}
 												defaultValue={editingIndex !== null ? resumeSkills[editingIndex]?.skill.name : ''}
 												onSkillSelect={(skillId, skillName, category) => {
-													// For custom skills, set a custom ID format
+												// For custom skills, set a custom ID format
 													if (skillId === 'custom') {
 														form.setValue('skill_id', `custom:${skillName}`)
-														// Clear category for custom skills
-														form.setValue('category', '')
-													} else {
-														// For existing skills, populate the category
+														// Only clear category for custom skills if we're adding a new skill (not editing)
+														if (editingIndex === null) {
+															form.setValue('category', '')
+														}
+													// When editing, preserve the existing category
+													} else if (skillId) {
+													// For existing skills, populate the category
 														form.setValue('category', category || '')
 													}
+												/*
+												 * Don't update category when skillId is empty (user is typing/clearing)
+												 * This preserves the existing category when editing
+												 */
 												}}
 											/>
 											<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
@@ -379,16 +388,21 @@ const SkillsEditor = ({className}: { className?: string }) => {
 									control={form.control}
 									name="category"
 									render={({field}) => (
-										<FormItem>
-											<FormLabel>Category (optional)</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="E.g., Programming Languages, Tools, etc."
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
+										<CategoryAutocomplete
+											categories={skillCategories}
+											name="category"
+											label="Category (optional)"
+											placeholder="E.g., Programming Languages, Tools, etc."
+											disabled={isSubmitting || isLoadingCategories}
+											showLabel
+											defaultValue={field.value || ''}
+											onCategorySelect={(category) => {
+												/*
+												 * CategoryAutocomplete already updates the form value
+												 * This callback can be used for additional logic if needed
+												 */
+											}}
+										/>
 									)}
 								/>
 
@@ -421,6 +435,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 							editingSubmitLabel="Update Skill"
 							addingSubmitLabel="Add Skill"
 							className="mt-2"
+							disabled={!form.watch('skill_id')}
 						/>
 					</form>
 				</Form>
@@ -448,7 +463,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 					Error loading skills. Please try again later.
 				</div>
 			) : (
-				<div ref={parent} className="space-y-6">
+				<div ref={parent} className="space-y-6 overflow-y-auto">
 					{Object.keys(skillsByCategory).length > 0 ? (
 						<div className="space-y-4">
 							{Object.entries(skillsByCategory).map(([category, skills]) => (

@@ -58,41 +58,6 @@ export const skillLevels = [
 	}
 ]
 
-export const employmentTypes = [
-	{
-		value: 'FULL_TIME',
-		label: 'Full-time'
-	},
-	{
-		value: 'PART_TIME',
-		label: 'Part-time'
-	},
-	{
-		value: 'SELF_EMPLOYED',
-		label: 'Self-employed'
-	},
-	{
-		value: 'FREELANCE',
-		label: 'Freelance'
-	},
-	{
-		value: 'CONTRACT',
-		label: 'Contract'
-	},
-	{
-		value: 'INTERNSHIP',
-		label: 'Internship'
-	},
-	{
-		value: 'APPRENTICESHIP',
-		label: 'Apprenticeship'
-	},
-	{
-		value: 'SEASONAL',
-		label: 'Seasonal'
-	}
-]
-
 /*
  * Schema for Resume Skill (the connection between a skill and a resume)
  */
@@ -110,7 +75,7 @@ export const SkillMutationSchema = z.object({
 	skill_id: z.string({
 		required_error: 'Please select a skill'
 	}),
-	level: z.string().nullable(),
+	level: SkillLevelEnum.nullable(),
 	category: z.string().optional()
 })
 
