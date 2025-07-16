@@ -3,8 +3,11 @@ import {PlayIcon} from '@heroicons/react/24/solid'
 import {Button} from '@/components/ui/button'
 import {ChevronRight} from 'lucide-react'
 import {Link} from 'next-view-transitions'
+import {updateOnboardingStep} from '@/lib/onboarding/actions'
 
 const Welcome = () => {
+	updateOnboardingStep('welcome')
+
 	return (
 		<div className="min-h-dvh">
 			{/* HEADING TEXT */}

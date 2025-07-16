@@ -16,6 +16,7 @@ import {useUpdateUserInfoMutation} from '@/lib/user-info/mutations'
 import * as Sentry from '@sentry/nextjs'
 import {useQuery} from '@tanstack/react-query'
 import {userInfoQueryOptions} from '@/lib/user-info/queries'
+import {updateOnboardingStep} from '@/lib/onboarding/actions'
 
 
 /**
@@ -29,7 +30,9 @@ const PersonalDetailsForm = ({className}: { className?: string }): JSX.Element =
 	const router = useTransitionRouter()
 
 	const {mutateAsync, isPending} = useUpdateUserInfoMutation({
-		onSuccess: () => {
+		onSuccess: async () => {
+			// Update onboarding progress
+			await updateOnboardingStep('personal-details')
 			router.push('/app/onboarding?step=education')
 		},
 		onError: (error) => {

@@ -23,6 +23,7 @@ import {useQueryClient} from '@tanstack/react-query'
 
 import {educationOptions} from '@/lib/education/queries'
 import {useAddEducationMutation} from '@/lib/education/mutations'
+import {updateOnboardingStep} from '@/lib/onboarding/actions'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -122,6 +123,8 @@ const EducationForm = ({
 				await insertEducation(values)
 			}
 
+			// Update onboarding progress
+			await updateOnboardingStep('education')
 			router.push('/app/onboarding?step=experience')
 		} catch (error) {
 			toast.error('Failed to update education, please try again')
