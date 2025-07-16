@@ -12,6 +12,7 @@ import PopConfirm from '@/components/ui/pop-confirm'
 import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
 import {useDeleteExperienceMutation} from '@/lib/experience/mutations'
 import {useQueryClient} from '@tanstack/react-query'
+import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 
 /**
  * Experience component to display and manage user's experience details.
@@ -81,53 +82,55 @@ const Experience = (): JSX.Element => {
 					type: 'tween',
 					ease: 'easeInOut'
 				}}
-				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
+				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2"
 			>
-				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
-					{currentExperiences?.map(
-						(experience) => (
-							<li
-								key={experience.id}
-								className={`bg-white rounded-xl py-4 px-6 shadow-lg relative transition-all duration-300 ease-in-out group ${
-									experience.description ? 'hover:shadow-xl cursor-pointer' : ''
-								}`}
-							>
-								<PopConfirm
-									triggerElement={
-										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10">
-											<X size={16} />
-										</button>
-									}
-									message="Are you sure you want to delete this experience?"
-									onYes={() => handleDeleteExperience(experience.id)}
-								/>
-								<p className="truncate font-medium text-xl">
-									{experience.job_title && experience.job_title + ' '}
-									{experience.job_title && 'in'} {experience.company_name}
-								</p>
-								<p className="mt-1 text-sm">
-									{experience.started_from_month && experience.started_from_year && 'From '}
-									{experience.started_from_month && months.find(month => parseInt(month.value) === experience.started_from_month)?.label} {experience.started_from_year}
+				<SmoothScrollProvider className="h-full w-full overflow-y-auto hide-scrollbar">
+					<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
+						{currentExperiences?.map(
+							(experience) => (
+								<li
+									key={experience.id}
+									className={`bg-white rounded-xl py-4 px-6 shadow-lg relative transition-all duration-300 ease-in-out group ${
+										experience.description ? 'hover:shadow-xl cursor-pointer' : ''
+									}`}
+								>
+									<PopConfirm
+										triggerElement={
+											<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10">
+												<X size={16} />
+											</button>
+										}
+										message="Are you sure you want to delete this experience?"
+										onYes={() => handleDeleteExperience(experience.id)}
+									/>
+									<p className="truncate font-medium text-xl">
+										{experience.job_title && experience.job_title + ' '}
+										{experience.job_title && 'in'} {experience.company_name}
+									</p>
+									<p className="mt-1 text-sm">
+										{experience.started_from_month && experience.started_from_year && 'From '}
+										{experience.started_from_month && months.find(month => parseInt(month.value) === experience.started_from_month)?.label} {experience.started_from_year}
 
-									{experience.finished_at_month && experience.finished_at_year && ' until '}
-									{experience.finished_at_month && months.find(month => parseInt(month.value) === experience.finished_at_month)?.label} {experience.finished_at_year}
-								</p>
+										{experience.finished_at_month && experience.finished_at_year && ' until '}
+										{experience.finished_at_month && months.find(month => parseInt(month.value) === experience.finished_at_month)?.label} {experience.finished_at_year}
+									</p>
 
-								{/* Expandable description section */}
-								{experience.description && (
-									<div className="mt-3 max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:max-h-48 group-hover:opacity-100">
-										<div className="border-t border-gray-200">
-											<div
-												className="prose prose-sm max-w-none text-gray-700 max-h-44 overflow-hidden"
-												dangerouslySetInnerHTML={{__html: experience.description}}
-											/>
+									{/* Expandable description section */}
+									{experience.description && (
+										<div className="mt-3 max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:max-h-48 group-hover:opacity-100">
+											<div className="border-t border-gray-200">
+												<div
+													className="prose prose-sm max-w-none text-gray-700 max-h-44 overflow-hidden"
+													dangerouslySetInnerHTML={{__html: experience.description}}
+												/>
+											</div>
 										</div>
-									</div>
-								)}
-							</li>
-						)
-					)}
-				</ul>
+									)}
+								</li>
+							)
+						)}
+					</ul>
+				</SmoothScrollProvider>
 			</motion.div>
 		</div>
 	)
