@@ -1,4 +1,4 @@
-import {OnboardingStep as OnboardingStepType} from '@/lib/onboarding/types'
+import {OnboardingStep as OnboardingStepType, OnboardingStepSchema} from '@/lib/onboarding/types'
 
 // Export the type for TypeScript usage
 export type OnboardingStep = OnboardingStepType
@@ -12,3 +12,5 @@ export const OnboardingStep = {
 	RESUME: 'resume' as const
 } as const
 
+// Also export the array version if needed elsewhere
+export const ONBOARDING_STEPS: OnboardingStepType[] = OnboardingStepSchema.options
