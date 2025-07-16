@@ -13,6 +13,7 @@ import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/qu
 import {useDeleteExperienceMutation} from '@/lib/experience/mutations'
 import {useQueryClient} from '@tanstack/react-query'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
+import {sanitizeHtml} from '@/lib/utils'
 
 /**
  * Experience component to display and manage user's experience details.
@@ -121,7 +122,7 @@ const Experience = (): JSX.Element => {
 											<div className="border-t border-gray-200">
 												<div
 													className="prose prose-sm max-w-none text-gray-700 max-h-44 overflow-hidden"
-													dangerouslySetInnerHTML={{__html: experience.description}}
+													dangerouslySetInnerHTML={{__html: sanitizeHtml(experience.description)}}
 												/>
 											</div>
 										</div>

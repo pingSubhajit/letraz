@@ -14,6 +14,7 @@ import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
 import {useQueryClient} from '@tanstack/react-query'
 import {useDeleteEducationMutation} from '@/lib/education/mutations'
 import SmoothScrollProvider from '../providers/SmoothScrollProvider'
+import {sanitizeHtml} from '@/lib/utils'
 
 /**
  * Education component to display and manage user's education details.
@@ -130,7 +131,7 @@ const Education = (): JSX.Element => {
 											<div className="border-t border-gray-200">
 												<div
 													className="prose prose-sm max-w-none text-gray-700 max-h-44 overflow-hidden"
-													dangerouslySetInnerHTML={{__html: education.description}}
+													dangerouslySetInnerHTML={{__html: sanitizeHtml(education.description)}}
 												/>
 											</div>
 										</div>
