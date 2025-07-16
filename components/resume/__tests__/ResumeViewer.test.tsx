@@ -1,5 +1,4 @@
 // --- window.matchMedia mock setup (must be first) ---
-const originalWindow = global.window
 const mockMatchMedia = vi.fn().mockImplementation(query => ({
 	matches: false,
 	media: query,
@@ -84,8 +83,6 @@ afterEach(() => {
 // --- Helper functions ---
 const createMockResume = (): Resume => ({
 	id: 'resume-1',
-	user: 'user-1',
-	title: 'My Resume',
 	sections: [
 		{
 			id: 'section-1',
@@ -102,31 +99,42 @@ const createMockResume = (): Resume => ({
 				current: false,
 				created_at: '',
 				updated_at: '',
-				start_date: '2020-01-01',
-				end_date: '2024-01-01',
+				started_from_month: 1,
+				started_from_year: 2025,
+				finished_at_month: 12,
+				finished_at_year: 2025,
 				degree: 'BSc',
-				gpa: '4.0',
 				description: 'desc'
 			}
 		}
 	],
-	created_at: '',
-	updated_at: '',
-	theme: 'DEFAULT_THEME',
-	personal_info: {
+	user: {
 		id: 'pi-1',
-		user: 'user-1',
-		resume: 'resume-1',
-		name: 'John Doe',
+		first_name: 'John',
+		last_name: 'Doe',
 		email: 'john@example.com',
 		phone: '123',
 		address: '123 St',
 		city: 'City',
-		country: 'US',
-		postal_code: '12345',
-		summary: 'summary',
+		country: {code: 'USA', name: 'United States of America'},
+		postal: '12345',
+		profile_text: 'summary',
 		created_at: '',
 		updated_at: ''
+	},
+	base: true,
+	job: {
+		title: 'Software Engineer',
+		job_url: 'https://example.com/job',
+		company_name: 'Tech Corp',
+		location: 'Remote',
+		currency: 'USD',
+		salary_max: 100000,
+		salary_min: 80000,
+		requirements: ['JavaScript', 'React'],
+		description: 'Software development role',
+		responsibilities: ['Code development', 'Testing'],
+		benefits: ['Health insurance', 'Remote work']
 	}
 })
 
@@ -165,21 +173,20 @@ describe('ResumeViewer', () => {
 	})
 
 	it('throws when window is undefined (SSR)', () => {
-		/*
+		// Store original window
+		const originalWindow = global.window
+
+		/**
 		 * Remove window for this test
-		 * @ts-ignore
+		 * @ts-expect-error - Intentionally setting to undefined for SSR test
 		 */
-		delete global.window
+		global.window = undefined as any
+
 		expect(() => {
 			render(<ResumeViewer resume={createMockResume()} />)
 		}).toThrow()
+
 		// Restore window for other tests
-		Object.defineProperty(global, 'window', {
-			value: {
-				matchMedia: mockMatchMedia
-			},
-			writable: true,
-			configurable: true
-		})
+		global.window = originalWindow
 	})
 })
