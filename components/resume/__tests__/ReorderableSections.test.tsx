@@ -141,23 +141,43 @@ const createMockSection = (id: string, type: 'Education' | 'Experience', index: 
 	type,
 	data: type === 'Education' ? {
 		id: `edu-${id}`,
-		institution: `University ${id}`,
+		user: 'user-123',
+		resume_section: id,
+		institution_name: `University ${id}`,
 		degree: 'Bachelor',
 		field_of_study: 'Computer Science',
-		location: 'City',
-		start_date: '2020-01-01',
-		end_date: '2024-01-01',
-		gpa: '3.8',
-		description: 'Education description'
+		country: {
+			code: 'USA',
+			name: 'United States'
+		},
+		started_from_month: 9,
+		started_from_year: 2020,
+		finished_at_month: 5,
+		finished_at_year: 2024,
+		current: false,
+		description: 'Education description',
+		created_at: '2023-01-01T00:00:00Z',
+		updated_at: '2023-01-01T00:00:00Z'
 	} : {
 		id: `exp-${id}`,
-		company: `Company ${id}`,
+		user: 'user-123',
+		resume_section: id,
+		company_name: `Company ${id}`,
 		job_title: 'Developer',
-		location: 'Remote',
-		start_date: '2024-01-01',
-		end_date: null,
-		is_current: true,
-		description: 'Work description'
+		country: {
+			code: 'USA',
+			name: 'United States'
+		},
+		city: 'Remote',
+		employment_type: 'flt',
+		started_from_month: 1,
+		started_from_year: 2024,
+		finished_at_month: null,
+		finished_at_year: null,
+		current: true,
+		description: 'Work description',
+		created_at: '2023-01-01T00:00:00Z',
+		updated_at: '2023-01-01T00:00:00Z'
 	}
 })
 
@@ -588,12 +608,31 @@ describe('ReorderableSections', () => {
 		})
 
 		it('handles invalid section data gracefully', () => {
-			const invalidSection = {
+			const invalidSection: ResumeSection = {
 				id: 'invalid',
 				resume: 'resume-123',
 				index: 0,
 				type: 'Education' as const,
-				data: null
+				data: {
+					id: 'invalid-edu',
+					user: 'user-123',
+					resume_section: 'invalid',
+					institution_name: '',
+					degree: '',
+					field_of_study: '',
+					country: {
+						code: '',
+						name: ''
+					},
+					started_from_month: 1,
+					started_from_year: 2020,
+					finished_at_month: null,
+					finished_at_year: null,
+					current: false,
+					description: '',
+					created_at: '2023-01-01T00:00:00Z',
+					updated_at: '2023-01-01T00:00:00Z'
+				}
 			}
 			const renderSection = createMockRenderSection()
 

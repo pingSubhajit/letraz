@@ -62,11 +62,10 @@ const createMockResumeData = (): Resume => ({
 		last_name: 'Doe',
 		email: 'john.doe@example.com',
 		phone: '+1234567890',
-		location: 'New York, NY',
 		website: 'https://johndoe.com',
-		linkedin: 'https://linkedin.com/in/johndoe',
-		github: 'https://github.com/johndoe',
-		bio: 'Software developer with 5 years of experience'
+		profile_text: 'Software developer with 5 years of experience',
+		created_at: '2023-01-01T00:00:00Z',
+		updated_at: '2023-01-01T00:00:00Z'
 	},
 	job: {
 		title: 'Software Engineer',
@@ -89,14 +88,23 @@ const createMockResumeData = (): Resume => ({
 			type: 'Education',
 			data: {
 				id: 'edu-1',
-				institution: 'Test University',
+				user: 'user-123',
+				resume_section: 'section-1',
+				institution_name: 'Test University',
 				degree: 'Bachelor of Science',
 				field_of_study: 'Computer Science',
-				location: 'Boston, MA',
-				start_date: '2018-09-01',
-				end_date: '2022-05-01',
-				gpa: '3.8',
-				description: 'Studied computer science'
+				country: {
+					code: 'USA',
+					name: 'United States'
+				},
+				started_from_month: 9,
+				started_from_year: 2018,
+				finished_at_month: 5,
+				finished_at_year: 2022,
+				current: false,
+				description: 'Studied computer science',
+				created_at: '2023-01-01T00:00:00Z',
+				updated_at: '2023-01-01T00:00:00Z'
 			}
 		},
 		{
@@ -106,13 +114,24 @@ const createMockResumeData = (): Resume => ({
 			type: 'Experience',
 			data: {
 				id: 'exp-1',
-				company: 'Tech Corp',
+				user: 'user-123',
+				resume_section: 'section-2',
+				company_name: 'Tech Corp',
 				job_title: 'Software Engineer',
-				location: 'San Francisco, CA',
-				start_date: '2022-06-01',
-				end_date: '2024-01-01',
-				is_current: false,
-				description: 'Worked on web applications'
+				country: {
+					code: 'USA',
+					name: 'United States'
+				},
+				city: 'San Francisco',
+				employment_type: 'flt',
+				started_from_month: 6,
+				started_from_year: 2022,
+				finished_at_month: 1,
+				finished_at_year: 2024,
+				current: false,
+				description: 'Worked on web applications',
+				created_at: '2023-01-01T00:00:00Z',
+				updated_at: '2023-01-01T00:00:00Z'
 			}
 		}
 	]
