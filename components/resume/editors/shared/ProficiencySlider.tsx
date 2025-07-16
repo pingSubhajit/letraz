@@ -257,11 +257,14 @@ const ProficiencySlider = ({
 		}
 	}, [normalizedValue, levelIndex, levels])
 
-	// Cleanup timeout on unmount
+	// Cleanup timeout and audio context on unmount
 	useEffect(() => {
 		return () => {
 			if (magnetTimeoutRef.current) {
 				clearTimeout(magnetTimeoutRef.current)
+			}
+			if (audioContextRef.current) {
+				audioContextRef.current.close()
 			}
 		}
 	}, [])
