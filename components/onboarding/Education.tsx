@@ -89,16 +89,19 @@ const Education = (): JSX.Element => {
 				}}
 				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
 			>
-				<h3 className="text-center text-3xl font-medium">Educations</h3>
-
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 					{currentEducations?.map(
 						(education) => (
 							// EDUCATION ITEM
-							<li key={education.id} className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
+							<li
+								key={education.id}
+								className={`bg-white rounded-xl py-4 px-6 shadow-lg relative transition-all duration-300 ease-in-out group ${
+									education.description ? 'hover:shadow-xl cursor-pointer' : ''
+								}`}
+							>
 								<PopConfirm
 									triggerElement={
-										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10">
 											<X size={16} />
 										</button>
 									}
@@ -118,6 +121,18 @@ const Education = (): JSX.Element => {
 									{education.finished_at_month && education.finished_at_year && ' until '}
 									{education.finished_at_month && months.find(month => parseInt(month.value) === education.finished_at_month)?.label} {education.finished_at_year?.toString()}
 								</p>
+
+								{/* Expandable description section */}
+								{education.description && (
+									<div className="mt-3 max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:max-h-48 group-hover:opacity-100">
+										<div className="border-t border-gray-200">
+											<div
+												className="prose prose-sm max-w-none text-gray-700 max-h-44 overflow-hidden"
+												dangerouslySetInnerHTML={{__html: education.description}}
+											/>
+										</div>
+									</div>
+								)}
 							</li>
 						)
 					)}

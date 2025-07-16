@@ -1,14 +1,12 @@
 'use client'
 
 import TextAnimate from '@/components/animations/TextAnimations'
-import {JSX, useState} from 'react'
+import {JSX} from 'react'
 import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import ExperienceForm from '@/components/onboarding/ExperienceForm'
 import {months} from '@/constants'
 import {X} from 'lucide-react'
-import {deleteExperienceFromDB} from '@/lib/experience/actions'
-import {Experience as ExperienceType} from '@/lib/experience/types'
 import {toast} from 'sonner'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
@@ -85,15 +83,18 @@ const Experience = (): JSX.Element => {
 				}}
 				className="absolute h-[512px] w-[40%] right-16 top-1/2 -translate-y-1/2 overflow-auto"
 			>
-				<h3 className="text-center text-3xl font-medium">Experiences</h3>
-
 				<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
 					{currentExperiences?.map(
 						(experience) => (
-							<li key={experience.id } className="bg-white rounded-xl py-4 px-6 shadow-lg relative">
+							<li
+								key={experience.id}
+								className={`bg-white rounded-xl py-4 px-6 shadow-lg relative transition-all duration-300 ease-in-out group ${
+									experience.description ? 'hover:shadow-xl cursor-pointer' : ''
+								}`}
+							>
 								<PopConfirm
 									triggerElement={
-										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+										<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10">
 											<X size={16} />
 										</button>
 									}
@@ -111,6 +112,18 @@ const Experience = (): JSX.Element => {
 									{experience.finished_at_month && experience.finished_at_year && ' until '}
 									{experience.finished_at_month && months.find(month => parseInt(month.value) === experience.finished_at_month)?.label} {experience.finished_at_year}
 								</p>
+
+								{/* Expandable description section */}
+								{experience.description && (
+									<div className="mt-3 max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:max-h-48 group-hover:opacity-100">
+										<div className="border-t border-gray-200">
+											<div
+												className="prose prose-sm max-w-none text-gray-700 max-h-44 overflow-hidden"
+												dangerouslySetInnerHTML={{__html: experience.description}}
+											/>
+										</div>
+									</div>
+								)}
 							</li>
 						)
 					)}
