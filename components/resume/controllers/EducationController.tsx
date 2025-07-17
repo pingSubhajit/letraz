@@ -5,7 +5,7 @@ import {sanitizeHtml} from '@/lib/utils'
 
 // Types for the processed data
 export interface EducationData {
-  id: string
+  educationId:string
   institution: {
     hasInstitution: boolean
     name?: string
@@ -107,7 +107,7 @@ export const useEducationController = (
 		}
 
 		return {
-			id: education.id,
+			educationId: education.id,
 			institution,
 			dates,
 			degree,
