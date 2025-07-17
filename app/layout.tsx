@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <ClerkProvider>
 	<ViewTransitions>
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning suppressContentEditableWarning>
 			<PosthogProvider>
 				<body className={`${modelica.className} ${plusJakartaSans.variable}`}>
 					<APIProvider>
