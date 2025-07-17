@@ -13,24 +13,24 @@ vi.mock('../actions')
 describe('Experience Mutations', () => {
 	beforeEach(async () => {
 		vi.clearAllMocks()
-		
+
 		// Setup default mock implementations
 		const mutations = vi.mocked(await import('../mutations'))
-		
+
 		mutations.useAddUserExperienceMutation.mockReturnValue({
 			mutateAsync: vi.fn(() => Promise.resolve()),
 			isPending: false,
 			isError: false,
 			error: null
 		} as any)
-		
+
 		mutations.useUpdateExperienceMutation.mockReturnValue({
 			mutateAsync: vi.fn(() => Promise.resolve()),
 			isPending: false,
 			isError: false,
 			error: null
 		} as any)
-		
+
 		mutations.useDeleteExperienceMutation.mockReturnValue({
 			mutateAsync: vi.fn(() => Promise.resolve()),
 			isPending: false,
@@ -51,12 +51,12 @@ describe('Experience Mutations', () => {
 
 		it('should be mockable', async () => {
 			const {useAddUserExperienceMutation} = vi.mocked(await import('../mutations'))
-			
+
 			expect(useAddUserExperienceMutation).toHaveBeenCalledTimes(0)
-			
+
 			// Call the mocked function
 			const result = useAddUserExperienceMutation()
-			
+
 			expect(useAddUserExperienceMutation).toHaveBeenCalledTimes(1)
 			expect(result).toBeDefined()
 			expect(result.mutateAsync).toBeDefined()
@@ -72,12 +72,12 @@ describe('Experience Mutations', () => {
 
 		it('should be mockable', async () => {
 			const {useUpdateExperienceMutation} = vi.mocked(await import('../mutations'))
-			
+
 			expect(useUpdateExperienceMutation).toHaveBeenCalledTimes(0)
-			
+
 			// Call the mocked function
 			const result = useUpdateExperienceMutation()
-			
+
 			expect(useUpdateExperienceMutation).toHaveBeenCalledTimes(1)
 			expect(result).toBeDefined()
 			expect(result.mutateAsync).toBeDefined()
@@ -93,16 +93,16 @@ describe('Experience Mutations', () => {
 
 		it('should be mockable', async () => {
 			const {useDeleteExperienceMutation} = vi.mocked(await import('../mutations'))
-			
+
 			expect(useDeleteExperienceMutation).toHaveBeenCalledTimes(0)
-			
+
 			// Call the mocked function
 			const result = useDeleteExperienceMutation()
-			
+
 			expect(useDeleteExperienceMutation).toHaveBeenCalledTimes(1)
 			expect(result).toBeDefined()
 			expect(result.mutateAsync).toBeDefined()
 			expect(result.isPending).toBe(false)
 		})
 	})
-}) 
+})

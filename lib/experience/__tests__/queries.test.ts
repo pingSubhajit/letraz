@@ -99,7 +99,7 @@ describe('Experience Queries', () => {
 	describe('useCurrentExperiences', () => {
 		it('should use the correct query options', () => {
 			const hook = useCurrentExperiences
-			
+
 			// Test that the hook is a function
 			expect(typeof hook).toBe('function')
 		})
@@ -109,4 +109,4 @@ describe('Experience Queries', () => {
 			expect(typeof useCurrentExperiences).toBe('function')
 		})
 	})
-}) 
+})
