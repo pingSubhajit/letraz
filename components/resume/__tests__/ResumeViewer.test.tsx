@@ -23,7 +23,7 @@ Object.defineProperty(global, 'window', {
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {render, screen} from '@testing-library/react'
 import {Resume} from '@/lib/resume/types'
-import ResumeViewer from '../ResumeViewer'
+import ResumeViewer from '@/components/resume/ResumeViewer'
 
 // --- Mocks ---
 vi.mock('../themes/DEFAULT_THEME/DefaultTheme', () => ({

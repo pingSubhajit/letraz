@@ -1,12 +1,12 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 // Mock the mutations module
-vi.mock('../mutations', () => ({
+vi.mock('@/lib/resume/mutations', () => ({
 	useRearrangeResumeSectionsMutation: vi.fn()
 }))
 
 // Mock the actions
-vi.mock('../actions')
+vi.mock('@/lib/resume/actions')
 
 // Mock sonner toast
 vi.mock('sonner', () => ({
@@ -20,7 +20,7 @@ describe('Resume Mutations', () => {
 		vi.clearAllMocks()
 
 		// Setup default mock implementations
-		const mutations = vi.mocked(await import('../mutations'))
+		const mutations = vi.mocked(await import('@/lib/resume/mutations'))
 
 		mutations.useRearrangeResumeSectionsMutation.mockReturnValue({
 			mutateAsync: vi.fn(() => Promise.resolve()),
@@ -36,12 +36,12 @@ describe('Resume Mutations', () => {
 
 	describe('useRearrangeResumeSectionsMutation', () => {
 		it('should be a function', async () => {
-			const {useRearrangeResumeSectionsMutation} = await import('../mutations')
+			const {useRearrangeResumeSectionsMutation} = await import('@/lib/resume/mutations')
 			expect(typeof useRearrangeResumeSectionsMutation).toBe('function')
 		})
 
 		it('should be mockable', async () => {
-			const {useRearrangeResumeSectionsMutation} = vi.mocked(await import('../mutations'))
+			const {useRearrangeResumeSectionsMutation} = vi.mocked(await import('@/lib/resume/mutations'))
 
 			expect(useRearrangeResumeSectionsMutation).toHaveBeenCalledTimes(0)
 
@@ -55,7 +55,7 @@ describe('Resume Mutations', () => {
 		})
 
 		it('should return mutation with proper structure', async () => {
-			const {useRearrangeResumeSectionsMutation} = vi.mocked(await import('../mutations'))
+			const {useRearrangeResumeSectionsMutation} = vi.mocked(await import('@/lib/resume/mutations'))
 
 			const result = useRearrangeResumeSectionsMutation()
 

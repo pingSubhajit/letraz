@@ -2,7 +2,7 @@ import React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import Education from '../Education'
+import Education from '@/components/onboarding/Education'
 import type {Education as EducationType} from '@/lib/education/types'
 
 // Mock data

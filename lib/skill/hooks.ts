@@ -1,5 +1,5 @@
-import {useState, useEffect, useMemo} from 'react'
-import {GlobalSkill} from './types'
+import {useMemo} from 'react'
+import {GlobalSkill} from '@/lib/skill/types'
 
 interface UseSkillSearchProps {
   skills: GlobalSkill[]

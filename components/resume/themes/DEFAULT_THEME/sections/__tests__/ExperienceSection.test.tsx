@@ -1,7 +1,7 @@
 import React from 'react'
 import {render, screen} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import ExperienceSection from '../ExperienceSection'
+import ExperienceSection from '@/components/resume/themes/DEFAULT_THEME/sections/ExperienceSection'
 import {ExperienceData} from '@/components/resume/controllers/ExperienceController'
 
 // --- Mock Data ---

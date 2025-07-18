@@ -1,21 +1,21 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 // Mock the mutations module
-vi.mock('../mutations', () => ({
+vi.mock('@/lib/education/mutations', () => ({
 	useAddEducationMutation: vi.fn(),
 	useUpdateEducationMutation: vi.fn(),
 	useDeleteEducationMutation: vi.fn()
 }))
 
 // Mock the actions
-vi.mock('../actions')
+vi.mock('@/lib/education/actions')
 
 describe('Education Mutations', () => {
 	beforeEach(async () => {
 		vi.clearAllMocks()
 
 		// Setup default mock implementations
-		const mutations = vi.mocked(await import('../mutations'))
+		const mutations = vi.mocked(await import('@/lib/education/mutations'))
 
 		mutations.useAddEducationMutation.mockReturnValue({
 			mutateAsync: vi.fn(() => Promise.resolve()),
@@ -45,12 +45,12 @@ describe('Education Mutations', () => {
 
 	describe('useAddEducationMutation', () => {
 		it('should be a function', async () => {
-			const {useAddEducationMutation} = await import('../mutations')
+			const {useAddEducationMutation} = await import('@/lib/education/mutations')
 			expect(typeof useAddEducationMutation).toBe('function')
 		})
 
 		it('should be mockable', async () => {
-			const {useAddEducationMutation} = vi.mocked(await import('../mutations'))
+			const {useAddEducationMutation} = vi.mocked(await import('@/lib/education/mutations'))
 
 			expect(useAddEducationMutation).toHaveBeenCalledTimes(0)
 
@@ -66,12 +66,12 @@ describe('Education Mutations', () => {
 
 	describe('useUpdateEducationMutation', () => {
 		it('should be a function', async () => {
-			const {useUpdateEducationMutation} = await import('../mutations')
+			const {useUpdateEducationMutation} = await import('@/lib/education/mutations')
 			expect(typeof useUpdateEducationMutation).toBe('function')
 		})
 
 		it('should be mockable', async () => {
-			const {useUpdateEducationMutation} = vi.mocked(await import('../mutations'))
+			const {useUpdateEducationMutation} = vi.mocked(await import('@/lib/education/mutations'))
 
 			expect(useUpdateEducationMutation).toHaveBeenCalledTimes(0)
 
@@ -87,12 +87,12 @@ describe('Education Mutations', () => {
 
 	describe('useDeleteEducationMutation', () => {
 		it('should be a function', async () => {
-			const {useDeleteEducationMutation} = await import('../mutations')
+			const {useDeleteEducationMutation} = await import('@/lib/education/mutations')
 			expect(typeof useDeleteEducationMutation).toBe('function')
 		})
 
 		it('should be mockable', async () => {
-			const {useDeleteEducationMutation} = vi.mocked(await import('../mutations'))
+			const {useDeleteEducationMutation} = vi.mocked(await import('@/lib/education/mutations'))
 
 			expect(useDeleteEducationMutation).toHaveBeenCalledTimes(0)
 

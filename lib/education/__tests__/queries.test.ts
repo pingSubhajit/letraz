@@ -1,8 +1,8 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {educationOptions, useCurrentEducations} from '../queries'
-import {getEducationsFromDB} from '../actions'
-import {EDUCATION_KEYS} from '../keys'
-import {Education} from '../types'
+import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
+import {getEducationsFromDB} from '@/lib/education/actions'
+import {EDUCATION_KEYS} from '@/lib/education/keys'
+import {Education} from '@/lib/education/types'
 
 // Mock the actions
 vi.mock('../actions')
@@ -78,7 +78,14 @@ describe('Education Queries', () => {
 		it('should call getEducationsFromDB with "base" when query function is executed', async () => {
 			mockGetEducationsFromDB.mockResolvedValue(mockEducations)
 
-			const result = await educationOptions.queryFn()
+			const mockContext = {
+				queryKey: EDUCATION_KEYS,
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			const result = await educationOptions.queryFn!(mockContext)
 
 			expect(mockGetEducationsFromDB).toHaveBeenCalledTimes(1)
 			expect(mockGetEducationsFromDB).toHaveBeenCalledWith('base')
@@ -89,7 +96,14 @@ describe('Education Queries', () => {
 			const error = new Error('API Error')
 			mockGetEducationsFromDB.mockRejectedValue(error)
 
-			await expect(educationOptions.queryFn()).rejects.toThrow('API Error')
+			const mockContext = {
+				queryKey: EDUCATION_KEYS,
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			await expect(educationOptions.queryFn!(mockContext)).rejects.toThrow('API Error')
 			expect(mockGetEducationsFromDB).toHaveBeenCalledWith('base')
 		})
 	})

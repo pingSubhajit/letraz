@@ -5,9 +5,9 @@ import {
 	progressToNextStep,
 	resetOnboarding,
 	updateOnboardingStep
-} from '../actions'
+} from '@/lib/onboarding/actions'
 import {auth, clerkClient} from '@clerk/nextjs/server'
-import {ONBOARDING_STEPS, OnboardingMetadata, OnboardingStep} from '../types'
+import {ONBOARDING_STEPS, OnboardingMetadata, OnboardingStep} from '@/lib/onboarding/types'
 
 // Mock dependencies
 vi.mock('@clerk/nextjs/server')

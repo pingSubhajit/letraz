@@ -1,8 +1,8 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {experienceQueryOptions, useCurrentExperiences} from '../queries'
-import {getExperiencesFromDB} from '../actions'
-import {EXPERIENCE_KEYS} from '../keys'
-import {Experience} from '../types'
+import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
+import {getExperiencesFromDB} from '@/lib/experience/actions'
+import {EXPERIENCE_KEYS} from '@/lib/experience/keys'
+import {Experience} from '@/lib/experience/types'
 
 // Mock the actions
 vi.mock('../actions')
@@ -80,7 +80,14 @@ describe('Experience Queries', () => {
 		it('should call getExperiencesFromDB with "base" when query function is executed', async () => {
 			mockGetExperiencesFromDB.mockResolvedValue(mockExperiences)
 
-			const result = await experienceQueryOptions.queryFn()
+			const mockContext = {
+				queryKey: EXPERIENCE_KEYS,
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			const result = await experienceQueryOptions.queryFn!(mockContext)
 
 			expect(mockGetExperiencesFromDB).toHaveBeenCalledTimes(1)
 			expect(mockGetExperiencesFromDB).toHaveBeenCalledWith('base')
@@ -91,7 +98,14 @@ describe('Experience Queries', () => {
 			const error = new Error('API Error')
 			mockGetExperiencesFromDB.mockRejectedValue(error)
 
-			await expect(experienceQueryOptions.queryFn()).rejects.toThrow('API Error')
+			const mockContext = {
+				queryKey: EXPERIENCE_KEYS,
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			await expect(experienceQueryOptions.queryFn!(mockContext)).rejects.toThrow('API Error')
 			expect(mockGetExperiencesFromDB).toHaveBeenCalledWith('base')
 		})
 	})

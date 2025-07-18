@@ -1,8 +1,13 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {addExperienceToDB, deleteExperienceFromDB, getExperiencesFromDB, updateExperienceInDB} from '../actions'
+import {
+	addExperienceToDB,
+	deleteExperienceFromDB,
+	getExperiencesFromDB,
+	updateExperienceInDB
+} from '@/lib/experience/actions'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
-import {Experience, ExperienceMutation} from '../types'
+import {Experience, ExperienceMutation} from '@/lib/experience/types'
 
 // Mock dependencies
 vi.mock('@/lib/config/api-client')

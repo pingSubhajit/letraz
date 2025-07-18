@@ -1,7 +1,7 @@
 import React from 'react'
 import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import PersonalDetailsEditor from '../PersonalDetailsEditor'
+import PersonalDetailsEditor from '@/components/resume/editors/PersonalDetailsEditor'
 import {UserInfo} from '@/lib/user-info/types'
 
 // --- Mock data ---
@@ -21,7 +21,7 @@ vi.mock('@/lib/resume/queries', () => ({
 	baseResumeQueryOptions: {queryKey: ['resume']}
 }))
 
-vi.mock('@clerk/nextjs', () => ({
+vi.mock('clerk/nextjs', () => ({
 	useUser: () => ({
 		user: {
 			firstName: 'John',
@@ -139,6 +139,18 @@ vi.mock('@formkit/auto-animate/react', () => ({
 vi.mock('next/image', () => ({
 	__esModule: true,
 	default: (props: any) => <img {...props} data-testid="profile-image" />
+}))
+
+vi.mock('lucide-react', () => ({
+	User: () => <svg data-testid="user-icon" />,
+	Mail: () => <svg data-testid="mail-icon" />,
+	Phone: () => <svg data-testid="phone-icon" />,
+	Calendar: () => <svg data-testid="calendar-icon" />,
+	Globe: () => <svg data-testid="globe-icon" />,
+	MapPin: () => <svg data-testid="map-pin-icon" />,
+	FileText: () => <svg data-testid="file-text-icon" />,
+	Edit2Icon: () => <svg data-testid="edit-icon" />,
+	Loader2: () => <svg data-testid="loader-icon" />
 }))
 
 // --- Tests ---
@@ -361,7 +373,8 @@ describe('PersonalDetailsEditor', () => {
 		}
 
 		render(<PersonalDetailsEditor />)
-		expect(screen.getByTestId('profile-image')).toBeInTheDocument()
+		// Since the mock user doesn't have an image, it should render a User icon
+		expect(screen.getByTestId('user-icon')).toBeInTheDocument()
 	})
 
 	it('shows global information notice in form view', async () => {

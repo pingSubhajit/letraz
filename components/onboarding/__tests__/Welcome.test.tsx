@@ -1,7 +1,7 @@
 import React from 'react'
 import {render, screen} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import Welcome from '../Welcome'
+import Welcome from '@/components/onboarding/Welcome'
 
 // --- Mocks ---
 vi.mock('@/components/animations/TextAnimations', () => ({

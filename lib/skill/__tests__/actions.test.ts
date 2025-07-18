@@ -7,10 +7,10 @@ import {
 	fetchSkillCategories,
 	removeSkillFromResume,
 	updateResumeSkill
-} from '../actions'
+} from '@/lib/skill/actions'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
-import {GlobalSkill, NewSkill, ResumeSkill, SkillMutation} from '../types'
+import {GlobalSkill, NewSkill, ResumeSkill, SkillMutation} from '@/lib/skill/types'
 
 // Mock dependencies
 vi.mock('@/lib/config/api-client')

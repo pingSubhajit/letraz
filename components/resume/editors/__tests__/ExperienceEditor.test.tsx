@@ -1,7 +1,7 @@
 import React from 'react'
 import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import ExperienceEditor from '../ExperienceEditor'
+import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
 import {Experience} from '@/lib/experience/types'
 
 // --- Mock data ---

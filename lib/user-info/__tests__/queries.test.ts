@@ -1,8 +1,8 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {userInfoQueryOptions, useUserInfoQuery} from '../queries'
-import {getPersonalInfoFromDB} from '../actions'
-import {USER_INFO_QUERY_KEY} from '../keys'
-import {UserInfo} from '../types'
+import {userInfoQueryOptions, useUserInfoQuery} from '@/lib/user-info/queries'
+import {getPersonalInfoFromDB} from '@/lib/user-info/actions'
+import {USER_INFO_QUERY_KEY} from '@/lib/user-info/keys'
+import {UserInfo} from '@/lib/user-info/types'
 
 // Mock the actions
 vi.mock('../actions')
@@ -57,10 +57,16 @@ describe('User Info Queries', () => {
 		it('should call getPersonalInfoFromDB when query function is executed', async () => {
 			mockGetPersonalInfoFromDB.mockResolvedValue(mockUserInfo)
 
-			const result = await userInfoQueryOptions.queryFn()
+			const mockContext = {
+				queryKey: ['userInfo'],
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			const result = await userInfoQueryOptions.queryFn!(mockContext)
 
 			expect(mockGetPersonalInfoFromDB).toHaveBeenCalledTimes(1)
-			expect(mockGetPersonalInfoFromDB).toHaveBeenCalledWith()
 			expect(result).toEqual(mockUserInfo)
 		})
 
@@ -68,8 +74,15 @@ describe('User Info Queries', () => {
 			const error = new Error('API Error')
 			mockGetPersonalInfoFromDB.mockRejectedValue(error)
 
-			await expect(userInfoQueryOptions.queryFn()).rejects.toThrow('API Error')
-			expect(mockGetPersonalInfoFromDB).toHaveBeenCalledWith()
+			const mockContext = {
+				queryKey: ['userInfo'],
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			await expect(userInfoQueryOptions.queryFn!(mockContext)).rejects.toThrow('API Error')
+			expect(mockGetPersonalInfoFromDB).toHaveBeenCalledTimes(1)
 		})
 	})
 

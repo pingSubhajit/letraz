@@ -1,19 +1,19 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 // Mock the mutations module
-vi.mock('../mutations', () => ({
+vi.mock('@/lib/user-info/mutations', () => ({
 	useUpdateUserInfoMutation: vi.fn()
 }))
 
 // Mock the actions
-vi.mock('../actions')
+vi.mock('@/lib/user-info/actions')
 
 describe('User Info Mutations', () => {
 	beforeEach(async () => {
 		vi.clearAllMocks()
 
 		// Setup default mock implementations
-		const mutations = vi.mocked(await import('../mutations'))
+		const mutations = vi.mocked(await import('@/lib/user-info/mutations'))
 
 		mutations.useUpdateUserInfoMutation.mockReturnValue({
 			mutateAsync: vi.fn(() => Promise.resolve()),
@@ -29,12 +29,12 @@ describe('User Info Mutations', () => {
 
 	describe('useUpdateUserInfoMutation', () => {
 		it('should be a function', async () => {
-			const {useUpdateUserInfoMutation} = await import('../mutations')
+			const {useUpdateUserInfoMutation} = await import('@/lib/user-info/mutations')
 			expect(typeof useUpdateUserInfoMutation).toBe('function')
 		})
 
 		it('should be mockable', async () => {
-			const {useUpdateUserInfoMutation} = vi.mocked(await import('../mutations'))
+			const {useUpdateUserInfoMutation} = vi.mocked(await import('@/lib/user-info/mutations'))
 
 			expect(useUpdateUserInfoMutation).toHaveBeenCalledTimes(0)
 
@@ -48,7 +48,7 @@ describe('User Info Mutations', () => {
 		})
 
 		it('should return mutation with proper structure', async () => {
-			const {useUpdateUserInfoMutation} = vi.mocked(await import('../mutations'))
+			const {useUpdateUserInfoMutation} = vi.mocked(await import('@/lib/user-info/mutations'))
 
 			const result = useUpdateUserInfoMutation()
 
@@ -62,7 +62,7 @@ describe('User Info Mutations', () => {
 		})
 
 		it('should accept options parameter', async () => {
-			const {useUpdateUserInfoMutation} = vi.mocked(await import('../mutations'))
+			const {useUpdateUserInfoMutation} = vi.mocked(await import('@/lib/user-info/mutations'))
 
 			const mockOptions = {
 				onSuccess: vi.fn(),

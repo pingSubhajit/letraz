@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {render, screen} from '@testing-library/react'
-import ResumeView from '../ResumeView'
+import ResumeView from '@/components/resume/ResumeView'
 import {useBaseResume} from '@/lib/resume/queries'
 import {Resume} from '@/lib/resume/types'
 

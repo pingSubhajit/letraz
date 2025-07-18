@@ -1,13 +1,13 @@
-import {render, screen} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import {vi} from 'vitest'
 import React from 'react'
+import {render, screen} from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
 	OnboardingFormInput,
 	OnboardingFormSelect,
 	OnboardingFormTextArea,
 	OnboardingRichTextInput
-} from '../OnboardingFormInput'
+} from '@/components/onboarding/OnboardingFormInput'
 
 // Mock the container structure to match actual component
 const MockContainer = ({children, className}: {children: React.ReactNode; className?: string}) => (

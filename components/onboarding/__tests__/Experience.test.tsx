@@ -2,7 +2,7 @@ import React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import Experience from '../Experience'
+import Experience from '@/components/onboarding/Experience'
 import type {Experience as ExperienceType} from '@/lib/experience/types'
 
 // Mock data

@@ -1,7 +1,7 @@
 import React from 'react'
 import {render, screen, userEvent, waitFor} from '@/__tests__/helpers/test-utils'
 import {afterEach, beforeEach, vi} from 'vitest'
-import Waitlist from '../Waitlist'
+import Waitlist from '@/components/Waitlist'
 import {toast} from 'sonner'
 import {signUpForWaitlist} from '@/lib/waitlist/actions'
 

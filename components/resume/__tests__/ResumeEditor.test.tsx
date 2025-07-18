@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {fireEvent, render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import ResumeEditor from '../ResumeEditor'
+import ResumeEditor from '@/components/resume/ResumeEditor'
 
 // Mock the editor components
 vi.mock('../editors/PersonalDetailsEditor', () => ({

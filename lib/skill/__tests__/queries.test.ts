@@ -6,9 +6,9 @@ import {
 	useCurrentResumeSkills,
 	useGlobalSkills,
 	useSkillCategories
-} from '../queries'
-import {fetchGlobalSkills, fetchResumeSkills, fetchSkillCategories} from '../actions'
-import {GlobalSkill, ResumeSkill} from '../types'
+} from '@/lib/skill/queries'
+import {fetchGlobalSkills, fetchResumeSkills, fetchSkillCategories} from '@/lib/skill/actions'
+import {GlobalSkill, ResumeSkill} from '@/lib/skill/types'
 
 // Mock the actions
 vi.mock('../actions')
@@ -20,18 +20,38 @@ const mockFetchSkillCategories = vi.mocked(fetchSkillCategories)
 // Mock data
 const mockGlobalSkills: GlobalSkill[] = [
 	{
-		id: 'global-skill-1',
+		id: '123e4567-e89b-12d3-a456-426614174000',
 		name: 'JavaScript',
 		category: 'Programming Languages',
-		description: 'A programming language',
+		preferred: true,
+		alias: [
+			{
+				id: '123e4567-e89b-12d3-a456-426614174001',
+				name: 'JS',
+				category: 'Programming Languages',
+				preferred: false,
+				created_at: '2023-01-01T00:00:00Z',
+				updated_at: '2023-01-01T00:00:00Z'
+			}
+		],
 		created_at: '2023-01-01T00:00:00Z',
 		updated_at: '2023-01-01T00:00:00Z'
 	},
 	{
-		id: 'global-skill-2',
+		id: '123e4567-e89b-12d3-a456-426614174002',
 		name: 'React',
 		category: 'Frontend Frameworks',
-		description: 'A JavaScript library',
+		preferred: true,
+		alias: [
+			{
+				id: '123e4567-e89b-12d3-a456-426614174003',
+				name: 'React.js',
+				category: 'Frontend Frameworks',
+				preferred: false,
+				created_at: '2023-01-01T00:00:00Z',
+				updated_at: '2023-01-01T00:00:00Z'
+			}
+		],
 		created_at: '2023-01-01T00:00:00Z',
 		updated_at: '2023-01-01T00:00:00Z'
 	}
@@ -39,22 +59,16 @@ const mockGlobalSkills: GlobalSkill[] = [
 
 const mockResumeSkills: ResumeSkill[] = [
 	{
-		id: 'resume-skill-1',
-		user: 'user-123',
-		resume: 'resume-123',
-		global_skill: 'global-skill-1',
-		level: 'intermediate',
-		created_at: '2023-01-01T00:00:00Z',
-		updated_at: '2023-01-01T00:00:00Z'
+		id: '123e4567-e89b-12d3-a456-426614174004',
+		skill: mockGlobalSkills[0],
+		resume_section: 'section-1',
+		level: 'INT'
 	},
 	{
-		id: 'resume-skill-2',
-		user: 'user-123',
-		resume: 'resume-123',
-		global_skill: 'global-skill-2',
-		level: 'advanced',
-		created_at: '2023-01-01T00:00:00Z',
-		updated_at: '2023-01-01T00:00:00Z'
+		id: '123e4567-e89b-12d3-a456-426614174005',
+		skill: mockGlobalSkills[1],
+		resume_section: 'section-1',
+		level: 'ADV'
 	}
 ]
 
@@ -90,7 +104,14 @@ describe('Skill Queries', () => {
 		it('should call fetchGlobalSkills when query function is executed', async () => {
 			mockFetchGlobalSkills.mockResolvedValue(mockGlobalSkills)
 
-			const result = await globalSkillsQueryOptions.queryFn()
+			const mockContext = {
+				queryKey: ['skills', 'global'],
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			const result = await globalSkillsQueryOptions.queryFn!(mockContext)
 
 			expect(mockFetchGlobalSkills).toHaveBeenCalledTimes(1)
 			expect(result).toEqual(mockGlobalSkills)
@@ -128,17 +149,31 @@ describe('Skill Queries', () => {
 		it('should call fetchResumeSkills with correct resumeId', async () => {
 			mockFetchResumeSkills.mockResolvedValue(mockResumeSkills)
 
-			const options = resumeSkillsQueryOptions('test-resume-456')
-			await options.queryFn()
+			const options = resumeSkillsQueryOptions('custom-resume-id')
+			const mockContext = {
+				queryKey: ['skills', 'resume', 'custom-resume-id'],
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
 
-			expect(mockFetchResumeSkills).toHaveBeenCalledWith('test-resume-456')
+			await options.queryFn!(mockContext)
+
+			expect(mockFetchResumeSkills).toHaveBeenCalledWith('custom-resume-id')
 		})
 
 		it('should call fetchResumeSkills with default resumeId when none provided', async () => {
 			mockFetchResumeSkills.mockResolvedValue(mockResumeSkills)
 
 			const options = resumeSkillsQueryOptions()
-			await options.queryFn()
+			const mockContext = {
+				queryKey: ['skills', 'resume', 'base'],
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			await options.queryFn!(mockContext)
 
 			expect(mockFetchResumeSkills).toHaveBeenCalledWith('base')
 		})
@@ -173,19 +208,33 @@ describe('Skill Queries', () => {
 		})
 
 		it('should call fetchSkillCategories with correct resumeId', async () => {
-			mockFetchSkillCategories.mockResolvedValue(mockSkillCategories)
+			mockFetchSkillCategories.mockResolvedValue(['Programming', 'Design'])
 
-			const options = skillCategoriesQueryOptions('test-resume-categories')
-			await options.queryFn()
+			const options = skillCategoriesQueryOptions('custom-resume-id')
+			const mockContext = {
+				queryKey: ['skills', 'categories', 'custom-resume-id'],
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
 
-			expect(mockFetchSkillCategories).toHaveBeenCalledWith('test-resume-categories')
+			await options.queryFn!(mockContext)
+
+			expect(mockFetchSkillCategories).toHaveBeenCalledWith('custom-resume-id')
 		})
 
 		it('should call fetchSkillCategories with default resumeId when none provided', async () => {
-			mockFetchSkillCategories.mockResolvedValue(mockSkillCategories)
+			mockFetchSkillCategories.mockResolvedValue(['Programming', 'Design'])
 
 			const options = skillCategoriesQueryOptions()
-			await options.queryFn()
+			const mockContext = {
+				queryKey: ['skills', 'categories', 'base'],
+				client: {} as any,
+				signal: {} as AbortSignal,
+				meta: undefined
+			}
+
+			await options.queryFn!(mockContext)
 
 			expect(mockFetchSkillCategories).toHaveBeenCalledWith('base')
 		})

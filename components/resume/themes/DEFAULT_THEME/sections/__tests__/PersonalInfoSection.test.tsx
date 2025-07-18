@@ -1,7 +1,7 @@
 import React from 'react'
 import {render, screen} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import PersonalInfoSection from '../PersonalInfoSection'
+import PersonalInfoSection from '@/components/resume/themes/DEFAULT_THEME/sections/PersonalInfoSection'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 
 // --- Mock Data ---

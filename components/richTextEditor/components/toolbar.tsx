@@ -1,11 +1,11 @@
 import {VariantProps} from 'class-variance-authority'
-import {FormatAction} from '../types'
+import {FormatAction} from '@/components/richTextEditor/types'
 import {Editor} from '@tiptap/react'
 
 import {DotsHorizontalIcon, FontBoldIcon, FontItalicIcon, ListBulletIcon, UnderlineIcon} from '@radix-ui/react-icons'
 import {toggleVariants} from '@/components/ui/toggle'
-import ToolbarSection from './toolbar-section'
-import {LinkEditPopover} from './link/link-edit-popover'
+import ToolbarSection from '@/components/richTextEditor/components/toolbar-section'
+import {LinkEditPopover} from '@/components/richTextEditor/components/link/link-edit-popover'
 
 type TextStyleAction =
   | 'bold'

@@ -1,8 +1,8 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {getResumeFromDB, rearrangeResumeSections} from '../actions'
+import {getResumeFromDB, rearrangeResumeSections} from '@/lib/resume/actions'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
-import {Resume} from '../types'
+import {Resume} from '@/lib/resume/types'
 
 // Mock dependencies
 vi.mock('@/lib/config/api-client')

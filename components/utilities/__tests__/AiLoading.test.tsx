@@ -1,6 +1,6 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {render, screen} from '@testing-library/react'
-import AiLoading from '../AiLoading'
+import AiLoading from '@/components/utilities/AiLoading'
 
 // Mock motion components
 vi.mock('motion/react', () => ({

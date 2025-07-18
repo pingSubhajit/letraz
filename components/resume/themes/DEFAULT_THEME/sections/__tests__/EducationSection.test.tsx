@@ -1,7 +1,7 @@
 import React from 'react'
 import {render, screen} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import EducationSection from '../EducationSection'
+import EducationSection from '@/components/resume/themes/DEFAULT_THEME/sections/EducationSection'
 import {EducationData} from '@/components/resume/controllers/EducationController'
 
 // --- Mock Data ---

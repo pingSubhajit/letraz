@@ -1,8 +1,8 @@
 import React from 'react'
 import {render, screen} from '@testing-library/react'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import DefaultTheme from '../DefaultTheme'
-import {ThemeProps} from '../../ThemeFactory'
+import DefaultTheme from '@/components/resume/themes/DEFAULT_THEME/DefaultTheme'
+import {ThemeProps} from '@/components/resume/themes/ThemeFactory'
 import {ResumeSection} from '@/lib/resume/types'
 import {UserInfo} from '@/lib/user-info/types'
 

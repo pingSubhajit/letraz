@@ -1,7 +1,7 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 import {render, screen} from '@testing-library/react'
 import {useCompletion} from 'ai/react'
-import {JobSummary, JobSummaryFromJson} from '../JobSummary'
+import {JobSummary, JobSummaryFromJson} from '@/components/JobSummary'
 import {createMockJob} from '@/__tests__/helpers'
 
 // Mock external dependencies
