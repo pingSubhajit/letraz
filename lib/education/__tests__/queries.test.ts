@@ -107,4 +107,4 @@ describe('Education Queries', () => {
 			expect(typeof useCurrentEducations).toBe('function')
 		})
 	})
-}) 
+})

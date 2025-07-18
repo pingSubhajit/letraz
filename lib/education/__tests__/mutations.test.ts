@@ -105,4 +105,4 @@ describe('Education Mutations', () => {
 			expect(result.isPending).toBe(false)
 		})
 	})
-}) 
+})

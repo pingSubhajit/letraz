@@ -150,4 +150,4 @@ describe('Resume Queries', () => {
 			expect(typeof useBaseResume).toBe('function')
 		})
 	})
-}) 
+})

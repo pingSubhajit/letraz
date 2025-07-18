@@ -68,4 +68,4 @@ describe('Resume Mutations', () => {
 			expect(typeof result.isError).toBe('boolean')
 		})
 	})
-}) 
+})
