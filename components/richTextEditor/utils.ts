@@ -1,5 +1,5 @@
 import type {Editor} from '@tiptap/core'
-import type {RichTextEditorProps} from './'
+import type {RichTextEditorProps} from '@/components/richTextEditor'
 
 type ShortcutKeyResult = {
   symbol: string

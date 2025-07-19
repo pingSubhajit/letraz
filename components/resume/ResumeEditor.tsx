@@ -3,7 +3,7 @@
 import {cn} from '@/lib/utils'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
-import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
+import PersonalDetailsEditor from '@/components/resume/editors/PersonalDetailsEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
 import {Briefcase, FolderKanban, GraduationCap, User, Wrench} from 'lucide-react'

@@ -1,4 +1,4 @@
-import {OnboardingMetadata} from './types'
+import {OnboardingMetadata} from '@/lib/onboarding/types'
 
 declare global {
   interface CustomJwtSessionClaims {

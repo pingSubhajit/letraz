@@ -1,7 +1,7 @@
 'use client'
 
 import {useUser} from '@clerk/nextjs'
-import {OnboardingMetadata, OnboardingStep} from './types'
+import {OnboardingMetadata, OnboardingStep} from '@/lib/onboarding/types'
 import {ONBOARDING_STEPS} from '@/app/app/onboarding/types'
 
 /**

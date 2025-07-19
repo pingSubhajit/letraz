@@ -57,11 +57,11 @@ const AdminResumePage = async (props: PageProps) => {
 		const resume = await fetchResumeData(resumeId)
 
 		return (
-			<div className="bg-neutral-300 h-screen">
+			<div className="bg-neutral-300 min-h-screen overflow-y-hidden">
 				<div className="flex justify-center">
 					<ResumeViewer
 						resume={resume}
-						className="h-full"
+						className="min-h-full"
 						showAnimation={false}
 					/>
 				</div>

@@ -1,7 +1,13 @@
 'use server'
 
 import {auth, clerkClient} from '@clerk/nextjs/server'
-import {getNextStep, ONBOARDING_STEPS, OnboardingMetadata, OnboardingMetadataSchema, OnboardingStep} from './types'
+import {
+	getNextStep,
+	ONBOARDING_STEPS,
+	OnboardingMetadata,
+	OnboardingMetadataSchema,
+	OnboardingStep
+} from '@/lib/onboarding/types'
 
 /**
  * Updates the user's current onboarding step

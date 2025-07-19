@@ -2,12 +2,12 @@
 
 import './styles/index.css'
 import {Content, EditorContent} from '@tiptap/react'
-import useMinimalTiptapEditor, {UseMinimalTiptapEditorProps} from './hooks/use-minimal-tiptap'
-import {MeasuredContainer} from './components/measured-container'
+import useMinimalTiptapEditor, {UseMinimalTiptapEditorProps} from '@/components/richTextEditor/hooks/use-minimal-tiptap'
+import {MeasuredContainer} from '@/components/richTextEditor/components/measured-container'
 import {forwardRef} from 'react'
 import {cn} from '@/lib/utils'
-import {LinkBubbleMenu} from './components/bubble-menu/link-bubble-menu'
-import Toolbar from './components/toolbar'
+import {LinkBubbleMenu} from '@/components/richTextEditor/components/bubble-menu/link-bubble-menu'
+import Toolbar from '@/components/richTextEditor/components/toolbar'
 
 export interface RichTextEditorProps extends Omit<UseMinimalTiptapEditorProps, 'onUpdate'> {
     value?: Content
