@@ -44,7 +44,7 @@ vi.mock('motion/react', () => ({
 describe('TextAnimations Component', () => {
 	beforeEach(() => {
 		vi.clearAllMocks()
-		
+
 		// Setup default mock returns
 		mockUseInView.mockReturnValue(true)
 	})
@@ -170,10 +170,8 @@ describe('TextAnimations Component', () => {
 
 				const motionSpans = screen.getAllByTestId('motion-span')
 				// Word spans should have specific classes
-				const wordSpans = motionSpans.filter(span => 
-					span.className.includes('inline-block') && 
-					span.className.includes('mr-[0.25em]')
-				)
+				const wordSpans = motionSpans.filter(span => span.className.includes('inline-block') &&
+					span.className.includes('mr-[0.25em]'))
 				expect(wordSpans.length).toBeGreaterThan(0)
 			})
 
@@ -198,7 +196,7 @@ describe('TextAnimations Component', () => {
 
 	describe('Props Handling', () => {
 		it('handles text prop correctly', () => {
-			const testText = "Testing Props"
+			const testText = 'Testing Props'
 			render(<TextAnimations text={testText} />)
 
 			// Text is split into individual characters, so check for individual letters
@@ -234,10 +232,10 @@ describe('TextAnimations Component', () => {
 
 		it('handles multiple props together', () => {
 			render(
-				<TextAnimations 
-					text="Multi Props" 
-					type="popIn" 
-					delay={0.3} 
+				<TextAnimations
+					text="Multi Props"
+					type="popIn"
+					delay={0.3}
 					duration={1.5}
 					className="test-class"
 					id="test-id"
@@ -287,8 +285,8 @@ describe('TextAnimations Component', () => {
 
 	describe('Responsive Behavior', () => {
 		it('maintains structure across different text lengths', () => {
-			const shortText = "Hi"
-			const longText = "This is a very long text that should still work properly"
+			const shortText = 'Hi'
+			const longText = 'This is a very long text that should still work properly'
 
 			const {rerender} = render(<TextAnimations text={shortText} />)
 			expect(screen.getByTestId('motion-h2')).toBeInTheDocument()
@@ -298,7 +296,7 @@ describe('TextAnimations Component', () => {
 		})
 
 		it('handles special characters correctly', () => {
-			const specialText = "Hello! @#$%^&*()_+ 123"
+			const specialText = 'Hello! @#$%^&*()_+ 123'
 			render(<TextAnimations text={specialText} />)
 
 			// Check for individual special characters
@@ -309,7 +307,7 @@ describe('TextAnimations Component', () => {
 		})
 
 		it('handles unicode characters correctly', () => {
-			const unicodeText = "Hello 世界 🌍"
+			const unicodeText = 'Hello 世界 🌍'
 			render(<TextAnimations text={unicodeText} />)
 
 			// Check for individual unicode characters
@@ -321,7 +319,7 @@ describe('TextAnimations Component', () => {
 
 		it('maintains accessibility across different animations', () => {
 			const animations = ['fadeIn', 'rollIn', 'popIn', 'whipIn']
-			
+
 			animations.forEach(animation => {
 				const {unmount} = render(<TextAnimations text="Test" type={animation as any} />)
 				const headings = screen.getAllByRole('heading')
@@ -386,8 +384,10 @@ describe('TextAnimations Component', () => {
 		})
 
 		it('handles invalid animation type gracefully', () => {
-			// TypeScript would prevent this, but testing runtime behavior
-			// This will actually throw an error in the component, so we expect it to fail
+			/*
+			 * TypeScript would prevent this, but testing runtime behavior
+			 * This will actually throw an error in the component, so we expect it to fail
+			 */
 			expect(() => {
 				render(<TextAnimations text="Test" type={'invalidType' as any} />)
 			}).toThrow()
@@ -400,11 +400,13 @@ describe('TextAnimations Component', () => {
 
 			const motionH2 = screen.getByTestId('motion-h2')
 			const variants = JSON.parse(motionH2.getAttribute('data-variants') || '{}')
-			
+
 			// The container variants are applied to the h2 element
 			expect(variants.hidden).toEqual({opacity: 0})
-			// fadeIn has a visible variant that's a function, so it may not serialize properly
-			// Just check that the variants object has the expected structure
+			/*
+			 * fadeIn has a visible variant that's a function, so it may not serialize properly
+			 * Just check that the variants object has the expected structure
+			 */
 			expect(Object.keys(variants)).toContain('hidden')
 		})
 
@@ -413,7 +415,7 @@ describe('TextAnimations Component', () => {
 
 			const motionSpans = screen.getAllByTestId('motion-span')
 			const variants = JSON.parse(motionSpans[0].getAttribute('data-variants') || '{}')
-			
+
 			expect(variants.visible).toEqual({opacity: 1, y: 0, transition: {duration: 0.5}})
 			expect(variants.hidden).toEqual({opacity: 0, y: 20})
 		})
@@ -423,7 +425,7 @@ describe('TextAnimations Component', () => {
 
 			const motionSpans = screen.getAllByTestId('motion-span')
 			const variants = JSON.parse(motionSpans[0].getAttribute('data-variants') || '{}')
-			
+
 			expect(variants.visible.transition.type).toBe('spring')
 			expect(variants.visible.transition.damping).toBe(15)
 			expect(variants.visible.transition.stiffness).toBe(400)
@@ -434,7 +436,7 @@ describe('TextAnimations Component', () => {
 
 			const motionSpans = screen.getAllByTestId('motion-span')
 			const variants = JSON.parse(motionSpans[0].getAttribute('data-variants') || '{}')
-			
+
 			expect(variants.visible.transition.ease).toEqual([0.125, 0.92, 0.69, 0.975])
 			expect(variants.visible.transition.duration).toBe(0.75)
 		})
@@ -444,7 +446,7 @@ describe('TextAnimations Component', () => {
 
 			const motionSpans = screen.getAllByTestId('motion-span')
 			const variants = JSON.parse(motionSpans[0].getAttribute('data-variants') || '{}')
-			
+
 			expect(variants.visible.y).toBe(0)
 			expect(variants.hidden.y).toBe('200%')
 			expect(variants.visible.transition.duration).toBe(0.75)
@@ -461,7 +463,7 @@ describe('TextAnimations Component', () => {
 
 		it('handles re-renders efficiently', () => {
 			const {rerender} = render(<TextAnimations text="Initial" />)
-			
+
 			rerender(<TextAnimations text="Updated" />)
 			rerender(<TextAnimations text="Final" />)
 
@@ -474,9 +476,9 @@ describe('TextAnimations Component', () => {
 
 		it('cleans up properly on unmount', () => {
 			const {unmount} = render(<TextAnimations text="Test" />)
-			
+
 			unmount()
-			
+
 			expect(screen.queryByTestId('motion-h2')).not.toBeInTheDocument()
 		})
 	})
