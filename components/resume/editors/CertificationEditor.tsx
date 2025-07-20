@@ -30,8 +30,8 @@ import {apiDateToDate} from '@/lib/utils'
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
 	name: '',
-	issuing_organization: '',
-	issue_date: undefined as any,
+	issuing_organization: undefined,
+	issue_date: undefined,
 	credential_url: ''
 }
 
@@ -152,8 +152,8 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 		const certification = certifications[index]
 		form.reset({
 			name: certification.name,
-			issuing_organization: certification.issuing_organization || '',
-			issue_date: apiDateToDate(certification.issue_date) || undefined,
+			issuing_organization: certification.issuing_organization || undefined,
+			issue_date: certification.issue_date ? apiDateToDate(certification.issue_date) || undefined : undefined,
 			credential_url: certification.credential_url || ''
 		})
 		setEditingIndex(index)

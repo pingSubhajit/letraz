@@ -21,7 +21,7 @@ export const addCertificationToDB = async (
 		// Transform date for API compatibility
 		const apiParams = {
 			...params,
-			issue_date: dateToApiFormat(params.issue_date as Date)
+			issue_date: params.issue_date ? dateToApiFormat(params.issue_date as Date) : undefined
 		}
 
 		const data = await api.post<Certification>('/resume/base/certification/', apiParams)
