@@ -8,6 +8,7 @@ import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
 import {Briefcase, FolderKanban, GraduationCap, User, Wrench} from 'lucide-react'
 import {useState} from 'react'
+import ProjectEditor from './editors/ProjectEditor'
 
 const ResumeEditor = ({className}: {className?: string}) => {
 	const [activeTab, setActiveTab] = useState<number>(0) // Default to Education (index 0)
@@ -42,11 +43,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 				{activeTab === 1 && <EducationEditor />}
 				{activeTab === 2 && <ExperienceEditor />}
 				{activeTab === 3 && <SkillsEditor />}
-				{activeTab === 4 && (
-					<div className="p-4">
-						<p className="text-center text-muted-foreground">Project editor is coming soon</p>
-					</div>
-				)}
+				{activeTab === 4 && <ProjectEditor />}
 			</div>
 		</div>
 	)
