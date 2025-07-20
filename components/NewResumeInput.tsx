@@ -47,9 +47,8 @@ const NewResumeInput = ({className}: {className?: string}) => {
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
 				className={cn('min-h-96 overflow-hidden bg-white p-4 pt-6 flex ' +
-				'flex-col justify-between gap-4 relative z-[60] hover:shadow-2xl focus-within:shadow-2xl ' +
+				'flex-col justify-between gap-4 relative z-40 hover:shadow-2xl focus-within:shadow-2xl ' +
 				'shadow-flame-300 transition', className)}
-				style={{viewTransitionName: 'craft_container'}}
 			>
 				<FormField
 					control={form.control}
@@ -90,6 +89,6 @@ const NewResumeInputOverlay = ({inputFocused}: {inputFocused: boolean}) => <Anim
 		initial={{opacity: 0}}
 		animate={{opacity: inputFocused ? 1 : 0}}
 		exit={{opacity: 0}}
-		className="fixed inset-0 z-50 bg-white/70"
+		className="fixed inset-0 z-30 bg-white/70"
 	/>}
 </AnimatePresence>

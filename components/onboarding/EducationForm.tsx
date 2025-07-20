@@ -1,28 +1,30 @@
 'use client'
 
-import {motion} from 'motion/react'
+import {AnimatePresence, motion} from 'motion/react'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {cn} from '@/lib/utils'
-import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {
 	OnboardingFormInput,
 	OnboardingFormSelect,
 	OnboardingRichTextInput
 } from '@/components/onboarding/OnboardingFormInput'
 import {Button} from '@/components/ui/button'
+import {Checkbox} from '@/components/ui/checkbox'
 import {ChevronLeft, ChevronRight, Loader2} from 'lucide-react'
 import {months, years} from '@/constants'
 import {toast} from 'sonner'
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
-import {JSX} from 'react'
+import {JSX, useEffect, useState} from 'react'
 
 import {countries} from '@/lib/constants'
 import {useQueryClient} from '@tanstack/react-query'
 
 import {educationOptions} from '@/lib/education/queries'
 import {useAddEducationMutation} from '@/lib/education/mutations'
+import {updateOnboardingStep} from '@/lib/onboarding/actions'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -44,6 +46,24 @@ const EducationForm = ({
 	const router = useTransitionRouter()
 
 	const queryClient = useQueryClient()
+	const [formKey, setFormKey] = useState(0)
+	const [isCurrentLocal, setIsCurrentLocal] = useState(false)
+	const [userCountry, setUserCountry] = useState('IND')
+
+	// Get user's country from IP
+	useEffect(() => {
+		fetch('https://ipapi.co/json/')
+			.then(res => res.json())
+			.then(data => {
+				if (data.country_code_iso3) {
+					setUserCountry(data.country_code_iso3)
+				}
+			})
+			.catch(() => {
+				// Fallback to India if detection fails
+				setUserCountry('IND')
+			})
+	}, [])
 
 
 	// Fixing the mutation options
@@ -72,17 +92,49 @@ const EducationForm = ({
 		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
 			institution_name: '',
-			country: 'IND',
+			country: userCountry,
 			field_of_study: '',
 			degree: '',
-			started_from_month: null,
-			started_from_year: null,
-			finished_at_month: null,
-			finished_at_year: null,
+			started_from_month: undefined,
+			started_from_year: undefined,
+			finished_at_month: undefined,
+			finished_at_year: undefined,
 			current: false,
 			description: ''
 		}
 	})
+
+	// Watch the current field and keep local state in sync
+	const isCurrent = form.watch('current')
+
+	useEffect(() => {
+		setIsCurrentLocal(isCurrent)
+	}, [isCurrent])
+
+	// Update form country when userCountry changes
+	useEffect(() => {
+		if (userCountry) {
+			form.setValue('country', userCountry)
+		}
+	}, [userCountry, form])
+
+	// Clear end date fields when "current" is checked
+	useEffect(() => {
+		if (isCurrentLocal) {
+			form.setValue('finished_at_month', undefined)
+			form.setValue('finished_at_year', undefined)
+		}
+	}, [isCurrentLocal, form])
+
+	// Handle checkbox change
+	const handleCurrentChange = (checked: boolean) => {
+		setIsCurrentLocal(checked)
+		form.setValue('current', checked, {
+			shouldValidate: true,
+			shouldDirty: true,
+			shouldTouch: true
+		})
+	}
 
 	/**
 	 * Function to insert education details into the database.
@@ -104,6 +156,7 @@ const EducationForm = ({
 			if (newEducation) {
 				// setEducations([...educations, newEducation])
 				form.reset()
+				setFormKey(prev => prev + 1)
 			} else {
 				throw new Error('Failed to add education')
 			}
@@ -122,6 +175,8 @@ const EducationForm = ({
 				await insertEducation(values)
 			}
 
+			// Update onboarding progress
+			await updateOnboardingStep('education')
 			router.push('/app/onboarding?step=experience')
 		} catch (error) {
 			toast.error('Failed to update education, please try again')
@@ -231,7 +286,7 @@ const EducationForm = ({
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between"
+						className="grid grid-cols-4 gap-8"
 					>
 						{/* Form field for start month */}
 						<FormField
@@ -274,39 +329,81 @@ const EducationForm = ({
 						/>
 
 						{/* Form field for end month */}
-						<FormField
-							disabled={isPending}
-							control={form.control}
-							name="finished_at_month"
-							render={({field}) => (
-								<FormItem className="w-full">
-									<OnboardingFormSelect
-										onChange={field.onChange}
-										value={field.value || ''}
-										options={months}
-										placeholder="End month"
-									/>
-									<FormLabel className="transition">Month of end</FormLabel>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<AnimatePresence>
+							{!isCurrentLocal && <motion.div
+								initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: 20}}
+								transition={{duration: 0.3}}
+							>
+								<FormField
+									disabled={isPending}
+									control={form.control}
+									name="finished_at_month"
+									render={({field}) => (
+										<FormItem className="w-full">
+											<OnboardingFormSelect
+												onChange={field.onChange}
+												value={field.value || ''}
+												options={months}
+												placeholder="End month"
+											/>
+											<FormLabel className="transition">Month of end</FormLabel>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</motion.div>}
+						</AnimatePresence>
 
 						{/* Form field for end year */}
+						<AnimatePresence>
+							{!isCurrentLocal && <motion.div
+								initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: 20}}
+								transition={{duration: 0.3}}
+							>
+								<FormField
+									disabled={isPending}
+									control={form.control}
+									name="finished_at_year"
+									render={({field}) => (
+										<FormItem className="w-full">
+											<OnboardingFormSelect
+												onChange={field.onChange}
+												value={field.value || ''}
+												options={years}
+												placeholder="End year"
+											/>
+											<FormLabel className="transition">Year of end</FormLabel>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</motion.div>}
+						</AnimatePresence>
+					</motion.div>
+
+					{/* Current checkbox */}
+					<motion.div
+						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+						transition={{delay: 0.4, duration: 0.7}}
+						className="flex items-center gap-8 justify-between"
+					>
 						<FormField
 							disabled={isPending}
 							control={form.control}
-							name="finished_at_year"
+							name="current"
 							render={({field}) => (
-								<FormItem className="w-full">
-									<OnboardingFormSelect
-										onChange={field.onChange}
-										value={field.value || ''}
-										options={years}
-										placeholder="End year"
-									/>
-									<FormLabel className="transition">Year of end</FormLabel>
-									<FormMessage />
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={handleCurrentChange}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none">
+										<FormLabel className="text-sm font-medium cursor-pointer transition">
+											I currently study here
+										</FormLabel>
+									</div>
 								</FormItem>
 							)}
 						/>
@@ -324,10 +421,9 @@ const EducationForm = ({
 							name="description"
 							render={({field}) => (
 								<FormItem className="w-full">
-									<FormLabel className="transition">
-										Description (optional)
-									</FormLabel>
-									<OnboardingRichTextInput placeholder="write a few things about what you learnt, the things you've build etc."
+									<OnboardingRichTextInput
+										key={formKey}
+										placeholder="write a few things about what you learnt, the things you've build etc."
 										value={field?.value || ''}
 										onChange={field?.onChange}
 									/>

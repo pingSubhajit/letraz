@@ -95,7 +95,7 @@ type OnboardingFormSelectProps = {
 
 const OnboardingFormSelect = ({className, value, onChange, options, ...props}: OnboardingFormSelectProps) => {
 	return (
-		<Select onValueChange={onChange} defaultValue={value}>
+		<Select onValueChange={onChange} value={value}>
 			<FormControl>
 				<SelectTrigger className={cn('text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground mb-2', className)}>
 					<SelectValue {...props} />

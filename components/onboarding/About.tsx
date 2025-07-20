@@ -3,8 +3,11 @@ import {Button} from '@/components/ui/button'
 import {ChevronLeft, ChevronRight} from 'lucide-react'
 import {Link} from 'next-view-transitions'
 import AboutDescription from '@/components/onboarding/AboutDescription'
+import {updateOnboardingStep} from '@/lib/onboarding/actions'
 
 const About = () => {
+	updateOnboardingStep('about')
+
 	return (
 		<div className="w-full h-full flex flex-col justify-center items-center">
 			{/* HEADING TEXT */}
@@ -38,7 +41,7 @@ const About = () => {
 					</Button>
 				</Link>
 
-				{/* NEXT STEP BUTTON */}
+				{/*	/!* NEXT STEP BUTTON *!/*/}
 				<Link href={'/app/onboarding?step=personal-details'}>
 					<Button
 						className="transition rounded-full shadow-lg px-6 hover:shadow-xl"

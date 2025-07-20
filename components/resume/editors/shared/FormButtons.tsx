@@ -13,6 +13,7 @@ interface FormButtonsProps {
   editingSubmitLabel?: string
   addingSubmitLabel?: string
   className?: string
+  disabled?: boolean
 }
 
 const FormButtons = ({
@@ -23,7 +24,8 @@ const FormButtons = ({
 	cancelLabel = 'Cancel',
 	editingSubmitLabel = 'Update',
 	addingSubmitLabel = 'Add',
-	className
+	className,
+	disabled = false
 }: FormButtonsProps) => {
 	// If submitLabel is provided, use it. Otherwise, use appropriate label based on isEditing
 	const effectiveSubmitLabel = submitLabel || (isEditing ? editingSubmitLabel : addingSubmitLabel)
@@ -33,7 +35,7 @@ const FormButtons = ({
 			<Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
 				{cancelLabel}
 			</Button>
-			<Button type="submit" disabled={isSubmitting}>
+			<Button type="submit" disabled={isSubmitting || disabled}>
 				{isSubmitting ? (
 					<>
 						<Loader2 className="mr-2 h-4 w-4 animate-spin" />
