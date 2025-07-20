@@ -42,6 +42,10 @@ import ScrollMask from '@/components/ui/scroll-mask'
 
 type ViewState = 'list' | 'form';
 
+interface ProjectEditorProps {
+	className?: string
+}
+
 const DEFAULT_PROJECT_VALUES: ProjectMutation = {
 	name: '',
 	category: '',
@@ -57,7 +61,7 @@ const DEFAULT_PROJECT_VALUES: ProjectMutation = {
 	skills_used: []
 }
 
-const ProjectEditor = ({className}: { className?: string }) => {
+const ProjectEditor = ({className}: ProjectEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
 	const [parent] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -91,132 +95,37 @@ const ProjectEditor = ({className}: { className?: string }) => {
 		})
 	}
 
-	const {mutateAsync: addProject, isPending: isAddingPending} =
-    useAddProjectMutation({
-    	onMutate: async (newProject) => {
-    		await queryClient.cancelQueries({
-    			queryKey: projectQueryOptions.queryKey
-    		})
+	const {mutateAsync: addProject, isPending: isAddingPending} = useAddProjectMutation({
+		onSuccess: () => {
+			revalidate()
+			toast.success('Project added successfully!')
+		},
+		onError: () => {
+			toast.error('Failed to add project. Please try again.')
+		}
+	})
 
-    		const prevAddProjects = queryClient.getQueryData(
-    			projectQueryOptions.queryKey,
-    		)
-
-    		queryClient.setQueryData(
-    			projectQueryOptions.queryKey,
-    			(oldData: any) => {
-    				const data = oldData || []
-    				return [
-    					...data,
-    					{
-    						...newProject,
-    						id: `temp-id-${Date.now()}`,
-    						created_at: new Date().toISOString(),
-    						updated_at: new Date().toISOString()
-    					}
-    				]
-    			},
-    		)
-
-    		return {prevProjects: prevAddProjects}
-    	},
-    	onError: (err, _newProject, context: any) => {
-    		queryClient.setQueryData(
-    			projectQueryOptions.queryKey,
-    			context?.prevProjects,
-    		)
-    		toast.error(`Failed to save project details: ${err.message}`)
-    	},
-    	onSettled: () => {
-    		revalidate()
-    	},
-    	onSuccess: () => {
-    		toast.success('Project added successfully!')
-    	}
-    })
-
-	const {mutateAsync: updateProject, isPending: isUpdatingPending} =
-    useUpdateProjectMutation({
-    	onMutate: async ({id, data}) => {
-    		await queryClient.cancelQueries({
-    			queryKey: projectQueryOptions.queryKey
-    		})
-
-    		const prevUpdateProjects = queryClient.getQueryData(
-    			projectQueryOptions.queryKey,
-    		)
-
-    		queryClient.setQueryData(
-    			projectQueryOptions.queryKey,
-    			(oldData: any) => {
-    				const dataArr = oldData || []
-    				return dataArr.map((item: any) => item.id === id
-    					? {
-    						...item,
-    						...data,
-    						updated_at: new Date().toISOString()
-    					}
-    					: item,)
-    			},
-    		)
-
-    		return {prevProjects: prevUpdateProjects}
-    	},
-    	onError: (err, _updateData, context: any) => {
-    		queryClient.setQueryData(
-    			projectQueryOptions.queryKey,
-    			context?.prevProjects,
-    		)
-    		toast.error(`Failed to update project details: ${err.message}`)
-    	},
-    	onSettled: () => {
-    		revalidate()
-    	},
-    	onSuccess: () => {
-    		toast.success('Project updated successfully!')
-    	}
-    })
+	const {mutateAsync: updateProject, isPending: isUpdatingPending} = useUpdateProjectMutation({
+		onSuccess: () => {
+			revalidate()
+			toast.success('Project updated successfully!')
+		},
+		onError: () => {
+			toast.error('Failed to update project. Please try again.')
+		}
+	})
 
 	const isSubmitting = isAddingPending || isUpdatingPending
 
-	const {mutateAsync: deleteProject, isPending: isDeleting} =
-    useDeleteProjectMutation({
-    	onMutate: async (projectId) => {
-    		setDeletingId(projectId)
-
-    		await queryClient.cancelQueries({
-    			queryKey: projectQueryOptions.queryKey
-    		})
-
-    		const prevDeleteProjects = queryClient.getQueryData(
-    			projectQueryOptions.queryKey,
-    		)
-
-    		queryClient.setQueryData(
-    			projectQueryOptions.queryKey,
-    			(oldData: any) => {
-    				const data = oldData || []
-    				return data.filter((item: any) => item.id !== projectId)
-    			},
-    		)
-
-    		return {prevProjects: prevDeleteProjects}
-    	},
-    	onError: (err, _projectId, context: any) => {
-    		queryClient.setQueryData(
-    			projectQueryOptions.queryKey,
-    			context?.prevProjects,
-    		)
-    		toast.error(`Failed to delete project: ${err.message}`)
-    	},
-    	onSettled: () => {
-    		revalidate()
-    		setDeletingId(null)
-    	},
-    	onSuccess: () => {
-    		toast.success('Project deleted successfully!')
-    	}
-    })
+	const {mutateAsync: deleteProject, isPending: isDeleting} = useDeleteProjectMutation({
+		onSuccess: () => {
+			revalidate()
+			toast.success('Project deleted successfully!')
+		},
+		onError: () => {
+			toast.error('Failed to delete project. Please try again.')
+		}
+	})
 
 	useEffect(() => {
 		setIsMounted(true)
@@ -322,6 +231,7 @@ const ProjectEditor = ({className}: { className?: string }) => {
 
 	const handleDelete = async (id: string) => {
 		try {
+			setDeletingId(id)
 			await deleteProject(id)
 			if (editingIndex !== null && projects[editingIndex]?.id === id) {
 				setEditingIndex(null)
@@ -330,6 +240,8 @@ const ProjectEditor = ({className}: { className?: string }) => {
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
+		} finally {
+			setDeletingId(null)
 		}
 	}
 
@@ -685,12 +597,24 @@ const ProjectEditor = ({className}: { className?: string }) => {
 										)}
 									</p>
 									{project.skills_used && project.skills_used.length > 0 && (
-										<div className="flex flex-wrap gap-1 mt-2">
-											{project.skills_used.map((skill, i) => (
-												<Badge key={i} variant="secondary" className="text-xs">
+										<div className="flex flex-wrap gap-1.5 mt-3">
+											{project.skills_used.slice(0, 6).map((skill, i) => (
+												<Badge
+													key={i}
+													variant="outline"
+													className="text-xs px-2 py-0.5 bg-blue-50/80 text-blue-700 border-blue-200/60 hover:bg-blue-100/80 transition-colors font-medium"
+												>
 													{skill.name}
 												</Badge>
 											))}
+											{project.skills_used.length > 6 && (
+												<Badge
+													variant="outline"
+													className="text-xs px-2 py-0.5 bg-neutral-50 text-neutral-600 border-neutral-200 font-medium"
+												>
+													+{project.skills_used.length - 6} more
+												</Badge>
+											)}
 										</div>
 									)}
 								</ItemCard>

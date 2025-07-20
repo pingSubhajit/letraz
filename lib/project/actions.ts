@@ -65,9 +65,10 @@ export const updateProjectInDB = async (
 	resumeId: string = 'base'
 ): Promise<Project> => {
 	try {
+		const params = ProjectMutationSchema.partial().parse(projectValues)
 		const data = await api.patch<Project>(
 			`/resume/${resumeId}/project/${projectId}/`,
-			projectValues
+			params
 		)
 		return ProjectSchema.parse(data)
 	} catch (error) {
