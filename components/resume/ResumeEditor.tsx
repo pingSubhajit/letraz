@@ -8,19 +8,24 @@ import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
+import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs'
 import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
 import {useState} from 'react'
 
 const ResumeEditor = ({className}: {className?: string}) => {
-	const [activeTab, setActiveTab] = useState<number>(0) // Default to Education (index 0)
+	const [activeTab, setActiveTab] = useState<number>(0) // Default to Profile (index 0)
+	const [activeTabId, setActiveTabId] = useState<string>('profile') // For traditional tabs
+
+	// Feature flag to switch between new and old tab designs
+	const useNewTabDesign = process.env.NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED === 'true'
 
 	const tabs = [
-		{title: 'Profile', icon: User},
-		{title: 'Education', icon: GraduationCap},
-		{title: 'Experience', icon: Briefcase},
-		{title: 'Skills', icon: Wrench},
-		{title: 'Certifications', icon: Medal},
-		{title: 'Projects', icon: FolderKanban}
+		{title: 'Profile', icon: User, id: 'profile'},
+		{title: 'Education', icon: GraduationCap, id: 'education'},
+		{title: 'Experience', icon: Briefcase, id: 'experience'},
+		{title: 'Skills', icon: Wrench, id: 'skills'},
+		{title: 'Certifications', icon: Medal, id: 'certifications'},
+		{title: 'Projects', icon: FolderKanban, id: 'projects'}
 	]
 
 	// Handle tab changes, ignoring null values
@@ -30,29 +35,64 @@ const ResumeEditor = ({className}: {className?: string}) => {
 		}
 	}
 
+	// Render editor content based on current tab
+	const renderEditorContent = () => {
+		const tabIndex = useNewTabDesign ? activeTab : tabs.findIndex(tab => tab.id === activeTabId)
+
+		switch (tabIndex) {
+		case 0: return <PersonalDetailsEditor />
+		case 1: return <EducationEditor />
+		case 2: return <ExperienceEditor />
+		case 3: return <SkillsEditor />
+		case 4: return <CertificationEditor />
+		case 5: return (
+			<div className="p-4">
+				<p className="text-center text-muted-foreground">Project editor is coming soon</p>
+			</div>
+		)
+		default: return <PersonalDetailsEditor />
+		}
+	}
+
 	return (
 		<div className={cn('p-6', className)}>
-
-			<ExpandableTabs
-				tabs={tabs}
-				onChange={handleTabChange}
-				className="mb-6"
-				collapseOnOutsideClick={false}
-			/>
-
-			<div className="mt-6">
-				{/* Conditionally render only the active editor component */}
-				{activeTab === 0 && <PersonalDetailsEditor />}
-				{activeTab === 1 && <EducationEditor />}
-				{activeTab === 2 && <ExperienceEditor />}
-				{activeTab === 3 && <SkillsEditor />}
-				{activeTab === 4 && <CertificationEditor />}
-				{activeTab === 5 && (
-					<div className="p-4">
-						<p className="text-center text-muted-foreground">Project editor is coming soon</p>
+			{useNewTabDesign ? (
+				// New expandable tabs design
+				<>
+					<ExpandableTabs
+						tabs={tabs}
+						onChange={handleTabChange}
+						className="mb-6"
+						collapseOnOutsideClick={false}
+					/>
+					<div className="mt-6">
+						{renderEditorContent()}
 					</div>
-				)}
-			</div>
+				</>
+			) : (
+				// Traditional shadcn tabs design
+				<Tabs value={activeTabId} onValueChange={setActiveTabId} className="w-full">
+					<TabsList className="grid w-full grid-cols-6 h-10 p-1 rounded-md">
+						{tabs.map((tab) => {
+							const IconComponent = tab.icon
+							return (
+								<TabsTrigger
+									key={tab.id}
+									value={tab.id}
+								>
+									<IconComponent className="h-4 w-4 shrink-0" />
+									<span className="hidden sm:inline truncate">{tab.title}</span>
+								</TabsTrigger>
+							)
+						})}
+					</TabsList>
+					{tabs.map((tab) => (
+						<TabsContent key={tab.id} value={tab.id} className="mt-6">
+							{renderEditorContent()}
+						</TabsContent>
+					))}
+				</Tabs>
+			)}
 		</div>
 	)
 }
