@@ -1,12 +1,14 @@
 'use client'
 
 import {cn} from '@/lib/utils'
+import CertificationEditor from '@/components/resume/editors/CertificationEditor'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
+
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
-import {Briefcase, FolderKanban, GraduationCap, User, Wrench} from 'lucide-react'
+import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
 import {useState} from 'react'
 
 const ResumeEditor = ({className}: {className?: string}) => {
@@ -17,6 +19,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 		{title: 'Education', icon: GraduationCap},
 		{title: 'Experience', icon: Briefcase},
 		{title: 'Skills', icon: Wrench},
+		{title: 'Certifications', icon: Medal},
 		{title: 'Projects', icon: FolderKanban}
 	]
 
@@ -29,6 +32,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 
 	return (
 		<div className={cn('p-6', className)}>
+
 			<ExpandableTabs
 				tabs={tabs}
 				onChange={handleTabChange}
@@ -42,7 +46,8 @@ const ResumeEditor = ({className}: {className?: string}) => {
 				{activeTab === 1 && <EducationEditor />}
 				{activeTab === 2 && <ExperienceEditor />}
 				{activeTab === 3 && <SkillsEditor />}
-				{activeTab === 4 && (
+				{activeTab === 4 && <CertificationEditor />}
+				{activeTab === 5 && (
 					<div className="p-4">
 						<p className="text-center text-muted-foreground">Project editor is coming soon</p>
 					</div>
