@@ -1,9 +1,9 @@
 'use client'
 
 import {useEffect, useState} from 'react'
-import {cn} from '@/lib/utils'
+import {apiDateToDate, cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
-import {Form} from '@/components/ui/form'
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Loader2, Plus} from 'lucide-react'
@@ -22,10 +22,8 @@ import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
-import {FormField, FormItem, FormLabel, FormControl, FormMessage} from '@/components/ui/form'
 import {Input} from '@/components/ui/input'
 import DatePicker from '@/components/ui/date-picker'
-import {apiDateToDate} from '@/lib/utils'
 
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
@@ -117,16 +115,18 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 			</p>
 			{certification.issue_date && (
 				<p className="text-sm">
-					Issued: {new Date(certification.issue_date).toLocaleDateString('en-US', {
+					<span className="font-medium">Issued at:</span> {new Date(certification.issue_date).toLocaleDateString('en-US', {
 						year: 'numeric',
 						month: 'long'
 					})}
 				</p>
 			)}
 			{certification.credential_url && (
-				<p className="text-sm text-blue-600 truncate">
-					{certification.credential_url}
-				</p>
+				<span className="text-sm">
+					<span className="font-medium">Verification link:</span> <a className="text-flame-600 truncate" href={certification.credential_url} target="_blank">
+						{certification.credential_url}
+					</a>
+				</span>
 			)}
 		</ItemCard>
 	)
