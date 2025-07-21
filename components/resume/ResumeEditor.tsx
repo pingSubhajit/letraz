@@ -1,12 +1,14 @@
 'use client'
 
 import {cn} from '@/lib/utils'
+import CertificationEditor from '@/components/resume/editors/CertificationEditor'
 import EducationEditor from '@/components/resume/editors/EducationEditor'
 import ExperienceEditor from '@/components/resume/editors/ExperienceEditor'
+
 import PersonalDetailsEditor from './editors/PersonalDetailsEditor'
 import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
-import {Briefcase, FolderKanban, GraduationCap, User, Wrench} from 'lucide-react'
+import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
 import {useState} from 'react'
 import ProjectEditor from './editors/ProjectEditor'
 
@@ -18,7 +20,8 @@ const ResumeEditor = ({className}: {className?: string}) => {
 		{title: 'Education', icon: GraduationCap},
 		{title: 'Experience', icon: Briefcase},
 		{title: 'Skills', icon: Wrench},
-		{title: 'Projects', icon: FolderKanban}
+    {title: 'Projects', icon: FolderKanban},
+		{title: 'Certifications', icon: Medal}
 	]
 
 	// Handle tab changes, ignoring null values
@@ -30,6 +33,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 
 	return (
 		<div className={cn('p-6', className)}>
+
 			<ExpandableTabs
 				tabs={tabs}
 				onChange={handleTabChange}
@@ -44,6 +48,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 				{activeTab === 2 && <ExperienceEditor />}
 				{activeTab === 3 && <SkillsEditor />}
 				{activeTab === 4 && <ProjectEditor />}
+				{activeTab === 5 && <CertificationEditor />}
 			</div>
 		</div>
 	)
