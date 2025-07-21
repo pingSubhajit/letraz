@@ -335,7 +335,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 								currentLabel="This is an ongoing project"
 							/>
 
-							{/* Skills Section - Moved above description */}
+							{/* Skills Section */}
 							<div className="p-5 bg-white rounded-lg border shadow-sm">
 								<h3 className="text-base font-medium mb-4">Skills Used</h3>
 								<FormField
@@ -343,47 +343,68 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 									name="skills_used"
 									render={({field}) => {
 										const validSkills = field.value.filter(skill => skill.name.trim() !== '')
+										// Group skills by category
+										const skillsByCategory = validSkills.reduce((acc, skill, originalIndex) => {
+											const category = skill.category || 'Other'
+											if (!acc[category]) {
+												acc[category] = []
+											}
+											acc[category].push({...skill, originalIndex})
+											return acc
+										}, {} as Record<string, Array<{name: string, category: string, originalIndex: number}>>)
 
 										return (
 											<FormItem>
-												{/* Display existing skills as compact list */}
+												{/* Display existing skills grouped by category */}
 												{validSkills.length > 0 && (
 													<div className="space-y-2 mb-4">
-														{validSkills.map((skill, index) => (
-															<div key={index} className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg border">
-																<div className="flex-1">
+														{Object.entries(skillsByCategory).map(([category, categorySkills]) => (
+															<div key={category} className="p-3 bg-neutral-50 rounded-lg border">
+																<div className="flex items-center justify-between mb-2">
 																	<div className="flex items-center gap-2">
-																		<span className="font-medium text-sm">{skill.name}</span>
-																		{skill.category && skill.category !== 'Other' && (
-																			<Badge variant="outline" className="text-xs">
-																				{skill.category}
+																		{category !== 'Other' && (
+																			<Badge
+																				variant="outline"
+																				className="text-xs px-2 py-0.5 bg-orange-50/80 text-orange-700 border-orange-200/60 font-medium"
+																			>
+																				{category}
 																			</Badge>
+																		)}
+																		{category === 'Other' && categorySkills.length > 1 && (
+																			<span className="text-xs text-muted-foreground font-medium">Other Skills</span>
 																		)}
 																	</div>
 																</div>
-																<Button
-																	type="button"
-																	variant="ghost"
-																	size="icon"
-																	className="h-6 w-6 text-neutral-500 hover:text-red-600 hover:bg-red-50"
-																	onClick={() => {
-																		const newSkills = [...field.value]
-																		const actualIndex = field.value.findIndex(s => s.name === skill.name)
-																		if (actualIndex !== -1) {
-																			newSkills.splice(actualIndex, 1)
-																			field.onChange(newSkills)
-																		}
-																	}}
-																	disabled={isSubmitting}
-																>
-																	<Trash2 className="h-3 w-3" />
-																</Button>
+																<div className="flex flex-wrap gap-2">
+																	{categorySkills.map((skill) => (
+																		<div key={skill.originalIndex} className="flex items-center gap-1 bg-white rounded-md px-2 py-1 border">
+																			<span className="font-medium text-sm">{skill.name}</span>
+																			<Button
+																				type="button"
+																				variant="ghost"
+																				size="icon"
+																				className="h-4 w-4 text-neutral-400 hover:text-red-600 hover:bg-red-50 ml-1"
+																				onClick={() => {
+																					const newSkills = [...field.value]
+																					const actualIndex = field.value.findIndex(s => s.name === skill.name)
+																					if (actualIndex !== -1) {
+																						newSkills.splice(actualIndex, 1)
+																						field.onChange(newSkills)
+																					}
+																				}}
+																				disabled={isSubmitting}
+																			>
+																				<Trash2 className="h-3 w-3" />
+																			</Button>
+																		</div>
+																	))}
+																</div>
 															</div>
 														))}
 													</div>
 												)}
 
-												{/* Add new skill input - only show when adding */}
+												{/* Add new skill input */}
 												{isAddingSkill && (
 													<div className="flex flex-col gap-4 mb-4">
 														<Form {...newSkillForm}>
@@ -409,12 +430,12 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 																			onSkillSelect={(skillId, skillName, category) => {
 																				skillNameField.onChange(skillName)
 																				if (skillId === 'custom') {
-																					// For custom skills, only update category if not already set
+																					// For custom skills
 																					if (!newSkillForm.getValues('skill_category') || newSkillForm.getValues('skill_category') === 'Other') {
 																						newSkillForm.setValue('skill_category', category || 'Other')
 																					}
 																				} else if (skillId) {
-																					// For existing skills, always update category (like in SkillsEditor)
+																					// For existing skills
 																					newSkillForm.setValue('skill_category', category || 'Other')
 																				}
 																			}}
