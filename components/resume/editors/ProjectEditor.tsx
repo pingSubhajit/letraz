@@ -228,7 +228,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 			form.reset(DEFAULT_PROJECT_VALUES)
 			setView('list')
 			setEditingIndex(null)
-			setIsAddingSkill(false)		
+			setIsAddingSkill(false)
 			newSkillForm.reset({skill_name: '', skill_category: ''})
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
