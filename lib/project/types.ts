@@ -65,7 +65,7 @@ export const ProjectMutationSchema = ProjectSchema.omit({
 	finished_at_year: z.string().nullish(),
 	skills_used: z.array(z.object({
 		name: z.string().describe('The name of the skill.'),
-		category: z.string().describe('The category of the skill.')
+		category: z.string().nullable().describe('The category of the skill. (optional)')
 	})).describe('Skills used in this project')
 })
 

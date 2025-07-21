@@ -12,7 +12,7 @@ import {
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {months} from '@/constants'
-import {Loader2, Plus, Trash2} from 'lucide-react'
+import {Loader2, Plus, Trash2, Github, ExternalLink} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
@@ -69,13 +69,13 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [isAddingSkill, setIsAddingSkill] = useState(false)
-	const [newSkill, setNewSkill] = useState({name: '', category: 'Other'})
+	const [newSkill, setNewSkill] = useState({name: '', category: null as string | null})
 
 	// Separate form for new skill input
 	const newSkillForm = useForm({
 		defaultValues: {
 			skill_name: '',
-			skill_category: 'Other'
+			skill_category: ''
 		}
 	})
 
@@ -143,7 +143,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 				.filter((skill) => skill.name.trim() !== '')
 				.map((skill) => ({
 					name: skill.name.trim(),
-					category: skill.category?.trim() || 'Other'
+					category: skill.category?.trim() || null
 				}))
 
 			// If no valid skills, show error
@@ -173,22 +173,27 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 				skills_used: validSkills
 			}
 
-			// Format URLs if needed
-			if (
-				formattedValues.github_url &&
-        !formattedValues.github_url.startsWith('http') &&
-        formattedValues.github_url.length > 0
-			) {
-				formattedValues.github_url = `https://${formattedValues.github_url}`
+			// Format URLs with proper validation
+			const formatUrl = (url: string | null): string | null => {
+				if (!url || url.trim() === '') return null
+
+				const trimmedUrl = url.trim()
+
+				// Check if URL already has a valid protocol
+				if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmedUrl)) {
+					return trimmedUrl
+				}
+
+				// Only prepend https:// if it looks like a domain/path
+				if (/^[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9]/.test(trimmedUrl)) {
+					return `https://${trimmedUrl}`
+				}
+
+				return trimmedUrl
 			}
 
-			if (
-				formattedValues.live_url &&
-        !formattedValues.live_url.startsWith('http') &&
-        formattedValues.live_url.length > 0
-			) {
-				formattedValues.live_url = `https://${formattedValues.live_url}`
-			}
+			formattedValues.github_url = formatUrl(formattedValues.github_url)
+			formattedValues.live_url = formatUrl(formattedValues.live_url)
 
 			if (editingIndex !== null) {
 				const projectId = projects[editingIndex]?.id
@@ -201,8 +206,8 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 			setView('list')
 			setEditingIndex(null)
 			setIsAddingSkill(false)
-			setNewSkill({name: '', category: 'Other'})
-			newSkillForm.reset({skill_name: '', skill_category: 'Other'})
+			setNewSkill({name: '', category: null})
+			newSkillForm.reset({skill_name: '', skill_category: ''})
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -213,7 +218,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 		// Transform the skills to ensure they have the required format
 		const formattedSkills = project.skills_used.map((skill) => ({
 			name: skill.name,
-			category: skill.category || 'Other' // Ensure category is never null
+			category: skill.category // Keep original category, can be null
 		}))
 
 		form.reset({
@@ -250,8 +255,8 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 		setEditingIndex(null)
 		setView('form')
 		setIsAddingSkill(false)
-		setNewSkill({name: '', category: 'Other'})
-		newSkillForm.reset({skill_name: '', skill_category: 'Other'})
+		setNewSkill({name: '', category: null})
+		newSkillForm.reset({skill_name: '', skill_category: ''})
 	}
 
 	const handleCancel = () => {
@@ -259,8 +264,8 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 		setEditingIndex(null)
 		setView('list')
 		setIsAddingSkill(false)
-		setNewSkill({name: '', category: 'Other'})
-		newSkillForm.reset({skill_name: '', skill_category: 'Other'})
+		setNewSkill({name: '', category: null})
+		newSkillForm.reset({skill_name: '', skill_category: ''})
 	}
 
 	if (view === 'form') {
@@ -349,9 +354,9 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 											if (!acc[category]) {
 												acc[category] = []
 											}
-											acc[category].push({...skill, originalIndex})
+											acc[category].push({...skill, category, originalIndex})
 											return acc
-										}, {} as Record<string, Array<{name: string, category: string, originalIndex: number}>>)
+										}, {} as Record<string, Array<{name: string, category: string | null, originalIndex: number}>>)
 
 										return (
 											<FormItem>
@@ -385,12 +390,12 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 																				size="icon"
 																				className="h-4 w-4 text-neutral-400 hover:text-red-600 hover:bg-red-50 ml-1"
 																				onClick={() => {
-																					const newSkills = [...field.value]
-																					const actualIndex = field.value.findIndex(s => s.name === skill.name)
-																					if (actualIndex !== -1) {
-																						newSkills.splice(actualIndex, 1)
-																						field.onChange(newSkills)
-																					}
+																					/*
+																					 * Filter out this specific skill instance by both name and category
+																					 * to handle potential duplicates correctly
+																					 */
+																					const newSkills = field.value.filter((s, index) => !(s.name === skill.name && s.category === skill.category && index === skill.originalIndex))
+																					field.onChange(newSkills)
 																				}}
 																				disabled={isSubmitting}
 																			>
@@ -431,12 +436,12 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 																				skillNameField.onChange(skillName)
 																				if (skillId === 'custom') {
 																					// For custom skills
-																					if (!newSkillForm.getValues('skill_category') || newSkillForm.getValues('skill_category') === 'Other') {
-																						newSkillForm.setValue('skill_category', category || 'Other')
+																					if (!newSkillForm.getValues('skill_category')) {
+																						newSkillForm.setValue('skill_category', category || '')
 																					}
 																				} else if (skillId) {
 																					// For existing skills
-																					newSkillForm.setValue('skill_category', category || 'Other')
+																					newSkillForm.setValue('skill_category', category || '')
 																				}
 																			}}
 																		/>
@@ -483,9 +488,9 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 																	if (skillName.trim()) {
 																		field.onChange([...field.value, {
 																			name: skillName,
-																			category: skillCategory || 'Other'
+																			category: skillCategory || null
 																		}])
-																		newSkillForm.reset({skill_name: '', skill_category: 'Other'})
+																		newSkillForm.reset({skill_name: '', skill_category: ''})
 																		setIsAddingSkill(false)
 																	}
 																}}
@@ -500,7 +505,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 																size="sm"
 																onClick={() => {
 																	setIsAddingSkill(false)
-																	newSkillForm.reset({skill_name: '', skill_category: 'Other'})
+																	newSkillForm.reset({skill_name: '', skill_category: ''})
 																}}
 															>
 																Cancel
@@ -594,25 +599,53 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 									id={project.id}
 									deletingId={deletingId}
 								>
-									<h3 className="font-medium">{project.name}</h3>
+									<div className="flex items-center gap-2">
+										<h3 className="font-medium">{project.name}</h3>
+										<div className="flex items-center gap-1.5">
+											{project.github_url && (
+												<button
+													onClick={(e) => {
+														e.stopPropagation()
+														window.open(project.github_url!, '_blank', 'noopener,noreferrer')
+													}}
+													className="p-1 rounded-md hover:bg-neutral-100 transition-colors"
+													title="View on GitHub"
+												>
+													<Github className="h-4 w-4 text-neutral-700 hover:text-black transition-colors" />
+												</button>
+											)}
+											{project.live_url && (
+												<button
+													onClick={(e) => {
+														e.stopPropagation()
+														window.open(project.live_url!, '_blank', 'noopener,noreferrer')
+													}}
+													className="p-1 rounded-md hover:bg-neutral-100 transition-colors"
+													title="View Live Project"
+												>
+													<ExternalLink className="h-4 w-4 text-flame-600 hover:text-flame-700 transition-colors" />
+												</button>
+											)}
+										</div>
+									</div>
 									<p className="text-sm text-muted-foreground">
 										{project.role}
 										{project.category && ` | ${project.category}`}
 									</p>
 									<p className="text-sm">
 										{project.started_from_month &&
-                      months.find(
-                      	(m) => m.value === project.started_from_month?.toString(),
-                      )?.label}{' '}
+                                            months.find(
+                                            	(m) => m.value === project.started_from_month?.toString(),
+                                            )?.label}{' '}
 										{project.started_from_year} -{' '}
 										{project.current ? (
 											'Present'
 										) : (
 											<>
 												{project.finished_at_month &&
-                          months.find(
-                          	(m) => m.value === project.finished_at_month?.toString(),
-                          )?.label}{' '}
+                                                    months.find(
+                                                    	(m) => m.value === project.finished_at_month?.toString(),
+                                                    )?.label}{' '}
 												{project.finished_at_year}
 											</>
 										)}
@@ -623,7 +656,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 												<Badge
 													key={i}
 													variant="outline"
-													className="text-xs px-2 py-0.5 bg-blue-50/80 text-blue-700 border-blue-200/60 hover:bg-blue-100/80 transition-colors font-medium"
+													className="text-xs px-2 py-0.5 bg-flame-40/80 text-flame-600 border-flame-200/60 hover:bg-flame-50/80 transition-colors font-medium"
 												>
 													{skill.name}
 												</Badge>
@@ -631,7 +664,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 											{project.skills_used.length > 6 && (
 												<Badge
 													variant="outline"
-													className="text-xs px-2 py-0.5 bg-neutral-50 text-neutral-600 border-neutral-200 font-medium"
+													className="text-xs px-2 py-0.5 bg-flame-40/80 text-flame-600 border-flame-200/60 hover:bg-flame-50/80 transition-colors font-medium"
 												>
 													+{project.skills_used.length - 6} more
 												</Badge>
