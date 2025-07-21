@@ -1,16 +1,19 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useMemo} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {
 	Form,
 	FormField,
 	FormItem,
+	FormLabel,
 	FormMessage
 } from '@/components/ui/form'
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
+import {z} from 'zod'
 import {months} from '@/constants'
 import {Loader2, Plus, Trash2, Github, ExternalLink} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
@@ -22,7 +25,7 @@ import {
 	projectQueryOptions,
 	useCurrentProjects
 } from '@/lib/project/queries'
-import {useGlobalSkills, useSkillCategories} from '@/lib/skill/queries'
+import {useGlobalSkills, useSkillCategories, useCurrentResumeSkills} from '@/lib/skill/queries'
 import {
 	useAddProjectMutation,
 	useDeleteProjectMutation,
@@ -61,6 +64,11 @@ const DEFAULT_PROJECT_VALUES: ProjectMutation = {
 	skills_used: []
 }
 
+const newSkillSchema = z.object({
+	skill_name: z.string().min(1, 'Skill name is required'),
+	skill_category: z.string().optional()
+})
+
 const ProjectEditor = ({className}: ProjectEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
 	const [parent] = useAutoAnimate()
@@ -69,21 +77,41 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [isAddingSkill, setIsAddingSkill] = useState(false)
-	const [newSkill, setNewSkill] = useState({name: '', category: null as string | null})
 
 	// Separate form for new skill input
 	const newSkillForm = useForm({
+		resolver: zodResolver(newSkillSchema),
 		defaultValues: {
 			skill_name: '',
 			skill_category: ''
-		}
+		},
+		mode: 'onChange'
 	})
 
 	const {data: projects = [], isLoading, error} = useCurrentProjects()
+	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills} = useCurrentResumeSkills()
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} =
     useGlobalSkills()
 	const {data: skillCategories = [], isLoading: isLoadingCategories} =
     useSkillCategories()
+
+	// Merge and prioritize skills - user's resume skills come first
+	const mergedSkills = useMemo(() => {
+		// Convert resume skills to global skill format and mark them as preferred
+		const userSkills = resumeSkills.map(resumeSkill => ({
+			...resumeSkill.skill,
+			preferred: true // Mark user's existing skills as preferred
+		}))
+
+		// Get skill IDs that are already in user's resume
+		const userSkillIds = new Set(userSkills.map(skill => skill.id))
+
+		// Filter global skills to exclude those already in user's resume
+		const additionalGlobalSkills = globalSkills.filter(skill => !userSkillIds.has(skill.id))
+
+		// Return user skills first, then remaining global skills
+		return [...userSkills, ...additionalGlobalSkills]
+	}, [resumeSkills, globalSkills])
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: projectQueryOptions.queryKey})
@@ -133,7 +161,8 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 
 	const form = useForm<ProjectMutation>({
 		resolver: zodResolver(ProjectMutationSchema),
-		defaultValues: DEFAULT_PROJECT_VALUES
+		defaultValues: DEFAULT_PROJECT_VALUES,
+		mode: 'onChange'
 	})
 
 	const onSubmit = async (values: ProjectMutation) => {
@@ -145,12 +174,6 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 					name: skill.name.trim(),
 					category: skill.category?.trim() || null
 				}))
-
-			// If no valid skills, show error
-			if (validSkills.length === 0) {
-				toast.error('At least one skill with a name is required')
-				return
-			}
 
 			// Create a copy of values to avoid mutating the original
 			const formattedValues = {
@@ -205,8 +228,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 			form.reset(DEFAULT_PROJECT_VALUES)
 			setView('list')
 			setEditingIndex(null)
-			setIsAddingSkill(false)
-			setNewSkill({name: '', category: null})
+			setIsAddingSkill(false)		
 			newSkillForm.reset({skill_name: '', skill_category: ''})
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -255,7 +277,6 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 		setEditingIndex(null)
 		setView('form')
 		setIsAddingSkill(false)
-		setNewSkill({name: '', category: null})
 		newSkillForm.reset({skill_name: '', skill_category: ''})
 	}
 
@@ -264,7 +285,6 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 		setEditingIndex(null)
 		setView('list')
 		setIsAddingSkill(false)
-		setNewSkill({name: '', category: null})
 		newSkillForm.reset({skill_name: '', skill_category: ''})
 	}
 
@@ -341,96 +361,75 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 							/>
 
 							{/* Skills Section */}
-							<div className="p-5 bg-white rounded-lg border shadow-sm">
-								<h3 className="text-base font-medium mb-4">Skills Used</h3>
+							<div className="space-y-4">
+								<h3 className="text-base font-medium">Skills Used</h3>
 								<FormField
 									control={form.control}
 									name="skills_used"
 									render={({field}) => {
 										const validSkills = field.value.filter(skill => skill.name.trim() !== '')
-										// Group skills by category
-										const skillsByCategory = validSkills.reduce((acc, skill, originalIndex) => {
-											const category = skill.category || 'Other'
-											if (!acc[category]) {
-												acc[category] = []
-											}
-											acc[category].push({...skill, category, originalIndex})
-											return acc
-										}, {} as Record<string, Array<{name: string, category: string | null, originalIndex: number}>>)
 
 										return (
 											<FormItem>
-												{/* Display existing skills grouped by category */}
+												{/* Display existing skills as boxy cards */}
 												{validSkills.length > 0 && (
-													<div className="space-y-2 mb-4">
-														{Object.entries(skillsByCategory).map(([category, categorySkills]) => (
-															<div key={category} className="p-3 bg-neutral-50 rounded-lg border">
-																<div className="flex items-center justify-between mb-2">
-																	<div className="flex items-center gap-2">
-																		{category !== 'Other' && (
-																			<Badge
-																				variant="outline"
-																				className="text-xs px-2 py-0.5 bg-orange-50/80 text-orange-700 border-orange-200/60 font-medium"
-																			>
-																				{category}
-																			</Badge>
-																		)}
-																		{category === 'Other' && categorySkills.length > 1 && (
-																			<span className="text-xs text-muted-foreground font-medium">Other Skills</span>
+													<div className="flex flex-wrap gap-3 mb-4">
+														{validSkills.map((skill, index) => (
+															<div key={index} className="relative bg-neutral-50 rounded-lg px-4 py-3 border border-neutral-200 shadow-sm hover:shadow-md transition-shadow min-w-[140px]">
+																<div className="flex justify-between items-start gap-2">
+																	<div className="flex-1 min-w-0">
+																		<div className="font-medium text-base text-neutral-900 leading-tight mb-1">
+																			{skill.name}
+																		</div>
+																		{skill.category && (
+																			<div className="text-xs text-neutral-500 leading-tight">
+																				{skill.category}
+																			</div>
 																		)}
 																	</div>
-																</div>
-																<div className="flex flex-wrap gap-2">
-																	{categorySkills.map((skill) => (
-																		<div key={skill.originalIndex} className="flex items-center gap-1 bg-white rounded-md px-2 py-1 border">
-																			<span className="font-medium text-sm">{skill.name}</span>
-																			<Button
-																				type="button"
-																				variant="ghost"
-																				size="icon"
-																				className="h-4 w-4 text-neutral-400 hover:text-red-600 hover:bg-red-50 ml-1"
-																				onClick={() => {
-																					/*
-																					 * Filter out this specific skill instance by both name and category
-																					 * to handle potential duplicates correctly
-																					 */
-																					const newSkills = field.value.filter((s, index) => !(s.name === skill.name && s.category === skill.category && index === skill.originalIndex))
-																					field.onChange(newSkills)
-																				}}
-																				disabled={isSubmitting}
-																			>
-																				<Trash2 className="h-3 w-3" />
-																			</Button>
-																		</div>
-																	))}
+																	<Button
+																		type="button"
+																		variant="ghost"
+																		size="icon"
+																		className="h-5 w-5 text-neutral-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0 -mt-1 -mr-1"
+																		onClick={() => {
+																			const newSkills = field.value.filter((_, i) => i !== index)
+																			field.onChange(newSkills)
+																		}}
+																		disabled={isSubmitting}
+																	>
+																		<Trash2 className="h-3.5 w-3.5" />
+																	</Button>
 																</div>
 															</div>
 														))}
 													</div>
 												)}
 
-												{/* Add new skill input */}
-												{isAddingSkill && (
-													<div className="flex flex-col gap-4 mb-4">
+												{/* Add skill interface */}
+												{isAddingSkill ? (
+													// Autocomplete for new skills - directly replaces dropdown + button
+													<div className="space-y-4">
 														<Form {...newSkillForm}>
 															<FormField
 																control={newSkillForm.control}
 																name="skill_name"
 																render={({field: skillNameField}) => (
 																	<FormItem>
+																		<FormLabel>Add New Skill</FormLabel>
 																		<SkillAutocomplete
-																			skills={globalSkills}
+																			skills={mergedSkills}
 																			excludeSkillIds={field.value
 																				.filter(s => s.name.trim() !== '')
 																				.map((s) => {
-																					const globalSkill = globalSkills.find(
+																					const matchingSkill = mergedSkills.find(
 																						(gs) => gs.name.toLowerCase() === s.name.toLowerCase(),
 																					)
-																					return globalSkill?.id || s.name
+																					return matchingSkill?.id || s.name
 																				})}
 																			name="skill_name"
 																			placeholder="Type to search skills..."
-																			disabled={isSubmitting || isLoadingGlobalSkills}
+																			disabled={isSubmitting || isLoadingGlobalSkills || isLoadingResumeSkills}
 																			defaultValue=""
 																			onSkillSelect={(skillId, skillName, category) => {
 																				skillNameField.onChange(skillName)
@@ -447,8 +446,9 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 																		/>
 																		<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
 																			<Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 px-1.5 py-0">Preferred</Badge>
-																			<span>skills are recommended by ATS systems and frequently searched by recruiters.</span>
+																			<span>skills include your existing skills and those recommended by ATS systems.</span>
 																		</div>
+																		<FormMessage className="text-xs" />
 																	</FormItem>
 																)}
 															/>
@@ -477,10 +477,10 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 															Skills with detailed categories stand out to both recruiters and ATS systems.
 														</p>
 
-														<div className="flex items-center gap-2 justify-center">
+														<div className="flex items-center gap-2">
 															<Button
 																type="button"
-																variant="outline"
+																variant="default"
 																size="sm"
 																onClick={() => {
 																	const skillName = newSkillForm.getValues('skill_name')
@@ -512,21 +512,79 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 															</Button>
 														</div>
 													</div>
-												)}
+												) : (
+													// Dropdown and Add button side by side
+													<div className="flex items-end gap-3">
+														<div className="flex-1">
+															<FormLabel className="text-sm font-medium mb-2 block">Add Skills</FormLabel>
+															{(() => {
+																const availableSkills = resumeSkills.filter(rs => {
+																	// Exclude already selected skills
+																	const isAlreadySelected = field.value.some(
+																		(s) => s.name.toLowerCase() === rs.skill.name.toLowerCase()
+																	)
+																	return !isAlreadySelected
+																})
 
-												{/* Add skill button */}
-												{!isAddingSkill && (
-													<div className="flex justify-center">
+																return (
+																	<Select
+																		value=""
+																		onValueChange={(value) => {
+																			if (value && value !== '' && value !== 'no-skills') {
+																				// Find the selected skill from user's resume
+																				const selectedSkill = resumeSkills.find(rs => rs.skill.id === value)
+																				if (selectedSkill) {
+																					field.onChange([...field.value, {
+																						name: selectedSkill.skill.name,
+																						category: selectedSkill.skill.category
+																					}])
+																				}
+																			}
+																		}}
+																		disabled={isSubmitting || availableSkills.length === 0}
+																	>
+																		<SelectTrigger>
+																			<SelectValue
+																				placeholder={
+																					availableSkills.length === 0
+																						? 'All skills already added'
+																						: validSkills.length === 0
+																							? 'Choose from your existing skills'
+																							: 'Add another skill'
+																				}
+																			/>
+																		</SelectTrigger>
+																		<SelectContent>
+																			{availableSkills.length > 0 ? (
+																				availableSkills.map((resumeSkill) => (
+																					<SelectItem key={resumeSkill.skill.id} value={resumeSkill.skill.id}>
+																						{resumeSkill.skill.name}
+																						{resumeSkill.skill.category && (
+																							<span className="text-muted-foreground ml-2">
+																								({resumeSkill.skill.category})
+																							</span>
+																						)}
+																					</SelectItem>
+																				))
+																			) : (
+																				<SelectItem value="no-skills" disabled>
+																					No more skills available
+																				</SelectItem>
+																			)}
+																		</SelectContent>
+																	</Select>
+																)
+															})()}
+														</div>
 														<Button
 															type="button"
 															variant="outline"
-															size="sm"
 															onClick={() => setIsAddingSkill(true)}
 															disabled={isSubmitting}
-															className="px-4 py-2"
+															className="flex-shrink-0"
 														>
 															<Plus className="h-4 w-4 mr-2" />
-															{validSkills.length === 0 ? 'Add Skill' : 'Add Another Skill'}
+															Add New Skill
 														</Button>
 													</div>
 												)}

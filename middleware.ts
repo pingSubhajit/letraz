@@ -20,9 +20,9 @@ export default clerkMiddleware(async (auth, req) => {
 				const metadata = user.publicMetadata as OnboardingMetadata
 				
 				// If user is on onboarding page but has completed onboarding, redirect to main app
-				if (isOnboardingRoute(req) && metadata.onboardingComplete) {
-					return NextResponse.redirect(new URL('/app', req.url))
-				}
+				// if (isOnboardingRoute(req) && metadata.onboardingComplete) {
+				// 	return NextResponse.redirect(new URL('/app', req.url))
+				// }
 				
 				// If user is not on onboarding page but hasn't completed onboarding, redirect to current step
 				if (!isOnboardingRoute(req) && !metadata.onboardingComplete) {

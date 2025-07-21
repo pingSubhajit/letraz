@@ -59,6 +59,7 @@ export const ProjectMutationSchema = ProjectSchema.omit({
 	finished_at_month: true,
 	finished_at_year: true
 }).extend({
+	name: z.string().min(1, {message: 'Required'}).max(255).describe('Name of the project.'),
 	started_from_month: z.string().nullish(),
 	started_from_year: z.string().nullish(),
 	finished_at_month: z.string().nullish(),
