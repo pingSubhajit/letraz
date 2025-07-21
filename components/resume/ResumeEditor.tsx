@@ -20,7 +20,7 @@ const ResumeEditor = ({className}: {className?: string}) => {
 		{title: 'Education', icon: GraduationCap},
 		{title: 'Experience', icon: Briefcase},
 		{title: 'Skills', icon: Wrench},
-    {title: 'Projects', icon: FolderKanban},
+		{title: 'Projects', icon: FolderKanban},
 		{title: 'Certifications', icon: Medal}
 	]
 
