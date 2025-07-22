@@ -334,9 +334,9 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 					Error loading experience details. Please try again later.
 				</div>
 			) : (
-				<div ref={parent}>
+				<div>
 					{localExperiences.length > 0 ? (
-						<div className="space-y-4">
+						<div className="space-y-4" ref={parent}>
 							{localExperiences.map((experience, index) => renderExperienceItem(experience, index))}
 						</div>
 					) : (

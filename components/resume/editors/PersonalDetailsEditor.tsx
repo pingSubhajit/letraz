@@ -6,7 +6,6 @@ import {cn, sanitizeHtml} from '@/lib/utils'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
-
 import {useForm} from 'react-hook-form'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import TextFormField from '@/components/resume/editors/shared/TextFormField'
@@ -175,7 +174,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 							description="Ensure that the details are correct and reflect your previous personal information"
 						/>
 
-						<div className="rounded-xl p-6 mb-6 shadow-sm border border-accent">
+						<div className="rounded-xl p-6 mb-6 shadow-md bg-neutral-100">
 							<div className="flex items-start gap-4">
 								<div className="flex-shrink-0">
 									<div className="w-10 h-10 bg-flame-500 rounded-lg flex items-center justify-center">
