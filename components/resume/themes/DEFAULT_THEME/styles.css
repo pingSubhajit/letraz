@@ -240,3 +240,29 @@
   color: black;
   font-family: "Charter", "Times New Roman", Times, serif;
 }
+
+/* Skills section styling */
+.default-theme-container .skills-section {
+  margin-bottom: 8px;
+}
+
+.default-theme-container .skill-category {
+  font-size: 13px;
+  line-height: 1.27;
+  font-family: "Charter", "Times New Roman", Times, serif;
+  margin-bottom: 4px;
+}
+
+.default-theme-container .skill-category:last-child {
+  margin-bottom: 0;
+}
+
+.default-theme-container .skill-category-name {
+  font-weight: 700;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .skill-list {
+  font-weight: 400;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}

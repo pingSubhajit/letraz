@@ -5,11 +5,13 @@ import {ResumeSection} from '@/lib/resume/types'
 import {UserInfo} from '@/lib/user-info/types'
 import {Education} from '@/lib/education/types'
 import {Experience} from '@/lib/experience/types'
+import {ResumeSkill} from '@/lib/skill/types'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 import ReorderableSections from '@/components/resume/ReorderableSections'
 import {PersonalInfoController, PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 import {EducationController, EducationData} from '@/components/resume/controllers/EducationController'
 import {ExperienceController, ExperienceData} from '@/components/resume/controllers/ExperienceController'
+import {SkillsController, SkillsData} from '@/components/resume/controllers/SkillsController'
 import {cn} from '@/lib/utils'
 
 // Standard theme props interface
@@ -25,8 +27,10 @@ export interface ThemeComponents {
 	PersonalInfoSection: React.ComponentType<{data: PersonalInfoData}>
 	EducationSection: React.ComponentType<{data: EducationData}>
 	ExperienceSection: React.ComponentType<{data: ExperienceData}>
+	SkillsSection: React.ComponentType<{data: SkillsData}>
 	EducationTitle: React.ComponentType
 	ExperienceTitle: React.ComponentType
+	SkillsTitle: React.ComponentType
 }
 
 // Theme configuration interface
@@ -51,6 +55,8 @@ export const createTheme = (config: ThemeConfig) => {
 					return <config.components.EducationTitle />
 				} else if (section.type === 'Experience') {
 					return <config.components.ExperienceTitle />
+				} else if (section.type === 'Skill') {
+					return <config.components.SkillsTitle />
 				}
 				return null
 			})()
@@ -74,6 +80,15 @@ export const createTheme = (config: ThemeConfig) => {
 						>
 							{(data) => <config.components.ExperienceSection data={data} />}
 						</ExperienceController>
+					)
+				} else if (section.type === 'Skill') {
+					return (
+						<SkillsController
+							section={section as ResumeSection & { type: 'Skill', data: ResumeSkill[] }}
+							isFirstInGroup={isFirstInGroup}
+						>
+							{(data) => <config.components.SkillsSection data={data} />}
+						</SkillsController>
 					)
 				}
 				return null
