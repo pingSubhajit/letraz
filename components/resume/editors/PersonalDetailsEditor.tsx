@@ -6,7 +6,6 @@ import {cn, sanitizeHtml} from '@/lib/utils'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
-
 import {useForm} from 'react-hook-form'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import TextFormField from '@/components/resume/editors/shared/TextFormField'

@@ -1,31 +1,31 @@
 'use client'
 
-import {useState, useEffect, useMemo} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
+import {Form, FormField, FormItem} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {Loader2, Pencil, Plus, Trash2, ChevronDown} from 'lucide-react'
+import {ChevronDown, Loader2, Pencil, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {Badge} from '@/components/ui/badge'
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '@/components/ui/collapsible'
 import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger
-} from '@/components/ui/collapsible'
-import {resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills, useSkillCategories} from '@/lib/skill/queries'
+	resumeSkillsQueryOptions,
+	useCurrentResumeSkills,
+	useGlobalSkills,
+	useSkillCategories
+} from '@/lib/skill/queries'
 import {useAddSkillMutation, useRemoveSkillMutation, useUpdateSkillMutation} from '@/lib/skill/mutations'
-import {SkillMutation, SkillMutationSchema, skillLevels, ResumeSkill} from '@/lib/skill/types'
+import {ResumeSkill, skillLevels, SkillMutation, SkillMutationSchema} from '@/lib/skill/types'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ProficiencySlider from '@/components/resume/editors/shared/ProficiencySlider'
 import PopConfirm from '@/components/ui/pop-confirm'
-import {Input} from '@/components/ui/input'
 
 type ViewState = 'list' | 'form'
 
@@ -41,7 +41,8 @@ interface SkillsByCategory {
 
 const SkillsEditor = ({className}: { className?: string }) => {
 	const [view, setView] = useState<ViewState>('list')
-	const [parent] = useAutoAnimate()
+	const [categoryAnimationContainer] = useAutoAnimate()
+	const [skillAnimationContainer] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
 	const [openSkillSearch, setOpenSkillSearch] = useState(false)
@@ -463,9 +464,9 @@ const SkillsEditor = ({className}: { className?: string }) => {
 					Error loading skills. Please try again later.
 				</div>
 			) : (
-				<div ref={parent} className="space-y-6 overflow-y-auto">
+				<div className="space-y-6 overflow-y-auto">
 					{Object.keys(skillsByCategory).length > 0 ? (
-						<div className="space-y-4">
+						<div className="space-y-4" ref={categoryAnimationContainer}>
 							{Object.entries(skillsByCategory).map(([category, skills]) => (
 								<Collapsible key={category} defaultOpen={true} className="rounded-lg border bg-card overflow-hidden">
 									<CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-100 focus:outline-none border-b">
@@ -473,7 +474,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 										<ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
 									</CollapsibleTrigger>
 									<CollapsibleContent>
-										<div className="divide-y divide-neutral-100">
+										<div className="divide-y divide-neutral-100" ref={skillAnimationContainer}>
 											{skills.map((skill) => (
 												<div
 													key={skill.id}
