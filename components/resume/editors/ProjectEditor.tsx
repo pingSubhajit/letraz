@@ -1,36 +1,22 @@
 'use client'
 
-import {useEffect, useState, useMemo} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
-import {
-	Form,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage
-} from '@/components/ui/form'
+import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {z} from 'zod'
 import {months} from '@/constants'
-import {Loader2, Plus, Trash2, Github, ExternalLink} from 'lucide-react'
+import {ExternalLink, Github, Loader2, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
 import {ProjectMutation, ProjectMutationSchema} from '@/lib/project/types'
-import {
-	globalSkillsQueryOptions,
-	projectQueryOptions,
-	useCurrentProjects
-} from '@/lib/project/queries'
-import {useGlobalSkills, useSkillCategories, useCurrentResumeSkills} from '@/lib/skill/queries'
-import {
-	useAddProjectMutation,
-	useDeleteProjectMutation,
-	useUpdateProjectMutation
-} from '@/lib/project/mutations'
+import {globalSkillsQueryOptions, projectQueryOptions, useCurrentProjects} from '@/lib/project/queries'
+import {useCurrentResumeSkills, useGlobalSkills, useSkillCategories} from '@/lib/skill/queries'
+import {useAddProjectMutation, useDeleteProjectMutation, useUpdateProjectMutation} from '@/lib/project/mutations'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import DateRangeFields from '@/components/resume/editors/shared/DateRangeFields'
 import TextFormField from '@/components/resume/editors/shared/TextFormField'
@@ -42,6 +28,8 @@ import {Badge} from '@/components/ui/badge'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {AnimatePresence, motion} from 'motion/react'
+import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 
 type ViewState = 'list' | 'form';
 
@@ -71,7 +59,8 @@ const newSkillSchema = z.object({
 
 const ProjectEditor = ({className}: ProjectEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
-	const [parent] = useAutoAnimate()
+	const [projectListAnimationRef] = useAutoAnimate()
+	const [skillListAnimationRef] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const queryClient = useQueryClient()
 	const [isMounted, setIsMounted] = useState(false)
@@ -361,7 +350,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 							/>
 
 							{/* Skills Section */}
-							<div className="space-y-4">
+							<div className="mt-4">
 								<h3 className="text-base font-medium">Skills Used</h3>
 								<FormField
 									control={form.control}
@@ -372,245 +361,260 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 										return (
 											<FormItem>
 												{/* Display existing skills as boxy cards */}
-												{validSkills.length > 0 && (
-													<div className="flex flex-wrap gap-3 mb-4">
-														{validSkills.map((skill, index) => (
-															<div key={index} className="relative bg-neutral-50 rounded-lg px-4 py-3 border border-neutral-200 shadow-sm hover:shadow-md transition-shadow min-w-[140px]">
-																<div className="flex justify-between items-start gap-2">
-																	<div className="flex-1 min-w-0">
-																		<div className="font-medium text-base text-neutral-900 leading-tight mb-1">
-																			{skill.name}
-																		</div>
-																		{skill.category && (
-																			<div className="text-xs text-neutral-500 leading-tight">
-																				{skill.category}
+												<AnimatePresence>
+													{validSkills.length > 0 && (
+														<motion.div {...DEFAULT_SLIDE_ANIMATION} className="mt-4 flex flex-wrap gap-3 mb-4" ref={skillListAnimationRef}>
+															{validSkills.map((skill, index) => (
+																<div key={index} className="relative bg-neutral-50 rounded-lg px-4 py-3 border border-neutral-200 shadow-sm hover:shadow-md transition-shadow min-w-[140px]">
+																	<div className="flex justify-between items-start gap-2">
+																		<div className="flex-1 min-w-0">
+																			<div className="font-medium text-base text-neutral-900 leading-tight mb-1">
+																				{skill.name}
 																			</div>
-																		)}
+																			{skill.category && (
+																				<div className="text-xs text-neutral-500 leading-tight">
+																					{skill.category}
+																				</div>
+																			)}
+																		</div>
+																		<Button
+																			type="button"
+																			variant="ghost"
+																			size="icon"
+																			className="h-5 w-5 text-neutral-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0 -mt-1 -mr-1"
+																			onClick={() => {
+																				const newSkills = field.value.filter((_, i) => i !== index)
+																				field.onChange(newSkills)
+																			}}
+																			disabled={isSubmitting}
+																		>
+																			<Trash2 className="h-3.5 w-3.5" />
+																		</Button>
 																	</div>
-																	<Button
-																		type="button"
-																		variant="ghost"
-																		size="icon"
-																		className="h-5 w-5 text-neutral-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0 -mt-1 -mr-1"
-																		onClick={() => {
-																			const newSkills = field.value.filter((_, i) => i !== index)
-																			field.onChange(newSkills)
-																		}}
-																		disabled={isSubmitting}
-																	>
-																		<Trash2 className="h-3.5 w-3.5" />
-																	</Button>
 																</div>
-															</div>
-														))}
-													</div>
-												)}
+															))}
+														</motion.div>
+													)}
+												</AnimatePresence>
 
-												{/* Add skill interface */}
-												{isAddingSkill ? (
-													// Autocomplete for new skills - directly replaces dropdown + button
-													<div className="space-y-4">
-														<Form {...newSkillForm}>
-															<FormField
-																control={newSkillForm.control}
-																name="skill_name"
-																render={({field: skillNameField}) => (
-																	<FormItem>
-																		<FormLabel>Add New Skill</FormLabel>
-																		<SkillAutocomplete
-																			skills={mergedSkills}
-																			excludeSkillIds={field.value
-																				.filter(s => s.name.trim() !== '')
-																				.map((s) => {
-																					const matchingSkill = mergedSkills.find(
-																						(gs) => gs.name.toLowerCase() === s.name.toLowerCase(),
-																					)
-																					return matchingSkill?.id || s.name
-																				})}
-																			name="skill_name"
-																			placeholder="Type to search skills..."
-																			disabled={isSubmitting || isLoadingGlobalSkills || isLoadingResumeSkills}
-																			defaultValue=""
-																			onSkillSelect={(skillId, skillName, category) => {
-																				skillNameField.onChange(skillName)
-																				if (skillId === 'custom') {
-																					// For custom skills
-																					if (!newSkillForm.getValues('skill_category')) {
+												{/* Render fallback text if no skill is added */}
+												<AnimatePresence>
+													{validSkills.length === 0 && (
+														<motion.div {...DEFAULT_SLIDE_ANIMATION} className="flex flex-wrap gap-3 mb-6 text-sm mt-2 opacity-80 italic">
+															<p>Add skills that you have learnt or used in this project</p>
+														</motion.div>
+													)}
+												</AnimatePresence>
+
+												<motion.div layout>
+													<AnimatePresence>
+														{/* Add skill interface */}
+														{isAddingSkill && <motion.div {...DEFAULT_SLIDE_ANIMATION} className="space-y-4">
+															<Form {...newSkillForm}>
+																<FormField
+																	control={newSkillForm.control}
+																	name="skill_name"
+																	render={({field: skillNameField}) => (
+																		<FormItem>
+																			<FormLabel>Add New Skill</FormLabel>
+																			<SkillAutocomplete
+																				skills={mergedSkills}
+																				excludeSkillIds={field.value
+																					.filter(s => s.name.trim() !== '')
+																					.map((s) => {
+																						const matchingSkill = mergedSkills.find(
+																							(gs) => gs.name.toLowerCase() === s.name.toLowerCase(),
+																						)
+																						return matchingSkill?.id || s.name
+																					})}
+																				name="skill_name"
+																				placeholder="Type to search skills..."
+																				disabled={isSubmitting || isLoadingGlobalSkills || isLoadingResumeSkills}
+																				defaultValue=""
+																				onSkillSelect={(skillId, skillName, category) => {
+																					skillNameField.onChange(skillName)
+																					if (skillId === 'custom') {
+																						// For custom skills
+																						if (!newSkillForm.getValues('skill_category')) {
+																							newSkillForm.setValue('skill_category', category || '')
+																						}
+																					} else if (skillId) {
+																						// For existing skills
 																						newSkillForm.setValue('skill_category', category || '')
 																					}
-																				} else if (skillId) {
-																					// For existing skills
-																					newSkillForm.setValue('skill_category', category || '')
-																				}
+																				}}
+																			/>
+																			<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
+																				<Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 px-1.5 py-0">Preferred</Badge>
+																				<span>skills include your existing skills and those recommended by ATS systems.</span>
+																			</div>
+																			<FormMessage className="text-xs" />
+																		</FormItem>
+																	)}
+																/>
+
+																<FormField
+																	control={newSkillForm.control}
+																	name="skill_category"
+																	render={({field: categoryField}) => (
+																		<CategoryAutocomplete
+																			categories={skillCategories}
+																			name="skill_category"
+																			label="Category (optional)"
+																			placeholder="E.g., Programming Languages, Tools, etc."
+																			disabled={isSubmitting || isLoadingCategories}
+																			showLabel
+																			defaultValue={categoryField.value || ''}
+																			onCategorySelect={(category) => {
+																				categoryField.onChange(category)
 																			}}
 																		/>
-																		<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
-																			<Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 px-1.5 py-0">Preferred</Badge>
-																			<span>skills include your existing skills and those recommended by ATS systems.</span>
-																		</div>
-																		<FormMessage className="text-xs" />
-																	</FormItem>
-																)}
-															/>
+																	)}
+																/>
+															</Form>
 
-															<FormField
-																control={newSkillForm.control}
-																name="skill_category"
-																render={({field: categoryField}) => (
-																	<CategoryAutocomplete
-																		categories={skillCategories}
-																		name="skill_category"
-																		label="Category (optional)"
-																		placeholder="E.g., Programming Languages, Tools, etc."
-																		disabled={isSubmitting || isLoadingCategories}
-																		showLabel
-																		defaultValue={categoryField.value || ''}
-																		onCategorySelect={(category) => {
-																			categoryField.onChange(category)
-																		}}
-																	/>
-																)}
-															/>
-														</Form>
+															<p className="text-xs text-muted-foreground">
+																Skills with detailed categories stand out to both recruiters and ATS systems.
+															</p>
 
-														<p className="text-xs text-muted-foreground">
-															Skills with detailed categories stand out to both recruiters and ATS systems.
-														</p>
+															<div className="flex items-center gap-2">
+																<Button
+																	type="button"
+																	variant="default"
+																	size="sm"
+																	onClick={() => {
+																		const skillName = newSkillForm.getValues('skill_name')
+																		const skillCategory = newSkillForm.getValues('skill_category')
+																		if (skillName.trim()) {
+																			field.onChange([...field.value, {
+																				name: skillName,
+																				category: skillCategory || null
+																			}])
+																			newSkillForm.reset({skill_name: '', skill_category: ''})
+																			setIsAddingSkill(false)
+																		}
+																	}}
+																	disabled={!newSkillForm.watch('skill_name')?.trim() || isSubmitting}
+																>
+																	<Plus className="h-4 w-4 mr-2" />
+																	Add Skill
+																</Button>
+																<Button
+																	type="button"
+																	variant="ghost"
+																	size="sm"
+																	onClick={() => {
+																		setIsAddingSkill(false)
+																		newSkillForm.reset({skill_name: '', skill_category: ''})
+																	}}
+																>
+																	Cancel
+																</Button>
+															</div>
+														</motion.div>}
+													</AnimatePresence>
 
-														<div className="flex items-center gap-2">
+													<AnimatePresence>
+														{!isAddingSkill && <motion.div {...DEFAULT_SLIDE_ANIMATION} className="flex items-end gap-3">
+															<div className="flex-1">
+																<FormLabel className="text-sm font-medium mb-2 block">Add Skills</FormLabel>
+																{(() => {
+																	const availableSkills = resumeSkills.filter(rs => {
+																		// Exclude already selected skills
+																		const isAlreadySelected = field.value.some(
+																			(s) => s.name.toLowerCase() === rs.skill.name.toLowerCase()
+																		)
+																		return !isAlreadySelected
+																	})
+
+																	return (
+																		<Select
+																			value=""
+																			onValueChange={(value) => {
+																				if (value && value !== '' && value !== 'no-skills') {
+																					// Find the selected skill from user's resume
+																					const selectedSkill = resumeSkills.find(rs => rs.skill.id === value)
+																					if (selectedSkill) {
+																						field.onChange([...field.value, {
+																							name: selectedSkill.skill.name,
+																							category: selectedSkill.skill.category
+																						}])
+																					}
+																				}
+																			}}
+																			disabled={isSubmitting || availableSkills.length === 0}
+																		>
+																			<SelectTrigger>
+																				<SelectValue
+																					placeholder={
+																						availableSkills.length === 0
+																							? 'All skills already added'
+																							: validSkills.length === 0
+																								? 'Choose from your existing skills'
+																								: 'Add another skill'
+																					}
+																				/>
+																			</SelectTrigger>
+																			<SelectContent>
+																				{availableSkills.length > 0 ? (
+																					availableSkills.map((resumeSkill) => (
+																						<SelectItem key={resumeSkill.skill.id} value={resumeSkill.skill.id}>
+																							{resumeSkill.skill.name}
+																							{resumeSkill.skill.category && (
+																								<span className="text-muted-foreground ml-2">
+																									({resumeSkill.skill.category})
+																								</span>
+																							)}
+																						</SelectItem>
+																					))
+																				) : (
+																					<SelectItem value="no-skills" disabled>
+																						No more skills available
+																					</SelectItem>
+																				)}
+																			</SelectContent>
+																		</Select>
+																	)
+																})()}
+															</div>
 															<Button
 																type="button"
-																variant="default"
-																size="sm"
-																onClick={() => {
-																	const skillName = newSkillForm.getValues('skill_name')
-																	const skillCategory = newSkillForm.getValues('skill_category')
-																	if (skillName.trim()) {
-																		field.onChange([...field.value, {
-																			name: skillName,
-																			category: skillCategory || null
-																		}])
-																		newSkillForm.reset({skill_name: '', skill_category: ''})
-																		setIsAddingSkill(false)
-																	}
-																}}
-																disabled={!newSkillForm.watch('skill_name')?.trim() || isSubmitting}
+																variant="outline"
+																onClick={() => setIsAddingSkill(true)}
+																disabled={isSubmitting}
+																className="flex-shrink-0"
 															>
 																<Plus className="h-4 w-4 mr-2" />
-																Add Skill
+																Add New Skill
 															</Button>
-															<Button
-																type="button"
-																variant="ghost"
-																size="sm"
-																onClick={() => {
-																	setIsAddingSkill(false)
-																	newSkillForm.reset({skill_name: '', skill_category: ''})
-																}}
-															>
-																Cancel
-															</Button>
-														</div>
-													</div>
-												) : (
-													// Dropdown and Add button side by side
-													<div className="flex items-end gap-3">
-														<div className="flex-1">
-															<FormLabel className="text-sm font-medium mb-2 block">Add Skills</FormLabel>
-															{(() => {
-																const availableSkills = resumeSkills.filter(rs => {
-																	// Exclude already selected skills
-																	const isAlreadySelected = field.value.some(
-																		(s) => s.name.toLowerCase() === rs.skill.name.toLowerCase()
-																	)
-																	return !isAlreadySelected
-																})
+														</motion.div>}
+													</AnimatePresence>
 
-																return (
-																	<Select
-																		value=""
-																		onValueChange={(value) => {
-																			if (value && value !== '' && value !== 'no-skills') {
-																				// Find the selected skill from user's resume
-																				const selectedSkill = resumeSkills.find(rs => rs.skill.id === value)
-																				if (selectedSkill) {
-																					field.onChange([...field.value, {
-																						name: selectedSkill.skill.name,
-																						category: selectedSkill.skill.category
-																					}])
-																				}
-																			}
-																		}}
-																		disabled={isSubmitting || availableSkills.length === 0}
-																	>
-																		<SelectTrigger>
-																			<SelectValue
-																				placeholder={
-																					availableSkills.length === 0
-																						? 'All skills already added'
-																						: validSkills.length === 0
-																							? 'Choose from your existing skills'
-																							: 'Add another skill'
-																				}
-																			/>
-																		</SelectTrigger>
-																		<SelectContent>
-																			{availableSkills.length > 0 ? (
-																				availableSkills.map((resumeSkill) => (
-																					<SelectItem key={resumeSkill.skill.id} value={resumeSkill.skill.id}>
-																						{resumeSkill.skill.name}
-																						{resumeSkill.skill.category && (
-																							<span className="text-muted-foreground ml-2">
-																								({resumeSkill.skill.category})
-																							</span>
-																						)}
-																					</SelectItem>
-																				))
-																			) : (
-																				<SelectItem value="no-skills" disabled>
-																					No more skills available
-																				</SelectItem>
-																			)}
-																		</SelectContent>
-																	</Select>
-																)
-															})()}
-														</div>
-														<Button
-															type="button"
-															variant="outline"
-															onClick={() => setIsAddingSkill(true)}
-															disabled={isSubmitting}
-															className="flex-shrink-0"
-														>
-															<Plus className="h-4 w-4 mr-2" />
-															Add New Skill
-														</Button>
-													</div>
-												)}
-
-												<FormMessage />
+													<FormMessage />
+												</motion.div>
 											</FormItem>
 										)
 									}}
 								/>
 							</div>
 
-							<RichTextFormField
-								form={form}
-								name="description"
-								label="Description"
-								placeholder="Describe your project, its objectives, technologies used, and your contributions..."
-								disabled={isSubmitting}
-							/>
+							<motion.div layout>
+								<RichTextFormField
+									form={form}
+									name="description"
+									label="Description"
+									placeholder="Describe your project, its objectives, technologies used, and your contributions..."
+									disabled={isSubmitting}
+								/>
 
-							<FormButtons
-								onCancel={handleCancel}
-								isSubmitting={isSubmitting}
-								isEditing={editingIndex !== null}
-								editingSubmitLabel="Update Project"
-								addingSubmitLabel="Add Project"
-							/>
+								<FormButtons
+									onCancel={handleCancel}
+									isSubmitting={isSubmitting}
+									isEditing={editingIndex !== null}
+									editingSubmitLabel="Update Project"
+									addingSubmitLabel="Add Project"
+								/>
+							</motion.div>
 						</form>
 					</Form>
 				</div>
@@ -646,7 +650,7 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 						Error loading project details. Please try again later.
 					</div>
 				) : (
-					<div ref={parent} className="space-y-4 pb-8">
+					<div ref={projectListAnimationRef} className="space-y-4 pb-8">
 						{projects.length > 0 ? (
 							projects.map((project, index) => (
 								<ItemCard
