@@ -77,15 +77,16 @@ const ResumeEditor = ({className}: {className?: string}) => {
 					</div>
 				</>
 			) : (
-				// Traditional shadcn tabs design
+				// Traditional tabs design
 				<Tabs value={activeTabId} onValueChange={setActiveTabId} className="w-full">
-					<TabsList className="grid w-full grid-cols-6 h-10 p-1 rounded-md">
+					<TabsList className="grid w-full grid-cols-6 h-12 p-1 rounded-xl">
 						{tabs.map((tab) => {
 							const IconComponent = tab.icon
 							return (
 								<TabsTrigger
 									key={tab.id}
 									value={tab.id}
+									className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
 								>
 									<IconComponent className="h-4 w-4 shrink-0" />
 									<span className="hidden sm:inline truncate">{tab.title}</span>
