@@ -11,13 +11,8 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
 import {useState} from 'react'
 import {motion} from 'motion/react'
-
-const CONTENT_ANIMATION = {
-	initial: {opacity: 0, y: 10},
-	animate: {opacity: 1, y: 0},
-	exit: {opacity: 0, y: -10},
-	transition: {duration: 0.2, ease: 'easeInOut'}
-}
+import ProjectEditor from '@/components/resume/editors/ProjectEditor'
+import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 
 const ResumeEditor = ({className}: {className?: string}) => {
 	const [activeTab, setActiveTab] = useState<number>(0) // Default to Profile (index 0)
@@ -47,15 +42,12 @@ const ResumeEditor = ({className}: {className?: string}) => {
 		const tabIndex = useNewTabDesign ? activeTab : tabs.findIndex(tab => tab.id === activeTabId)
 
 		switch (tabIndex) {
-		case 0: return <motion.div key="profile" {...CONTENT_ANIMATION}><PersonalDetailsEditor /></motion.div>
-		case 1: return <motion.div key="education" {...CONTENT_ANIMATION}><EducationEditor /></motion.div>
-		case 2: return <motion.div key="experience" {...CONTENT_ANIMATION}><ExperienceEditor /></motion.div>
-		case 3: return <motion.div key="skill" {...CONTENT_ANIMATION}><SkillsEditor /></motion.div>
-		case 4: return <motion.div key="certification" {...CONTENT_ANIMATION}><CertificationEditor /></motion.div>
-		case 5: return (
-			<motion.div key="project" {...CONTENT_ANIMATION} className="p-4">
-				<p className="text-center text-muted-foreground">Project editor is coming soon</p>
-			</motion.div>
+		case 0: return <motion.div key="profile" {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor /></motion.div>
+		case 1: return <motion.div key="education" {...DEFAULT_SLIDE_ANIMATION}><EducationEditor /></motion.div>
+		case 2: return <motion.div key="experience" {...DEFAULT_SLIDE_ANIMATION}><ExperienceEditor /></motion.div>
+		case 3: return <motion.div key="skill" {...DEFAULT_SLIDE_ANIMATION}><SkillsEditor /></motion.div>
+		case 4: return <motion.div key="certification" {...DEFAULT_SLIDE_ANIMATION}><CertificationEditor /></motion.div>
+		case 5: return (<motion.div key="project" {...DEFAULT_SLIDE_ANIMATION}><ProjectEditor /></motion.div>
 		)
 		default: return <PersonalDetailsEditor />
 		}
