@@ -28,6 +28,7 @@ import ItemCard from '@/components/resume/editors/shared/ItemCard'
 
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 
 type ViewState = 'list' | 'form'
 
@@ -58,6 +59,9 @@ const ExperienceEditor = ({className}: ExperienceEditorProps) => {
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'job_title')
 
 	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
 

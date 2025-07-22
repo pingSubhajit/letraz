@@ -26,6 +26,7 @@ import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
@@ -56,6 +57,9 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'institution_name')
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})

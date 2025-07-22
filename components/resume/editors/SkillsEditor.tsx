@@ -27,6 +27,7 @@ import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ProficiencySlider from '@/components/resume/editors/shared/ProficiencySlider'
 import PopConfirm from '@/components/ui/pop-confirm'
+import {useAutoFocus} from '@/components/resume/hooks/useAutoFocus'
 
 type ViewState = 'list' | 'form'
 
@@ -50,6 +51,9 @@ const SkillsEditor = ({className}: { className?: string }) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const queryClient = useQueryClient()
+
+	// Auto-focus when form is opened
+	useAutoFocus(view === 'form')
 
 	// Load skills data
 	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills()
