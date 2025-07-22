@@ -292,9 +292,9 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 					Error loading education details. Please try again later.
 				</div>
 			) : (
-				<div ref={parent}>
+				<div>
 					{localEducations.length > 0 ? (
-						<div className="space-y-4">
+						<div className="space-y-4" ref={parent}>
 							{localEducations.map((education, index) => renderEducationItem(education, index))}
 						</div>
 					) : (

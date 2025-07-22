@@ -278,9 +278,9 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 					Error loading certifications. Please try again later.
 				</div>
 			) : (
-				<div ref={parent}>
+				<div>
 					{certifications.length > 0 ? (
-						<div className="space-y-4">
+						<div className="space-y-4" ref={parent}>
 							{certifications.map((certification, index) => renderCertificationItem(certification, index))}
 						</div>
 					) : (
