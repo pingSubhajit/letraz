@@ -3,7 +3,6 @@
 import {useEffect, useRef, useState} from 'react'
 import {UserInfoMutation, UserInfoMutationSchema} from '@/lib/user-info/types'
 import {cn, sanitizeHtml} from '@/lib/utils'
-import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
@@ -54,18 +53,11 @@ const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 const SALUTATIONS = ['Mr.', 'Ms.', 'Mrs.', 'Miss', 'Dr.', 'Prof.', 'Rev.', 'Hon.', 'Mx.']
 
 const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
-	const [parent] = useAutoAnimate()
 	const scrollRef = useRef<HTMLDivElement>(null)
 	const [view, setView] = useState<ViewState>('list')
 	const [isMounted, setIsMounted] = useState(false)
 	const queryClient = useQueryClient()
 	const {user: clerkUser} = useUser()
-
-	// Combine both refs
-	const setRefs = (element: HTMLDivElement | null) => {
-		parent(element)
-		scrollRef.current = element
-	}
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: userInfoQueryOptions.queryKey})
@@ -159,7 +151,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 	}
 
 	return (
-		<div ref={setRefs} className={cn('space-y-6', className)}>
+		<div ref={scrollRef} className={cn('space-y-6', className)}>
 			{view === 'form' ? (
 				<ScrollMask
 					className="space-y-6"
