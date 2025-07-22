@@ -32,9 +32,9 @@ export const useSkillsController = (
 		// Process individual skills
 		const skills: SkillData[] = resumeSkills.map(resumeSkill => {
 			const skill = resumeSkill.skill
-			
+
 			// Find level information
-			const levelInfo = resumeSkill.level 
+			const levelInfo = resumeSkill.level
 				? skillLevels.find(level => level.value === resumeSkill.level)
 				: null
 
