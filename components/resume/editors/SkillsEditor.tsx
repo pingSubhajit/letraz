@@ -10,6 +10,7 @@ import {ChevronDown, Loader2, Pencil, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
+import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {Badge} from '@/components/ui/badge'
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '@/components/ui/collapsible'
 import {
@@ -126,6 +127,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({queryKey: resumeSkillsQueryOptions().queryKey})
+			queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 		},
 		onSuccess: () => {
 			toast.success('Skill added successfully!')
@@ -155,6 +157,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({queryKey: resumeSkillsQueryOptions().queryKey})
+			queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 		},
 		onSuccess: () => {
 			toast.success('Skill updated successfully!')
@@ -185,6 +188,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({queryKey: resumeSkillsQueryOptions().queryKey})
+			queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 			setDeletingId(null)
 		},
 		onSuccess: () => {
