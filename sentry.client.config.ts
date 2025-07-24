@@ -36,6 +36,21 @@ Sentry.init({
 	replaysOnErrorSampleRate: 1.0,
 
 	// Setting this option to true will print useful information to the console while you're setting up Sentry.
-	debug: process.env.VERCEL_ENV !== 'production',
-	environment: process.env.VERCEL_ENV
+	debug: process.env.NODE_ENV === 'development',
+	environment: process.env.VERCEL_ENV,
+
+	// Hook to modify events before they are sent to Sentry
+	beforeSend: (event, hint) => {
+		// Add additional context for user-related errors
+		if (event.user) {
+			// Add custom fingerprinting for user-specific issues
+			event.fingerprint = ['{{ default }}', event.user.id as string || 'anonymous']
+
+			// Add user segment information to extra context
+			if (!event.extra) event.extra = {}
+			event.extra.userSegment = event.user.segment || 'unknown'
+		}
+
+		return event
+	}
 })
