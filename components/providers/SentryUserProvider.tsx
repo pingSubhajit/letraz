@@ -55,23 +55,6 @@ export const SentryUserProvider = ({children}: SentryUserProviderProps) => {
 		}
 	}, [authLoaded, userLoaded, userId, user])
 
-	// Handle user logout - clear Sentry context when user logs out
-	useEffect(() => {
-		// If auth is loaded but no userId, user has logged out
-		if (authLoaded && !userId) {
-			const anonymousUser = {segment: 'anonymous'}
-
-			Sentry.getCurrentScope().setUser(anonymousUser)
-			Sentry.getCurrentScope().setTag('user.onboardingComplete', null)
-			Sentry.getCurrentScope().setTag('user.currentStep', null)
-
-			// Also set on global scope
-			Sentry.setUser(anonymousUser)
-			Sentry.setTag('user.onboardingComplete', null)
-			Sentry.setTag('user.currentStep', null)
-		}
-	}, [authLoaded, userId])
-
 	// Handle cleanup when component unmounts
 	useEffect(() => {
 		return () => {
