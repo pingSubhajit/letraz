@@ -44,7 +44,7 @@ Sentry.init({
 		// Add additional context for user-related errors
 		if (event.user) {
 			// Add custom fingerprinting for user-specific issues
-			event.fingerprint = ['{{ default }}', event.user.id as string || 'anonymous']
+			event.fingerprint = ['{{ default }}', (event.user.id as string) || 'anonymous']
 
 			// Add user segment information to extra context
 			if (!event.extra) event.extra = {}

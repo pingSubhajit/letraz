@@ -21,7 +21,7 @@ if (process.env.VERCEL_ENV === 'production') {
 			// Add server-side specific context
 			if (event.user) {
 				// Add custom fingerprinting for user-specific issues
-				event.fingerprint = ['{{ default }}', event.user.id as string || 'anonymous']
+				event.fingerprint = ['{{ default }}', (event.user.id as string) || 'anonymous']
 
 				// Add server context
 				if (!event.extra) event.extra = {}
