@@ -23,6 +23,6 @@ export const NO_ANIMATION = {
 }
 
 // For AnimatePresence mode
-export const ANIMATE_PRESENCE_MODE = "wait" as const
+export const ANIMATE_PRESENCE_MODE = 'wait' as const
 
-export default DEFAULT_FADE_ANIMATION 
+export default DEFAULT_FADE_ANIMATION
