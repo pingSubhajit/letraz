@@ -266,3 +266,164 @@
   font-weight: 400;
   font-family: "Charter", "Times New Roman", Times, serif;
 }
+
+/* Projects section styling */
+.default-theme-container .project-item {
+  margin-bottom: 8px;
+}
+
+.default-theme-container .project-item:last-child {
+  margin-bottom: 0;
+}
+
+.default-theme-container .project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  gap: 20px;
+}
+
+.default-theme-container .project-title {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.27;
+  font-family: "Charter", "Times New Roman", Times, serif;
+  margin: 0;
+  display: inline;
+  flex: 1;
+  min-width: 0;
+}
+
+.default-theme-container .project-category {
+  font-style: italic;
+  font-weight: 400;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-date {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.27;
+  font-family: "Charter", "Times New Roman", Times, serif;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.default-theme-container .project-subtitle {
+  font-size: 13px;
+  line-height: 1.27;
+  margin-bottom: 2px;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-role {
+  font-style: italic;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-links {
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-link {
+  color: #000;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-link:hover {
+  opacity: 0.7;
+}
+
+.default-theme-container .project-link svg {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+  margin-right: 2px;
+}
+
+.default-theme-container .project-technologies {
+  font-size: 13px;
+  line-height: 1.27;
+  margin-bottom: 4px;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .tech-label {
+  font-weight: 600;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .tech-list {
+  font-weight: 400;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-details {
+  font-size: 13px;
+  line-height: 1.27;
+  font-weight: 400;
+  margin-bottom: 6px;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-details ul {
+  margin-left: 4px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.default-theme-container .project-details li {
+  font-size: 13px;
+  margin-bottom: 2.5px;
+  line-height: 1.27;
+  font-weight: 400;
+  position: relative;
+  padding-left: 10px;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-details li::before {
+  content: "•";
+  font-size: 16px;
+  font-weight: bold;
+  position: absolute;
+  left: -4px;
+  top: -1px;
+  color: black;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-details p {
+  margin: 0;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .project-accomplishments {
+  margin-left: 4px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.default-theme-container .accomplishment-item {
+  font-size: 13px;
+  margin-bottom: 2.5px;
+  line-height: 1.27;
+  font-weight: 400;
+  position: relative;
+  padding-left: 10px;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
+.default-theme-container .accomplishment-item::before {
+  content: "•";
+  font-size: 16px;
+  font-weight: bold;
+  position: absolute;
+  left: -4px;
+  top: -1px;
+  color: black;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
