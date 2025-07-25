@@ -1,7 +1,6 @@
 'use client'
 
 import {cn} from '@/lib/utils'
-import EditorHeaderSkeleton from '@/components/skeletons/shared/EditorHeaderSkeleton'
 import ItemCardSkeleton from '@/components/skeletons/shared/ItemCardSkeleton'
 
 interface ExperienceEditorSkeletonProps {
@@ -12,8 +11,6 @@ interface ExperienceEditorSkeletonProps {
 const ExperienceEditorSkeleton = ({className, itemCount = 2}: ExperienceEditorSkeletonProps) => {
 	return (
 		<div className={cn('space-y-6', className)}>
-			<EditorHeaderSkeleton />
-
 			{/* Experience items list */}
 			<div className="space-y-4">
 				{Array.from({length: itemCount}).map((_, index) => (

@@ -1,7 +1,6 @@
 'use client'
 
 import {cn} from '@/lib/utils'
-import EditorHeaderSkeleton from '@/components/skeletons/shared/EditorHeaderSkeleton'
 
 interface PersonalDetailsEditorSkeletonProps {
   className?: string
@@ -10,8 +9,6 @@ interface PersonalDetailsEditorSkeletonProps {
 const PersonalDetailsEditorSkeleton = ({className}: PersonalDetailsEditorSkeletonProps) => {
 	return (
 		<div className={cn('space-y-6', className)}>
-			<EditorHeaderSkeleton />
-
 			{/* Main content card skeleton */}
 			<div className="flex items-start justify-between p-4 rounded-lg border bg-card">
 				<div className="space-y-6 p-4 flex-1">

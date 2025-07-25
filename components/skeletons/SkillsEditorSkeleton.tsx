@@ -1,7 +1,6 @@
 'use client'
 
 import {cn} from '@/lib/utils'
-import EditorHeaderSkeleton from '@/components/skeletons/shared/EditorHeaderSkeleton'
 
 interface SkillsEditorSkeletonProps {
   className?: string
@@ -11,8 +10,6 @@ interface SkillsEditorSkeletonProps {
 const SkillsEditorSkeleton = ({className, categoryCount = 3}: SkillsEditorSkeletonProps) => {
 	return (
 		<div className={cn('space-y-6', className)}>
-			<EditorHeaderSkeleton />
-
 			{/* Skills categories */}
 			<div className="space-y-4">
 				{Array.from({length: categoryCount}).map((_, categoryIndex) => (
