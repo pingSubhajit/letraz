@@ -42,14 +42,14 @@ const ResumeEditor = ({className}: {className?: string}) => {
 		const tabIndex = useNewTabDesign ? activeTab : tabs.findIndex(tab => tab.id === activeTabId)
 
 		switch (tabIndex) {
-		case 0: return <motion.div key="profile" {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor /></motion.div>
-		case 1: return <motion.div key="education" {...DEFAULT_SLIDE_ANIMATION}><EducationEditor /></motion.div>
-		case 2: return <motion.div key="experience" {...DEFAULT_SLIDE_ANIMATION}><ExperienceEditor /></motion.div>
-		case 3: return <motion.div key="skill" {...DEFAULT_SLIDE_ANIMATION}><SkillsEditor /></motion.div>
-		case 4: return <motion.div key="certification" {...DEFAULT_SLIDE_ANIMATION}><CertificationEditor /></motion.div>
-		case 5: return (<motion.div key="project" {...DEFAULT_SLIDE_ANIMATION}><ProjectEditor /></motion.div>
+		case 0: return <motion.div key="profile" {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor isTabSwitch={true} /></motion.div>
+		case 1: return <motion.div key="education" {...DEFAULT_SLIDE_ANIMATION}><EducationEditor isTabSwitch={true} /></motion.div>
+		case 2: return <motion.div key="experience" {...DEFAULT_SLIDE_ANIMATION}><ExperienceEditor isTabSwitch={true} /></motion.div>
+		case 3: return <motion.div key="skill" {...DEFAULT_SLIDE_ANIMATION}><SkillsEditor isTabSwitch={true} /></motion.div>
+		case 4: return <motion.div key="certification" {...DEFAULT_SLIDE_ANIMATION}><CertificationEditor isTabSwitch={true} /></motion.div>
+		case 5: return (<motion.div key="project" {...DEFAULT_SLIDE_ANIMATION}><ProjectEditor isTabSwitch={true} /></motion.div>
 		)
-		default: return <PersonalDetailsEditor />
+		default: return <PersonalDetailsEditor isTabSwitch={true} />
 		}
 	}
 
