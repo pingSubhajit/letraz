@@ -36,7 +36,7 @@ const ProjectsSection = ({data}: { data: ProjectData }) => {
 				)}
 				{data.links.hasLinks && (
 					<span className="project-links" role="group" aria-label="Project links">
-						{data.role.hasRole && ' | '}
+						{data.role.hasRole && <span aria-hidden="true"> | </span>}
 						{data.links.github && (
 							<>
 								<a
@@ -49,7 +49,7 @@ const ProjectsSection = ({data}: { data: ProjectData }) => {
 									<FontAwesomeIcon icon={faGithub} aria-hidden="true" />
 									<span> GitHub</span>
 								</a>
-								{data.links.live && ' | '}
+								{data.links.live && <span aria-hidden="true"> | </span>}
 							</>
 						)}
 						{data.links.live && (
