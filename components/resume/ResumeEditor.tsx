@@ -47,9 +47,8 @@ const ResumeEditor = ({className}: {className?: string}) => {
 		case 2: return <motion.div key="experience" {...DEFAULT_SLIDE_ANIMATION}><ExperienceEditor isTabSwitch={true} /></motion.div>
 		case 3: return <motion.div key="skill" {...DEFAULT_SLIDE_ANIMATION}><SkillsEditor isTabSwitch={true} /></motion.div>
 		case 4: return <motion.div key="certification" {...DEFAULT_SLIDE_ANIMATION}><CertificationEditor isTabSwitch={true} /></motion.div>
-		case 5: return (<motion.div key="project" {...DEFAULT_SLIDE_ANIMATION}><ProjectEditor isTabSwitch={true} /></motion.div>
-		)
-		default: return <PersonalDetailsEditor isTabSwitch={true} />
+		case 5: return <motion.div key="project" {...DEFAULT_SLIDE_ANIMATION}><ProjectEditor isTabSwitch={true} /></motion.div>
+		default: return <motion.div key="profile" {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor isTabSwitch={true} /></motion.div>
 		}
 	}
 
