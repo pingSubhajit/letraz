@@ -83,16 +83,6 @@ const ProjectsSection = ({data}: { data: ProjectData }) => {
 				/>
 			)}
 
-			{/* PROJECT ACCOMPLISHMENTS */}
-			{data.accomplishments.hasAccomplishments && (
-				<ul className="project-accomplishments">
-					{data.accomplishments.list.map((accomplishment, index) => (
-						<li key={index} className="accomplishment-item">
-							{accomplishment}
-						</li>
-					))}
-				</ul>
-			)}
 		</article>
 	)
 }

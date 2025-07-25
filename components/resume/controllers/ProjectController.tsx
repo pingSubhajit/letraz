@@ -27,10 +27,6 @@ export interface ProjectData {
     github?: string
     live?: string
   }
-  accomplishments: {
-    hasAccomplishments: boolean
-    list: string[]
-  }
   dates: {
     hasDates: boolean
     formatted: string
@@ -81,16 +77,6 @@ export const useProjectController = (
 			live: project.live_url || undefined
 		}
 
-		/*
-		 * Process accomplishments - extracting from description if needed
-		 * Since the Project type doesn't have a separate accomplishments field,
-		 * we'll leave this empty for now but structure is ready for future use
-		 */
-		const accomplishments = {
-			hasAccomplishments: false,
-			list: []
-		}
-
 		// Process dates - similar to Experience dates formatting
 		const formatDate = (month: number | null | undefined, year: number) => {
 			if (!month) {
@@ -138,7 +124,6 @@ export const useProjectController = (
 			technologies,
 			role,
 			links,
-			accomplishments,
 			dates,
 			spacing
 		}
