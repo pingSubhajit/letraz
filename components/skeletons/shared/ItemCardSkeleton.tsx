@@ -16,7 +16,7 @@ const ItemCardSkeleton = ({className, showActions = true, contentLines = 3}: Ite
 				<div className="h-5 bg-neutral-200 rounded w-3/4 animate-pulse"></div>
 
 				{/* Additional content lines */}
-				{Array.from({length: contentLines - 1}).map((_, index) => (
+				{Array.from({length: Math.max(0, contentLines - 1)}).map((_, index) => (
 					<div
 						key={index}
 						className={cn(

@@ -44,7 +44,7 @@ const ResumeEditorSkeleton = ({className, activeTab = 'profile'}: ResumeEditorSk
 							// Different widths for different tab names
 							tab.title === 'Profile' ? 'w-12' :
 								tab.title === 'Education' ? 'w-16' :
-									tab.title === 'Experience' ? 'w-18' :
+									tab.title === 'Experience' ? 'w-16' :
 										tab.title === 'Skills' ? 'w-10' :
 											tab.title === 'Certifications' ? 'w-20' : 'w-14'
 						)}></div>

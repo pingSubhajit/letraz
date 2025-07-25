@@ -1,7 +1,6 @@
 'use client'
 
-import {cn} from '@/lib/utils'
-import ItemCardSkeleton from '@/components/skeletons/shared/ItemCardSkeleton'
+import EditorListSkeleton from '@/components/skeletons/shared/EditorListSkeleton'
 
 interface CertificationEditorSkeletonProps {
   className?: string
@@ -10,18 +9,11 @@ interface CertificationEditorSkeletonProps {
 
 const CertificationEditorSkeleton = ({className, itemCount = 2}: CertificationEditorSkeletonProps) => {
 	return (
-		<div className={cn('space-y-6', className)}>
-			{/* Certification items list */}
-			<div className="space-y-4">
-				{Array.from({length: itemCount}).map((_, index) => (
-					<ItemCardSkeleton
-						key={index}
-						contentLines={3}
-						className="space-y-1"
-					/>
-				))}
-			</div>
-		</div>
+		<EditorListSkeleton
+			className={className}
+			itemCount={itemCount}
+			ariaLabel="Loading certification items"
+		/>
 	)
 }
 
