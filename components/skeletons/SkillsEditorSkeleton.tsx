@@ -22,7 +22,7 @@ const SkillsEditorSkeleton = ({className, categoryCount = 3}: SkillsEditorSkelet
 
 						{/* Skills within category */}
 						<div className="space-y-2">
-							{Array.from({length: Math.floor(Math.random() * 4) + 2}).map((_, skillIndex) => (
+							{Array.from({length: 3}).map((_, skillIndex) => (
 								<div key={skillIndex} className="flex items-center justify-between p-2 rounded bg-neutral-50">
 									<div className="flex items-center gap-2">
 										<div className="h-6 bg-neutral-200 rounded-full w-16 animate-pulse"></div>
