@@ -10,6 +10,7 @@ import PosthogProvider from '@/components/providers/PosthogProvider'
 import {TooltipProvider} from '@/components/ui/tooltip'
 import APIProvider from '@/components/providers/ApiProvider'
 import {KnockProvider} from '@/components/providers/KnockProvider'
+import SentryUserProvider from '@/components/providers/SentryUserProvider'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
@@ -35,14 +36,16 @@ const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <Cle
 		<html lang="en" suppressHydrationWarning suppressContentEditableWarning>
 			<PosthogProvider>
 				<body className={`${modelica.className} ${plusJakartaSans.variable}`}>
-					<APIProvider>
-						<KnockProvider>
-							<TooltipProvider>
-								{children}
-							</TooltipProvider>
-							<Toaster richColors/>
-						</KnockProvider>
-					</APIProvider>
+					<SentryUserProvider>
+						<APIProvider>
+							<KnockProvider>
+								<TooltipProvider>
+									{children}
+								</TooltipProvider>
+								<Toaster richColors/>
+							</KnockProvider>
+						</APIProvider>
+					</SentryUserProvider>
 				</body>
 			</PosthogProvider>
 		</html>
