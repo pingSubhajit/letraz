@@ -5,8 +5,8 @@ import {ResumeSection} from '@/lib/resume/types'
 import {UserInfo} from '@/lib/user-info/types'
 import {Education} from '@/lib/education/types'
 import {Experience} from '@/lib/experience/types'
-import {ResumeSkill} from '@/lib/skill/types'
 import {Project} from '@/lib/project/types'
+import {ResumeSkillSection} from '@/lib/skill/types'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 import ReorderableSections from '@/components/resume/ReorderableSections'
 import {PersonalInfoController, PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
@@ -90,7 +90,7 @@ export const createTheme = (config: ThemeConfig) => {
 				} else if (section.type === 'Skill') {
 					return (
 						<SkillsController
-							section={section as ResumeSection & { type: 'Skill', data: ResumeSkill[] }}
+							section={section as ResumeSection & { type: 'Skill', data: ResumeSkillSection }}
 							isFirstInGroup={isFirstInGroup}
 						>
 							{(data) => <config.components.SkillsSection data={data} />}
