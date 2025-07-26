@@ -36,15 +36,16 @@ export const useCertificationController = (
 			value: certification.issuing_organization || undefined
 		}
 
+		const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+			'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 		// Process issue date
 		const formatDate = (dateString: string | null | undefined) => {
 			if (!dateString) return undefined
 
 			try {
 				const date = new Date(dateString)
-				const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-					'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-				const month = monthNames[date.getMonth()]
+				const month = MONTH_NAMES[date.getMonth()]
 				const year = date.getFullYear()
 				return `${month} ${year}`
 			} catch {
