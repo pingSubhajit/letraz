@@ -108,7 +108,7 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 
 const CSPostHogProvider = ({children}: { children: ReactNode }) => {
 	// Enhanced domain filtering logic
-	const currentUrl = typeof window !== 'undefined' ? window.location.hostname : defaultUrl
+	const currentUrl = typeof window !== 'undefined' ? window.location.hostname : new URL(defaultUrl).hostname
 
 	// Only enable PostHog on production domains
 	const isProductionDomain = currentUrl === 'letraz.app' || currentUrl === 'www.letraz.app'
