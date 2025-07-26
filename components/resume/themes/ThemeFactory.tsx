@@ -5,6 +5,7 @@ import {ResumeSection} from '@/lib/resume/types'
 import {UserInfo} from '@/lib/user-info/types'
 import {Education} from '@/lib/education/types'
 import {Experience} from '@/lib/experience/types'
+import {Project} from '@/lib/project/types'
 import {ResumeSkillSection} from '@/lib/skill/types'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 import ReorderableSections from '@/components/resume/ReorderableSections'
@@ -12,6 +13,7 @@ import {PersonalInfoController, PersonalInfoData} from '@/components/resume/cont
 import {EducationController, EducationData} from '@/components/resume/controllers/EducationController'
 import {ExperienceController, ExperienceData} from '@/components/resume/controllers/ExperienceController'
 import {SkillsController, SkillsData} from '@/components/resume/controllers/SkillsController'
+import {ProjectController, ProjectData} from '@/components/resume/controllers/ProjectController'
 import {cn} from '@/lib/utils'
 
 // Standard theme props interface
@@ -28,9 +30,11 @@ export interface ThemeComponents {
 	EducationSection: React.ComponentType<{data: EducationData}>
 	ExperienceSection: React.ComponentType<{data: ExperienceData}>
 	SkillsSection: React.ComponentType<{data: SkillsData}>
+	ProjectsSection: React.ComponentType<{data: ProjectData}>
 	EducationTitle: React.ComponentType
 	ExperienceTitle: React.ComponentType
 	SkillsTitle: React.ComponentType
+	ProjectsTitle: React.ComponentType
 }
 
 // Theme configuration interface
@@ -57,6 +61,8 @@ export const createTheme = (config: ThemeConfig) => {
 					return <config.components.ExperienceTitle />
 				} else if (section.type === 'Skill') {
 					return <config.components.SkillsTitle />
+				} else if (section.type === 'Project') {
+					return <config.components.ProjectsTitle />
 				}
 				return null
 			})()
@@ -89,6 +95,15 @@ export const createTheme = (config: ThemeConfig) => {
 						>
 							{(data) => <config.components.SkillsSection data={data} />}
 						</SkillsController>
+					)
+				} else if (section.type === 'Project') {
+					return (
+						<ProjectController
+							section={section as ResumeSection & { type: 'Project', data: Project }}
+							isFirstInGroup={isFirstInGroup}
+						>
+							{(data) => <config.components.ProjectsSection data={data} />}
+						</ProjectController>
 					)
 				}
 				return null
