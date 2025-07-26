@@ -11,9 +11,13 @@ import {useUpdateEducationMutation} from '@/lib/education/mutations'
 import {toast} from 'sonner'
 import {useQueryClient} from '@tanstack/react-query'
 import {educationOptions} from '@/lib/education/queries'
+import DateMonthSelector, {formatDateRange} from '@/components/resume/editors/shared/DateMonthSelector'
 
 const EducationSection = ({data}: { data: EducationData }) => {
 	const [isEditing, setIsEditing] = useState(false)
+
+	const [educationDate, setEducationDate] = useState(data.dates)
+
 
 	const queryClient = useQueryClient()
 
@@ -30,7 +34,6 @@ const EducationSection = ({data}: { data: EducationData }) => {
 
 	const institutionRef = useRef<HTMLSpanElement>(null)
 	const degreeRef = useRef<HTMLSpanElement>(null)
-	const dateRef = useRef<HTMLSpanElement>(null)
 	const descriptionRef = useRef<HTMLDivElement>(null)
 
 	const handleReset = () => {
@@ -39,9 +42,6 @@ const EducationSection = ({data}: { data: EducationData }) => {
 		}
 		if (degreeRef.current) {
 			degreeRef.current.innerText = data.degree.formatted || ''
-		}
-		if (dateRef.current) {
-			dateRef.current.innerText = data.dates.formatted || ''
 		}
 		if (descriptionRef.current) {
 			descriptionRef.current.innerHTML = data.description.sanitizedHtml || ''
@@ -87,14 +87,19 @@ const EducationSection = ({data}: { data: EducationData }) => {
 						)}
 					</span>
 					{data.dates.hasDates && (
-						<span
-							ref={dateRef}
-							contentEditable={isEditing}
-							suppressContentEditableWarning
-							className="education-date text-sm text-muted-foreground"
+						<DateMonthSelector
+							title="Education Duration"
+							description="Set the duration for your education."
+							value={educationDate}
+							onChange={setEducationDate}
 						>
-							{data.dates.formatted}
-						</span>
+							<span className="education-date cursor-pointer  hover:text-gray-900 border-b border-dashed border-transparent hover:border-gray-600">
+								{educationDate.hasDates
+									? formatDateRange(educationDate)
+									: 'Add dates'
+								}
+							</span>
+						</DateMonthSelector>
 					)}
 				</div>
 
@@ -102,7 +107,6 @@ const EducationSection = ({data}: { data: EducationData }) => {
 					<div
 						ref={descriptionRef}
 						contentEditable={isEditing}
-						suppressContentEditableWarning
 						className="education-details prose prose-sm max-w-none"
 						dangerouslySetInnerHTML={{__html: data.description.sanitizedHtml || ''}}
 					/>

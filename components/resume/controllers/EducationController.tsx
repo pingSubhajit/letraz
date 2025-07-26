@@ -14,7 +14,10 @@ export interface EducationData {
   }
   dates: {
     hasDates: boolean
-    formatted: string
+	startMonth?:number|null
+	startYear?:number|null
+	endMonth?:number|null
+	endYear?:number|null
   }
   degree: {
     hasDegree: boolean
@@ -45,7 +48,7 @@ export const useEducationController = (
 			education.country?.name
 		].filter(Boolean)
 
-		const institution = {
+		const institution :EducationData['institution'] = {
 			hasInstitution: institutionParts.length > 0,
 			name: education.institution_name || undefined,
 			location: education.country?.name || undefined,
@@ -63,9 +66,12 @@ export const useEducationController = (
 			dateParts.push('Present')
 		}
 
-		const dates = {
+		const dates :EducationData['dates'] = {
 			hasDates: dateParts.length > 0,
-			formatted: dateParts.join(' – ')
+			startMonth: education.started_from_month,
+			startYear: education.started_from_year,
+			endMonth: education.finished_at_month,
+			endYear: education.finished_at_year
 		}
 
 		// Process degree information
