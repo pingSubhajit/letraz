@@ -344,6 +344,13 @@
   margin-right: 2px;
 }
 
+.default-theme-container .project-separator {
+  margin: 0 1px;
+  font-size: 12px;
+  color: #444;
+  font-family: "Charter", "Times New Roman", Times, serif;
+}
+
 .default-theme-container .project-technologies {
   font-size: 13px;
   line-height: 1.27;
