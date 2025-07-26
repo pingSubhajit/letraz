@@ -11,6 +11,7 @@ import {TooltipProvider} from '@/components/ui/tooltip'
 import APIProvider from '@/components/providers/ApiProvider'
 import {KnockProvider} from '@/components/providers/KnockProvider'
 import SentryUserProvider from '@/components/providers/SentryUserProvider'
+import {ReactNode} from 'react'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
 	authors: [{name: 'Subhajit Kundu', url: portfolio}]
 }
 
-const RootLayout = ({children}: Readonly<{ children: React.ReactNode }>) => <ClerkProvider
+const RootLayout = ({children}: Readonly<{ children: ReactNode }>) => <ClerkProvider
 	afterSignOutUrl="/"
 >
 	<ViewTransitions>
