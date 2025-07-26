@@ -6,7 +6,7 @@ import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {Loader2, Plus} from 'lucide-react'
+import {Plus} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Certification, CertificationMutation, CertificationMutationSchema} from '@/lib/certification/types'
 import {useQueryClient} from '@tanstack/react-query'
@@ -22,6 +22,14 @@ import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
+import CertificationEditorSkeleton from '@/components/skeletons/CertificationEditorSkeleton'
+import {AnimatePresence, motion} from 'motion/react'
+import {
+	ANIMATE_PRESENCE_MODE,
+	DEFAULT_FADE_ANIMATION,
+	DEFAULT_FADE_CONTENT_ANIMATION,
+	NO_ANIMATION
+} from '@/components/animations/DefaultFade'
 import {Input} from '@/components/ui/input'
 import DatePicker from '@/components/ui/date-picker'
 
@@ -36,10 +44,11 @@ const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
 type ViewState = 'list' | 'form'
 
 interface CertificationEditorProps {
-	className?: string
+  className?: string
+  isTabSwitch?: boolean
 }
 
-const CertificationEditor = ({className}: CertificationEditorProps) => {
+const CertificationEditor = ({className, isTabSwitch = false}: CertificationEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -268,33 +277,48 @@ const CertificationEditor = ({className}: CertificationEditorProps) => {
 				addButtonText="Add New Certification"
 			/>
 
-			{isLoading ? (
-				<div className="flex items-center justify-center py-10">
-					<Loader2 className="h-8 w-8 animate-spin text-primary" />
-					<span className="ml-2">Loading certifications...</span>
-				</div>
-			) : error ? (
-				<div className="text-center py-10 text-red-500">
-					Error loading certifications. Please try again later.
-				</div>
-			) : (
-				<div>
-					{certifications.length > 0 ? (
-						<div className="space-y-4" ref={parent}>
-							{certifications.map((certification, index) => renderCertificationItem(certification, index))}
-						</div>
-					) : (
-						<Button
-							onClick={handleAddNew}
-							className="w-full"
-							variant="outline"
-						>
-							<Plus className="h-4 w-4 mr-2" />
-							Add New Certification
-						</Button>
-					)}
-				</div>
-			)}
+			<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+				{isLoading && (
+					<motion.div
+						key="skeleton"
+						{...DEFAULT_FADE_ANIMATION}
+					>
+						<CertificationEditorSkeleton />
+					</motion.div>
+				)}
+
+				{error && (
+					<motion.div
+						key="error"
+						{...DEFAULT_FADE_ANIMATION}
+						className="text-center py-10 text-red-500"
+					>
+						Error loading certifications. Please try again later.
+					</motion.div>
+				)}
+
+				{!isLoading && !error && (
+					<motion.div
+						key="content"
+						{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+					>
+						{certifications.length > 0 ? (
+							<div className="space-y-4" ref={parent}>
+								{certifications.map((certification, index) => renderCertificationItem(certification, index))}
+							</div>
+						) : (
+							<Button
+								onClick={handleAddNew}
+								className="w-full"
+								variant="outline"
+							>
+								<Plus className="h-4 w-4 mr-2" />
+								Add New Certification
+							</Button>
+						)}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	)
 }

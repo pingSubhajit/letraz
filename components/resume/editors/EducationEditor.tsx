@@ -7,8 +7,16 @@ import {Form} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {months} from '@/constants'
-import {Loader2, Plus} from 'lucide-react'
+import {Plus} from 'lucide-react'
+import EducationEditorSkeleton from '@/components/skeletons/EducationEditorSkeleton'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
+import {AnimatePresence, motion} from 'motion/react'
+import {
+	ANIMATE_PRESENCE_MODE,
+	DEFAULT_FADE_ANIMATION,
+	DEFAULT_FADE_CONTENT_ANIMATION,
+	NO_ANIMATION
+} from '@/components/animations/DefaultFade'
 import {Education, EducationMutation, EducationMutationSchema} from '@/lib/education/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
@@ -44,10 +52,11 @@ const DEFAULT_EDUCATION_VALUES: EducationMutation = {
 type ViewState = 'list' | 'form'
 
 interface EducationEditorProps {
-	className?: string
+  className?: string
+  isTabSwitch?: boolean
 }
 
-const EducationEditor = ({className}: EducationEditorProps) => {
+const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -282,33 +291,48 @@ const EducationEditor = ({className}: EducationEditorProps) => {
 				addButtonText="Add New Education"
 			/>
 
-			{isLoading ? (
-				<div className="flex items-center justify-center py-10">
-					<Loader2 className="h-8 w-8 animate-spin text-primary" />
-					<span className="ml-2">Loading education details...</span>
-				</div>
-			) : error ? (
-				<div className="text-center py-10 text-red-500">
-					Error loading education details. Please try again later.
-				</div>
-			) : (
-				<div>
-					{localEducations.length > 0 ? (
-						<div className="space-y-4" ref={parent}>
-							{localEducations.map((education, index) => renderEducationItem(education, index))}
-						</div>
-					) : (
-						<Button
-							onClick={handleAddNew}
-							className="w-full"
-							variant="outline"
-						>
-							<Plus className="h-4 w-4 mr-2" />
-							Add New Education
-						</Button>
-					)}
-				</div>
-			)}
+			<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+				{isLoading && (
+					<motion.div
+						key="skeleton"
+						{...DEFAULT_FADE_ANIMATION}
+					>
+						<EducationEditorSkeleton />
+					</motion.div>
+				)}
+
+				{error && (
+					<motion.div
+						key="error"
+						{...DEFAULT_FADE_ANIMATION}
+						className="text-center py-10 text-red-500"
+					>
+						Error loading education details. Please try again later.
+					</motion.div>
+				)}
+
+				{!isLoading && !error && (
+					<motion.div
+						key="content"
+						{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+					>
+						{localEducations.length > 0 ? (
+							<div className="space-y-4" ref={parent}>
+								{localEducations.map((education, index) => renderEducationItem(education, index))}
+							</div>
+						) : (
+							<Button
+								onClick={handleAddNew}
+								className="w-full"
+								variant="outline"
+							>
+								<Plus className="h-4 w-4 mr-2" />
+								Add New Education
+							</Button>
+						)}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	)
 }
