@@ -1,33 +1,47 @@
 'use client'
 
-import {useState, useEffect, useMemo} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
+import {Form, FormField, FormItem} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {Loader2, Pencil, Plus, Trash2, ChevronDown} from 'lucide-react'
+import {ChevronDown, Loader2, Pencil, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
+import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {Badge} from '@/components/ui/badge'
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '@/components/ui/collapsible'
 import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger
-} from '@/components/ui/collapsible'
-import {resumeSkillsQueryOptions, useCurrentResumeSkills, useGlobalSkills, useSkillCategories} from '@/lib/skill/queries'
+	resumeSkillsQueryOptions,
+	useCurrentResumeSkills,
+	useGlobalSkills,
+	useSkillCategories
+} from '@/lib/skill/queries'
 import {useAddSkillMutation, useRemoveSkillMutation, useUpdateSkillMutation} from '@/lib/skill/mutations'
-import {SkillMutation, SkillMutationSchema, skillLevels, ResumeSkill} from '@/lib/skill/types'
+import {ResumeSkill, skillLevels, SkillMutation, SkillMutationSchema} from '@/lib/skill/types'
 import EditorHeader from '@/components/resume/editors/shared/EditorHeader'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ProficiencySlider from '@/components/resume/editors/shared/ProficiencySlider'
 import PopConfirm from '@/components/ui/pop-confirm'
-import {Input} from '@/components/ui/input'
+import SkillsEditorSkeleton from '@/components/skeletons/SkillsEditorSkeleton'
+import {AnimatePresence, motion} from 'motion/react'
+import {
+	ANIMATE_PRESENCE_MODE,
+	DEFAULT_FADE_ANIMATION,
+	DEFAULT_FADE_CONTENT_ANIMATION,
+	NO_ANIMATION
+} from '@/components/animations/DefaultFade'
 
 type ViewState = 'list' | 'form'
+
+interface SkillsEditorProps {
+  className?: string;
+  isTabSwitch?: boolean;
+}
 
 interface SkillsByCategory {
 	[category: string]: Array<{
@@ -39,9 +53,10 @@ interface SkillsByCategory {
 	}>;
 }
 
-const SkillsEditor = ({className}: { className?: string }) => {
+const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
-	const [parent] = useAutoAnimate()
+	const [categoryAnimationContainer] = useAutoAnimate()
+	const [skillAnimationContainer] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
 	const [openSkillSearch, setOpenSkillSearch] = useState(false)
@@ -125,6 +140,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({queryKey: resumeSkillsQueryOptions().queryKey})
+			queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 		},
 		onSuccess: () => {
 			toast.success('Skill added successfully!')
@@ -154,6 +170,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({queryKey: resumeSkillsQueryOptions().queryKey})
+			queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 		},
 		onSuccess: () => {
 			toast.success('Skill updated successfully!')
@@ -184,6 +201,7 @@ const SkillsEditor = ({className}: { className?: string }) => {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({queryKey: resumeSkillsQueryOptions().queryKey})
+			queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 			setDeletingId(null)
 		},
 		onSuccess: () => {
@@ -453,101 +471,117 @@ const SkillsEditor = ({className}: { className?: string }) => {
 				addButtonText="Add New Skill"
 			/>
 
-			{isLoadingResumeSkills || isLoadingGlobalSkills ? (
-				<div className="flex items-center justify-center py-10">
-					<Loader2 className="h-8 w-8 animate-spin text-primary" />
-					<span className="ml-2">Loading skills...</span>
-				</div>
-			) : resumeSkillsError ? (
-				<div className="text-center py-10 text-red-500">
-					Error loading skills. Please try again later.
-				</div>
-			) : (
-				<div ref={parent} className="space-y-6 overflow-y-auto">
-					{Object.keys(skillsByCategory).length > 0 ? (
-						<div className="space-y-4">
-							{Object.entries(skillsByCategory).map(([category, skills]) => (
-								<Collapsible key={category} defaultOpen={true} className="rounded-lg border bg-card overflow-hidden">
-									<CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-100 focus:outline-none border-b">
-										<h3 className="font-medium text-foreground">{category}</h3>
-										<ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
-									</CollapsibleTrigger>
-									<CollapsibleContent>
-										<div className="divide-y divide-neutral-100">
-											{skills.map((skill) => (
-												<div
-													key={skill.id}
-													className="group relative flex items-center py-3 px-4 hover:bg-neutral-50 transition-all"
-												>
-													<div className="flex-1">
-														<span className="font-medium text-sm">{skill.name}</span>
-														{skill.level && (
-															<span className="ml-2 text-xs text-muted-foreground">
-																{getSkillLevelLabel(skill.level)}
-															</span>
-														)}
-													</div>
+			<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+				{(isLoadingResumeSkills || isLoadingGlobalSkills) && (
+					<motion.div
+						key="skeleton"
+						{...DEFAULT_FADE_ANIMATION}
+					>
+						<SkillsEditorSkeleton />
+					</motion.div>
+				)}
 
-													<div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-														<Button
-															variant="ghost"
-															size="icon"
-															className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
-															onClick={() => handleEdit(skill.index)}
-															disabled={isDeleting}
-														>
-															<Pencil className="h-4 w-4" />
-															<span className="sr-only">Edit</span>
-														</Button>
-														{skill.id === deletingId ? (
+				{resumeSkillsError && (
+					<motion.div
+						key="error"
+						{...DEFAULT_FADE_ANIMATION}
+						className="text-center py-10 text-red-500"
+					>
+						Error loading skills. Please try again later.
+					</motion.div>
+				)}
+
+				{!isLoadingResumeSkills && !isLoadingGlobalSkills && !resumeSkillsError && (
+					<motion.div
+						key="content"
+						{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+						className="space-y-6 overflow-y-auto"
+					>
+						{Object.keys(skillsByCategory).length > 0 ? (
+							<div className="space-y-4" ref={categoryAnimationContainer}>
+								{Object.entries(skillsByCategory).map(([category, skills]) => (
+									<Collapsible key={category} defaultOpen={true} className="rounded-lg border bg-card overflow-hidden">
+										<CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-100 focus:outline-none border-b">
+											<h3 className="font-medium text-foreground">{category}</h3>
+											<ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
+										</CollapsibleTrigger>
+										<CollapsibleContent>
+											<div className="divide-y divide-neutral-100" ref={skillAnimationContainer}>
+												{skills.map((skill) => (
+													<div
+														key={skill.id}
+														className="group relative flex items-center py-3 px-4 hover:bg-neutral-50 transition-all"
+													>
+														<div className="flex-1">
+															<span className="font-medium text-sm">{skill.name}</span>
+															{skill.level && (
+																<span className="ml-2 text-xs text-muted-foreground">
+																	{getSkillLevelLabel(skill.level)}
+																</span>
+															)}
+														</div>
+
+														<div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
 															<Button
 																variant="ghost"
 																size="icon"
-																className="h-8 w-8"
-																disabled
+																className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+																onClick={() => handleEdit(skill.index)}
+																disabled={isDeleting}
 															>
-																<Loader2 className="h-4 w-4 animate-spin" />
-																<span className="sr-only">Deleting</span>
+																<Pencil className="h-4 w-4" />
+																<span className="sr-only">Edit</span>
 															</Button>
-														) : (
-															<PopConfirm
-																triggerElement={
-																	<Button
-																		variant="ghost"
-																		size="icon"
-																		className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
-																		disabled={isDeleting}
-																	>
-																		<Trash2 className="h-4 w-4" />
-																		<span className="sr-only">Delete</span>
-																	</Button>
-																}
-																message={`Are you sure you want to remove "${skill.name}" from your resume?`}
-																onYes={() => handleDelete(skill.id)}
-															/>
-														)}
+															{skill.id === deletingId ? (
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	className="h-8 w-8"
+																	disabled
+																>
+																	<Loader2 className="h-4 w-4 animate-spin" />
+																	<span className="sr-only">Deleting</span>
+																</Button>
+															) : (
+																<PopConfirm
+																	triggerElement={
+																		<Button
+																			variant="ghost"
+																			size="icon"
+																			className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+																			disabled={isDeleting}
+																		>
+																			<Trash2 className="h-4 w-4" />
+																			<span className="sr-only">Delete</span>
+																		</Button>
+																	}
+																	message={`Are you sure you want to remove "${skill.name}" from your resume?`}
+																	onYes={() => handleDelete(skill.id)}
+																/>
+															)}
+														</div>
 													</div>
-												</div>
-											))}
-										</div>
-									</CollapsibleContent>
-								</Collapsible>
-							))}
-						</div>
-					) : (
-						<div className="text-center py-8 px-4 border border-dashed rounded-lg bg-neutral-50">
-							<div className="mb-3 text-muted-foreground">No skills added yet</div>
-							<Button
-								onClick={handleAddNew}
-								className="bg-flame-500 hover:bg-flame-600 text-white"
-							>
-								<Plus className="h-4 w-4 mr-2" />
-								Add Your First Skill
-							</Button>
-						</div>
-					)}
-				</div>
-			)}
+												))}
+											</div>
+										</CollapsibleContent>
+									</Collapsible>
+								))}
+							</div>
+						) : (
+							<div className="text-center py-8 px-4 border border-dashed rounded-lg bg-neutral-50">
+								<div className="mb-3 text-muted-foreground">No skills added yet</div>
+								<Button
+									onClick={handleAddNew}
+									className="bg-flame-500 hover:bg-flame-600 text-white"
+								>
+									<Plus className="h-4 w-4 mr-2" />
+									Add Your First Skill
+								</Button>
+							</div>
+						)}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	)
 }

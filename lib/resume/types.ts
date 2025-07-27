@@ -1,8 +1,12 @@
 import {EducationSchema} from '@/lib/education/types'
 import {ExperienceSchema} from '@/lib/experience/types'
 import {UserInfoSchema} from '@/lib/user-info/types'
+import {ResumeSkillSchema} from '@/lib/skill/types'
+import {ResumeSkillSectionSchema} from '@/lib/skill/types'
 import {z} from 'zod'
 import {JobSchema} from '@/lib/job/types'
+import {CertificationSchema} from '@/lib/certification/types'
+import {ProjectSchema} from '@/lib/project/types'
 
 /*
  * Base schema for Resume and its sections
@@ -13,8 +17,9 @@ export const ResumeSectionSchema = z.object({
 	id: z.string().describe('The unique identifier for the resume section.'),
 	resume: z.string().describe('The identifier of the resume this section belongs to.'),
 	index: z.number().describe('The position of this section within the resume.'),
-	type: z.enum(['Education', 'Experience']).describe('The type of the resume section, either Education or Experience.'),
-	data: z.union([EducationSchema, ExperienceSchema]).describe('The data associated with this section, either education or experience details.')
+
+	type: z.enum(['Education', 'Experience', 'Skill', 'Project', 'Certification']).describe('The type of the resume section: Education, Experience, Skill, Project, or Certification.'),
+	data: z.union([EducationSchema, ExperienceSchema, ResumeSkillSectionSchema, CertificationSchema, ProjectSchema]).describe('The data associated with this section: education details, experience details, or array of skills.')
 })
 
 export const ResumeSchema = z.object({

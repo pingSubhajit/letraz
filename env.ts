@@ -108,7 +108,12 @@ const envSchema = z.object({
 	SELF_SECRET_KEY: z.string({
 		required_error: 'Self secret key is required',
 		invalid_type_error: 'Self secret key must be a string'
-	})
+	}),
+
+	// Optional feature flag for Resume Editor tabs new design
+	NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED: z.string()
+		.optional()
+		.default('true')
 })
 
 

@@ -68,6 +68,10 @@ export const ResumeSkillSchema = z.object({
 	level: SkillLevelEnum.nullable().describe('The proficiency level of the skill.')
 })
 
+export const ResumeSkillSectionSchema = z.object({
+	skills: z.array(ResumeSkillSchema)
+})
+
 /*
  * Schema for adding a new skill to a resume
  */
@@ -85,6 +89,7 @@ export const SkillMutationSchema = z.object({
 export type SkillAlias = z.infer<typeof SkillAliasSchema>
 export type GlobalSkill = z.infer<typeof GlobalSkillSchema>
 export type ResumeSkill = z.infer<typeof ResumeSkillSchema>
+export type ResumeSkillSection = z.infer<typeof ResumeSkillSectionSchema>
 export type SkillMutation = z.infer<typeof SkillMutationSchema>
 export type SkillLevel = z.infer<typeof SkillLevelEnum>
 
