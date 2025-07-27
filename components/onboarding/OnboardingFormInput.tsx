@@ -9,7 +9,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {SelectValueProps} from '@radix-ui/react-select'
 import {Textarea, TextareaProps} from '@/components/ui/textarea'
 import {Content} from '@tiptap/react'
-import RichTextEditor from '../richTextEditor'
+import RichTextEditor from '@/components/richTextEditor'
 import Image from 'next/image'
 
 const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
@@ -21,6 +21,7 @@ const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 			<FormControl>
 				<Input
 					className="text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2"
+					type={type}
 					{...props}
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
