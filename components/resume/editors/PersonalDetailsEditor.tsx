@@ -14,7 +14,7 @@ import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import DatePicker from '@/components/ui/date-picker'
 import {userInfoQueryOptions, useUserInfoQuery} from '@/lib/user-info/queries'
-import {Calendar, Edit2Icon, FileText, Globe, Loader2, Mail, MapPin, Phone, User} from 'lucide-react'
+import {Calendar, Edit2Icon, FileText, Globe, Mail, MapPin, Phone, User} from 'lucide-react'
 import {useUser} from '@clerk/nextjs'
 import {Button} from '@/components/ui/button'
 import Image from 'next/image'
@@ -24,9 +24,18 @@ import {useQueryClient} from '@tanstack/react-query'
 import {CountryDropdown} from '@/components/ui/country-dropdown'
 import ScrollMask from '@/components/ui/scroll-mask'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
+import PersonalDetailsEditorSkeleton from '@/components/skeletons/PersonalDetailsEditorSkeleton'
+import {AnimatePresence, motion} from 'motion/react'
+import {
+	ANIMATE_PRESENCE_MODE,
+	DEFAULT_FADE_ANIMATION,
+	DEFAULT_FADE_CONTENT_ANIMATION,
+	NO_ANIMATION
+} from '@/components/animations/DefaultFade'
 
 interface Props {
   className?: string;
+  isTabSwitch?: boolean;
 }
 
 type ViewState = 'list' | 'form';
@@ -52,7 +61,7 @@ const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 
 const SALUTATIONS = ['Mr.', 'Ms.', 'Mrs.', 'Miss', 'Dr.', 'Prof.', 'Rev.', 'Hon.', 'Mx.']
 
-const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
+const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}) => {
 	const scrollRef = useRef<HTMLDivElement>(null)
 	const [view, setView] = useState<ViewState>('list')
 	const [isMounted, setIsMounted] = useState(false)
@@ -338,143 +347,159 @@ const PersonalDetailsEditor: React.FC<Props> = ({className}) => {
 						addButtonText="Update your personal info"
 					/>
 
-					{isLoading ? (
-						<div className="flex items-center justify-center py-10">
-							<Loader2 className="h-8 w-8 animate-spin text-primary" />
-							<span className="ml-2">Loading personal details...</span>
-						</div>
-					) : error ? (
-						<div className="text-center py-10 text-red-500">
-							Error loading personal details. Please try again later.
-						</div>
-					) : (
-						<div className="space-y-4">
-							{userInfo ? (
-								<ItemCard
-									onEdit={() => setView('form')}
-									id={userInfo.id}
-								>
-									<div className="space-y-6 p-4">
-										{/* Header Section */}
-										<div className="flex items-center space-x-3">
-											<div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full overflow-hidden">
-												{clerkUser?.hasImage && clerkUser.imageUrl && clerkUser.imageUrl.length > 0 ? (
-													<Image
-														src={clerkUser.imageUrl}
-														alt={`${clerkUser.firstName || 'User'}'s profile`}
-														width={48}
-														height={48}
-														className="w-full h-full object-cover"
-														priority={false}
-														unoptimized={false}
-													/>
-												) : (
-													<User className="w-6 h-6 text-primary" />
-												)}
-											</div>
-											<div>
-												<h3 className="text-lg font-semibold text-foreground">
-													{userInfo?.title && `${userInfo.title} `}
-													{userInfo.first_name || 'First Name'} {userInfo.last_name || 'Last Name'}
-												</h3>
-												<p className="text-sm text-muted-foreground">Personal Information</p>
-											</div>
-										</div>
+					<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+						{isLoading && (
+							<motion.div
+								key="skeleton"
+								{...DEFAULT_FADE_ANIMATION}
+							>
+								<PersonalDetailsEditorSkeleton />
+							</motion.div>
+						)}
 
-										{/* Contact Information */}
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											{/* Email */}
+						{error && (
+							<motion.div
+								key="error"
+								{...DEFAULT_FADE_ANIMATION}
+								className="text-center py-10 text-red-500"
+							>
+								Error loading personal details. Please try again later.
+							</motion.div>
+						)}
+
+						{!isLoading && !error && (
+							<motion.div
+								key="content"
+								{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+								className="space-y-4"
+							>
+								{userInfo ? (
+									<ItemCard
+										onEdit={() => setView('form')}
+										id={userInfo.id}
+									>
+										<div className="space-y-6 p-4">
+											{/* Header Section */}
 											<div className="flex items-center space-x-3">
-												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-													<Mail className="w-4 h-4 text-flame-600" />
+												<div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full overflow-hidden">
+													{clerkUser?.hasImage && clerkUser.imageUrl && clerkUser.imageUrl.length > 0 ? (
+														<Image
+															src={clerkUser.imageUrl}
+															alt={`${clerkUser.firstName || 'User'}'s profile`}
+															width={48}
+															height={48}
+															className="w-full h-full object-cover"
+															priority={false}
+															unoptimized={false}
+														/>
+													) : (
+														<User className="w-6 h-6 text-primary" />
+													)}
 												</div>
-												<div className="min-w-0 flex-1">
-													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
-													<p className="text-sm text-foreground truncate">{userInfo.email || 'Not provided'}</p>
-												</div>
-											</div>
-
-											{/* Phone */}
-											<div className="flex items-center space-x-3">
-												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-													<Phone className="w-4 h-4 text-flame-600" />
-												</div>
-												<div className="min-w-0 flex-1">
-													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
-													<p className="text-sm text-foreground">{userInfo.phone || 'Not provided'}</p>
-												</div>
-											</div>
-
-											{/* Date of Birth */}
-											<div className="flex items-center space-x-3">
-												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-													<Calendar className="w-4 h-4 text-flame-600" />
-												</div>
-												<div className="min-w-0 flex-1">
-													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</p>
-													<p className="text-sm text-foreground">
-														{userInfo.dob ? userInfo.dob.toLocaleDateString() : 'Not provided'}
-													</p>
+												<div>
+													<h3 className="text-lg font-semibold text-foreground">
+														{userInfo?.title && `${userInfo.title} `}
+														{userInfo.first_name || 'First Name'} {userInfo.last_name || 'Last Name'}
+													</h3>
+													<p className="text-sm text-muted-foreground">Personal Information</p>
 												</div>
 											</div>
 
-											{/* Website */}
-											<div className="flex items-center space-x-3">
-												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-													<Globe className="w-4 h-4 text-flame-600" />
+											{/* Contact Information */}
+											<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+												{/* Email */}
+												<div className="flex items-center space-x-3">
+													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+														<Mail className="w-4 h-4 text-flame-600" />
+													</div>
+													<div className="min-w-0 flex-1">
+														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
+														<p className="text-sm text-foreground truncate">{userInfo.email || 'Not provided'}</p>
+													</div>
 												</div>
-												<div className="min-w-0 flex-1">
-													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</p>
-													<p className="text-sm text-foreground truncate">{userInfo.website || 'Not provided'}</p>
-												</div>
-											</div>
-										</div>
 
-										{/* Address Section */}
-										{(userInfo.address || userInfo.city || userInfo.postal || userInfo.country?.name) && (
-											<div className="flex items-start space-x-3">
-												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg my-1">
-													<MapPin className="w-4 h-4 text-flame-600" />
+												{/* Phone */}
+												<div className="flex items-center space-x-3">
+													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+														<Phone className="w-4 h-4 text-flame-600" />
+													</div>
+													<div className="min-w-0 flex-1">
+														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
+														<p className="text-sm text-foreground">{userInfo.phone || 'Not provided'}</p>
+													</div>
 												</div>
-												<div className="min-w-0 flex-1">
-													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
-													<div className="text-sm text-foreground space-y-1">
-														{userInfo.address && <p>{userInfo.address}</p>}
-														<p>
-															{[userInfo.city, userInfo.postal, userInfo.country?.name]
-																.filter(Boolean)
-																.join(', ') || 'Not provided'}
+
+												{/* Date of Birth */}
+												<div className="flex items-center space-x-3">
+													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+														<Calendar className="w-4 h-4 text-flame-600" />
+													</div>
+													<div className="min-w-0 flex-1">
+														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</p>
+														<p className="text-sm text-foreground">
+															{userInfo.dob ? userInfo.dob.toLocaleDateString() : 'Not provided'}
 														</p>
 													</div>
 												</div>
-											</div>
-										)}
 
-										{/* Bio Section */}
-										{userInfo.profile_text && (
-											<div className="flex items-start space-x-3">
-												<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mt-1">
-													<FileText className="w-4 h-4 text-flame-600" />
-												</div>
-												<div className="min-w-0 flex-1">
-													<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
-													<div
-														className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
-														dangerouslySetInnerHTML={{__html: sanitizeHtml(userInfo.profile_text)}}
-													/>
+												{/* Website */}
+												<div className="flex items-center space-x-3">
+													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
+														<Globe className="w-4 h-4 text-flame-600" />
+													</div>
+													<div className="min-w-0 flex-1">
+														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</p>
+														<p className="text-sm text-foreground truncate">{userInfo.website || 'Not provided'}</p>
+													</div>
 												</div>
 											</div>
-										)}
-									</div>
-								</ItemCard>
-							) : (
-								<Button onClick={handleUpdate} className="w-full" variant="outline">
-									<Edit2Icon className="h-4 w-4 mr-2" />
-									Edit Personal Details
-								</Button>
-							)}
-						</div>
-					)}
+
+											{/* Address Section */}
+											{(userInfo.address || userInfo.city || userInfo.postal || userInfo.country?.name) && (
+												<div className="flex items-start space-x-3">
+													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg my-1">
+														<MapPin className="w-4 h-4 text-flame-600" />
+													</div>
+													<div className="min-w-0 flex-1">
+														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
+														<div className="text-sm text-foreground space-y-1">
+															{userInfo.address && <p>{userInfo.address}</p>}
+															<p>
+																{[userInfo.city, userInfo.postal, userInfo.country?.name]
+																	.filter(Boolean)
+																	.join(', ') || 'Not provided'}
+															</p>
+														</div>
+													</div>
+												</div>
+											)}
+
+											{/* Bio Section */}
+											{userInfo.profile_text && (
+												<div className="flex items-start space-x-3">
+													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mt-1">
+														<FileText className="w-4 h-4 text-flame-600" />
+													</div>
+													<div className="min-w-0 flex-1">
+														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
+														<div
+															className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
+															dangerouslySetInnerHTML={{__html: sanitizeHtml(userInfo.profile_text)}}
+														/>
+													</div>
+												</div>
+											)}
+										</div>
+									</ItemCard>
+								) : (
+									<Button onClick={handleUpdate} className="w-full" variant="outline">
+										<Edit2Icon className="h-4 w-4 mr-2" />
+										Edit Personal Details
+									</Button>
+								)}
+							</motion.div>
+						)}
+					</AnimatePresence>
 				</>
 			)}
 		</div>

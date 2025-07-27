@@ -23,18 +23,18 @@ export interface SkillsData {
 
 // Controller hook that processes raw ResumeSkill data into display-ready data
 export const useSkillsController = (
-	section: ResumeSection & { type: 'Skill', data: ResumeSkill[] },
+	section: ResumeSection & { type: 'Skill', data: { skills: ResumeSkill[] } },
 	isFirstInGroup: boolean
 ): SkillsData => {
 	return React.useMemo(() => {
-		const {data: resumeSkills} = section
+		const {data: {skills: resumeSkills}} = section
 
 		// Process individual skills
 		const skills: SkillData[] = resumeSkills.map(resumeSkill => {
 			const skill = resumeSkill.skill
-			
+
 			// Find level information
-			const levelInfo = resumeSkill.level 
+			const levelInfo = resumeSkill.level
 				? skillLevels.find(level => level.value === resumeSkill.level)
 				: null
 
@@ -74,7 +74,7 @@ export const useSkillsController = (
 
 // HOC wrapper for theme components
 export interface SkillsControllerProps {
-  section: ResumeSection & { type: 'Skill', data: ResumeSkill[] }
+  section: ResumeSection & { type: 'Skill', data: { skills: ResumeSkill[] } }
   isFirstInGroup: boolean
   children: (data: SkillsData) => React.ReactNode
 }

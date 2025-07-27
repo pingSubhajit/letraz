@@ -9,7 +9,7 @@ import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {z} from 'zod'
 import {months} from '@/constants'
-import {ExternalLink, Github, Loader2, Plus, Trash2} from 'lucide-react'
+import {ExternalLink, Github, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
@@ -23,18 +23,26 @@ import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
+import ProjectEditorSkeleton from '@/components/skeletons/ProjectEditorSkeleton'
+import {AnimatePresence, motion} from 'motion/react'
+import {
+	ANIMATE_PRESENCE_MODE,
+	DEFAULT_FADE_ANIMATION,
+	DEFAULT_FADE_CONTENT_ANIMATION,
+	NO_ANIMATION
+} from '@/components/animations/DefaultFade'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {Badge} from '@/components/ui/badge'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
-import {AnimatePresence, motion} from 'motion/react'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 
 type ViewState = 'list' | 'form';
 
 interface ProjectEditorProps {
-	className?: string
+  className?: string
+  isTabSwitch?: boolean
 }
 
 const DEFAULT_PROJECT_VALUES: ProjectMutation = {
@@ -57,7 +65,7 @@ const newSkillSchema = z.object({
 	skill_category: z.string().optional()
 })
 
-const ProjectEditor = ({className}: ProjectEditorProps) => {
+const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
 	const [projectListAnimationRef] = useAutoAnimate()
 	const [skillListAnimationRef] = useAutoAnimate()
@@ -640,113 +648,130 @@ const ProjectEditor = ({className}: ProjectEditorProps) => {
 					className="flex-shrink-0"
 				/>
 
-				{isLoading ? (
-					<div className="flex items-center justify-center py-10">
-						<Loader2 className="h-8 w-8 animate-spin text-primary" />
-						<span className="ml-2">Loading project details...</span>
-					</div>
-				) : error ? (
-					<div className="text-center py-10 text-red-500">
-						Error loading project details. Please try again later.
-					</div>
-				) : (
-					<div ref={projectListAnimationRef} className="space-y-4 pb-8">
-						{projects.length > 0 ? (
-							projects.map((project, index) => (
-								<ItemCard
-									key={project.id}
-									onEdit={() => handleEdit(index)}
-									onDelete={() => handleDelete(project.id)}
-									isDeleting={isDeleting}
-									id={project.id}
-									deletingId={deletingId}
-								>
-									<div className="flex items-center gap-2">
-										<h3 className="font-medium">{project.name}</h3>
-										<div className="flex items-center gap-1.5">
-											{project.github_url && (
-												<button
-													onClick={(e) => {
-														e.stopPropagation()
-														window.open(project.github_url!, '_blank', 'noopener,noreferrer')
-													}}
-													className="p-1 rounded-md hover:bg-neutral-100 transition-colors"
-													title="View on GitHub"
-												>
-													<Github className="h-4 w-4 text-neutral-700 hover:text-black transition-colors" />
-												</button>
-											)}
-											{project.live_url && (
-												<button
-													onClick={(e) => {
-														e.stopPropagation()
-														window.open(project.live_url!, '_blank', 'noopener,noreferrer')
-													}}
-													className="p-1 rounded-md hover:bg-neutral-100 transition-colors"
-													title="View Live Project"
-												>
-													<ExternalLink className="h-4 w-4 text-flame-600 hover:text-flame-700 transition-colors" />
-												</button>
-											)}
+				<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+					{isLoading && (
+						<motion.div
+							key="skeleton"
+							{...DEFAULT_FADE_ANIMATION}
+						>
+							<ProjectEditorSkeleton />
+						</motion.div>
+					)}
+
+					{error && (
+						<motion.div
+							key="error"
+							{...DEFAULT_FADE_ANIMATION}
+							className="text-center py-10 text-red-500"
+						>
+							Error loading project details. Please try again later.
+						</motion.div>
+					)}
+
+					{!isLoading && !error && (
+						<motion.div
+							key="content"
+							{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+							ref={projectListAnimationRef}
+							className="space-y-4 pb-8"
+						>
+							{projects.length > 0 ? (
+								projects.map((project, index) => (
+									<ItemCard
+										key={project.id}
+										onEdit={() => handleEdit(index)}
+										onDelete={() => handleDelete(project.id)}
+										isDeleting={isDeleting}
+										id={project.id}
+										deletingId={deletingId}
+									>
+										<div className="flex items-center gap-2">
+											<h3 className="font-medium">{project.name}</h3>
+											<div className="flex items-center gap-1.5">
+												{project.github_url && (
+													<button
+														onClick={(e) => {
+															e.stopPropagation()
+															window.open(project.github_url!, '_blank', 'noopener,noreferrer')
+														}}
+														className="p-1 rounded-md hover:bg-neutral-100 transition-colors"
+														title="View on GitHub"
+													>
+														<Github className="h-4 w-4 text-neutral-700 hover:text-black transition-colors" />
+													</button>
+												)}
+												{project.live_url && (
+													<button
+														onClick={(e) => {
+															e.stopPropagation()
+															window.open(project.live_url!, '_blank', 'noopener,noreferrer')
+														}}
+														className="p-1 rounded-md hover:bg-neutral-100 transition-colors"
+														title="View Live Project"
+													>
+														<ExternalLink className="h-4 w-4 text-flame-600 hover:text-flame-700 transition-colors" />
+													</button>
+												)}
+											</div>
 										</div>
-									</div>
-									<p className="text-sm text-muted-foreground">
-										{project.role}
-										{project.category && ` | ${project.category}`}
-									</p>
-									<p className="text-sm">
-										{project.started_from_month &&
+										<p className="text-sm text-muted-foreground">
+											{project.role}
+											{project.category && ` | ${project.category}`}
+										</p>
+										<p className="text-sm">
+											{project.started_from_month &&
                                             months.find(
                                             	(m) => m.value === project.started_from_month?.toString(),
                                             )?.label}{' '}
-										{project.started_from_year} -{' '}
-										{project.current ? (
-											'Present'
-										) : (
-											<>
-												{project.finished_at_month &&
+											{project.started_from_year} -{' '}
+											{project.current ? (
+												'Present'
+											) : (
+												<>
+													{project.finished_at_month &&
                                                     months.find(
                                                     	(m) => m.value === project.finished_at_month?.toString(),
                                                     )?.label}{' '}
-												{project.finished_at_year}
-											</>
-										)}
-									</p>
-									{project.skills_used && project.skills_used.length > 0 && (
-										<div className="flex flex-wrap gap-1.5 mt-3">
-											{project.skills_used.slice(0, 6).map((skill, i) => (
-												<Badge
-													key={i}
-													variant="outline"
-													className="text-xs px-2 py-0.5 bg-flame-40/80 text-flame-600 border-flame-200/60 hover:bg-flame-50/80 transition-colors font-medium"
-												>
-													{skill.name}
-												</Badge>
-											))}
-											{project.skills_used.length > 6 && (
-												<Badge
-													variant="outline"
-													className="text-xs px-2 py-0.5 bg-flame-40/80 text-flame-600 border-flame-200/60 hover:bg-flame-50/80 transition-colors font-medium"
-												>
-													+{project.skills_used.length - 6} more
-												</Badge>
+													{project.finished_at_year}
+												</>
 											)}
-										</div>
-									)}
-								</ItemCard>
-							))
-						) : (
-							<Button
-								onClick={handleAddNew}
-								className="w-full"
-								variant="outline"
-							>
-								<Plus className="h-4 w-4 mr-2" />
-								Add New Project
-							</Button>
-						)}
-					</div>
-				)}
+										</p>
+										{project.skills_used && project.skills_used.length > 0 && (
+											<div className="flex flex-wrap gap-1.5 mt-3">
+												{project.skills_used.slice(0, 6).map((skill, i) => (
+													<Badge
+														key={i}
+														variant="outline"
+														className="text-xs px-2 py-0.5 bg-flame-40/80 text-flame-600 border-flame-200/60 hover:bg-flame-50/80 transition-colors font-medium"
+													>
+														{skill.name}
+													</Badge>
+												))}
+												{project.skills_used.length > 6 && (
+													<Badge
+														variant="outline"
+														className="text-xs px-2 py-0.5 bg-flame-40/80 text-flame-600 border-flame-200/60 hover:bg-flame-50/80 transition-colors font-medium"
+													>
+														+{project.skills_used.length - 6} more
+													</Badge>
+												)}
+											</div>
+										)}
+									</ItemCard>
+								))
+							) : (
+								<Button
+									onClick={handleAddNew}
+									className="w-full"
+									variant="outline"
+								>
+									<Plus className="h-4 w-4 mr-2" />
+									Add New Project
+								</Button>
+							)}
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</div>
 		</ScrollMask>
 	)
