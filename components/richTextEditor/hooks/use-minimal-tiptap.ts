@@ -7,10 +7,10 @@ import {StarterKit} from '@tiptap/starter-kit'
 import {Placeholder} from '@tiptap/extension-placeholder'
 import {Underline} from '@tiptap/extension-underline'
 import {TextStyle} from '@tiptap/extension-text-style'
-import {Link} from '../extensions/link'
+import {Link} from '@/components/richTextEditor/extensions/link'
 import {cn} from '@/lib/utils'
-import {getOutput} from '../utils'
-import {useThrottle} from '../hooks/use-throttle'
+import {getOutput} from '@/components/richTextEditor/utils'
+import {useThrottle} from '@/components/richTextEditor/hooks/use-throttle'
 
 
 export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
