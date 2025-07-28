@@ -1,6 +1,9 @@
 'use client'
 
-import React, {createContext, useContext, useState, ReactNode} from 'react'
+import React, {createContext, useContext, useState, ReactNode, useRef} from 'react'
+
+const SCROLL_DELAY_MS = 100
+const HIGHLIGHT_DURATION_MS = 3000
 
 export interface HighlightedItem {
 	type: 'education' | 'experience' | 'project' | 'skill' | 'certification' | 'personal'
@@ -30,27 +33,52 @@ interface ResumeHighlightProviderProps {
 
 export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = ({children}) => {
 	const [highlightedItem, setHighlightedItem] = useState<HighlightedItem | null>(null)
+	const timeoutRefs = useRef<{
+		clearHighlight?: NodeJS.Timeout
+		scrollToElement?: NodeJS.Timeout
+	}>({})
 
 	const scrollToItem = (item: HighlightedItem) => {
+		// Clear any existing timeouts to prevent memory leaks
+		if (timeoutRefs.current.clearHighlight) {
+			clearTimeout(timeoutRefs.current.clearHighlight)
+		}
+		if (timeoutRefs.current.scrollToElement) {
+			clearTimeout(timeoutRefs.current.scrollToElement)
+		}
+
 		setHighlightedItem(item)
 
-		// Auto-clear highlight after 3 seconds
-		setTimeout(() => {
+		// Auto-clear highlight after configured duration
+		timeoutRefs.current.clearHighlight = setTimeout(() => {
 			setHighlightedItem(null)
-		}, 3000)
+			timeoutRefs.current.clearHighlight = undefined
+		}, HIGHLIGHT_DURATION_MS)
 
-		// Find and scroll to the element
-		setTimeout(() => {
-			const selector = generateSelector(item)
-			const element = document.querySelector(selector)
+		// Find and scroll to the element after DOM update delay
+		timeoutRefs.current.scrollToElement = setTimeout(() => {
+			try {
+				const selector = generateSelector(item)
 
-			if (element) {
-				element.scrollIntoView({
-					behavior: 'smooth',
-					block: 'center'
-				})
+				// Validate selector is not empty
+				if (!selector || selector.trim() === '') {
+					return
+				}
+
+				const element = document.querySelector(selector)
+
+				if (element) {
+					element.scrollIntoView({
+						behavior: 'smooth',
+						block: 'center'
+					})
+				}
+			} catch (error) {
+				// Silent error handling - scrolling is not critical functionality
+			} finally {
+				timeoutRefs.current.scrollToElement = undefined
 			}
-		}, 100) // Small delay to ensure DOM is updated
+		}, SCROLL_DELAY_MS)
 	}
 
 	return (
