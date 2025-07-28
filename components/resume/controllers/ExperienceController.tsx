@@ -5,6 +5,7 @@ import {sanitizeHtml} from '@/lib/utils'
 
 // Types for the processed data
 export interface ExperienceData {
+  id: string
   company: {
     hasCompany: boolean
     name?: string
@@ -119,6 +120,7 @@ export const useExperienceController = (
 		}
 
 		return {
+			id: experience.id,
 			company,
 			dates,
 			role,

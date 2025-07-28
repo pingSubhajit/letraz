@@ -36,6 +36,7 @@ import {
 	DEFAULT_FADE_CONTENT_ANIMATION,
 	NO_ANIMATION
 } from '@/components/animations/DefaultFade'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 type ViewState = 'list' | 'form'
 
@@ -64,6 +65,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const queryClient = useQueryClient()
+	const {scrollToItem} = useResumeHighlight()
 
 	// Auto-focus when form is opened
 	useAutoFocus(view === 'form')
@@ -311,6 +313,11 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		// Store the index for reference
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for the skills section
+		scrollToItem({
+			type: 'skill'
+		})
 	}
 
 	const handleDelete = async (id: string) => {

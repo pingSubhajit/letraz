@@ -35,6 +35,7 @@ import RichTextFormField from '@/components/resume/editors/shared/RichTextFormFi
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
@@ -66,6 +67,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
+	const {scrollToItem} = useResumeHighlight()
 
 	// Auto-focus the first field when form is opened
 	useAutoFocusField(view === 'form', 'institution_name')
@@ -171,7 +173,10 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	}
 
 	const handleEdit = (index: number) => {
+		console.log('📚 EducationEditor handleEdit called with index:', index)
 		const education = localEducations[index]
+		console.log('📚 Education item:', education)
+		
 		form.reset({
 			...education,
 			country: education.country.code,
@@ -182,6 +187,16 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		})
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for this education item
+		console.log('📚 About to call scrollToItem with:', {
+			type: 'education',
+			id: education.id
+		})
+		scrollToItem({
+			type: 'education',
+			id: education.id
+		})
 	}
 
 	const handleDelete = async (id: string) => {

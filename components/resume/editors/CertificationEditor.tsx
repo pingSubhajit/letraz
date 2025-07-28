@@ -32,6 +32,7 @@ import {
 } from '@/components/animations/DefaultFade'
 import {Input} from '@/components/ui/input'
 import DatePicker from '@/components/ui/date-picker'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
@@ -56,6 +57,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
+	const {scrollToItem} = useResumeHighlight()
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: certificationOptions.queryKey})
@@ -167,6 +169,12 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		})
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for this certification item
+		scrollToItem({
+			type: 'certification',
+			id: certification.id
+		})
 	}
 
 	const handleDelete = async (id: string) => {

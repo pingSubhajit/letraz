@@ -32,6 +32,7 @@ import {
 	DEFAULT_FADE_CONTENT_ANIMATION,
 	NO_ANIMATION
 } from '@/components/animations/DefaultFade'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 interface Props {
   className?: string;
@@ -67,6 +68,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	const [isMounted, setIsMounted] = useState(false)
 	const queryClient = useQueryClient()
 	const {user: clerkUser} = useUser()
+	const {scrollToItem} = useResumeHighlight()
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: userInfoQueryOptions.queryKey})
@@ -140,6 +142,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	}, [userInfo, form])
 
 	const handleUpdate = () => {
+		console.log('👤 PersonalDetailsEditor handleUpdate called')
 		if (userInfo) {
 			form.reset(userInfo)
 		}
@@ -148,6 +151,14 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 			scrollRef.current.scrollTop = 0
 		}
 		setView('form')
+
+		// Trigger highlight for personal info section
+		console.log('👤 About to call scrollToItem with:', {
+			type: 'personal'
+		})
+		scrollToItem({
+			type: 'personal'
+		})
 	}
 
 	const handleCancel = () => {

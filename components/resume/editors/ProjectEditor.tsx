@@ -37,6 +37,7 @@ import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 type ViewState = 'list' | 'form';
 
@@ -74,6 +75,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [isAddingSkill, setIsAddingSkill] = useState(false)
+	const {scrollToItem} = useResumeHighlight()
 
 	// Separate form for new skill input
 	const newSkillForm = useForm({
@@ -251,6 +253,12 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 		})
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for this project item
+		scrollToItem({
+			type: 'project',
+			id: project.id
+		})
 	}
 
 	const handleDelete = async (id: string) => {
