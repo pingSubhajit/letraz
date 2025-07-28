@@ -24,13 +24,22 @@ describe('Resume Actions', () => {
 		const mockResume: Resume = {
 			id: 'resume_123',
 			base: true,
+			processing: false,
 			user: {
 				id: 'user_123',
+				title: null,
 				first_name: 'John',
 				last_name: 'Doe',
 				email: 'john.doe@example.com',
 				phone: '+1-555-0123',
+				dob: null,
+				nationality: null,
+				address: null,
+				city: null,
+				postal: null,
+				country: null,
 				website: 'https://johndoe.dev',
+				profile_text: null,
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z'
 			},
@@ -39,13 +48,11 @@ describe('Resume Actions', () => {
 				title: 'Senior Software Engineer',
 				company_name: 'Tech Corp',
 				location: 'San Francisco, CA',
-				currency: 'USD',
-				salary_min: 120000,
-				salary_max: 180000,
-				requirements: ['React', 'TypeScript', 'Node.js'],
+				requirements: 'React, TypeScript, Node.js',
 				description: 'We are looking for a senior software engineer.',
-				responsibilities: ['Lead development projects', 'Mentor junior developers'],
-				benefits: ['Health insurance', 'Remote work', '401k matching']
+				responsibilities: 'Lead development projects, Mentor junior developers',
+				benefits: 'Health insurance, Remote work, 401k matching',
+				processing: false
 			},
 			sections: [
 				{
@@ -188,22 +195,24 @@ describe('Resume Actions', () => {
 			expect(result.sections).toEqual([])
 		})
 
-		it('should handle resume with null salary values in job', async () => {
-			const resumeWithNullSalary: Resume = {
+		it('should handle resume with null job values', async () => {
+			const resumeWithNullJobValues: Resume = {
 				...mockResume,
 				job: {
 					...mockResume.job,
-					salary_min: null,
-					salary_max: null
+					requirements: null,
+					responsibilities: null,
+					benefits: null
 				}
 			}
 
-			mockApi.get.mockResolvedValue(resumeWithNullSalary)
+			mockApi.get.mockResolvedValue(resumeWithNullJobValues)
 
 			const result = await getResumeFromDB()
 
-			expect(result.job.salary_min).toBeNull()
-			expect(result.job.salary_max).toBeNull()
+			expect(result.job.requirements).toBeNull()
+			expect(result.job.responsibilities).toBeNull()
+			expect(result.job.benefits).toBeNull()
 		})
 	})
 
@@ -211,13 +220,22 @@ describe('Resume Actions', () => {
 		const mockUpdatedResume: Resume = {
 			id: 'resume_123',
 			base: true,
+			processing: false,
 			user: {
 				id: 'user_123',
+				title: null,
 				first_name: 'John',
 				last_name: 'Doe',
 				email: 'john.doe@example.com',
 				phone: '+1-555-0123',
+				dob: null,
+				nationality: null,
+				address: null,
+				city: null,
+				postal: null,
+				country: null,
 				website: 'https://johndoe.dev',
+				profile_text: null,
 				created_at: '2024-01-01T00:00:00Z',
 				updated_at: '2024-01-01T00:00:00Z'
 			},
@@ -226,13 +244,11 @@ describe('Resume Actions', () => {
 				title: 'Senior Software Engineer',
 				company_name: 'Tech Corp',
 				location: 'San Francisco, CA',
-				currency: 'USD',
-				salary_min: 120000,
-				salary_max: 180000,
-				requirements: ['React', 'TypeScript', 'Node.js'],
+				requirements: 'React, TypeScript, Node.js',
 				description: 'We are looking for a senior software engineer.',
-				responsibilities: ['Lead development projects', 'Mentor junior developers'],
-				benefits: ['Health insurance', 'Remote work', '401k matching']
+				responsibilities: 'Lead development projects, Mentor junior developers',
+				benefits: 'Health insurance, Remote work, 401k matching',
+				processing: false
 			},
 			sections: [
 				{
