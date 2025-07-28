@@ -1,7 +1,6 @@
 import {EducationSchema} from '@/lib/education/types'
 import {ExperienceSchema} from '@/lib/experience/types'
 import {UserInfoSchema} from '@/lib/user-info/types'
-import {ResumeSkillSchema} from '@/lib/skill/types'
 import {ResumeSkillSectionSchema} from '@/lib/skill/types'
 import {z} from 'zod'
 import {JobSchema} from '@/lib/job/types'
@@ -27,6 +26,7 @@ export const ResumeSchema = z.object({
 	base: z.boolean().describe('Indicates if this is the base resume.'),
 	user: UserInfoSchema.describe('The user information associated with the resume.'),
 	job: JobSchema.describe('The job information associated with the resume.'),
+	processing: z.boolean().describe('Indicates if the resume is currently being processed.'),
 	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.')
 })
 
