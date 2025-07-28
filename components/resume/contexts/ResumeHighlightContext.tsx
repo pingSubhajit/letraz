@@ -95,15 +95,15 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 const generateSelector = (item: HighlightedItem): string => {
 	switch (item.type) {
 	case 'education':
-		return `[data-resume-item="education-${item.id}"]`
+		return item.id ? `[data-resume-item="education-${item.id}"]` : ''
 	case 'experience':
-		return `[data-resume-item="experience-${item.id}"]`
+		return item.id ? `[data-resume-item="experience-${item.id}"]` : ''
 	case 'project':
-		return `[data-resume-item="project-${item.id}"]`
+		return item.id ? `[data-resume-item="project-${item.id}"]` : ''
+	case 'certification':
+		return item.id ? `[data-resume-item="certification-${item.id}"]` : ''
 	case 'skill':
 		return '[data-resume-item="skill-section"]'
-	case 'certification':
-		return `[data-resume-item="certification-${item.id}"]`
 	case 'personal':
 		return '[data-resume-item="personal-info"]'
 	default:
