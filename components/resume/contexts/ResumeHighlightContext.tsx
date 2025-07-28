@@ -1,8 +1,8 @@
 'use client'
 
-import React, {createContext, useContext, useState, ReactNode, useRef} from 'react'
+import React, {createContext, useContext, useState, ReactNode, useRef, useEffect} from 'react'
 
-const SCROLL_DELAY_MS = 100
+const SCROLL_DELAY_MS = 200
 const HIGHLIGHT_DURATION_MS = 3000
 
 export interface HighlightedItem {
@@ -38,14 +38,28 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 		scrollToElement?: NodeJS.Timeout
 	}>({})
 
-	const scrollToItem = (item: HighlightedItem) => {
-		// Clear any existing timeouts to prevent memory leaks
+	// Cleanup function to clear all active timeouts
+	const clearAllTimeouts = () => {
 		if (timeoutRefs.current.clearHighlight) {
 			clearTimeout(timeoutRefs.current.clearHighlight)
+			timeoutRefs.current.clearHighlight = undefined
 		}
 		if (timeoutRefs.current.scrollToElement) {
 			clearTimeout(timeoutRefs.current.scrollToElement)
+			timeoutRefs.current.scrollToElement = undefined
 		}
+	}
+
+	// Cleanup timeouts on component unmount
+	useEffect(() => {
+		return () => {
+			clearAllTimeouts()
+		}
+	}, [])
+
+	const scrollToItem = (item: HighlightedItem) => {
+		// Clear any existing timeouts to prevent memory leaks and race conditions
+		clearAllTimeouts()
 
 		setHighlightedItem(item)
 
