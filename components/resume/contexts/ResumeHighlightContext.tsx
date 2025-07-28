@@ -84,7 +84,8 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 				if (element) {
 					element.scrollIntoView({
 						behavior: 'smooth',
-						block: 'center'
+						block: 'center',
+						inline: 'nearest'
 					})
 				}
 			} catch (error) {
