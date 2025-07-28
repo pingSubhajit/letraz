@@ -9,8 +9,8 @@ import {useEffect, useRef, RefObject} from 'react'
  * @param delay - Optional delay in milliseconds before focusing (default: 150ms)
  */
 export const useAutoFocus = (
-	isFormOpen: boolean, 
-	containerRef?: RefObject<HTMLElement>, 
+	isFormOpen: boolean,
+	containerRef?: RefObject<HTMLElement>,
 	delay: number = 150
 ) => {
 	const hasBeenFocused = useRef(false)
@@ -21,12 +21,12 @@ export const useAutoFocus = (
 				try {
 					// Use container element if provided, otherwise fallback to document
 					const searchContext = containerRef?.current || document
-					
+
 					// Ensure we have a valid search context
 					if (!searchContext) {
 						return
 					}
-					
+
 					// Find the first focusable input element within the scoped context
 					const firstInput = searchContext.querySelector(
 						'input:not([disabled]):not([readonly]), textarea:not([disabled]):not([readonly]), select:not([disabled])'
@@ -59,9 +59,9 @@ export const useAutoFocus = (
  * @param delay - Optional delay in milliseconds before focusing (default: 150ms)
  */
 export const useAutoFocusField = (
-	isFormOpen: boolean, 
-	fieldName: string, 
-	containerRef?: RefObject<HTMLElement>, 
+	isFormOpen: boolean,
+	fieldName: string,
+	containerRef?: RefObject<HTMLElement>,
 	delay: number = 150
 ) => {
 	const hasBeenFocused = useRef(false)
@@ -72,18 +72,18 @@ export const useAutoFocusField = (
 				try {
 					// Use container element if provided, otherwise fallback to document
 					const searchContext = containerRef?.current || document
-					
+
 					// Ensure we have a valid search context
 					if (!searchContext) {
 						return
 					}
-					
+
 					// Construct a clean, single-line CSS selector for the target field
 					const inputSelector = `input[name="${fieldName}"]:not([disabled]):not([readonly])`
 					const textareaSelector = `textarea[name="${fieldName}"]:not([disabled]):not([readonly])`
 					const selectSelector = `select[name="${fieldName}"]:not([disabled])`
 					const combinedSelector = `${inputSelector}, ${textareaSelector}, ${selectSelector}`
-					
+
 					// Find the specific field by name within the scoped context
 					const targetField = searchContext.querySelector(combinedSelector) as HTMLElement
 
@@ -95,7 +95,7 @@ export const useAutoFocusField = (
 						}
 					}
 				} catch (error) {
-					// Silently handle DOM query errors - focus is not critical functionality  
+					// Silently handle DOM query errors - focus is not critical functionality
 				}
 			}, delay)
 
