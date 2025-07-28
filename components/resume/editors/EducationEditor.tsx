@@ -174,7 +174,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 
 	const handleEdit = (index: number) => {
 		const education = localEducations[index]
-		
+
 		form.reset({
 			...education,
 			country: education.country.code,
