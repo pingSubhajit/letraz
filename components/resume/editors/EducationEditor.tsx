@@ -173,9 +173,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	}
 
 	const handleEdit = (index: number) => {
-		console.log('📚 EducationEditor handleEdit called with index:', index)
 		const education = localEducations[index]
-		console.log('📚 Education item:', education)
 		
 		form.reset({
 			...education,
@@ -189,10 +187,6 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		setView('form')
 
 		// Trigger highlight for this education item
-		console.log('📚 About to call scrollToItem with:', {
-			type: 'education',
-			id: education.id
-		})
 		scrollToItem({
 			type: 'education',
 			id: education.id

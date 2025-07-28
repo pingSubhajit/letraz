@@ -142,7 +142,6 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	}, [userInfo, form])
 
 	const handleUpdate = () => {
-		console.log('👤 PersonalDetailsEditor handleUpdate called')
 		if (userInfo) {
 			form.reset(userInfo)
 		}
@@ -153,9 +152,6 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 		setView('form')
 
 		// Trigger highlight for personal info section
-		console.log('👤 About to call scrollToItem with:', {
-			type: 'personal'
-		})
 		scrollToItem({
 			type: 'personal'
 		})
@@ -386,7 +382,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							>
 								{userInfo ? (
 									<ItemCard
-										onEdit={() => setView('form')}
+										onEdit={handleUpdate}
 										id={userInfo.id}
 									>
 										<div className="space-y-6 p-4">

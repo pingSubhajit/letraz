@@ -19,7 +19,6 @@ const ResumeHighlightContext = createContext<ResumeHighlightContextType | undefi
 export const useResumeHighlight = () => {
 	const context = useContext(ResumeHighlightContext)
 	if (context === undefined) {
-		console.error('❌ useResumeHighlight called outside of ResumeHighlightProvider!')
 		throw new Error('useResumeHighlight must be used within a ResumeHighlightProvider')
 	}
 	return context
@@ -33,35 +32,23 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 	const [highlightedItem, setHighlightedItem] = useState<HighlightedItem | null>(null)
 
 	const scrollToItem = (item: HighlightedItem) => {
-		console.log('🎯 scrollToItem called with:', item)
 		setHighlightedItem(item)
-		console.log('📝 highlightedItem state updated to:', item)
 
 		// Auto-clear highlight after 3 seconds
 		setTimeout(() => {
-			console.log('⏰ Auto-clearing highlight after 3 seconds')
 			setHighlightedItem(null)
 		}, 3000)
 
 		// Find and scroll to the element
 		setTimeout(() => {
 			const selector = generateSelector(item)
-			console.log('🔍 Generated selector:', selector)
-
 			const element = document.querySelector(selector)
-			console.log('🎯 Found element:', element)
 
 			if (element) {
-				console.log('✅ Scrolling to element:', element)
 				element.scrollIntoView({
 					behavior: 'smooth',
 					block: 'center'
 				})
-			} else {
-				console.warn('❌ Element not found for selector:', selector)
-				console.log('🔍 Available elements with data-resume-item:', 
-					Array.from(document.querySelectorAll('[data-resume-item]')).map(el => el.getAttribute('data-resume-item'))
-				)
 			}
 		}, 100) // Small delay to ensure DOM is updated
 	}
