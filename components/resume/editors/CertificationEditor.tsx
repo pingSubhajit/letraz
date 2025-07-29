@@ -57,7 +57,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
-	const {scrollToItem} = useResumeHighlight()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: certificationOptions.queryKey})
@@ -154,6 +154,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 			form.reset(DEFAULT_CERTIFICATION_VALUES)
 			setView('list')
 			setEditingIndex(null)
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -185,6 +186,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 				setEditingIndex(null)
 				form.reset(DEFAULT_CERTIFICATION_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -203,6 +205,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		form.reset(DEFAULT_CERTIFICATION_VALUES)
 		setEditingIndex(null)
 		setView('list')
+		clearHighlight()
 	}
 
 	if (view === 'form') {

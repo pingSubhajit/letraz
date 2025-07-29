@@ -116,13 +116,15 @@ export interface EducationControllerProps {
   section: ResumeSection & { type: 'Education', data: Education }
   isFirstInGroup: boolean
   children: (data: EducationData) => React.ReactNode
+  className?: string
 }
 
 export const EducationController: React.FC<EducationControllerProps> = ({
 	section,
 	isFirstInGroup,
-	children
+	children,
+	className
 }) => {
 	const processedData = useEducationController(section, isFirstInGroup)
-	return <>{children(processedData)}</>
+	return <div className={className}>{children(processedData)}</div>
 }

@@ -68,7 +68,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	const [isMounted, setIsMounted] = useState(false)
 	const queryClient = useQueryClient()
 	const {user: clerkUser} = useUser()
-	const {scrollToItem} = useResumeHighlight()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: userInfoQueryOptions.queryKey})
@@ -128,6 +128,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	const onSubmit = async (values: UserInfoMutation) => {
 		await updateInfo(values)
 		setView('list')
+		clearHighlight()
 	}
 
 	useEffect(() => {
@@ -164,6 +165,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 			scrollRef.current.scrollTop = 0
 		}
 		setView('list')
+		clearHighlight()
 	}
 
 	return (

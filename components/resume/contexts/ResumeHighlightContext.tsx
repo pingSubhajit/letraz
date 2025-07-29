@@ -3,7 +3,6 @@
 import React, {createContext, useContext, useState, ReactNode, useRef, useEffect} from 'react'
 
 const SCROLL_DELAY_MS = 200
-const HIGHLIGHT_DURATION_MS = 3000
 const SCROLL_THRESHOLD = 100 // pixels of buffer space from viewport edges
 
 export interface HighlightedItem {
@@ -16,6 +15,7 @@ interface ResumeHighlightContextType {
 	highlightedItem: HighlightedItem | null
 	setHighlightedItem: (item: HighlightedItem | null) => void
 	scrollToItem: (item: HighlightedItem) => void
+	clearHighlight: () => void
 }
 
 const ResumeHighlightContext = createContext<ResumeHighlightContextType | undefined>(undefined)
@@ -35,16 +35,11 @@ interface ResumeHighlightProviderProps {
 export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = ({children}) => {
 	const [highlightedItem, setHighlightedItem] = useState<HighlightedItem | null>(null)
 	const timeoutRefs = useRef<{
-		clearHighlight?: NodeJS.Timeout
 		scrollToElement?: NodeJS.Timeout
 	}>({})
 
 	// Cleanup function to clear all active timeouts
 	const clearAllTimeouts = () => {
-		if (timeoutRefs.current.clearHighlight) {
-			clearTimeout(timeoutRefs.current.clearHighlight)
-			timeoutRefs.current.clearHighlight = undefined
-		}
 		if (timeoutRefs.current.scrollToElement) {
 			clearTimeout(timeoutRefs.current.scrollToElement)
 			timeoutRefs.current.scrollToElement = undefined
@@ -58,17 +53,15 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 		}
 	}, [])
 
+	const clearHighlight = () => {
+		setHighlightedItem(null)
+	}
+
 	const scrollToItem = (item: HighlightedItem) => {
 		// Clear any existing timeouts to prevent memory leaks and race conditions
 		clearAllTimeouts()
 
 		setHighlightedItem(item)
-
-		// Auto-clear highlight after configured duration
-		timeoutRefs.current.clearHighlight = setTimeout(() => {
-			setHighlightedItem(null)
-			timeoutRefs.current.clearHighlight = undefined
-		}, HIGHLIGHT_DURATION_MS)
 
 		// Find and scroll to the element after DOM update delay
 		timeoutRefs.current.scrollToElement = setTimeout(() => {
@@ -138,7 +131,8 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 		<ResumeHighlightContext.Provider value={{
 			highlightedItem,
 			setHighlightedItem,
-			scrollToItem
+			scrollToItem,
+			clearHighlight
 		}}>
 			{children}
 		</ResumeHighlightContext.Provider>

@@ -75,7 +75,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [isAddingSkill, setIsAddingSkill] = useState(false)
-	const {scrollToItem} = useResumeHighlight()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
 	// Separate form for new skill input
 	const newSkillForm = useForm({
@@ -229,6 +229,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 			setEditingIndex(null)
 			setIsAddingSkill(false)
 			newSkillForm.reset({skill_name: '', skill_category: ''})
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -269,6 +270,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 				setEditingIndex(null)
 				form.reset(DEFAULT_PROJECT_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -291,6 +293,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 		setView('list')
 		setIsAddingSkill(false)
 		newSkillForm.reset({skill_name: '', skill_category: ''})
+		clearHighlight()
 	}
 
 	if (view === 'form') {

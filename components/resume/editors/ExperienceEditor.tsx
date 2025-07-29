@@ -69,7 +69,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
-	const {scrollToItem} = useResumeHighlight()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
 	// Auto-focus the first field when form is opened
 	useAutoFocusField(view === 'form', 'job_title')
@@ -177,6 +177,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 			form.reset(DEFAULT_EXPERIENCE_VALUES)
 			setView('list')
 			setEditingIndex(null)
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -217,6 +218,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 				setEditingIndex(null)
 				form.reset(DEFAULT_EXPERIENCE_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -235,6 +237,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 		form.reset(DEFAULT_EXPERIENCE_VALUES)
 		setEditingIndex(null)
 		setView('list')
+		clearHighlight()
 	}
 
 	if (view === 'form') {

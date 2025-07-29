@@ -3,19 +3,15 @@ import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faEnvelope, faGlobe, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
-import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {cn} from '@/lib/utils'
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
-	const {highlightedItem} = useResumeHighlight()
-	const isHighlighted = highlightedItem?.type === 'personal'
-
 	return (
 		<div
 			className={cn(
 				charter.className,
-				'transition-all duration-300',
-				isHighlighted && 'bg-yellow-100/50 animate-pulse shadow-sm rounded-md px-2 py-1'
+				'personal-info-section',
+				' transition-all duration-300'
 			)}
 			data-resume-item="personal-info"
 		>

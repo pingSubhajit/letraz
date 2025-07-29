@@ -67,7 +67,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
-	const {scrollToItem} = useResumeHighlight()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
 	// Auto-focus the first field when form is opened
 	useAutoFocusField(view === 'form', 'institution_name')
@@ -167,6 +167,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 			form.reset(DEFAULT_EDUCATION_VALUES)
 			setView('list')
 			setEditingIndex(null)
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -201,6 +202,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 				setEditingIndex(null)
 				form.reset(DEFAULT_EDUCATION_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -219,6 +221,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		form.reset(DEFAULT_EDUCATION_VALUES)
 		setEditingIndex(null)
 		setView('list')
+		clearHighlight()
 	}
 
 	if (view === 'form') {

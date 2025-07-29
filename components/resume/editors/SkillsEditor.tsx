@@ -65,7 +65,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const queryClient = useQueryClient()
-	const {scrollToItem} = useResumeHighlight()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
 	// Auto-focus when form is opened
 	useAutoFocus(view === 'form')
@@ -288,6 +288,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		setView('list')
 		setEditingIndex(null)
 		setSearchQuery('')
+		clearHighlight()
 	}
 
 	const handleSkillSelect = (skillId: string) => {
@@ -330,6 +331,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 				category: ''
 			})
 			setView('list')
+			clearHighlight()
 		}
 	}
 
@@ -352,6 +354,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		setEditingIndex(null)
 		setView('list')
 		setSearchQuery('')
+		clearHighlight()
 	}
 
 	const getSkillLevelLabel = (level: string | null) => {

@@ -3,14 +3,9 @@ import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faGithub} from '@fortawesome/free-brands-svg-icons'
 import {ProjectData} from '@/components/resume/controllers/ProjectController'
-import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {cn} from '@/lib/utils'
 
-// Project Section UI Component
 const ProjectsSection = ({data}: { data: ProjectData }) => {
-	const {highlightedItem} = useResumeHighlight()
-	const isHighlighted = highlightedItem?.type === 'project' && highlightedItem?.id === data.id
-
 	// Error handling for missing project name
 	if (!data.name) {
 		return null
@@ -21,8 +16,7 @@ const ProjectsSection = ({data}: { data: ProjectData }) => {
 			className={cn(
 				charter.className,
 				'project-item transition-all duration-300',
-				data.spacing.marginTop ? 'mt-2' : '',
-				isHighlighted && 'bg-yellow-100/50 animate-pulse shadow-sm rounded-md px-2 py-1'
+				data.spacing.marginTop ? 'mt-2' : ''
 			)}
 			aria-label={`Project: ${data.name}`}
 			data-resume-item={`project-${data.id}`}
