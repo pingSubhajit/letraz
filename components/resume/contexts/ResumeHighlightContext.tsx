@@ -4,7 +4,7 @@ import React, {createContext, useContext, useState, ReactNode, useRef, useEffect
 
 const SCROLL_DELAY_MS = 200
 const HIGHLIGHT_DURATION_MS = 3000
-const SCROLL_THRESHOLD = 180 // pixels of buffer space from viewport edges
+const SCROLL_THRESHOLD = 100 // pixels of buffer space from viewport edges
 
 export interface HighlightedItem {
 	type: 'education' | 'experience' | 'project' | 'skill' | 'certification' | 'personal'
@@ -94,6 +94,43 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 							block: 'nearest',
 							inline: 'nearest'
 						})
+
+						// Add breathing room by finding the scrollable container
+						setTimeout(() => {
+							const updatedRect = element.getBoundingClientRect()
+
+							// Find the actual scrollable container (not window)
+							let scrollContainer = element.parentElement
+							while (scrollContainer && scrollContainer !== document.body) {
+								const styles = window.getComputedStyle(scrollContainer)
+								if (styles.overflow === 'auto' || styles.overflow === 'scroll' ||
+									styles.overflowY === 'auto' || styles.overflowY === 'scroll') {
+									break
+								}
+								scrollContainer = scrollContainer.parentElement
+							}
+
+							// Use the found container or fallback to window
+							const container = scrollContainer || window
+
+							// Add breathing room if element is too close to edges
+							if (updatedRect.top < SCROLL_THRESHOLD && updatedRect.top >= 0) {
+								const scrollAmount = -(SCROLL_THRESHOLD - updatedRect.top)
+								if (container === window) {
+									window.scrollBy({top: scrollAmount, behavior: 'smooth'})
+								} else {
+									container.scrollBy({top: scrollAmount, behavior: 'smooth'})
+								}
+							} else if (updatedRect.bottom > (window.innerHeight - SCROLL_THRESHOLD) &&
+									  updatedRect.bottom <= window.innerHeight) {
+								const scrollAmount = updatedRect.bottom - (window.innerHeight - SCROLL_THRESHOLD)
+								if (container === window) {
+									window.scrollBy({top: scrollAmount, behavior: 'smooth'})
+								} else {
+									container.scrollBy({top: scrollAmount, behavior: 'smooth'})
+								}
+							}
+						}, 300)
 					}
 				}
 			} catch (error) {
