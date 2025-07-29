@@ -4,6 +4,7 @@ import React, {createContext, useContext, useState, ReactNode, useRef, useEffect
 
 const SCROLL_DELAY_MS = 200
 const HIGHLIGHT_DURATION_MS = 3000
+const SCROLL_THRESHOLD = 180 // pixels of buffer space from viewport edges
 
 export interface HighlightedItem {
 	type: 'education' | 'experience' | 'project' | 'skill' | 'certification' | 'personal'
@@ -82,11 +83,18 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 				const element = document.querySelector(selector)
 
 				if (element) {
-					element.scrollIntoView({
-						behavior: 'smooth',
-						block: 'center',
-						inline: 'nearest'
-					})
+					// Check if element is already visible in viewport
+					const rect = element.getBoundingClientRect()
+					const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight
+
+					// Only scroll if element is not fully visible
+					if (!isVisible) {
+						element.scrollIntoView({
+							behavior: 'smooth',
+							block: 'nearest',
+							inline: 'nearest'
+						})
+					}
 				}
 			} catch (error) {
 				// Silent error handling - scrolling is not critical functionality
