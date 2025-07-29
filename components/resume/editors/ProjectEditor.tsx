@@ -38,6 +38,7 @@ import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 
 type ViewState = 'list' | 'form';
 
@@ -76,6 +77,9 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [isAddingSkill, setIsAddingSkill] = useState(false)
 	const {scrollToItem, clearHighlight} = useResumeHighlight()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'name')
 
 	// Separate form for new skill input
 	const newSkillForm = useForm({

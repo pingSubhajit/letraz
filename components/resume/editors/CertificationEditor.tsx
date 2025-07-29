@@ -33,6 +33,7 @@ import {
 import {Input} from '@/components/ui/input'
 import DatePicker from '@/components/ui/date-picker'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
@@ -58,6 +59,9 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 
 	const queryClient = useQueryClient()
 	const {scrollToItem, clearHighlight} = useResumeHighlight()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'name')
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: certificationOptions.queryKey})
