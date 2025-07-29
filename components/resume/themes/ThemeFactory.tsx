@@ -38,6 +38,14 @@ const HighlightWrapper: React.FC<{
 	)
 }
 
+// Title wrapper: dims (opacity-20 blur) when any item is highlighted; never brightens
+const TitleDimWrapper: React.FC<{children: React.ReactNode}> = ({children}) => {
+	const {highlightedItem} = useResumeHighlight()
+	return (
+		<div className={highlightedItem ? 'opacity-20 blur-[1px]' : ''}>{children}</div>
+	)
+}
+
 // Standard theme props interface
 export interface ThemeProps {
 	sections?: ResumeSection[]
@@ -78,13 +86,29 @@ export const createTheme = (config: ThemeConfig) => {
 				if (!isFirstInGroup) return null
 
 				if (section.type === 'Education') {
-					return <config.components.EducationTitle />
+					return (
+						<TitleDimWrapper>
+							<config.components.EducationTitle />
+						</TitleDimWrapper>
+					)
 				} else if (section.type === 'Experience') {
-					return <config.components.ExperienceTitle />
+					return (
+						<TitleDimWrapper>
+							<config.components.ExperienceTitle />
+						</TitleDimWrapper>
+					)
 				} else if (section.type === 'Skill') {
-					return <config.components.SkillsTitle />
+					return (
+						<TitleDimWrapper>
+							<config.components.SkillsTitle />
+						</TitleDimWrapper>
+					)
 				} else if (section.type === 'Project') {
-					return <config.components.ProjectsTitle />
+					return (
+						<TitleDimWrapper>
+							<config.components.ProjectsTitle />
+						</TitleDimWrapper>
+					)
 				}
 				return null
 			})()
