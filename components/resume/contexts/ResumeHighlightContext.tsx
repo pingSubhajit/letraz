@@ -89,48 +89,41 @@ export const ResumeHighlightProvider: React.FC<ResumeHighlightProviderProps> = (
 
 					// Only scroll if element is not fully visible
 					if (!isVisible) {
-						element.scrollIntoView({
-							behavior: 'smooth',
-							block: 'nearest',
-							inline: 'nearest'
-						})
-
-						// Add breathing room by finding the scrollable container
-						setTimeout(() => {
-							const updatedRect = element.getBoundingClientRect()
-
-							// Find the actual scrollable container (not window)
-							let scrollContainer = element.parentElement
-							while (scrollContainer && scrollContainer !== document.body) {
-								const styles = window.getComputedStyle(scrollContainer)
-								if (styles.overflow === 'auto' || styles.overflow === 'scroll' ||
-									styles.overflowY === 'auto' || styles.overflowY === 'scroll') {
-									break
-								}
-								scrollContainer = scrollContainer.parentElement
+						// Find the actual scrollable container first
+						let scrollContainer = element.parentElement
+						while (scrollContainer && scrollContainer !== document.body) {
+							const styles = window.getComputedStyle(scrollContainer)
+							if (styles.overflow === 'auto' || styles.overflow === 'scroll' ||
+								styles.overflowY === 'auto' || styles.overflowY === 'scroll') {
+								break
 							}
+							scrollContainer = scrollContainer.parentElement
+						}
 
-							// Use the found container or fallback to window
-							const container = scrollContainer || window
+						// Calculate optimal scroll position with threshold
+						if (scrollContainer) {
+							// For container scrolling, calculate position relative to container
+							const containerRect = scrollContainer.getBoundingClientRect()
+							const elementRect = element.getBoundingClientRect()
+							const relativeTop = elementRect.top - containerRect.top
 
-							// Add breathing room if element is too close to edges
-							if (updatedRect.top < SCROLL_THRESHOLD && updatedRect.top >= 0) {
-								const scrollAmount = -(SCROLL_THRESHOLD - updatedRect.top)
-								if (container === window) {
-									window.scrollBy({top: scrollAmount, behavior: 'smooth'})
-								} else {
-									container.scrollBy({top: scrollAmount, behavior: 'smooth'})
-								}
-							} else if (updatedRect.bottom > (window.innerHeight - SCROLL_THRESHOLD) &&
-									  updatedRect.bottom <= window.innerHeight) {
-								const scrollAmount = updatedRect.bottom - (window.innerHeight - SCROLL_THRESHOLD)
-								if (container === window) {
-									window.scrollBy({top: scrollAmount, behavior: 'smooth'})
-								} else {
-									container.scrollBy({top: scrollAmount, behavior: 'smooth'})
-								}
-							}
-						}, 300)
+							let targetScrollTop = scrollContainer.scrollTop + relativeTop - SCROLL_THRESHOLD
+
+							// Ensure we don't scroll past the boundaries
+							targetScrollTop = Math.max(0, Math.min(targetScrollTop, scrollContainer.scrollHeight - scrollContainer.clientHeight))
+
+							scrollContainer.scrollTo({
+								top: targetScrollTop,
+								behavior: 'smooth'
+							})
+						} else {
+							// Fallback to scrollIntoView
+							element.scrollIntoView({
+								behavior: 'smooth',
+								block: 'nearest',
+								inline: 'nearest'
+							})
+						}
 					}
 				}
 			} catch (error) {
