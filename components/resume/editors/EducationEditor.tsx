@@ -34,6 +34,8 @@ import TextFormField from '@/components/resume/editors/shared/TextFormField'
 import RichTextFormField from '@/components/resume/editors/shared/RichTextFormField'
 import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
@@ -65,6 +67,10 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'institution_name')
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
@@ -161,6 +167,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 			form.reset(DEFAULT_EDUCATION_VALUES)
 			setView('list')
 			setEditingIndex(null)
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -168,6 +175,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 
 	const handleEdit = (index: number) => {
 		const education = localEducations[index]
+
 		form.reset({
 			...education,
 			country: education.country.code,
@@ -178,6 +186,12 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		})
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for this education item
+		scrollToItem({
+			type: 'education',
+			id: education.id
+		})
 	}
 
 	const handleDelete = async (id: string) => {
@@ -188,6 +202,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 				setEditingIndex(null)
 				form.reset(DEFAULT_EDUCATION_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -206,6 +221,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		form.reset(DEFAULT_EDUCATION_VALUES)
 		setEditingIndex(null)
 		setView('list')
+		clearHighlight()
 	}
 
 	if (view === 'form') {

@@ -5,6 +5,7 @@ import {sanitizeHtml} from '@/lib/utils'
 
 // Types for the processed data
 export interface ProjectData {
+  id: string
   name: string
   category: {
     hasCategory: boolean
@@ -118,6 +119,7 @@ export const useProjectController = (
 		}
 
 		return {
+			id: project.id,
 			name: project.name,
 			category,
 			description,

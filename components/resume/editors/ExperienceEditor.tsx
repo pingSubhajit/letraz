@@ -36,6 +36,8 @@ import ItemCard from '@/components/resume/editors/shared/ItemCard'
 
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 type ViewState = 'list' | 'form'
 
@@ -67,6 +69,10 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'job_title')
 
 	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
 
@@ -171,6 +177,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 			form.reset(DEFAULT_EXPERIENCE_VALUES)
 			setView('list')
 			setEditingIndex(null)
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -195,6 +202,12 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 		})
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for this experience item
+		scrollToItem({
+			type: 'experience',
+			id: experience.id
+		})
 	}
 
 	const handleDelete = async (id: string) => {
@@ -205,6 +218,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 				setEditingIndex(null)
 				form.reset(DEFAULT_EXPERIENCE_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -223,6 +237,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 		form.reset(DEFAULT_EXPERIENCE_VALUES)
 		setEditingIndex(null)
 		setView('list')
+		clearHighlight()
 	}
 
 	if (view === 'form') {

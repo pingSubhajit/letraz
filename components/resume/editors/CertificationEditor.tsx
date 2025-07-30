@@ -32,6 +32,8 @@ import {
 } from '@/components/animations/DefaultFade'
 import {Input} from '@/components/ui/input'
 import DatePicker from '@/components/ui/date-picker'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
@@ -56,6 +58,10 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const [parent] = useAutoAnimate()
 
 	const queryClient = useQueryClient()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'name')
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: certificationOptions.queryKey})
@@ -152,6 +158,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 			form.reset(DEFAULT_CERTIFICATION_VALUES)
 			setView('list')
 			setEditingIndex(null)
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -167,6 +174,12 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		})
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for this certification item
+		scrollToItem({
+			type: 'certification',
+			id: certification.id
+		})
 	}
 
 	const handleDelete = async (id: string) => {
@@ -177,6 +190,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 				setEditingIndex(null)
 				form.reset(DEFAULT_CERTIFICATION_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -195,6 +209,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		form.reset(DEFAULT_CERTIFICATION_VALUES)
 		setEditingIndex(null)
 		setView('list')
+		clearHighlight()
 	}
 
 	if (view === 'form') {

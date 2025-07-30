@@ -5,6 +5,7 @@ import {sanitizeHtml} from '@/lib/utils'
 
 // Types for the processed data
 export interface EducationData {
+  id: string
   institution: {
     hasInstitution: boolean
     name?: string
@@ -100,6 +101,7 @@ export const useEducationController = (
 		}
 
 		return {
+			id: education.id,
 			institution,
 			dates,
 			degree,
@@ -114,13 +116,15 @@ export interface EducationControllerProps {
   section: ResumeSection & { type: 'Education', data: Education }
   isFirstInGroup: boolean
   children: (data: EducationData) => React.ReactNode
+  className?: string
 }
 
 export const EducationController: React.FC<EducationControllerProps> = ({
 	section,
 	isFirstInGroup,
-	children
+	children,
+	className
 }) => {
 	const processedData = useEducationController(section, isFirstInGroup)
-	return <>{children(processedData)}</>
+	return <div className={className}>{children(processedData)}</div>
 }

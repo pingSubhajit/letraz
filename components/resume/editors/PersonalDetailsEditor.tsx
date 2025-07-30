@@ -32,6 +32,7 @@ import {
 	DEFAULT_FADE_CONTENT_ANIMATION,
 	NO_ANIMATION
 } from '@/components/animations/DefaultFade'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 interface Props {
   className?: string;
@@ -67,6 +68,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	const [isMounted, setIsMounted] = useState(false)
 	const queryClient = useQueryClient()
 	const {user: clerkUser} = useUser()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: userInfoQueryOptions.queryKey})
@@ -126,6 +128,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	const onSubmit = async (values: UserInfoMutation) => {
 		await updateInfo(values)
 		setView('list')
+		clearHighlight()
 	}
 
 	useEffect(() => {
@@ -148,6 +151,11 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 			scrollRef.current.scrollTop = 0
 		}
 		setView('form')
+
+		// Trigger highlight for personal info section
+		scrollToItem({
+			type: 'personal'
+		})
 	}
 
 	const handleCancel = () => {
@@ -157,6 +165,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 			scrollRef.current.scrollTop = 0
 		}
 		setView('list')
+		clearHighlight()
 	}
 
 	return (
@@ -375,7 +384,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							>
 								{userInfo ? (
 									<ItemCard
-										onEdit={() => setView('form')}
+										onEdit={handleUpdate}
 										id={userInfo.id}
 									>
 										<div className="space-y-6 p-4">

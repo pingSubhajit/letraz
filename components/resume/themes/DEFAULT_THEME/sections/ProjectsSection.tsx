@@ -3,8 +3,8 @@ import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faGithub} from '@fortawesome/free-brands-svg-icons'
 import {ProjectData} from '@/components/resume/controllers/ProjectController'
+import {cn} from '@/lib/utils'
 
-// Project Section UI Component
 const ProjectsSection = ({data}: { data: ProjectData }) => {
 	// Error handling for missing project name
 	if (!data.name) {
@@ -12,7 +12,15 @@ const ProjectsSection = ({data}: { data: ProjectData }) => {
 	}
 
 	return (
-		<article className={`${charter.className} project-item ${data.spacing.marginTop ? 'mt-2' : ''}`} aria-label={`Project: ${data.name}`}>
+		<article
+			className={cn(
+				charter.className,
+				'project-item transition-all duration-300',
+				data.spacing.marginTop ? 'mt-2' : ''
+			)}
+			aria-label={`Project: ${data.name}`}
+			data-resume-item={`project-${data.id}`}
+		>
 			{/* PROJECT HEADER */}
 			<div className="project-header">
 				{/* PROJECT NAME AND CATEGORY */}
