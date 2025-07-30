@@ -11,7 +11,11 @@ const CertificationSection = ({data}: { data: CertificationData }) => {
 	}
 
 	return (
-		<article className={`${charter.className} certification-item ${data.spacing.marginTop ? 'mt-2' : ''}`} aria-label={`Certification: ${data.name}`}>
+		<article
+			className={`${charter.className} certification-item ${data.spacing.marginTop ? 'mt-2' : ''}`}
+			aria-label={`Certification: ${data.name}`}
+			data-resume-item={`certification-${data.id}`}
+		>
 			{/* CERTIFICATION HEADER */}
 			<div className="certification-header">
 				{/* CERTIFICATION NAME */}

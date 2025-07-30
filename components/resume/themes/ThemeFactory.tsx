@@ -124,10 +124,10 @@ export const createTheme = (config: ThemeConfig) => {
 					)
 				} else if (section.type === 'Certification') {
 					return (
-                        <TitleDimWrapper>
-                            <config.components.CertificationTitle />
-                        </TitleDimWrapper>
-                    )
+						<TitleDimWrapper>
+							<config.components.CertificationTitle />
+						</TitleDimWrapper>
+					)
 				}
 				return null
 			})()
@@ -180,14 +180,14 @@ export const createTheme = (config: ThemeConfig) => {
 					)
 				} else if (section.type === 'Certification') {
 					return (
-                        <HighlightWrapper itemType="certification" itemId={(section.data as any).id}>
-                            <CertificationController
-                                section={section as ResumeSection & { type: 'Certification', data: Certification }}
-                                isFirstInGroup={isFirstInGroup}
-                            >
-                                {(data) => <config.components.CertificationSection data={data} />}
-                            </CertificationController>
-                        </HighlightWrapper>
+						<HighlightWrapper itemType="certification" itemId={(section.data as any).id}>
+							<CertificationController
+								section={section as ResumeSection & { type: 'Certification', data: Certification }}
+								isFirstInGroup={isFirstInGroup}
+							>
+								{(data) => <config.components.CertificationSection data={data} />}
+							</CertificationController>
+						</HighlightWrapper>
 					)
 				}
 				return null
