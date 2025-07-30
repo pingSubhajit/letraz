@@ -4,32 +4,7 @@
 import {useRef, useState, useEffect, useCallback} from 'react'
 import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {EducationData} from '@/components/resume/controllers/EducationController'
-import {Loader2Icon, CheckIcon} from 'lucide-react'
 import {cn} from '@/lib/utils'
-import {useUpdateEducationMutation} from '@/lib/education/mutations'
-import {toast} from 'sonner'
-import {useQueryClient} from '@tanstack/react-query'
-import {educationOptions} from '@/lib/education/queries'
-// import {useDebounce} from 'use-debounce'
-import DateMonthSelector, {formatDateRange} from '@/components/resume/editors/shared/DateMonthSelector'
-import {Badge} from '@/components/ui/badge'
-
-function useDebounce<T>(value: T, delay: number): T {
-	const [debouncedValue, setDebouncedValue] = useState(value)
-
-	useEffect(() => {
-		const timeoutId = setTimeout(() => {
-			setDebouncedValue(value)
-		}, delay)
-
-		return () => {
-			clearTimeout(timeoutId)
-		}
-	}, [value, delay])
-
-	return debouncedValue
-}
-
 
 const EducationSection = ({data}: { data: EducationData }) => {
 	const [isEditing, setIsEditing] = useState(false)
@@ -174,44 +149,25 @@ const EducationSection = ({data}: { data: EducationData }) => {
 
 
 	return (
-		<div className="relative group">
-			<SaveIndicator />
-
-			<div className={cn(
-				`${charter.className} education-item ${data.spacing.marginTop ? 'mt-2' : ''}`,
-				isEditing && 'outline outline-2 outline-blue-500 rounded px-4 py-2'
-			)}>
-				<div className="education-header">
-					<span className="education-title">
-						{data.institution.name && (
-							<span
-								ref={institutionRef}
-								contentEditable={true}
-								suppressContentEditableWarning
-								className={cn(
-									'font-semibold focus:outline-none focus:bg-blue-50 rounded px-1 cursor-text'
-								)}
-								onFocus={handleStartEdit}
-								onBlur={handleStopEdit}
-								onInput={() => handleContentChange('institution')}
-							>{data.institution.name}</span>
-						)}
-						{data.institution.name && data.degree.hasDegree && ', '}
-						{data.degree.hasDegree && (
-							<span
-								ref={degreeRef}
-								contentEditable={true}
-								suppressContentEditableWarning
-								className={cn(
-									'focus:outline-none focus:bg-blue-50 rounded px-1 cursor-text'
-								)}
-								onFocus={handleStartEdit}
-								onBlur={handleStopEdit}
-								onInput={() => handleContentChange('degree')}
-							>
-								{data.degree.formatted}
-							</span>
-						)}
+		<div
+			className={cn(
+				charter.className,
+				'education-item transition-all duration-300',
+				data.spacing.marginTop ? 'mt-2' : ''
+			)}
+			data-resume-item={`education-${data.id}`}
+		>
+			<div className="education-header">
+				<span className="education-title">
+					{data.institution.name && (
+						<span className="title-bold">{data.institution.name}</span>
+					)}
+					{data.institution.name && data.degree.hasDegree && ', '}
+					{data.degree.hasDegree && data.degree.formatted}
+				</span>
+				{data.dates.hasDates && (
+					<span className="education-date">
+						{data.dates.formatted}
 					</span>
 					{data.dates.hasDates && (
 						<DateMonthSelector

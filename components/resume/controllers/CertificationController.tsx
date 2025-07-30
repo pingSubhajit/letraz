@@ -4,6 +4,7 @@ import {Certification} from '@/lib/certification/types'
 
 // Types for the processed data
 export interface CertificationData {
+  id: string
   name: string
   issuingOrganization: {
     hasOrganization: boolean
@@ -70,6 +71,7 @@ export const useCertificationController = (
 		}
 
 		return {
+			id: certification.id,
 			name: certification.name,
 			issuingOrganization,
 			issueDate,

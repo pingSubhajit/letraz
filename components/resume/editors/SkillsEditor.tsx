@@ -27,6 +27,7 @@ import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ProficiencySlider from '@/components/resume/editors/shared/ProficiencySlider'
 import PopConfirm from '@/components/ui/pop-confirm'
+import {useAutoFocus} from '@/components/resume/hooks/useAutoFocus'
 import SkillsEditorSkeleton from '@/components/skeletons/SkillsEditorSkeleton'
 import {AnimatePresence, motion} from 'motion/react'
 import {
@@ -35,6 +36,7 @@ import {
 	DEFAULT_FADE_CONTENT_ANIMATION,
 	NO_ANIMATION
 } from '@/components/animations/DefaultFade'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 
 type ViewState = 'list' | 'form'
 
@@ -63,6 +65,10 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const queryClient = useQueryClient()
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
+
+	// Auto-focus when form is opened
+	useAutoFocus(view === 'form')
 
 	// Load skills data
 	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills()
@@ -282,6 +288,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		setView('list')
 		setEditingIndex(null)
 		setSearchQuery('')
+		clearHighlight()
 	}
 
 	const handleSkillSelect = (skillId: string) => {
@@ -307,6 +314,11 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		// Store the index for reference
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for the skills section
+		scrollToItem({
+			type: 'skill'
+		})
 	}
 
 	const handleDelete = async (id: string) => {
@@ -319,6 +331,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 				category: ''
 			})
 			setView('list')
+			clearHighlight()
 		}
 	}
 
@@ -341,6 +354,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		setEditingIndex(null)
 		setView('list')
 		setSearchQuery('')
+		clearHighlight()
 	}
 
 	const getSkillLevelLabel = (level: string | null) => {

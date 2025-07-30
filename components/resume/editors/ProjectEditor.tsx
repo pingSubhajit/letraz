@@ -37,6 +37,8 @@ import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
+import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
+import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 
 type ViewState = 'list' | 'form';
 
@@ -74,6 +76,10 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
 	const [isAddingSkill, setIsAddingSkill] = useState(false)
+	const {scrollToItem, clearHighlight} = useResumeHighlight()
+
+	// Auto-focus the first field when form is opened
+	useAutoFocusField(view === 'form', 'name')
 
 	// Separate form for new skill input
 	const newSkillForm = useForm({
@@ -227,6 +233,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 			setEditingIndex(null)
 			setIsAddingSkill(false)
 			newSkillForm.reset({skill_name: '', skill_category: ''})
+			clearHighlight()
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
 		}
@@ -251,6 +258,12 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 		})
 		setEditingIndex(index)
 		setView('form')
+
+		// Trigger highlight for this project item
+		scrollToItem({
+			type: 'project',
+			id: project.id
+		})
 	}
 
 	const handleDelete = async (id: string) => {
@@ -261,6 +274,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 				setEditingIndex(null)
 				form.reset(DEFAULT_PROJECT_VALUES)
 				setView('list')
+				clearHighlight()
 			}
 		} catch (error) {
 			// Error already handled by the mutation's onError callback
@@ -283,6 +297,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 		setView('list')
 		setIsAddingSkill(false)
 		newSkillForm.reset({skill_name: '', skill_category: ''})
+		clearHighlight()
 	}
 
 	if (view === 'form') {

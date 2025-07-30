@@ -1,10 +1,17 @@
 import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {ExperienceData} from '@/components/resume/controllers/ExperienceController'
+import {cn} from '@/lib/utils'
 
-// Pure UI component - no logic, just presentation
 const ExperienceSection = ({data}: { data: ExperienceData }) => {
 	return (
-		<div className={`${charter.className} experience-item ${data.spacing.marginTop ? 'mt-2' : ''}`}>
+		<div
+			className={cn(
+				charter.className,
+				'experience-item transition-all duration-300',
+				data.spacing.marginTop ? 'mt-2' : ''
+			)}
+			data-resume-item={`experience-${data.id}`}
+		>
 			{/* JOB HEADER */}
 			<div className="job-header">
 				{/* JOB TITLE (Role + Company) */}

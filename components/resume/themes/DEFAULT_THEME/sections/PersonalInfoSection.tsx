@@ -3,10 +3,18 @@ import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faEnvelope, faGlobe, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
+import {cn} from '@/lib/utils'
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 	return (
-		<div className={charter.className}>
+		<div
+			className={cn(
+				charter.className,
+				'personal-info-section',
+				' transition-all duration-300'
+			)}
+			data-resume-item="personal-info"
+		>
 			{/* HEADER */}
 			<div className="header">
 				{/* NAME */}
