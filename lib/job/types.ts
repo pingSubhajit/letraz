@@ -9,13 +9,11 @@ export const JobSchema = z.object({
 	title: z.string().describe('The title of the job position.'),
 	company_name: z.string().describe('The name of the company offering the job.'),
 	location: z.string().describe('The location where the job is based.'),
-	currency: z.string().describe('The currency in which the salary is paid.'),
-	salary_max: z.number().nullable().describe('The maximum salary for the job position. Nullable if not specified.'),
-	salary_min: z.number().nullable().describe('The minimum salary for the job position. Nullable if not specified.'),
-	requirements: z.array(z.string().nullable().describe('The requirements for the job position. Nullable if not specified.')),
+	requirements: z.string().nullable().describe('The requirements for the job position. Nullable if not specified.'),
 	description: z.string().describe('The description of the job position.'),
-	responsibilities: z.array(z.string().nullable().describe('The responsibilities associated with the job position. Nullable if not specified.')),
-	benefits: z.array(z.string().nullable().describe('The benefits provided by the company for the job position. Nullable if not specified.'))
+	responsibilities: z.string().nullable().describe('The responsibilities associated with the job position. Nullable if not specified.'),
+	benefits: z.string().nullable().describe('The benefits provided by the company for the job position. Nullable if not specified.'),
+	processing: z.boolean().describe('Indicates if the job information is currently being processed.')
 })
 
 // Infer TypeScript types from the schema

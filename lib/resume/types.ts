@@ -26,6 +26,7 @@ export const ResumeSchema = z.object({
 	base: z.boolean().describe('Indicates if this is the base resume.'),
 	user: UserInfoSchema.describe('The user information associated with the resume.'),
 	job: JobSchema.describe('The job information associated with the resume.'),
+	processing: z.boolean().describe('Indicates if the resume is currently being processed.'),
 	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.')
 })
 

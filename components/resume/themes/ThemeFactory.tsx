@@ -7,6 +7,7 @@ import {Education} from '@/lib/education/types'
 import {Experience} from '@/lib/experience/types'
 import {Project} from '@/lib/project/types'
 import {ResumeSkillSection} from '@/lib/skill/types'
+import {Certification} from '@/lib/certification/types'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 import ReorderableSections from '@/components/resume/ReorderableSections'
 import {PersonalInfoController, PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
@@ -14,6 +15,7 @@ import {EducationController, EducationData} from '@/components/resume/controller
 import {ExperienceController, ExperienceData} from '@/components/resume/controllers/ExperienceController'
 import {SkillsController, SkillsData} from '@/components/resume/controllers/SkillsController'
 import {ProjectController, ProjectData} from '@/components/resume/controllers/ProjectController'
+import {CertificationController, CertificationData} from '@/components/resume/controllers/CertificationController'
 import {cn} from '@/lib/utils'
 import {useResumeHighlight} from '../contexts/ResumeHighlightContext'
 
@@ -70,10 +72,12 @@ export interface ThemeComponents {
 	ExperienceSection: React.ComponentType<{data: ExperienceData}>
 	SkillsSection: React.ComponentType<{data: SkillsData}>
 	ProjectsSection: React.ComponentType<{data: ProjectData}>
+	CertificationSection: React.ComponentType<{data: CertificationData}>
 	EducationTitle: React.ComponentType
 	ExperienceTitle: React.ComponentType
 	SkillsTitle: React.ComponentType
 	ProjectsTitle: React.ComponentType
+	CertificationTitle: React.ComponentType
 }
 
 // Theme configuration interface
@@ -118,6 +122,12 @@ export const createTheme = (config: ThemeConfig) => {
 							<config.components.ProjectsTitle />
 						</TitleDimWrapper>
 					)
+				} else if (section.type === 'Certification') {
+					return (
+                        <TitleDimWrapper>
+                            <config.components.CertificationTitle />
+                        </TitleDimWrapper>
+                    )
 				}
 				return null
 			})()
@@ -167,6 +177,17 @@ export const createTheme = (config: ThemeConfig) => {
 								{(data) => <config.components.ProjectsSection data={data} />}
 							</ProjectController>
 						</HighlightWrapper>
+					)
+				} else if (section.type === 'Certification') {
+					return (
+                        <HighlightWrapper itemType="certification" itemId={(section.data as any).id}>
+                            <CertificationController
+                                section={section as ResumeSection & { type: 'Certification', data: Certification }}
+                                isFirstInGroup={isFirstInGroup}
+                            >
+                                {(data) => <config.components.CertificationSection data={data} />}
+                            </CertificationController>
+                        </HighlightWrapper>
 					)
 				}
 				return null

@@ -42,6 +42,9 @@ next-env.d.ts
 # IDE
 /.idea
 /.zed
+/.vscode
+/.cursor
+/.kiro
 
 # Sentry Config File
 .env.sentry-build-plugin

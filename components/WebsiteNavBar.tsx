@@ -99,7 +99,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 							size="sm"
 							onClick={() => setIsOpen(!isOpen)}
 						>
-							<MenuIcon className="[&>svg]:stroke-primary" openState={isOpen}/>
+							<MenuIcon className="[&>svg]:stroke-primary" openState={isOpen} />
 						</Button>
 					</div>
 
