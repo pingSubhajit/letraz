@@ -32,7 +32,11 @@ const HighlightWrapper: React.FC<{
 	const isDimmed = highlightedItem !== null && !isHighlighted
 
 	return (
-		<div className={cn(isDimmed && 'opacity-20 blur-[1px]', isHighlighted && 'opacity-100')}>
+		<div className={cn(
+			'transition-all duration-300 ease-in-out',
+			isDimmed && 'opacity-20 blur-[1px]',
+			isHighlighted && 'opacity-100'
+		)}>
 			{children}
 		</div>
 	)
@@ -42,7 +46,12 @@ const HighlightWrapper: React.FC<{
 const TitleDimWrapper: React.FC<{children: React.ReactNode}> = ({children}) => {
 	const {highlightedItem} = useResumeHighlight()
 	return (
-		<div className={highlightedItem ? 'opacity-20 blur-[1px]' : ''}>{children}</div>
+		<div className={cn(
+			'transition-all duration-300 ease-in-out',
+			highlightedItem && 'opacity-20 blur-[1px]'
+		)}>
+			{children}
+		</div>
 	)
 }
 
