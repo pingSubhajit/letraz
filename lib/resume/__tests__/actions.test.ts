@@ -24,7 +24,7 @@ describe('Resume Actions', () => {
 		const mockResume: Resume = {
 			id: 'resume_123',
 			base: true,
-			processing: false,
+			status: 'Success',
 			user: {
 				id: 'user_123',
 				title: null,
@@ -52,7 +52,7 @@ describe('Resume Actions', () => {
 				description: 'We are looking for a senior software engineer.',
 				responsibilities: 'Lead development projects, Mentor junior developers',
 				benefits: 'Health insurance, Remote work, 401k matching',
-				processing: false
+				status: 'Success'
 			},
 			sections: [
 				{
@@ -220,7 +220,7 @@ describe('Resume Actions', () => {
 		const mockUpdatedResume: Resume = {
 			id: 'resume_123',
 			base: true,
-			processing: false,
+			status: 'Success',
 			user: {
 				id: 'user_123',
 				title: null,
@@ -248,7 +248,7 @@ describe('Resume Actions', () => {
 				description: 'We are looking for a senior software engineer.',
 				responsibilities: 'Lead development projects, Mentor junior developers',
 				benefits: 'Health insurance, Remote work, 401k matching',
-				processing: false
+				status: 'Success'
 			},
 			sections: [
 				{
