@@ -13,7 +13,7 @@ export const JobSchema = z.object({
 	description: z.string().describe('The description of the job position.'),
 	responsibilities: z.string().nullable().describe('The responsibilities associated with the job position. Nullable if not specified.'),
 	benefits: z.string().nullable().describe('The benefits provided by the company for the job position. Nullable if not specified.'),
-	processing: z.boolean().describe('Indicates if the job information is currently being processed.')
+	status: z.string().describe('Indicates if the resume is currently being processed.').nullable().optional()
 })
 
 // Infer TypeScript types from the schema
