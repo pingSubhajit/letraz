@@ -13,7 +13,7 @@ const mockGetResumeFromDB = vi.mocked(getResumeFromDB)
 const mockResume: Resume = {
 	id: 'resume-123',
 	base: true,
-	processing: false,
+	status: 'Success',
 	user: {
 		id: 'user-123',
 		title: 'Mr.',
@@ -44,7 +44,7 @@ const mockResume: Resume = {
 		description: 'We are looking for a talented software engineer',
 		responsibilities: 'Develop web applications, Write clean code',
 		benefits: 'Health insurance, 401k, Remote work',
-		processing: false
+		status: 'Success'
 	},
 	sections: []
 }
