@@ -1,6 +1,7 @@
 import {notFound, redirect} from 'next/navigation'
 import ResumeViewer from '@/components/resume/ResumeViewer'
 import {Resume} from '@/lib/resume/types'
+import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
 
 type PageProps = {
 	params: Promise<{ resumeId: string }>
@@ -59,11 +60,13 @@ const AdminResumePage = async (props: PageProps) => {
 		return (
 			<div className="bg-neutral-300 min-h-screen overflow-y-hidden">
 				<div className="flex justify-center">
-					<ResumeViewer
-						resume={resume}
-						className="min-h-full"
-						showAnimation={false}
-					/>
+					<ResumeHighlightProvider>
+						<ResumeViewer
+							resume={resume}
+							className="min-h-full"
+							showAnimation={false}
+						/>
+					</ResumeHighlightProvider>
 				</div>
 			</div>
 		)
