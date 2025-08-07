@@ -169,7 +169,7 @@ const transformToSimpleFormat = (geminiResult: z.infer<typeof GeminiResumeSchema
 			...geminiResult.user,
 			dob: geminiResult.user?.dob ? new Date(geminiResult.user.dob) : null
 		},
-		job: geminiResult.job || null,
+		job: geminiResult.job ?? null,
 		sections: geminiResult.sections.map((section, index) => ({
 			type: section.type,
 			index: index,
