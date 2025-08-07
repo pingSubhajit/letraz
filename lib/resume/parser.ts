@@ -130,15 +130,15 @@ const GenericResumeSchema = z.object({
 		institution: z.string(),
 		degree: z.string().optional(),
 		field: z.string().optional(),
-		startDate: z.string().optional(),
-		endDate: z.string().optional(),
+		startDate: z.string().describe('Use blank string if not found'),
+		endDate: z.string().describe('Use blank string if not found'),
 		gpa: z.string().optional()
 	})),
 	experience: z.array(z.object({
 		company: z.string(),
 		position: z.string(),
-		startDate: z.string().optional(),
-		endDate: z.string().optional(),
+		startDate: z.string().describe('Use blank string if not found'),
+		endDate: z.string().describe('Use blank string if not found'),
 		description: z.string().describe('In a short paragraph, what did the user do in their experience and their impact'),
 		location: z.string().optional()
 	})),
@@ -199,8 +199,8 @@ export const parseResume = async (
 	const schema = format === 'proprietary' ? GeminiResumeSchema : GenericResumeSchema
 
 	const prompt = format === 'proprietary'
-		? 'Parse resume content into structured data. Extract: personal info, education, experience, skills, certifications, projects. Use HTML for descriptions with <ul class="list-node"><li class="text-node">text</li></ul> format. If certain details cannot be found, just leave a blank string for that.'
-		: 'Parse resume into: personalInfo, education, experience, skills, certifications, projects.'
+		? 'Parse resume content into structured data. Extract: personal info, education, experience, skills, certifications, projects. Use HTML for descriptions with <ul class="list-node"><li class="text-node">text</li></ul> format. If certain details cannot be found, just leave a blank string for that. Only return the JSON response. Do not include any additional texts, backticks or artifacts.'
+		: 'Parse resume into: personalInfo, education, experience, skills, certifications, projects. Only return the JSON response. Do not include any additional texts, backticks or artifacts.'
 
 	// Convert file to data URL format as required by AI SDK
 	const arrayBuffer = await file.arrayBuffer()
