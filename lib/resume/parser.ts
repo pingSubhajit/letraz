@@ -4,9 +4,9 @@ import {generateObject} from 'ai'
 import {google} from '@ai-sdk/google'
 import {z} from 'zod'
 
-// Simplified schemas compatible with Google Gemini (without metadata fields)
+// Simplified schemas compatible with Google Gemini
 const GeminiUserInfoSchema = z.object({
-	title: z.string().describe('The title of the user').nullable().optional(),
+	title: z.string().describe('The title of the user, ex. Mr. Mrs. etc.').nullable().optional(),
 	first_name: z.string().describe('The first name of the user'),
 	last_name: z.string().describe('The last name of the user'),
 	email: z.string().describe('The email address of the user'),
@@ -100,10 +100,9 @@ const GeminiProjectSchema = z.object({
 	current: z.boolean().describe('Whether currently working on project')
 })
 
-// Simplified section schema without unions and metadata
+// Simplified section schema
 const GeminiResumeSectionSchema = z.object({
 	type: z.enum(['Education', 'Experience', 'Skill', 'Project', 'Certification']).describe('The type of the resume section'),
-	// Use separate optional fields instead of union
 	education_data: GeminiEducationSchema.optional().describe('Education data if type is Education'),
 	experience_data: GeminiExperienceSchema.optional().describe('Experience data if type is Experience'),
 	skill_data: z.array(GeminiSkillSchema).optional().describe('Skills data if type is Skill'),
@@ -111,7 +110,7 @@ const GeminiResumeSectionSchema = z.object({
 	project_data: GeminiProjectSchema.optional().describe('Project data if type is Project')
 })
 
-// Simplified resume schema compatible with Gemini (without metadata)
+// Simplified resume schema compatible with Gemini
 const GeminiResumeSchema = z.object({
 	user: GeminiUserInfoSchema.describe('The user information associated with the resume'),
 	job: GeminiJobSchema.describe('The job information associated with the resume').optional(),
@@ -187,20 +186,15 @@ export const parseResume = async (
 	const schema = format === 'proprietary' ? GeminiResumeSchema : GenericResumeSchema
 
 	const prompt = format === 'proprietary'
-		? 'Extract and parse all information from this resume file. Focus only on the actual content - personal information, education, experience, skills, certifications, and projects. Follow the schema exactly and use appropriate default values for missing fields. For the description fields of Education, Experience, and Project, use HTML format to lay the description out in bullet points with proper usage of escape characters to make the string JSON friendly. The description needs to be tiptap compatible. So the ul elements will have a class of "list-node" and the li text elements will have a class of "text-node".'
-		: 'Extract and parse all information from this resume file into a generic structure with sections for personal info, education, experience, skills, certifications, and projects.'
+		? 'Parse resume content into structured data. Extract: personal info, education, experience, skills, certifications, projects. Use HTML for descriptions with <ul class="list-node"><li class="text-node">text</li></ul> format. If certain details cannot be found, just leave a blank string for that.'
+		: 'Parse resume into: personalInfo, education, experience, skills, certifications, projects.'
 
 	// Convert file to data URL format as required by AI SDK
 	const arrayBuffer = await file.arrayBuffer()
-	const uint8Array = new Uint8Array(arrayBuffer)
-	const charArray = Array.from(uint8Array, byte => String.fromCharCode(byte))
-	const binaryString = charArray.join('')
-	const base64Data = btoa(binaryString)
-	const fileDataUrl = `data:${file.type};base64,${base64Data}`
 
 	try {
 		const result = await generateObject({
-			model: google('gemini-2.5-flash'),
+			model: google('gemini-2.5-flash-lite'),
 			schema,
 			messages: [
 				{
@@ -212,12 +206,14 @@ export const parseResume = async (
 						},
 						{
 							type: 'file',
-							data: fileDataUrl,
+							data: arrayBuffer,
 							mediaType: file.type
 						}
 					]
 				}
-			]
+			],
+			// Add performance optimizations
+			temperature: 0 // More deterministic, faster
 		})
 
 		if (format === 'proprietary') {
