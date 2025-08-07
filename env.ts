@@ -51,8 +51,7 @@ const envSchema = z.object({
 
 	// Required Ghost CMS API key
 	GHOST_API_KEY: z.string({
-		required_error: 'Ghost API key is required',
-		invalid_type_error: 'Ghost API key must be a string'
+		message: 'Ghost API key must be a string'
 	}),
 
 	// Required PostHog key, must start with "phc_"
@@ -108,6 +107,12 @@ const envSchema = z.object({
 	SELF_SECRET_KEY: z.string({
 		required_error: 'Self secret key is required',
 		invalid_type_error: 'Self secret key must be a string'
+	}),
+
+	// Required Gemini API key for Vercel AI SDK
+	GOOGLE_GENERATIVE_AI_API_KEY: z.string({
+		required_error: 'Gemini API key is required',
+		invalid_type_error: 'Gemini API key must be a string'
 	}),
 
 	// Optional feature flag for Resume Editor tabs new design

@@ -12,7 +12,6 @@ import {useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import {useTransitionRouter} from 'next-view-transitions'
 import {Loader2} from 'lucide-react'
-import {parseJobFromRawJD} from '@/app/app/craft/parseJD'
 import {toast} from 'sonner'
 import useDOMMounted from '@/hooks/useDOMMounted'
 
@@ -34,7 +33,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
-			const jobDetails = await parseJobFromRawJD(values.input)
+			const jobDetails = '' // implement resume tailoring flow
 		} catch (error: any) {
 			toast.error(error.message || 'Could not understand the job')
 		}
