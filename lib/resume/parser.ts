@@ -139,7 +139,7 @@ const GenericResumeSchema = z.object({
 		position: z.string(),
 		startDate: z.string().optional(),
 		endDate: z.string().optional(),
-		description: z.string().optional(),
+		description: z.string().describe('In a short paragraph, what did the user do in their experience and their impact'),
 		location: z.string().optional()
 	})),
 	skills: z.array(z.string()),
@@ -150,7 +150,7 @@ const GenericResumeSchema = z.object({
 	})),
 	projects: z.array(z.object({
 		name: z.string(),
-		description: z.string().optional(),
+		description: z.string(),
 		technologies: z.array(z.string()).optional()
 	}))
 })
