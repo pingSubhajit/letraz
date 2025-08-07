@@ -168,13 +168,18 @@ const transformToSimpleFormat = (geminiResult: z.infer<typeof GeminiResumeSchema
 	return {
 		user: {
 			...geminiResult.user,
-			dob: geminiResult.user.dob ? new Date(geminiResult.user.dob) : null
+			dob: geminiResult.user?.dob ? new Date(geminiResult.user.dob) : null
 		},
 		job: geminiResult.job,
 		sections: geminiResult.sections.map((section, index) => ({
 			type: section.type,
 			index: index,
-			data: section.education_data || section.experience_data || section.certification_data || section.project_data || {skills: section.skill_data || []}
+			data:
+				section.education_data ??
+				section.experience_data ??
+				section.certification_data ??
+				section.project_data ??
+				{skills: section.skill_data ?? []}
 		}))
 	}
 }
@@ -183,6 +188,15 @@ export const parseResume = async (
 	file: File,
 	format: 'proprietary' | 'generic' = 'proprietary'
 ): Promise<any> => {
+	// Validate input
+	if (!file || !(file instanceof File)) {
+		throw new Error('Uploaded resume is not a file')
+	}
+
+	if (file.size === 0) {
+		throw new Error('Uploaded resume is an empty file')
+	}
+
 	const schema = format === 'proprietary' ? GeminiResumeSchema : GenericResumeSchema
 
 	const prompt = format === 'proprietary'
