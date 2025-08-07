@@ -4,8 +4,23 @@ import {OnboardingMetadata} from '@/lib/onboarding/types'
 
 const isProtectedRoute = createRouteMatcher(['/app(.*)'])
 const isOnboardingRoute = createRouteMatcher(['/app/onboarding(.*)'])
+const isApiRoute = createRouteMatcher(['/api(.*)'])
 
 export default clerkMiddleware(async (auth, req) => {
+	// Auth header protection for all API routes using SELF_SECRET_KEY
+	if (isApiRoute(req)) {
+		const providedToken = req.headers.get('x-authentication')
+		const secretKey = process.env.SELF_SECRET_KEY
+
+		if (!secretKey || providedToken !== secretKey) {
+			return NextResponse.json({error: 'Unauthorized'}, {status: 401})
+		}
+
+		// If token is valid, simply continue the request chain
+		return NextResponse.next()
+	}
+
+	// Continue with Clerk protection for application routes
 	const {userId} = await auth()
 
 	if (isProtectedRoute(req)) {
