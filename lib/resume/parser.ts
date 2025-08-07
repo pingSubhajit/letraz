@@ -159,9 +159,8 @@ const GenericResumeSchema = z.object({
  * Parses an uploaded resume file using Vercel AI SDK with Gemini Flash
  * and returns either a proprietary Resume object or a generic JSON structure.
  *
- * @param file - The uploaded resume file (PDF/DOCX/etc.)
- * @param format - Output format: 'proprietary' (default) or 'generic'
  * @returns Parsed resume data matching the requested format
+ * @param geminiResult
  */
 // Helper function to transform Gemini result to a simple parsed format
 const transformToSimpleFormat = (geminiResult: z.infer<typeof GeminiResumeSchema>) => {
@@ -170,7 +169,7 @@ const transformToSimpleFormat = (geminiResult: z.infer<typeof GeminiResumeSchema
 			...geminiResult.user,
 			dob: geminiResult.user?.dob ? new Date(geminiResult.user.dob) : null
 		},
-		job: geminiResult.job,
+		job: geminiResult.job || null,
 		sections: geminiResult.sections.map((section, index) => ({
 			type: section.type,
 			index: index,
