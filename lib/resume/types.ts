@@ -12,14 +12,43 @@ import {ProjectSchema} from '@/lib/project/types'
  * Check https://outline.letraz.app/api-reference/resume-object/get-resume-by-id for more information
  */
 
-export const ResumeSectionSchema = z.object({
-	id: z.string().describe('The unique identifier for the resume section.'),
-	resume: z.string().describe('The identifier of the resume this section belongs to.'),
-	index: z.number().describe('The position of this section within the resume.'),
-
-	type: z.enum(['Education', 'Experience', 'Skill', 'Project', 'Certification']).describe('The type of the resume section: Education, Experience, Skill, Project, or Certification.'),
-	data: z.union([EducationSchema, ExperienceSchema, ResumeSkillSectionSchema, CertificationSchema, ProjectSchema]).describe('The data associated with this section: education details, experience details, or array of skills.')
-})
+export const ResumeSectionSchema = z.discriminatedUnion('type', [
+	z.object({
+		id: z.string().describe('The unique identifier for the resume section.'),
+		resume: z.string().describe('The identifier of the resume this section belongs to.'),
+		index: z.number().describe('The position of this section within the resume.'),
+		type: z.literal('Education').describe('The type of the resume section.'),
+		data: EducationSchema.describe('The education data associated with this section.')
+	}),
+	z.object({
+		id: z.string().describe('The unique identifier for the resume section.'),
+		resume: z.string().describe('The identifier of the resume this section belongs to.'),
+		index: z.number().describe('The position of this section within the resume.'),
+		type: z.literal('Experience').describe('The type of the resume section.'),
+		data: ExperienceSchema.describe('The experience data associated with this section.')
+	}),
+	z.object({
+		id: z.string().describe('The unique identifier for the resume section.'),
+		resume: z.string().describe('The identifier of the resume this section belongs to.'),
+		index: z.number().describe('The position of this section within the resume.'),
+		type: z.literal('Skill').describe('The type of the resume section.'),
+		data: ResumeSkillSectionSchema.describe('The skills data associated with this section.')
+	}),
+	z.object({
+		id: z.string().describe('The unique identifier for the resume section.'),
+		resume: z.string().describe('The identifier of the resume this section belongs to.'),
+		index: z.number().describe('The position of this section within the resume.'),
+		type: z.literal('Project').describe('The type of the resume section.'),
+		data: ProjectSchema.describe('The project data associated with this section.')
+	}),
+	z.object({
+		id: z.string().describe('The unique identifier for the resume section.'),
+		resume: z.string().describe('The identifier of the resume this section belongs to.'),
+		index: z.number().describe('The position of this section within the resume.'),
+		type: z.literal('Certification').describe('The type of the resume section.'),
+		data: CertificationSchema.describe('The certification data associated with this section.')
+	})
+])
 
 export const ResumeSchema = z.object({
 	id: z.string().describe('The unique identifier for the resume.'),

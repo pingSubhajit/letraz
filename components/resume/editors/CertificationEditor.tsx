@@ -11,7 +11,7 @@ import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Certification, CertificationMutation, CertificationMutationSchema} from '@/lib/certification/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
-import {certificationOptions, useCurrentCertifications} from '@/lib/certification/queries'
+import {certificationQueryOptions, useCurrentCertifications} from '@/lib/certification/queries'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {
 	useAddCertificationMutation,
@@ -60,11 +60,11 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const queryClient = useQueryClient()
 	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
-	// Auto-focus the first field when form is opened
+	// Autofocus the first field when form is opened
 	useAutoFocusField(view === 'form', 'name')
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: certificationOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: certificationQueryOptions.queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
