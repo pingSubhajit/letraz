@@ -1,6 +1,6 @@
 'use server'
 
-import {Resume, ResumeSchema} from '@/lib/resume/types'
+import {Resume, ResumeSchema, TailorResumeResponseSchema, TailorResumeResponse} from '@/lib/resume/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 
@@ -34,5 +34,20 @@ export const rearrangeResumeSections = async (resumeId: string, sectionIds: stri
 		return ResumeSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'rearrange resume sections')
+	}
+}
+
+/**
+ * Initiates tailoring of a new resume for a job
+ * Accepts either a job URL or a raw job description
+ */
+export const tailorResumeInDB = async (
+	payload: { target: string }
+): Promise<TailorResumeResponse> => {
+	try {
+		const data = await api.post<TailorResumeResponse>('/resume/tailor/', payload)
+		return TailorResumeResponseSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'tailor resume')
 	}
 }

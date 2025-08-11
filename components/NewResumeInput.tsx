@@ -14,9 +14,18 @@ import {useTransitionRouter} from 'next-view-transitions'
 import {Loader2} from 'lucide-react'
 import {toast} from 'sonner'
 import useDOMMounted from '@/hooks/useDOMMounted'
+import {useTailorResumeMutation} from '@/lib/resume/mutations'
+
+const urlSchema = z.string().url()
 
 const formSchema = z.object({
-	input: z.string().min(1, 'Please enter a valid URL or job description').transform(input => encodeURIComponent(input))
+	input: z.string()
+		.trim()
+		.min(10, 'Please enter at least 10 characters')
+		.refine(
+			(value) => urlSchema.safeParse(value).success || value.length >= 50,
+			'Enter a valid job URL or a longer job description (50+ chars)'
+		)
 })
 
 const NewResumeInput = ({className}: {className?: string}) => {
@@ -30,10 +39,19 @@ const NewResumeInput = ({className}: {className?: string}) => {
 	})
 
 	const router = useTransitionRouter()
+	const {mutateAsync: tailorResume, isPending} = useTailorResumeMutation()
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
-			const jobDetails = '' // implement resume tailoring flow
+			const rawInput = values.input
+			const payload = {target: rawInput}
+
+			const response = await tailorResume(payload)
+
+			const resumeId = response?.id
+			if (!resumeId) throw new Error('No resume id returned')
+
+			router.replace(`/app/craft/resumes/${resumeId}`)
 		} catch (error: any) {
 			toast.error(error.message || 'Could not understand the job')
 		}
@@ -55,22 +73,27 @@ const NewResumeInput = ({className}: {className?: string}) => {
 					render={({field}) => (
 						<FormItem className="h-full flex flex-col gap-4">
 							<FormLabel className="text-flame-500 uppercase tracking-widest text-xs font-semibold">Craft new resume for a job</FormLabel>
-							{!form.formState.isSubmitted && <FormControl>
-								<Textarea
-									placeholder="Paste URL or job description" {...field}
-									className="h-full p-0 border-none resize-none"
-									onFocus={() => setInputFocused(true)}
-									onBlur={() => setInputFocused(false)}
-								/>
-							</FormControl>}
+							{!form.formState.isSubmitted && (
+								<FormControl>
+									<Textarea
+										placeholder="Paste URL or job description"
+										{...field}
+										className="h-full p-0 border-none resize-none"
+										onFocus={() => setInputFocused(true)}
+										onBlur={() => setInputFocused(false)}
+									/>
+								</FormControl>
+							)}
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				{form.formState.isValid && <Button type="submit" disabled={!form.formState.isValid}>
-					{(form.formState.isSubmitting || form.formState.isSubmitted) && <Loader2 className="w-4 h-4 animate-spin mr-2"/>}
-					Submit
-				</Button>}
+				{form.formState.isValid && (
+					<Button type="submit" disabled={!form.formState.isValid || form.formState.isSubmitting || isPending}>
+						{(form.formState.isSubmitting || form.formState.isSubmitted || isPending) && <Loader2 className="w-4 h-4 animate-spin mr-2"/>}
+						Submit
+					</Button>
+				)}
 
 				{mounted && createPortal(
 					NewResumeInputOverlay({inputFocused}),
