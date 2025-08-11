@@ -95,3 +95,62 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+@layer utilities {
+  /* Radial border that fades inward using flame-400 */
+  .bg-radial-border-flame {
+    background: radial-gradient(
+      closest-side,
+      rgba(245, 85, 53, 0) calc(100% - 24px),
+      rgba(245, 85, 53, 0.2) calc(100% - 12px),
+      rgba(245, 85, 53, 0.6) 100%
+    );
+  }
+
+  /* Rectangular inner-fade border using inset shadows, respects border radius */
+  .ring-fade-flame {
+    box-shadow:
+      inset 0 0 0 2px rgba(245, 85, 53, 0.9),
+      inset 0 0 24px rgba(245, 85, 53, 0.45),
+      inset 0 0 48px rgba(245, 85, 53, 0.25);
+  }
+
+  /* Green variant using Tailwind's green-600 (rgb(22,163,74)) */
+  .ring-fade-green {
+    box-shadow:
+      inset 0 0 0 2px rgba(22, 163, 74, 0.9),
+      inset 0 0 24px rgba(22, 163, 74, 0.45),
+      inset 0 0 48px rgba(22, 163, 74, 0.25);
+  }
+
+  /* Amber variant using Tailwind's amber-500 (rgb(245,158,11)) */
+  .ring-fade-amber {
+    box-shadow:
+      inset 0 0 0 2px rgba(245, 158, 11, 0.9),
+      inset 0 0 24px rgba(245, 158, 11, 0.45),
+      inset 0 0 48px rgba(245, 158, 11, 0.25);
+  }
+
+  /* Orange variant using Tailwind's orange-500 (rgb(249,115,22)) */
+  .ring-fade-orange {
+    box-shadow:
+      inset 0 0 0 2px rgba(249, 115, 22, 0.9),
+      inset 0 0 24px rgba(249, 115, 22, 0.45),
+      inset 0 0 48px rgba(249, 115, 22, 0.25);
+  }
+}
+
+.size-a4 {
+  @apply h-[297mm] aspect-[210/297];
+}
+
+.resume {
+  * {
+    @apply font-serif
+  }
+}
+
+/* Hide scrollbar for WebKit browsers */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

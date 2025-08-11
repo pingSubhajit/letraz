@@ -26,7 +26,7 @@ import {updateOnboardingStep} from '@/lib/onboarding/actions'
  * @param {string} [props.className] - Additional class names for styling.
  * @returns {JSX.Element} The JSX code to render the education form.
  */
-const PersonalDetailsForm = ({className}: { className?: string }): JSX.Element => {
+const PersonalDetailsForm = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
 	const router = useTransitionRouter()
 
 	const {mutateAsync, isPending} = useUpdateUserInfoMutation({
@@ -135,6 +135,14 @@ const PersonalDetailsForm = ({className}: { className?: string }): JSX.Element =
 								</FormItem>
 							)}
 						/>
+					</motion.div>
+
+					<motion.div
+						className="mt-12 flex flex-col justify-center items-center" key="MANUAL_DETAILS_CTA"
+						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
+					>
+						<Button onClick={toggleParseResume} variant="outline" size="lg">Upload a resume instead</Button>
+						<p className="text-xs mt-2 opacity-50 w-80 mx-auto text-center">Upload your existing resume and we will read the details from there</p>
 					</motion.div>
 
 					<div
