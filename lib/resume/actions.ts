@@ -1,6 +1,7 @@
 'use server'
 
 import {Resume, ResumeSchema} from '@/lib/resume/types'
+import {parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 
@@ -35,4 +36,21 @@ export const rearrangeResumeSections = async (resumeId: string, sectionIds: stri
 	} catch (error) {
 		return handleErrors(error, 'rearrange resume sections')
 	}
+}
+
+/**
+ * Parses an uploaded resume file using the self-hosted parser
+ * Runs on the server and accepts a FormData containing the file
+ */
+export const parseUploadedResume = async (
+	formData: FormData,
+	format: 'proprietary' | 'generic' = 'proprietary'
+): Promise<any> => {
+	const file = formData.get('file')
+	if (!file || !(file instanceof File)) {
+		throw new Error('No file provided in form data under key "file"')
+	}
+
+	const result = await parseResume(file, format)
+	return result
 }

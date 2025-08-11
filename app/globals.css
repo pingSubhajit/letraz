@@ -96,6 +96,53 @@ body {
   display: none;
 }
 
+/* Shimmer gradient for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.loading-gradient {
+  background-image: linear-gradient(90deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.02) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+.loading-gradient-color {
+  /* Defaults to brand flame unless overridden */
+  --lg-r: 245;  /* flame-400 R */
+  --lg-g: 85;   /* flame-400 G */
+  --lg-b: 53;   /* flame-400 B */
+  --lg-a1: 0.35; /* edge tint opacity */
+  --lg-a2: 0.7;  /* center tint opacity */
+  background-image: linear-gradient(
+    90deg,
+    rgba(var(--lg-r), var(--lg-g), var(--lg-b), var(--lg-a1)) 0%,
+    rgba(var(--lg-r), var(--lg-g), var(--lg-b), var(--lg-a2)) 50%,
+    rgba(var(--lg-r), var(--lg-g), var(--lg-b), var(--lg-a1)) 100%
+  );
+  background-size: 250% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* Color modifiers derived from existing project colors */
+.lg-flame { /* flame-400 */
+  --lg-r: 245; --lg-g: 85; --lg-b: 53;
+}
+.lg-orange { /* orange-500 */
+  --lg-r: 249; --lg-g: 115; --lg-b: 22;
+}
+.lg-amber { /* amber-500 */
+  --lg-r: 245; --lg-g: 158; --lg-b: 11;
+}
+.lg-green { /* green-600 */
+  --lg-r: 22; --lg-g: 163; --lg-b: 74;
+}
+
 @layer utilities {
   /* Radial border that fades inward using flame-400 */
   .bg-radial-border-flame {

@@ -1,16 +1,90 @@
 'use client'
 
 import {cn} from '@/lib/utils'
-import {JSX, useEffect, useState} from 'react'
+import {type ChangeEvent, type DragEvent, JSX, type KeyboardEvent, useEffect, useRef, useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import {Button} from '@/components/ui/button'
 import {FileCheck} from 'lucide-react'
 import DEFAULT_FADE_ANIMATION, {ANIMATE_PRESENCE_MODE} from '@/components/animations/DefaultFade'
 import ParticlesBurst from '@/components/animations/ParticlesBurst'
+import {useParseResumeMutation} from '@/lib/resume/mutations'
+import {ACCEPT_ATTRIBUTE, ACCEPTED_LABEL, isAcceptedFile} from '@/lib/resume/accept'
 
 const ParseResume = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
 	const [parsed, setParsed] = useState(false)
 	const [burstKey, setBurstKey] = useState<number>(() => Date.now())
+	const [isDragging, setIsDragging] = useState(false)
+	const fileInputRef = useRef<HTMLInputElement | null>(null)
+	const {mutateAsync: parseResumeMutation} = useParseResumeMutation()
+	const [isParsing, setIsParsing] = useState(false)
+
+	const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
+		event.preventDefault()
+		event.dataTransfer.dropEffect = 'copy'
+	}
+
+	const handleDragEnter = (event: DragEvent<HTMLDivElement>): void => {
+		event.preventDefault()
+		setIsDragging(true)
+	}
+
+	const handleDragLeave = (event: DragEvent<HTMLDivElement>): void => {
+		event.preventDefault()
+		setIsDragging(false)
+	}
+
+	const handleDrop = (event: DragEvent<HTMLDivElement>): void => {
+		event.preventDefault()
+		setIsDragging(false)
+
+		const files = Array.from(event.dataTransfer.files)
+		const acceptedFiles = files.filter(isAcceptedFile)
+
+		if (acceptedFiles.length > 0 && !isParsing) {
+			void handleFilesUpload(acceptedFiles)
+		} else {
+			console.log('No accepted files dropped')
+		}
+	}
+
+	const handleOpenFileDialog = (): void => {
+		fileInputRef.current?.click()
+	}
+
+	const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+		if ((event.key === 'Enter' || event.key === ' ') && !isParsing) {
+			event.preventDefault()
+			handleOpenFileDialog()
+		}
+	}
+
+	const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+		const files = Array.from(event.target.files ?? [])
+		const acceptedFiles = files.filter(isAcceptedFile)
+		if (acceptedFiles.length > 0 && !isParsing) {
+			void handleFilesUpload(acceptedFiles)
+		} else if (files.length > 0) {
+			console.log('Selected files contained unsupported types')
+		}
+		// Reset value to allow selecting the same file again
+		event.target.value = ''
+	}
+
+	const handleFilesUpload = async (files: File[]): Promise<void> => {
+		try {
+			setIsParsing(true)
+			const formData = new FormData()
+			// Use the first accepted file for now
+			formData.append('file', files[0])
+			const result = await parseResumeMutation({formData, format: 'proprietary'})
+			console.log('Parsed resume response:', result)
+			setParsed(true)
+		} catch (error) {
+			console.error('Failed to parse resume:', error)
+		} finally {
+			setIsParsing(false)
+		}
+	}
 
 	useEffect(() => {
 		if (parsed) {
@@ -27,14 +101,43 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 				<p>We need a few details about you to craft the perfect resume for you</p>
 
 				<div className="mt-10">
-					<div className="h-64 w-full bg-neutral-100 p-2 rounded-3xl relative">
-						<div className="h-full w-full bg-neutral-50 rounded-2xl flex flex-col items-center justify-center p-8">
+					<div className={cn(
+						'h-64 w-full bg-neutral-100 p-2 rounded-3xl relative',
+						isParsing && 'loading-gradient-color lg-flame'
+					)}
+					>
+						<div
+							className={cn(
+								'h-full w-full bg-neutral-50 rounded-2xl flex flex-col items-center justify-center p-8',
+								isDragging && 'ring-2 ring-orange-400 ring-offset-2',
+								'cursor-pointer',
+								isParsing && 'loading-gradient'
+							)}
+							onDragOver={handleDragOver}
+							onDragEnter={handleDragEnter}
+							onDragLeave={handleDragLeave}
+							onDrop={isParsing ? undefined : handleDrop}
+							onClick={isParsing ? undefined : handleOpenFileDialog}
+							onKeyDown={handleKeyDown}
+							role="button"
+							aria-label="Click or drop your resume here (.pdf, .txt, .doc, .docx, .rtf, .odt)"
+							tabIndex={0}
+						>
+							<input
+								ref={fileInputRef}
+								type="file"
+								accept={ACCEPT_ATTRIBUTE}
+								onChange={isParsing ? undefined : handleFileInputChange}
+								className="sr-only"
+								disabled={isParsing}
+							/>
 							<div className="border-4 opacity-60 p-4 rounded-3xl">
 								<FileCheck className="w-10 h-10" />
 							</div>
 
 							<p className="mt-4">Do you already have an existing resume?</p>
 							<p className="text-sm mt-2 opacity-60">Upload it and we will magically understand key information about you and you won't have to enter the details manually</p>
+							<p className="text-xs mt-3 opacity-50">Drag and drop a {ACCEPTED_LABEL} file here</p>
 						</div>
 
 						<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
