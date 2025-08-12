@@ -1,7 +1,7 @@
 import {EducationMutationSchema, EducationSchema} from '@/lib/education/types'
 import {ExperienceMutationSchema, ExperienceSchema} from '@/lib/experience/types'
 import {UserInfoSchema} from '@/lib/user-info/types'
-import {ResumeSkillSectionSchema, SkillMutationSchema} from '@/lib/skill/types'
+import {ResumeSkillSectionSchema, SkillLevelEnum} from '@/lib/skill/types'
 import {z} from 'zod'
 import {JobSchema} from '@/lib/job/types'
 import {CertificationMutationSchema, CertificationSchema} from '@/lib/certification/types'
@@ -68,7 +68,11 @@ export type Resume = z.infer<typeof ResumeSchema>
  * Consists of section mutation schemas only; excludes id, base, status, user, and job
  */
 export const ResumeSkillSectionMutationSchema = z.object({
-	skills: z.array(SkillMutationSchema)
+	skills: z.array(z.object({
+		name: z.string().min(1),
+		level: SkillLevelEnum.nullable(),
+		category: z.string().nullish()
+	}))
 })
 
 export const ResumeSectionMutationSchema = z.discriminatedUnion('type', [

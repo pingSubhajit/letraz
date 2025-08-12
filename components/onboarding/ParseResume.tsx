@@ -7,7 +7,7 @@ import {Button} from '@/components/ui/button'
 import {FileCheck} from 'lucide-react'
 import DEFAULT_FADE_ANIMATION, {ANIMATE_PRESENCE_MODE} from '@/components/animations/DefaultFade'
 import ParticlesBurst from '@/components/animations/ParticlesBurst'
-import {useParseResumeMutation} from '@/lib/resume/mutations'
+import {useParseResumeMutation, useReplaceResumeMutation} from '@/lib/resume/mutations'
 import {ACCEPT_ATTRIBUTE, ACCEPTED_LABEL, isAcceptedFile} from '@/lib/resume/accept'
 
 const ParseResume = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
@@ -16,6 +16,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	const [isDragging, setIsDragging] = useState(false)
 	const fileInputRef = useRef<HTMLInputElement | null>(null)
 	const {mutateAsync: parseResumeMutation} = useParseResumeMutation()
+	const {mutateAsync: replaceResume} = useReplaceResumeMutation()
 	const [isParsing, setIsParsing] = useState(false)
 
 	const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
@@ -76,8 +77,8 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 			const formData = new FormData()
 			// Use the first accepted file for now
 			formData.append('file', files[0])
-			const result = await parseResumeMutation({formData, format: 'proprietary'})
-			console.log('Parsed resume response:', result)
+			const payload = await parseResumeMutation({formData, format: 'proprietary'})
+			await replaceResume({payload, resumeId: 'base'})
 			setParsed(true)
 		} catch (error) {
 			console.error('Failed to parse resume:', error)

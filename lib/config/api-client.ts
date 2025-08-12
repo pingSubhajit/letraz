@@ -100,6 +100,7 @@ const fetchApi = async <T>(
 			 */
 		}
 
+		console.log(error)
 		throw new Error(error.message)
 	}
 
