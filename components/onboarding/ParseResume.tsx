@@ -8,19 +8,33 @@ import {FileCheck} from 'lucide-react'
 import DEFAULT_FADE_ANIMATION, {ANIMATE_PRESENCE_MODE} from '@/components/animations/DefaultFade'
 import ParticlesBurst from '@/components/animations/ParticlesBurst'
 import {useParseResumeMutation, useReplaceResumeMutation} from '@/lib/resume/mutations'
-import {ACCEPT_ATTRIBUTE, ACCEPTED_LABEL, isAcceptedFile} from '@/lib/resume/accept'
+import {ACCEPT_ATTRIBUTE, isAcceptedFile} from '@/lib/resume/accept'
 import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
+import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
+import StaggeredText from '@/components/animations/StaggeredText'
+
+
+const PARSING_MESSAGES = [
+	'Uploading your resume…',
+	'Scanning the document…',
+	'Extracting contact details…',
+	'Finding education and experiences…',
+	'Understanding your skills…',
+	'Polishing the results…'
+]
 
 const ParseResume = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
 	const [parsed, setParsed] = useState(false)
-	const [burstKey, setBurstKey] = useState<number>(() => Date.now())
+	const [particlesSeed] = useState<number>(() => Date.now())
 	const [isDragging, setIsDragging] = useState(false)
 	const fileInputRef = useRef<HTMLInputElement | null>(null)
 	const {mutateAsync: parseResumeMutation} = useParseResumeMutation()
 	const {mutateAsync: replaceResume} = useReplaceResumeMutation()
 	const [isParsing, setIsParsing] = useState(false)
 	const router = useRouter()
+	const [parsingMessageIndex, setParsingMessageIndex] = useState(0)
+	const [showParsingText, setShowParsingText] = useState(false)
 
 	const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
 		event.preventDefault()
@@ -90,11 +104,52 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 		}
 	}
 
+	// Particles mode: float while parsing, burst when parsed, hidden otherwise
+	const particlesMode: 'hidden' | 'float' | 'burst' = parsed ? 'burst' : (isParsing ? 'float' : 'hidden')
+
+	// Cycle cosmetic parsing messages with the same entrance/exit animation as "Welcome"
 	useEffect(() => {
-		if (parsed) {
-			setBurstKey(Date.now())
+		if (!isParsing || parsed) {
+			setShowParsingText(false)
+			return
 		}
-	}, [parsed])
+
+		let cancelled = false
+		let hideTimer: ReturnType<typeof setTimeout> | undefined
+		let nextTimer: ReturnType<typeof setTimeout> | undefined
+		let startTimer: ReturnType<typeof setTimeout> | undefined
+
+		setParsingMessageIndex(0)
+
+		const playAtIndex = (index: number) => {
+			if (cancelled) return
+			setShowParsingText(true)
+
+			// Show for a bit, then hide
+			hideTimer = setTimeout(() => {
+				if (cancelled) return
+				setShowParsingText(false)
+			}, 2000)
+
+			// After hide, move to next
+			nextTimer = setTimeout(() => {
+				if (cancelled) return
+				const nextIndex = (index + 1) % PARSING_MESSAGES.length
+				setParsingMessageIndex(nextIndex)
+				playAtIndex(nextIndex)
+			}, 3000)
+		}
+
+		// Small delay before starting the sequence
+		startTimer = setTimeout(() => playAtIndex(0), 250)
+
+		return () => {
+			cancelled = true
+			if (hideTimer) clearTimeout(hideTimer)
+			if (nextTimer) clearTimeout(nextTimer)
+			if (startTimer) clearTimeout(startTimer)
+		}
+	}, [isParsing, parsed])
 
 	return (
 		<div className={cn('max-w-4xl mx-auto flex flex-col items-center mt-8', className)}>
@@ -110,12 +165,12 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 						isParsing && 'loading-gradient-color lg-flame'
 					)}
 					>
+						{/* Floating/bursting particles overlay tied to parsing lifecycle */}
+						<ParticlesBurst playKey={particlesSeed} mode={particlesMode} className="z-20" />
 						<div
 							className={cn(
-								'h-full w-full bg-neutral-50 rounded-2xl flex flex-col items-center justify-center p-8',
-								isDragging && 'ring-2 ring-orange-400 ring-offset-2',
-								'cursor-pointer',
-								isParsing && 'loading-gradient'
+								'h-full w-full bg-neutral-50 rounded-2xl flex flex-col items-center justify-center p-8 cursor-pointer',
+								isDragging && 'ring-2 ring-orange-400 ring-offset-2'
 							)}
 							onDragOver={handleDragOver}
 							onDragEnter={handleDragEnter}
@@ -132,16 +187,33 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 								type="file"
 								accept={ACCEPT_ATTRIBUTE}
 								onChange={isParsing ? undefined : handleFileInputChange}
-								className="sr-only"
+								className="sr-only pointer-events-none"
 								disabled={isParsing}
 							/>
-							<div className="border-4 opacity-60 p-4 rounded-3xl">
-								<FileCheck className="w-10 h-10" />
-							</div>
+							<AnimatePresence mode="wait">
+								{!isDragging && !isParsing && <motion.div key="DEFAULT_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none">
+									<div className="border-4 opacity-60 p-4 rounded-3xl w-min mx-auto">
+										<FileCheck className="w-10 h-10" />
+									</div>
 
-							<p className="mt-4">Do you already have an existing resume?</p>
-							<p className="text-sm mt-2 opacity-60">Upload it and we will magically understand key information about you and you won't have to enter the details manually</p>
-							<p className="text-xs mt-3 opacity-50">Drag and drop a {ACCEPTED_LABEL} file here</p>
+									<p className="mt-4">Do you already have an existing resume?</p>
+									<p className="text-sm mt-2 opacity-60">Upload it and we will magically understand key information about you and you won't have to enter the details manually</p>
+								</motion.div>}
+
+								{isDragging && !isParsing && <motion.div key="DRAGGING_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none">
+									<p className="mt-4">Yes, let go</p>
+								</motion.div>}
+
+								{isParsing && !isDragging && (
+									<motion.div key="PARSING_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none">
+										<StaggeredText
+											text={PARSING_MESSAGES[parsingMessageIndex]}
+											show={showParsingText}
+											className="text-base md:text-lg text-center"
+										/>
+									</motion.div>
+								)}
+							</AnimatePresence>
 						</div>
 
 						<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
@@ -154,7 +226,6 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 									exit={{opacity: 0, scale: 0.95}}
 									transition={{type: 'spring', duration: 0.5, bounce: 0.35}}
 								>
-									<ParticlesBurst playKey={burstKey} />
 									<div className="w-full rounded-3xl ring-fade-orange overflow-hidden flex flex-col items-center justify-center px-6 py-12">
 										<p className="font-medium text-orange-500 text-xl">Wow! That worked! 🎉</p>
 										<p className="mt-2 text-sm w-80  opacity-75">We've understood a lot about you from your resume. See you on the other side</p>

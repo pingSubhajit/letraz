@@ -40,7 +40,6 @@ export const useReplaceResumeMutation = () => {
 		mutationFn: async ({payload, resumeId = 'base'}) => replaceResume(payload, resumeId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({queryKey: BASE_RESUME_KEYS})
-			toast.success('Resume updated')
 		},
 		onError: () => {
 			toast.error('Failed to replace resume')
