@@ -91,7 +91,7 @@ const ScrollMask: React.FC<ScrollMaskProps> = ({
 						animate={{opacity: 1}}
 						exit={{opacity: 0}}
 						className={cn(
-							'absolute top-0 left-0 right-0 z-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-b from-[#FAFAFA] to to-transparent',
+							'absolute top-0 left-0 right-0 z-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-b from-[#FAFAFA] to-transparent',
 							scrollState.canScrollUp ? 'opacity-100' : 'opacity-0'
 						)}
 						style={{
@@ -109,7 +109,7 @@ const ScrollMask: React.FC<ScrollMaskProps> = ({
 						animate={{opacity: 1}}
 						exit={{opacity: 0}}
 						className={cn(
-							'absolute bottom-0 left-0 right-0 z-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-t from-[#FAFAFA] to to-transparent',
+							'absolute bottom-0 left-0 right-0 z-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-t from-[#FAFAFA] to-transparent',
 							scrollState.canScrollDown ? 'opacity-100' : 'opacity-0'
 						)}
 						style={{
