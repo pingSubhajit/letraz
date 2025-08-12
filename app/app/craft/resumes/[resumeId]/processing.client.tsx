@@ -6,6 +6,7 @@ import AiLoading from '@/components/utilities/AiLoading'
 import ResumeEditorSkeleton from '@/components/skeletons/ResumeEditorSkeleton'
 import ResumeEditor from '@/components/resume/ResumeEditor'
 import dynamic from 'next/dynamic'
+import ResumeAiLoading from '@/components/utilities/ResumeAiLoading'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
@@ -31,24 +32,15 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	/* Keep processing UI while loading or error (before first successful fetch) to avoid flicker */
 	const processing = isProcessingStatus || (!resume && (isLoading || isError))
 
-	// Debug logs removed
 
 	if (processing) {
 		return (
 			<ResumeHighlightProvider>
 				<div className="flex h-screen w-full" role="main">
-					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
-						{processing && (
-							<AiLoading
-								loading
-								text={message}
-								centered
-								videoClass="opacity-50"
-								textClass="text-xl"
-							/>
-						)}
+					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative overflow-hidden shrink-0">
+						{processing && <ResumeAiLoading />}
 					</div>
-					<div className="size-full">
+					<div className="flex-1 min-w-0">
 						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
 					</div>
 				</div>
