@@ -17,7 +17,7 @@ export const resumeByIdQueryOptions = (resumeId: string) => queryOptions<Resume>
 	// Avoid refetch pause on error; keep polling to reduce flicker and recover automatically
 	retry: 3,
 	refetchInterval: (query) => {
-        const data = query.state.data as Resume | undefined
+		const data = query.state.data as Resume | undefined
 		if (!data) return 2000
 		const normalizedStatus = (data.status || '').toString().toLowerCase()
 		const doneStatuses = new Set(['success', 'failed', 'completed'])
