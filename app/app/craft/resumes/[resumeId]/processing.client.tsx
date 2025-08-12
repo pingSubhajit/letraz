@@ -1,8 +1,6 @@
 'use client'
 
-import {useMemo, useState} from 'react'
 import {useResumeById} from '@/lib/resume/queries'
-import AiLoading from '@/components/utilities/AiLoading'
 import ResumeEditorSkeleton from '@/components/skeletons/ResumeEditorSkeleton'
 import ResumeEditor from '@/components/resume/ResumeEditor'
 import dynamic from 'next/dynamic'
@@ -12,19 +10,9 @@ const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {
 
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
 
-const LOADING_MESSAGES = [
-	'Analyzing keywords…',
-	'Crafting your unique profile…',
-	'Optimizing bullet points…',
-	'Aligning achievements with the job…',
-	'Tailoring highlights for recruiters…'
-]
-
 
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {data: resume, isLoading, isError} = useResumeById(resumeId)
-	const [messageIndex] = useState(() => Math.floor(Math.random() * LOADING_MESSAGES.length))
-	const message = useMemo(() => LOADING_MESSAGES[messageIndex], [messageIndex])
 
 	// Compute status flags
 	const status = resume?.status

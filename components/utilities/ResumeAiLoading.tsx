@@ -68,7 +68,7 @@ const DEFAULT_STAGES: Stage[] = [
 			'Ensuring the resume passes the 6-second scan test.',
 			'Optimizing for ATS bots and humans.',
 			'Tightening language, trimming fluff.',
-			"Replacing 'responsible for' with action-packed verbs.",
+			'Replacing "responsible for" with action-packed verbs.',
 			'Adding a layer of clarity and polish.'
 		]
 	},
@@ -118,16 +118,16 @@ const ResumeAiLoading = ({
 
 	return (
 		<div className={cn('absolute inset-0', className)}>
-			{/* Ball video (bigger) */}
-			<AiLoading loading text="" centered videoClass="scale-[1.6]" textClass="hidden" />
+			{/* Ball video */}
+			<AiLoading loading text="" centered videoClass="scale-[1.8] blur-lg" textClass="hidden" />
 
 			{/* Stage title (subtle) */}
-			<div className="absolute top-[18%] left-1/2 -translate-x-1/2 text-sm tracking-wide text-neutral-600/80">
+			<div className="absolute top-[18%] left-1/2 -translate-x-1/2 text-sm tracking-wide text-neutral-600/80 z-20">
 				{stage?.title}
 			</div>
 
 			{/* Stage message with smooth blur/fade vertical animation */}
-			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[720px] text-center">
+			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[720px] text-center z-20">
 				<AnimatePresence mode="wait">
 					<motion.div
 						key={`${stage?.id}-${messageKey}`}
@@ -135,7 +135,7 @@ const ResumeAiLoading = ({
 						animate={{opacity: 1, y: 0, filter: 'blur(0px)'}}
 						exit={{opacity: 0, y: -24, filter: 'blur(6px)'}}
 						transition={{duration: 0.5, ease: 'easeOut'}}
-						className="text-[20px] sm:text-[24px] md:text-[28px] leading-snug font-semibold text-neutral-800 drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)]"
+						className="text-[18px] sm:text-[22px] md:text-[26px] leading-snug font-medium text-neutral-600 drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
 					>
 						{message}
 					</motion.div>
