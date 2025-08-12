@@ -14,7 +14,7 @@ import {ResumeMutation, ResumeMutationSchema} from '@/lib/resume/types'
  * - code (inline) -> inline
  * If the input is plain text, wrap it in a paragraph with class text-node.
  */
-function ensureClassOnTag(html: string, tag: string, className: string): string {
+const ensureClassOnTag = (html: string, tag: string, className: string): string => {
 	const regex = new RegExp(`<${tag}\\b([^>]*)>`, 'gi')
 	return html.replace(regex, (match, attrs: string) => {
 		if (/class\s*=/.test(attrs)) {
@@ -30,9 +30,7 @@ function ensureClassOnTag(html: string, tag: string, className: string): string 
 	})
 }
 
-function isLikelyHtml(input: string): boolean {
-	return /<\w+[\s\S]*>/.test(input)
-}
+const isLikelyHtml = (input: string): boolean => /<\w+[\s\S]*>/.test(input)
 
 const normalizeDescriptionToTiptapHTML = (input: string | null | undefined): string | null | undefined => {
 	if (input == null || input === '') return input
@@ -224,7 +222,6 @@ Rules:
 
 		return result.object
 	} catch (error) {
-		console.log(error)
 		throw new Error(`Failed to parse resume: ${(error as Error).message}`)
 	}
 }
