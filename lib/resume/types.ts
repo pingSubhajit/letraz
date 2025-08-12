@@ -1,11 +1,11 @@
-import {EducationSchema} from '@/lib/education/types'
-import {ExperienceSchema} from '@/lib/experience/types'
+import {EducationMutationSchema, EducationSchema} from '@/lib/education/types'
+import {ExperienceMutationSchema, ExperienceSchema} from '@/lib/experience/types'
 import {UserInfoSchema} from '@/lib/user-info/types'
-import {ResumeSkillSectionSchema} from '@/lib/skill/types'
+import {ResumeSkillSectionSchema, SkillMutationSchema} from '@/lib/skill/types'
 import {z} from 'zod'
 import {JobSchema} from '@/lib/job/types'
-import {CertificationSchema} from '@/lib/certification/types'
-import {ProjectSchema} from '@/lib/project/types'
+import {CertificationMutationSchema, CertificationSchema} from '@/lib/certification/types'
+import {ProjectMutationSchema, ProjectSchema} from '@/lib/project/types'
 
 /*
  * Base schema for Resume and its sections
@@ -62,3 +62,40 @@ export const ResumeSchema = z.object({
 // Infer TypeScript types from the schema
 export type ResumeSection = z.infer<typeof ResumeSectionSchema>
 export type Resume = z.infer<typeof ResumeSchema>
+
+/**
+ * Mutation schemas for replacing a resume
+ * Consists of section mutation schemas only; excludes id, base, status, user, and job
+ */
+export const ResumeSkillSectionMutationSchema = z.object({
+	skills: z.array(SkillMutationSchema)
+})
+
+export const ResumeSectionMutationSchema = z.discriminatedUnion('type', [
+	z.object({
+		type: z.literal('Education'),
+		data: EducationMutationSchema
+	}),
+	z.object({
+		type: z.literal('Experience'),
+		data: ExperienceMutationSchema
+	}),
+	z.object({
+		type: z.literal('Skill'),
+		data: ResumeSkillSectionMutationSchema
+	}),
+	z.object({
+		type: z.literal('Project'),
+		data: ProjectMutationSchema
+	}),
+	z.object({
+		type: z.literal('Certification'),
+		data: CertificationMutationSchema
+	})
+])
+
+export const ResumeMutationSchema = z.object({
+	sections: z.array(ResumeSectionMutationSchema)
+})
+
+export type ResumeMutation = z.infer<typeof ResumeMutationSchema>

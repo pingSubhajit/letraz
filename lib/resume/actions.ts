@@ -1,6 +1,6 @@
 'use server'
 
-import {Resume, ResumeSchema} from '@/lib/resume/types'
+import {Resume, ResumeMutation, ResumeMutationSchema, ResumeSchema} from '@/lib/resume/types'
 import {parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
@@ -53,4 +53,21 @@ export const parseUploadedResume = async (
 
 	const result = await parseResume(file, format)
 	return result
+}
+
+/**
+ * Replaces a resume with provided sections payload
+ * PUT /resume/{id}/ (or /resume/base/)
+ */
+export const replaceResume = async (
+	payload: ResumeMutation,
+	resumeId: string = 'base'
+): Promise<Resume> => {
+	try {
+		const parsed = ResumeMutationSchema.parse(payload)
+		const data = await api.put<Resume>(`/resume/${resumeId ?? 'base'}/`, parsed)
+		return ResumeSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'replace resume')
+	}
 }

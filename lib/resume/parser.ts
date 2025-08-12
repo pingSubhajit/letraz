@@ -113,7 +113,6 @@ const GeminiResumeSectionSchema = z.object({
 // Simplified resume schema compatible with Gemini
 const GeminiResumeSchema = z.object({
 	user: GeminiUserInfoSchema.describe('The user information associated with the resume'),
-	job: GeminiJobSchema.describe('The job information associated with the resume').optional(),
 	sections: z.array(GeminiResumeSectionSchema).describe('The sections included in the resume')
 })
 
@@ -169,7 +168,6 @@ const transformToSimpleFormat = (geminiResult: z.infer<typeof GeminiResumeSchema
 			...geminiResult.user,
 			dob: geminiResult.user?.dob ? new Date(geminiResult.user.dob) : null
 		},
-		job: geminiResult.job ?? null,
 		sections: geminiResult.sections.map((section, index) => ({
 			type: section.type,
 			index: index,
