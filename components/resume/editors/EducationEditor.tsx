@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import {useParams} from 'next/navigation'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form} from '@/components/ui/form'
@@ -60,6 +61,8 @@ interface EducationEditorProps {
 
 const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+    const params = useParams<{ resumeId?: string }>()
+    const resumeId = (params?.resumeId as string) ?? 'base'
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -85,7 +88,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 
 	const {data: educations = [], isLoading, error} = useCurrentEducations()
 
-	const {mutateAsync: addEducation, isPending: isAdding} = useAddEducationMutation({
+    const {mutateAsync: addEducation, isPending: isAdding} = useAddEducationMutation({
 		onSuccess: () => {
 			revalidate()
 			toast.success('Education added successfully!')
@@ -161,7 +164,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 				const educationId = localEducations[editingIndex]?.id
 				await updateEducation({id: educationId, data: values})
 			} else {
-				await addEducation(values)
+                await addEducation({data: values, resumeId})
 			}
 
 			form.reset(DEFAULT_EDUCATION_VALUES)
@@ -197,7 +200,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-			await deleteEducation(id)
+            await deleteEducation({id, resumeId})
 			if (editingIndex !== null && localEducations[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_EDUCATION_VALUES)

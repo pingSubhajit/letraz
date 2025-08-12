@@ -12,11 +12,12 @@ import {handleErrors} from '@/lib//misc/error-handler'
  * @throws {Error} If validation, authentication, or API request fails.
  */
 export const addEducationToDB = async (
-	educationValues: EducationMutation
+	educationValues: EducationMutation,
+	resumeId: string = 'base'
 ): Promise<Education> => {
 	try {
 		const params = EducationMutationSchema.parse(educationValues)
-		const data = await api.post<Education>('/resume/base/education/', params)
+		const data = await api.post<Education>(`/resume/${resumeId}/education/`, params)
 		return EducationSchema.parse(data)
 	} catch (error) {
 		return	handleErrors(error, 'add education')

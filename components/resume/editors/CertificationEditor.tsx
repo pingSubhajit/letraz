@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import {useParams} from 'next/navigation'
 import {apiDateToDate, cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -52,6 +53,8 @@ interface CertificationEditorProps {
 
 const CertificationEditor = ({className, isTabSwitch = false}: CertificationEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+    const params = useParams<{ resumeId?: string }>()
+    const resumeId = (params?.resumeId as string) ?? 'base'
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -76,7 +79,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 
 	const {data: certifications = [], isLoading, error} = useCurrentCertifications()
 
-	const {mutateAsync: addCertification, isPending: isAdding} = useAddCertificationMutation({
+    const {mutateAsync: addCertification, isPending: isAdding} = useAddCertificationMutation({
 		onSuccess: () => {
 			revalidate()
 			toast.success('Certification added successfully!')
@@ -148,11 +151,11 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 
 	const onSubmit = async (values: CertificationMutation) => {
 		try {
-			if (editingIndex !== null) {
+            if (editingIndex !== null) {
 				const certificationId = certifications[editingIndex]?.id
 				await updateCertification({id: certificationId, data: values})
 			} else {
-				await addCertification(values)
+                await addCertification({data: values, resumeId})
 			}
 
 			form.reset(DEFAULT_CERTIFICATION_VALUES)
@@ -185,7 +188,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-			await deleteCertification(id)
+            await deleteCertification({id, resumeId})
 			if (editingIndex !== null && certifications[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_CERTIFICATION_VALUES)

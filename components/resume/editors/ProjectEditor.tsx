@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useMemo, useState} from 'react'
+import {useParams} from 'next/navigation'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -69,6 +70,8 @@ const newSkillSchema = z.object({
 
 const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
+    const params = useParams<{ resumeId?: string }>()
+    const resumeId = (params?.resumeId as string) ?? 'base'
 	const [projectListAnimationRef] = useAutoAnimate()
 	const [skillListAnimationRef] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -225,7 +228,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 				const projectId = projects[editingIndex]?.id
 				await updateProject({id: projectId, data: formattedValues})
 			} else {
-				await addProject(formattedValues)
+                await addProject({data: formattedValues, resumeId})
 			}
 
 			form.reset(DEFAULT_PROJECT_VALUES)
@@ -269,7 +272,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-			await deleteProject(id)
+            await deleteProject({id, resumeId})
 			if (editingIndex !== null && projects[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_PROJECT_VALUES)
