@@ -9,6 +9,7 @@ import DEFAULT_FADE_ANIMATION, {ANIMATE_PRESENCE_MODE} from '@/components/animat
 import ParticlesBurst from '@/components/animations/ParticlesBurst'
 import {useParseResumeMutation, useReplaceResumeMutation} from '@/lib/resume/mutations'
 import {ACCEPT_ATTRIBUTE, ACCEPTED_LABEL, isAcceptedFile} from '@/lib/resume/accept'
+import {useRouter} from 'next/navigation'
 
 const ParseResume = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
 	const [parsed, setParsed] = useState(false)
@@ -18,6 +19,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	const {mutateAsync: parseResumeMutation} = useParseResumeMutation()
 	const {mutateAsync: replaceResume} = useReplaceResumeMutation()
 	const [isParsing, setIsParsing] = useState(false)
+	const router = useRouter()
 
 	const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
 		event.preventDefault()
@@ -172,7 +174,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 						</motion.div>}
 
 						{parsed && <motion.div {...DEFAULT_FADE_ANIMATION} className="mt-12" key="RESUME_PARSED_CTA">
-							<Button onClick={toggleParseResume} size="lg">Let's get your base resume</Button>
+							<Button onClick={() => router.push('/app/onboarding?step=resume')} size="lg">Let's get your base resume</Button>
 							<p className="text-xs mt-2 opacity-50 w-80 mx-auto text-center">Your base resume is ready, click to get started</p>
 						</motion.div>}
 					</AnimatePresence>

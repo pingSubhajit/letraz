@@ -5,6 +5,67 @@ import {google} from '@ai-sdk/google'
 import {z} from 'zod'
 import {ResumeMutation, ResumeMutationSchema} from '@/lib/resume/types'
 
+/**
+ * Ensure that HTML produced for Tiptap includes our expected classes.
+ * - paragraph -> text-node
+ * - heading (h1..h6) -> heading-node
+ * - blockquote -> block-node
+ * - ul/ol -> list-node
+ * - code (inline) -> inline
+ * If the input is plain text, wrap it in a paragraph with class text-node.
+ */
+function ensureClassOnTag(html: string, tag: string, className: string): string {
+	const regex = new RegExp(`<${tag}\\b([^>]*)>`, 'gi')
+	return html.replace(regex, (match, attrs: string) => {
+		if (/class\s*=/.test(attrs)) {
+			return match.replace(/class\s*=\s*(["'])(.*?)\1/i, (_m, quote: string, classes: string) => {
+				const classList = classes.trim().split(/\s+/)
+				if (classList.includes(className)) return `class=${quote}${classes}${quote}`
+				const updated = classes ? `${classes} ${className}` : className
+				return `class=${quote}${updated}${quote}`
+			})
+		}
+		const space = attrs?.length ? attrs : ''
+		return `<${tag}${space} class="${className}">`
+	})
+}
+
+function isLikelyHtml(input: string): boolean {
+	return /<\w+[\s\S]*>/.test(input)
+}
+
+const normalizeDescriptionToTiptapHTML = (input: string | null | undefined): string | null | undefined => {
+	if (input == null || input === '') return input
+
+	let html = String(input).trim()
+
+	// If not HTML, convert to a simple paragraph
+	if (!isLikelyHtml(html)) {
+		// Preserve basic newlines by splitting into paragraphs
+		const paragraphs = html
+			.split(/\n{2,}/)
+			.map(p => p.trim())
+			.filter(Boolean)
+			.map(p => `<p class="text-node">${p.replace(/\n/g, '<br/>')}</p>`) // single newlines become <br/>
+		html = paragraphs.length ? paragraphs.join('') : '<p class="text-node"></p>'
+	}
+
+	// Enforce classes on common nodes
+	html = ensureClassOnTag(html, 'p', 'text-node')
+	html = ensureClassOnTag(html, 'h1', 'heading-node')
+	html = ensureClassOnTag(html, 'h2', 'heading-node')
+	html = ensureClassOnTag(html, 'h3', 'heading-node')
+	html = ensureClassOnTag(html, 'h4', 'heading-node')
+	html = ensureClassOnTag(html, 'h5', 'heading-node')
+	html = ensureClassOnTag(html, 'h6', 'heading-node')
+	html = ensureClassOnTag(html, 'blockquote', 'block-node')
+	html = ensureClassOnTag(html, 'ul', 'list-node')
+	html = ensureClassOnTag(html, 'ol', 'list-node')
+	html = ensureClassOnTag(html, 'code', 'inline')
+
+	return html
+}
+
 // Generic schema for non-proprietary format
 const GenericResumeSchema = z.object({
 	personalInfo: z.object({
@@ -80,6 +141,12 @@ Rules:
 - employment_type must be one of: flt, prt, con, int, fre, sel, vol, tra.
 - skill_id should be "custom:<skill name>" if not a known global id.
 - level must be one of: BEG, INT, ADV, EXP, or null.
+- For every "description" field (Education, Experience, Project), return a Tiptap-compatible HTML string. Use minimal semantic tags and include these exact classes:
+ - For every "description" field (Education, Experience, Project), return a Tiptap-compatible HTML string and PREFER BULLETED LISTS:
+   - Default to unordered lists for multi-point content: <ul class="list-node"><li>…</li><li>…</li></ul>
+   - Use a single paragraph only when the content is one succinct sentence: <p class="text-node">…</p>
+   - Allowed classes: paragraphs -> "text-node"; headings h1–h6 -> "heading-node"; blockquotes -> "block-node"; ul/ol -> "list-node"; inline code -> "inline".
+   - Do NOT return Markdown; return HTML only with the classes above. Keep list items concise, one idea per <li>.
 - Return ONLY JSON. No backticks, no extra text.`
 		: 'Parse resume into: personalInfo, education, experience, skills, certifications, projects. Only return the JSON response. Do not include any additional texts, backticks or artifacts.'
 
@@ -139,6 +206,17 @@ Rules:
 					} else if (d === null || d === undefined) {
 						// leave as-is (allowed)
 					}
+				}
+
+				// Normalize description fields to Tiptap-compatible HTML
+				if (section.type === 'Education') {
+					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+				}
+				if (section.type === 'Experience') {
+					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+				}
+				if (section.type === 'Project') {
+					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
 				}
 			}
 			return payload
