@@ -21,7 +21,7 @@ const LOADING_MESSAGES = [
 
 
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
-    const {data: resume, isLoading, isError, error} = useResumeById(resumeId)
+	const {data: resume, isLoading, isError} = useResumeById(resumeId)
 	const [messageIndex] = useState(() => Math.floor(Math.random() * LOADING_MESSAGES.length))
 	const message = useMemo(() => LOADING_MESSAGES[messageIndex], [messageIndex])
 
@@ -31,17 +31,14 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	/* Keep processing UI while loading or error (before first successful fetch) to avoid flicker */
 	const processing = isProcessingStatus || (!resume && (isLoading || isError))
 
-    // DEBUG: trace state transitions
-    console.debug('[ProcessingView] mount', {resumeId})
-    console.debug('[ProcessingView] query', {isLoading, isError, error: (error as any)?.message, resume})
-    console.debug('[ProcessingView] status', {status, isProcessingStatus, processing})
+	// Debug logs removed
 
 	if (processing) {
 		return (
 			<ResumeHighlightProvider>
-                <div className="flex h-screen w-full" role="main">
-                    <div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
-                        {processing && (
+				<div className="flex h-screen w-full" role="main">
+					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
+						{processing && (
 							<AiLoading
 								loading
 								text={message}
@@ -49,7 +46,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 								videoClass="opacity-50"
 								textClass="text-xl"
 							/>
-                        )}
+						)}
 					</div>
 					<div className="size-full">
 						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />

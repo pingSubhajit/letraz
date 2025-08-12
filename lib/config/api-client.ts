@@ -76,9 +76,8 @@ const fetchApi = async <T>(
 
 	const fullUrl = buildUrlWithParams(`${process.env.API_URL}${url}`, params)
 
-    // debug: request trace
-    console.debug('[api] request', {url: fullUrl, method, params, hasBody: Boolean(body)})
-    const response = await fetch(fullUrl, {
+
+	const response = await fetch(fullUrl, {
 		method,
 		headers: {
 			'Content-Type': 'application/json',
@@ -92,10 +91,8 @@ const fetchApi = async <T>(
 		next
 	})
 
-    if (!response.ok) {
-        const errText = await response.clone().text().catch(() => '')
-        // debug: response error trace
-        console.debug('[api] response error', {status: response.status, statusText: response.statusText, body: errText})
+	if (!response.ok) {
+		const errText = await response.clone().text().catch(() => '')
 		const {error} = ((await response.json()) || response.statusText) as { error: ApiError }
 		if (typeof window === 'undefined') {
 		} else {
@@ -108,14 +105,12 @@ const fetchApi = async <T>(
 		throw new Error(error.message)
 	}
 
-    if (response.status === 204) {
+	if (response.status === 204) {
 		return {} as T
 	}
 
-    const json = await response.json()
-    // debug: response ok trace
-    console.debug('[api] response ok', {url: fullUrl, method, status: response.status})
-    return json
+	const json = await response.json()
+	return json
 }
 
 export const api = {

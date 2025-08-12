@@ -12,12 +12,9 @@ import {handleErrors} from '@/lib/misc/error-handler'
  */
 export const getResumeFromDB = async (resumeId?: string | 'base'): Promise<Resume> => {
 	try {
-        console.debug('[resume] fetch', {resumeId})
-        const data = await api.get<Resume>(`/resume/${resumeId ?? 'base'}/`)
-        console.debug('[resume] fetched', {id: (data as any)?.id, status: (data as any)?.status, sections: (data as any)?.sections?.length})
+		const data = await api.get<Resume>(`/resume/${resumeId ?? 'base'}/`)
 		return ResumeSchema.parse(data)
 	} catch (error) {
-        console.debug('[resume] fetch error', {error})
 		return handleErrors(error, 'fetch resume')
 	}
 }
