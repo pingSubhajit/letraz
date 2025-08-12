@@ -8,7 +8,8 @@ import {Button} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
 import {Textarea} from '@/components/ui/textarea'
 import {createPortal} from 'react-dom'
-import {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
+import {useHotkeys} from '@mantine/hooks'
 import {AnimatePresence, motion} from 'motion/react'
 import {useTransitionRouter} from 'next-view-transitions'
 import {Loader2} from 'lucide-react'
@@ -40,9 +41,15 @@ const NewResumeInput = ({className}: {className?: string}) => {
 
 	const router = useTransitionRouter()
 	const {mutateAsync: tailorResume, isPending} = useTailorResumeMutation()
+	const submittingRef = useRef(false)
+
+	useHotkeys([
+		['mod+Enter', () => form.handleSubmit(onSubmit)()]
+	])
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
+			submittingRef.current = true
 			const rawInput = values.input
 			const payload = {target: rawInput}
 
@@ -54,6 +61,8 @@ const NewResumeInput = ({className}: {className?: string}) => {
 			router.replace(`/app/craft/resumes/${resumeId}`)
 		} catch (error: any) {
 			toast.error(error.message || 'Could not understand the job')
+		} finally {
+			submittingRef.current = false
 		}
 	}
 
@@ -73,7 +82,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 					render={({field}) => (
 						<FormItem className="h-full flex flex-col gap-4">
 							<FormLabel className="text-flame-500 uppercase tracking-widest text-xs font-semibold">Craft new resume for a job</FormLabel>
-							{!form.formState.isSubmitted && (
+							{(!form.formState.isSubmitted || submittingRef.current) && (
 								<FormControl>
 									<Textarea
 										placeholder="Paste URL or job description"
@@ -81,6 +90,12 @@ const NewResumeInput = ({className}: {className?: string}) => {
 										className="h-full p-0 border-none resize-none"
 										onFocus={() => setInputFocused(true)}
 										onBlur={() => setInputFocused(false)}
+										onKeyDown={(e) => {
+											if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+												e.preventDefault()
+												form.handleSubmit(onSubmit)()
+											}
+										}}
 									/>
 								</FormControl>
 							)}
@@ -92,6 +107,11 @@ const NewResumeInput = ({className}: {className?: string}) => {
 					<Button type="submit" disabled={!form.formState.isValid || form.formState.isSubmitting || isPending}>
 						{(form.formState.isSubmitting || form.formState.isSubmitted || isPending) && <Loader2 className="w-4 h-4 animate-spin mr-2"/>}
 						Submit
+						<span className="ml-2 hidden sm:inline-flex items-center gap-1 text-[11px] opacity-70">
+							<span>⌘</span>
+							<span>+</span>
+							<span>Enter</span>
+						</span>
 					</Button>
 				)}
 

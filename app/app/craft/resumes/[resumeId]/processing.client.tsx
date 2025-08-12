@@ -5,7 +5,10 @@ import {useResumeById} from '@/lib/resume/queries'
 import AiLoading from '@/components/utilities/AiLoading'
 import ResumeEditorSkeleton from '@/components/skeletons/ResumeEditorSkeleton'
 import ResumeEditor from '@/components/resume/ResumeEditor'
-import ResumeViewer from '@/components/resume/ResumeViewer'
+import dynamic from 'next/dynamic'
+
+const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
+
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
 
 const LOADING_MESSAGES = [
@@ -16,41 +19,37 @@ const LOADING_MESSAGES = [
 	'Tailoring highlights for recruiters…'
 ]
 
+
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
-	const {data: resume, isLoading, isError, error} = useResumeById(resumeId)
+    const {data: resume, isLoading, isError, error} = useResumeById(resumeId)
 	const [messageIndex] = useState(() => Math.floor(Math.random() * LOADING_MESSAGES.length))
 	const message = useMemo(() => LOADING_MESSAGES[messageIndex], [messageIndex])
 
-	if (isError) {
-		return (
-			<div className="min-h-dvh flex items-center justify-center">
-				<div className="text-center">
-					<p className="text-lg font-semibold mb-2">Failed to load resume status</p>
-					<p className="text-sm text-neutral-600">{(error as Error)?.message || 'Please try again.'}</p>
-				</div>
-			</div>
-		)
-	}
-
-	const doneStatuses = new Set(['completed', 'success', 'failed'])
+	// Compute status flags
 	const status = resume?.status
-	const isProcessingStatus = status === 'processing'
-	const processing = isProcessingStatus || (!resume && isLoading)
+	const isProcessingStatus = (status || '').toLowerCase() === 'processing'
+	/* Keep processing UI while loading or error (before first successful fetch) to avoid flicker */
+	const processing = isProcessingStatus || (!resume && (isLoading || isError))
+
+    // DEBUG: trace state transitions
+    console.debug('[ProcessingView] mount', {resumeId})
+    console.debug('[ProcessingView] query', {isLoading, isError, error: (error as any)?.message, resume})
+    console.debug('[ProcessingView] status', {status, isProcessingStatus, processing})
 
 	if (processing) {
 		return (
 			<ResumeHighlightProvider>
-				<div className="flex h-screen w-full" role="main">
-					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
-						{isProcessingStatus && (
+                <div className="flex h-screen w-full" role="main">
+                    <div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
+                        {processing && (
 							<AiLoading
 								loading
 								text={message}
-								className="absolute inset-0"
+								centered
 								videoClass="opacity-50"
 								textClass="text-xl"
 							/>
-						)}
+                        )}
 					</div>
 					<div className="size-full">
 						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />

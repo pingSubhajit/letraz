@@ -41,6 +41,7 @@
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
     "@knocklabs/react": "^0.7.19",
+    "@mantine/hooks": "7",
     "@neondatabase/serverless": "^0.9.5",
     "@radix-ui/react-alert-dialog": "1.1.14",
     "@radix-ui/react-checkbox": "^1.1.3",

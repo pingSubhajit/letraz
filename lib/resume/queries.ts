@@ -14,12 +14,15 @@ export const useBaseResume = () => useQuery(baseResumeQueryOptions)
 export const resumeByIdQueryOptions = (resumeId: string) => queryOptions<Resume>({
 	queryKey: ['resume', resumeId],
 	queryFn: () => getResumeFromDB(resumeId),
+	// Avoid refetch pause on error; keep polling to reduce flicker and recover automatically
+	retry: 3,
 	refetchInterval: (query) => {
-		const data = query.state.data as Resume | undefined
+        const data = query.state.data as Resume | undefined
 		if (!data) return 2000
-		const doneStatuses = new Set(['success', 'failed'])
+		const normalizedStatus = (data.status || '').toString().toLowerCase()
+		const doneStatuses = new Set(['success', 'failed', 'completed'])
 		const hasSections = Array.isArray(data.sections) && data.sections.length > 0
-		if (hasSections || (data.status && doneStatuses.has(data.status))) return false
+		if (hasSections || doneStatuses.has(normalizedStatus)) return false
 		return 2000
 	}
 })
