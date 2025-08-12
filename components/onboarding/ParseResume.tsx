@@ -10,6 +10,7 @@ import ParticlesBurst from '@/components/animations/ParticlesBurst'
 import {useParseResumeMutation, useReplaceResumeMutation} from '@/lib/resume/mutations'
 import {ACCEPT_ATTRIBUTE, ACCEPTED_LABEL, isAcceptedFile} from '@/lib/resume/accept'
 import {useRouter} from 'next/navigation'
+import {toast} from 'sonner'
 
 const ParseResume = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
 	const [parsed, setParsed] = useState(false)
@@ -46,7 +47,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 		if (acceptedFiles.length > 0 && !isParsing) {
 			void handleFilesUpload(acceptedFiles)
 		} else {
-			console.log('No accepted files dropped')
+			toast.info('No accepted files dropped')
 		}
 	}
 
@@ -67,7 +68,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 		if (acceptedFiles.length > 0 && !isParsing) {
 			void handleFilesUpload(acceptedFiles)
 		} else if (files.length > 0) {
-			console.log('Selected files contained unsupported types')
+			toast.warning('Selected files contained unsupported types')
 		}
 		// Reset value to allow selecting the same file again
 		event.target.value = ''
@@ -83,7 +84,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 			await replaceResume({payload, resumeId: 'base'})
 			setParsed(true)
 		} catch (error) {
-			console.error('Failed to parse resume:', error)
+			toast.error('Failed to parse resume')
 		} finally {
 			setIsParsing(false)
 		}
