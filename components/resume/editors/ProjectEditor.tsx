@@ -70,8 +70,8 @@ const newSkillSchema = z.object({
 
 const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
-    const params = useParams<{ resumeId?: string }>()
-    const resumeId = (params?.resumeId as string) ?? 'base'
+	const params = useParams<{ resumeId?: string }>()
+	const resumeId = (params?.resumeId as string) ?? 'base'
 	const [projectListAnimationRef] = useAutoAnimate()
 	const [skillListAnimationRef] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -225,10 +225,10 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 			formattedValues.live_url = formatUrl(formattedValues.live_url)
 
 			if (editingIndex !== null) {
-                const projectId = projects[editingIndex]?.id
-                await updateProject({id: projectId, data: formattedValues, resumeId})
+				const projectId = projects[editingIndex]?.id
+				await updateProject({id: projectId, data: formattedValues, resumeId})
 			} else {
-                await addProject({data: formattedValues, resumeId})
+				await addProject({data: formattedValues, resumeId})
 			}
 
 			form.reset(DEFAULT_PROJECT_VALUES)
@@ -272,7 +272,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-            await deleteProject({id, resumeId})
+			await deleteProject({id, resumeId})
 			if (editingIndex !== null && projects[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_PROJECT_VALUES)

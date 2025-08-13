@@ -63,8 +63,8 @@ interface ExperienceEditorProps {
 
 const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
-    const params = useParams<{ resumeId?: string }>()
-    const resumeId = (params?.resumeId as string) ?? 'base'
+	const params = useParams<{ resumeId?: string }>()
+	const resumeId = (params?.resumeId as string) ?? 'base'
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -84,7 +84,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
-    const {mutateAsync: addExperience, isPending: isAdding} = useAddUserExperienceMutation({
+	const {mutateAsync: addExperience, isPending: isAdding} = useAddUserExperienceMutation({
 		onSuccess: () => {
 			revalidate()
 			toast.success('Experience added successfully!')
@@ -170,12 +170,12 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 				finished_at_year: values.current ? null : values.finished_at_year
 			}
 
-            if (editingIndex !== null) {
-                const experienceId = localExperiences[editingIndex]?.id
-                await updateExperience({id: experienceId, data: submissionValues, resumeId})
-            } else {
-                await addExperience({data: submissionValues, resumeId})
-            }
+			if (editingIndex !== null) {
+				const experienceId = localExperiences[editingIndex]?.id
+				await updateExperience({id: experienceId, data: submissionValues, resumeId})
+			} else {
+				await addExperience({data: submissionValues, resumeId})
+			}
 
 			form.reset(DEFAULT_EXPERIENCE_VALUES)
 			setView('list')
@@ -216,7 +216,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-            await deleteExperience({id, resumeId})
+			await deleteExperience({id, resumeId})
 			if (editingIndex !== null && localExperiences[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_EXPERIENCE_VALUES)
