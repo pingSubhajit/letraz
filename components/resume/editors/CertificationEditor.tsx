@@ -69,6 +69,8 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: certificationOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		// Ensure resume preview refreshes immediately
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const form = useForm<CertificationMutation>({
@@ -153,7 +155,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		try {
 			if (editingIndex !== null) {
 				const certificationId = certifications[editingIndex]?.id
-				await updateCertification({id: certificationId, data: values})
+				await updateCertification({id: certificationId, data: values, resumeId})
 			} else {
 				await addCertification({data: values, resumeId})
 			}

@@ -77,11 +77,13 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	// Auto-focus the first field when form is opened
 	useAutoFocusField(view === 'form', 'job_title')
 
-	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
+	const {data: experiencesData, isLoading, error} = useCurrentExperiences()
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: experienceQueryOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		// Also revalidate the current resume so the viewer updates instantly
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const {mutateAsync: addExperience, isPending: isAdding} = useAddUserExperienceMutation({
@@ -117,8 +119,11 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	const isSubmitting = isAdding || isUpdating
 
 	useEffect(() => {
-		setLocalExperiences(experiences)
-	}, [experiences])
+		// Only update when server data is available; avoids infinite loops from new [] reference each render
+		if (experiencesData) {
+			setLocalExperiences(experiencesData)
+		}
+	}, [experiencesData])
 
 	useEffect(() => {
 		setIsMounted(true)

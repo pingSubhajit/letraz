@@ -120,13 +120,10 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	}, [resumeSkills, globalSkills])
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: projectQueryOptions.queryKey})
-		queryClient.invalidateQueries({
-			queryKey: baseResumeQueryOptions.queryKey
-		})
-		queryClient.invalidateQueries({
-			queryKey: globalSkillsQueryOptions.queryKey
-		})
+		queryClient.invalidateQueries({queryKey: projectQueryOptions(resumeId).queryKey})
+		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: globalSkillsQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const {mutateAsync: addProject, isPending: isAddingPending} = useAddProjectMutation({

@@ -78,6 +78,8 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: educationOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		// Also revalidate the current resume so the viewer updates instantly
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const form = useForm<EducationMutation>({
@@ -86,7 +88,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		mode: 'onChange'
 	})
 
-	const {data: educations = [], isLoading, error} = useCurrentEducations()
+	const {data: educationsData, isLoading, error} = useCurrentEducations()
 
 	const {mutateAsync: addEducation, isPending: isAdding} = useAddEducationMutation({
 		onSuccess: () => {
@@ -121,8 +123,11 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const isSubmitting = isAdding || isUpdating
 
 	useEffect(() => {
-		setLocalEducations(educations)
-	}, [educations])
+		// Only update when server data is available; avoids infinite loops from new [] reference each render
+		if (educationsData) {
+			setLocalEducations(educationsData)
+		}
+	}, [educationsData])
 
 	useEffect(() => {
 		setIsMounted(true)
