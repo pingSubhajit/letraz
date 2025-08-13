@@ -1,6 +1,6 @@
 import {MutationOptions, useMutation} from '@tanstack/react-query'
-import {ResumeSkill, SkillMutation, NewSkill, GlobalSkill} from '@/lib/skill/types'
-import {addSkillToResume, removeSkillFromResume, updateResumeSkill, createGlobalSkill} from '@/lib/skill/actions'
+import {GlobalSkill, NewSkill, ResumeSkill, SkillMutation} from '@/lib/skill/types'
+import {addSkillToResume, createGlobalSkill, removeSkillFromResume, updateResumeSkill} from '@/lib/skill/actions'
 
 /**
  * Mutation hook for adding a skill to the resume

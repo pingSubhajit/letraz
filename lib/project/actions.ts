@@ -1,7 +1,14 @@
 'use server'
 
 import {z} from 'zod'
-import {Project, ProjectMutation, ProjectMutationSchema, ProjectSchema, GlobalSkillSchema, GlobalSkill} from '@/lib/project/types'
+import {
+	GlobalSkill,
+	GlobalSkillSchema,
+	Project,
+	ProjectMutation,
+	ProjectMutationSchema,
+	ProjectSchema
+} from '@/lib/project/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 
