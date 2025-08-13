@@ -241,8 +241,8 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 
 					<AnimatePresence mode="wait">
 						{!parsed && <motion.div {...DEFAULT_FADE_ANIMATION} className="mt-12" key="MANUAL_DETAILS_CTA">
-							<Button onClick={toggleParseResume} variant="outline" size="lg">Enter the details manually</Button>
-							<p className="text-xs mt-2 opacity-50 w-80 mx-auto text-center">We would ask for your educations and experiences on the next steps</p>
+							<Button onClick={toggleParseResume} variant="outline" size="lg" key="MANUAL_DETAILS_CTA_BUTTON">Enter the details manually</Button>
+							<p className="text-xs mt-2 opacity-50 w-80 mx-auto text-center" key="MANUAL_DETAILS_CTA_TEXT">We would ask for your educations and experiences on the next steps</p>
 						</motion.div>}
 
 						{parsed && <motion.div {...DEFAULT_FADE_ANIMATION} className="mt-12" key="RESUME_PARSED_CTA">

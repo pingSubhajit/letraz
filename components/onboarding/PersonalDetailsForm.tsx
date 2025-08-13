@@ -137,13 +137,13 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 						/>
 					</motion.div>
 
-					<motion.div
+					{typeof toggleParseResume === 'function' && <motion.div
 						className="mt-12 flex flex-col justify-center items-center" key="MANUAL_DETAILS_CTA"
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 					>
 						<Button onClick={toggleParseResume} variant="outline" size="lg">Upload a resume instead</Button>
 						<p className="text-xs mt-2 opacity-50 w-80 mx-auto text-center">Upload your existing resume and we will read the details from there</p>
-					</motion.div>
+					</motion.div>}
 
 					<div
 						className="w-[calc(100%-4.7rem)] flex items-center justify-between fixed left-[4.7rem] z-10 bottom-16 px-16"
