@@ -1,18 +1,3 @@
-/* Animated flowing gradient ONLY on border */
-.processing-border {
-  border: 2px solid transparent;
-  background:
-    linear-gradient(#ffffff, #ffffff) padding-box,
-    linear-gradient(90deg, #f97316, #f43f5e, #f59e0b, #facc15, #f97316) border-box;
-  background-size: 100% 100%, 200% 100%;
-  background-position: 0 0, 0 0;
-  background-repeat: no-repeat, repeat;
-  animation: border-flow 2s linear infinite;
-}
-
-@keyframes border-flow {
-  to { background-position: 0 0, 200% 0; }
-}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -215,4 +200,20 @@ body {
 /* Hide scrollbar for WebKit browsers */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Animated flowing gradient ONLY on border */
+.processing-border {
+  border: 2px solid transparent;
+  background:
+          linear-gradient(#ffffff, #ffffff) padding-box,
+          linear-gradient(90deg, #f97316, #f43f5e, #f59e0b, #facc15, #f97316) border-box;
+  background-size: 100% 100%, 200% 100%;
+  background-position: 0 0, 0 0;
+  background-repeat: no-repeat, repeat;
+  animation: border-flow 2s linear infinite;
+}
+
+@keyframes border-flow {
+  to { background-position: 0 0, 200% 0; }
 }

@@ -108,31 +108,30 @@ export type ResumeMutation = z.infer<typeof ResumeMutationSchema>
 /**
  * Lightweight schema for listing resumes for a user
  */
+const ResumeListItemCommonFields = z.object({
+	id: z.string(),
+	user: z.string().optional(),
+	status: z.string().nullable().optional(),
+	thumbnail: z.string().url().nullish()
+})
+
 export const ResumeListItemSchema = z.discriminatedUnion('base', [
-	z.object({
-		id: z.string(),
+	ResumeListItemCommonFields.extend({
 		base: z.literal(true),
 		job: JobSchema.partial({
 			requirements: true,
 			responsibilities: true,
 			benefits: true,
 			status: true
-		}),
-		user: z.string().optional(),
-		status: z.string().nullable().optional(),
-		thumbnail: z.string().nullable().optional()
+		})
 	}),
-	z.object({
-		id: z.string(),
+	ResumeListItemCommonFields.extend({
 		base: z.literal(false),
 		job: JobSchema.extend({
 			requirements: JobSchema.shape.requirements.optional(),
 			responsibilities: JobSchema.shape.responsibilities.optional(),
 			benefits: JobSchema.shape.benefits.optional()
-		}),
-		user: z.string().optional(),
-		status: z.string().nullable().optional(),
-		thumbnail: z.string().nullable().optional()
+		})
 	})
 ])
 

@@ -34,7 +34,6 @@ const ResumeCard = ({resume, className}: ResumeCardProps) => {
 						)}
 
 						{!isProcessing && (resume.thumbnail ? (
-						// eslint-disable-next-line @next/next/no-img-element
 							<img
 								src={resume.thumbnail}
 								alt={`${resume.job.title} at ${resume.job.company_name}`}
