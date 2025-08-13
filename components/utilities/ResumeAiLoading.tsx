@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useMemo, useState} from 'react'
+import {useEffect, useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import {cn} from '@/lib/utils'
 import AiLoading from '@/components/utilities/AiLoading'
@@ -97,14 +97,20 @@ const ResumeAiLoading = ({
 }) => {
 	const [stageIndex, setStageIndex] = useState(0)
 	const [messageKey, setMessageKey] = useState(0)
+	const [message, setMessage] = useState('')
 
 	const stage = stages[stageIndex % stages.length]
 
-	const message = useMemo(() => {
+
+	// IMPORTANT: Choose the message on the client after mount to avoid SSR/CSR text mismatches.
+	useEffect(() => {
 		const msgs = stage?.messages ?? []
-		if (msgs.length === 0) return ''
+		if (msgs.length === 0) {
+			setMessage('')
+			return
+		}
 		const idx = Math.floor(Math.random() * msgs.length)
-		return msgs[idx]
+		setMessage(msgs[idx])
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stageIndex, messageKey])
 
@@ -117,7 +123,13 @@ const ResumeAiLoading = ({
 	}, [])
 
 	return (
-		<div className={cn('absolute inset-0', className)}>
+		<motion.div
+			className={cn('absolute inset-0', className)}
+			initial={{opacity: 0, filter: 'blur(8px)'}}
+			animate={{opacity: 1, filter: 'blur(0px)'}}
+			exit={{opacity: 0, filter: 'blur(8px)'}}
+			transition={{duration: 0.5, ease: 'easeOut'}}
+		>
 			{/* Ball video */}
 			<AiLoading loading text="" centered videoClass="scale-[1.8] blur-lg" textClass="hidden" />
 
@@ -141,7 +153,7 @@ const ResumeAiLoading = ({
 					</motion.div>
 				</AnimatePresence>
 			</div>
-		</div>
+		</motion.div>
 	)
 }
 

@@ -17,9 +17,24 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	// Compute status flags
 	const status = resume?.status
 	const isProcessingStatus = (status || '').toLowerCase() === 'processing'
-	/* Keep processing UI while loading or error (before first successful fetch) to avoid flicker */
-	const processing = isProcessingStatus || (!resume && (isLoading || isError))
 
+	// Show the processing overlay ONLY when backend reports processing.
+	const processing = isProcessingStatus
+
+
+	// Initial load or transient errors: show neutral placeholders without the processing overlay
+	if (!resume && (isLoading || isError)) {
+		return (
+			<ResumeHighlightProvider>
+				<div className="flex h-screen w-full" role="main">
+					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative overflow-hidden shrink-0" />
+					<div className="flex-1 min-w-0">
+						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
+					</div>
+				</div>
+			</ResumeHighlightProvider>
+		)
+	}
 
 	if (processing) {
 		return (
