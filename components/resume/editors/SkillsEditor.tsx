@@ -37,6 +37,7 @@ import {
 	NO_ANIMATION
 } from '@/components/animations/DefaultFade'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
+import ScrollMask from '@/components/ui/scroll-mask'
 
 type ViewState = 'list' | 'form'
 
@@ -364,239 +365,252 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	if (view === 'form') {
 		return (
-			<div className={cn('space-y-6', className)}>
-				<EditorHeader
-					title={editingIndex !== null ? 'Update Skill' : 'Add New Skill'}
-					description={editingIndex !== null
-						? 'Update your skill proficiency level'
-						: 'Skills are critical for getting through ATS filters. Add skills relevant to your target job.'}
-					className="mb-10"
-				/>
+			<ScrollMask
+				className={cn('space-y-6', className)}
+				style={{height: 'calc(100vh - 162px)'}}
+				data-lenis-prevent
+			>
+				<div className="space-y-6 px-1">
+					<EditorHeader
+						title={editingIndex !== null ? 'Update Skill' : 'Add New Skill'}
+						description={editingIndex !== null
+							? 'Update your skill proficiency level'
+							: 'Skills are critical for getting through ATS filters. Add skills relevant to your target job.'}
+						className="mb-10"
+					/>
 
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-						<div className="p-5 bg-white rounded-lg border shadow-sm">
-							<h3 className="text-base font-medium mb-4">{editingIndex !== null ? 'Edit skill' : 'Select a skill'}</h3>
-							<div className="flex flex-col gap-4">
-								<FormField
-									control={form.control}
-									name="skill_id"
-									render={({field}) => (
-										<FormItem>
-											<SkillAutocomplete
-												skills={globalSkills}
-												name="skill_id"
-												placeholder="Type to search skills..."
-												disabled={isSubmitting || isLoadingGlobalSkills}
-												defaultValue={editingIndex !== null ? resumeSkills[editingIndex]?.skill.name : ''}
-												onSkillSelect={(skillId, skillName, category) => {
-												// For custom skills, set a custom ID format
-													if (skillId === 'custom') {
-														form.setValue('skill_id', `custom:${skillName}`)
-														// Only clear category for custom skills if we're adding a new skill (not editing)
-														if (editingIndex === null) {
-															form.setValue('category', '')
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+							<div className="p-5 bg-white rounded-lg border shadow-sm">
+								<h3 className="text-base font-medium mb-4">{editingIndex !== null ? 'Edit skill' : 'Select a skill'}</h3>
+								<div className="flex flex-col gap-4">
+									<FormField
+										control={form.control}
+										name="skill_id"
+										render={({field}) => (
+											<FormItem>
+												<SkillAutocomplete
+													skills={globalSkills}
+													name="skill_id"
+													placeholder="Type to search skills..."
+													disabled={isSubmitting || isLoadingGlobalSkills}
+													defaultValue={editingIndex !== null ? resumeSkills[editingIndex]?.skill.name : ''}
+													onSkillSelect={(skillId, skillName, category) => {
+														// For custom skills, set a custom ID format
+														if (skillId === 'custom') {
+															form.setValue('skill_id', `custom:${skillName}`)
+															// Only clear category for custom skills if we're adding a new skill (not editing)
+															if (editingIndex === null) {
+																form.setValue('category', '')
+															}
+															// When editing, preserve the existing category
+														} else if (skillId) {
+															// For existing skills, populate the category
+															form.setValue('category', category || '')
 														}
-													// When editing, preserve the existing category
-													} else if (skillId) {
-													// For existing skills, populate the category
-														form.setValue('category', category || '')
-													}
-												/*
-												 * Don't update category when skillId is empty (user is typing/clearing)
-												 * This preserves the existing category when editing
-												 */
-												}}
-											/>
-											<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
-												<Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 px-1.5 py-0">Preferred</Badge>
-												<span>skills are recommended by ATS systems and frequently searched by recruiters.</span>
-											</div>
-										</FormItem>
-									)}
-								/>
+														/*
+														 * Don't update category when skillId is empty (user is typing/clearing)
+														 * This preserves the existing category when editing
+														 */
+													}}
+												/>
+												<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
+													<Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50 px-1.5 py-0">Preferred</Badge>
+													<span>skills are recommended by ATS systems and frequently searched by recruiters.</span>
+												</div>
+											</FormItem>
+										)}
+									/>
 
-								<FormField
-									control={form.control}
-									name="category"
-									render={({field}) => (
-										<CategoryAutocomplete
-											categories={skillCategories}
-											name="category"
-											label="Category (optional)"
-											placeholder="E.g., Programming Languages, Tools, etc."
-											disabled={isSubmitting || isLoadingCategories}
-											showLabel
-											defaultValue={field.value || ''}
-											onCategorySelect={(category) => {
+									<FormField
+										control={form.control}
+										name="category"
+										render={({field}) => (
+											<CategoryAutocomplete
+												categories={skillCategories}
+												name="category"
+												label="Category (optional)"
+												placeholder="E.g., Programming Languages, Tools, etc."
+												disabled={isSubmitting || isLoadingCategories}
+												showLabel
+												defaultValue={field.value || ''}
+												onCategorySelect={(category) => {
 												/*
 												 * CategoryAutocomplete already updates the form value
 												 * This callback can be used for additional logic if needed
 												 */
-											}}
+												}}
+											/>
+										)}
+									/>
+
+									<p className="text-xs text-muted-foreground">
+										Skills with detailed proficiency levels stand out to both recruiters and ATS systems.
+									</p>
+								</div>
+							</div>
+
+							<div className="p-5 bg-white rounded-lg border shadow-sm">
+								<h3 className="text-base font-medium mb-4">Skill proficiency</h3>
+								<FormField
+									control={form.control}
+									name="level"
+									render={() => (
+										<ProficiencySlider
+											name="level"
+											levels={skillLevels}
+											description="Rate your proficiency level to help employers understand your expertise"
+											disabled={isSubmitting}
 										/>
 									)}
 								/>
-
-								<p className="text-xs text-muted-foreground">
-									Skills with detailed proficiency levels stand out to both recruiters and ATS systems.
-								</p>
 							</div>
-						</div>
 
-						<div className="p-5 bg-white rounded-lg border shadow-sm">
-							<h3 className="text-base font-medium mb-4">Skill proficiency</h3>
-							<FormField
-								control={form.control}
-								name="level"
-								render={() => (
-									<ProficiencySlider
-										name="level"
-										levels={skillLevels}
-										description="Rate your proficiency level to help employers understand your expertise"
-										disabled={isSubmitting}
-									/>
-								)}
+							<FormButtons
+								onCancel={handleCancel}
+								isSubmitting={isSubmitting}
+								isEditing={editingIndex !== null}
+								editingSubmitLabel="Update Skill"
+								addingSubmitLabel="Add Skill"
+								className="mt-2"
+								disabled={!form.watch('skill_id')}
 							/>
-						</div>
-
-						<FormButtons
-							onCancel={handleCancel}
-							isSubmitting={isSubmitting}
-							isEditing={editingIndex !== null}
-							editingSubmitLabel="Update Skill"
-							addingSubmitLabel="Add Skill"
-							className="mt-2"
-							disabled={!form.watch('skill_id')}
-						/>
-					</form>
-				</Form>
-			</div>
+						</form>
+					</Form>
+				</div>
+			</ScrollMask>
 		)
 	}
 
 	return (
-		<div className={cn('space-y-6', className)}>
-			<EditorHeader
-				title="Skills"
-				showAddButton={isMounted && !isLoadingResumeSkills}
-				onAddNew={handleAddNew}
-				isDisabled={isDeleting}
-				addButtonText="Add New Skill"
-			/>
+		<ScrollMask
+			className={cn('flex flex-col', className)}
+			style={{height: 'calc(100vh - 162px)'}}
+			data-lenis-prevent
+		>
+			<div className="space-y-6 px-1">
+				<EditorHeader
+					title="Skills"
+					showAddButton={isMounted && !isLoadingResumeSkills}
+					onAddNew={handleAddNew}
+					isDisabled={isDeleting}
+					addButtonText="Add New Skill"
+					className="flex-shrink-0"
+				/>
 
-			<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
-				{(isLoadingResumeSkills || isLoadingGlobalSkills) && (
-					<motion.div
-						key="skeleton"
-						{...DEFAULT_FADE_ANIMATION}
-					>
-						<SkillsEditorSkeleton />
-					</motion.div>
-				)}
+				<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+					{(isLoadingResumeSkills || isLoadingGlobalSkills) && (
+						<motion.div
+							key="skeleton"
+							{...DEFAULT_FADE_ANIMATION}
+						>
+							<SkillsEditorSkeleton />
+						</motion.div>
+					)}
 
-				{resumeSkillsError && (
-					<motion.div
-						key="error"
-						{...DEFAULT_FADE_ANIMATION}
-						className="text-center py-10 text-red-500"
-					>
-						Error loading skills. Please try again later.
-					</motion.div>
-				)}
+					{resumeSkillsError && (
+						<motion.div
+							key="error"
+							{...DEFAULT_FADE_ANIMATION}
+							className="text-center py-10 text-red-500"
+						>
+							Error loading skills. Please try again later.
+						</motion.div>
+					)}
 
-				{!isLoadingResumeSkills && !isLoadingGlobalSkills && !resumeSkillsError && (
-					<motion.div
-						key="content"
-						{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
-						className="space-y-6 overflow-y-auto"
-					>
-						{Object.keys(skillsByCategory).length > 0 ? (
-							<div className="space-y-4" ref={categoryAnimationContainer}>
-								{Object.entries(skillsByCategory).map(([category, skills]) => (
-									<Collapsible key={category} defaultOpen={true} className="rounded-lg border bg-card overflow-hidden">
-										<CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-100 focus:outline-none border-b">
-											<h3 className="font-medium text-foreground">{category}</h3>
-											<ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
-										</CollapsibleTrigger>
-										<CollapsibleContent>
-											<div className="divide-y divide-neutral-100" ref={skillAnimationContainer}>
-												{skills.map((skill) => (
-													<div
-														key={skill.id}
-														className="group relative flex items-center py-3 px-4 hover:bg-neutral-50 transition-all"
-													>
-														<div className="flex-1">
-															<span className="font-medium text-sm">{skill.name}</span>
-															{skill.level && (
-																<span className="ml-2 text-xs text-muted-foreground">
-																	{getSkillLevelLabel(skill.level)}
-																</span>
-															)}
-														</div>
+					{!isLoadingResumeSkills && !isLoadingGlobalSkills && !resumeSkillsError && (
+						<motion.div
+							key="content"
+							{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+							className="space-y-6"
+						>
+							{Object.keys(skillsByCategory).length > 0 ? (
+								<div className="space-y-4" ref={categoryAnimationContainer}>
+									{Object.entries(skillsByCategory).map(([category, skills]) => (
+										<Collapsible key={category} defaultOpen={true} className="rounded-lg border bg-card overflow-hidden">
+											<CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-100 focus:outline-none border-b">
+												<h3 className="font-medium text-foreground">{category}</h3>
+												<ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
+											</CollapsibleTrigger>
+											<CollapsibleContent>
+												<div className="divide-y divide-neutral-100" ref={skillAnimationContainer}>
+													{skills.map((skill) => (
+														<div
+															key={skill.id}
+															className="group relative flex items-center py-3 px-4 hover:bg-neutral-50 transition-all"
+														>
+															<div className="flex-1">
+																<span className="font-medium text-sm">{skill.name}</span>
+																{skill.level && (
+																	<span className="ml-2 text-xs text-muted-foreground">
+																		{getSkillLevelLabel(skill.level)}
+																	</span>
+																)}
+															</div>
 
-														<div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-															<Button
-																variant="ghost"
-																size="icon"
-																className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
-																onClick={() => handleEdit(skill.index)}
-																disabled={isDeleting}
-															>
-																<Pencil className="h-4 w-4" />
-																<span className="sr-only">Edit</span>
-															</Button>
-															{skill.id === deletingId ? (
+															<div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
 																<Button
 																	variant="ghost"
 																	size="icon"
-																	className="h-8 w-8"
-																	disabled
+																	className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+																	onClick={() => handleEdit(skill.index)}
+																	disabled={isDeleting}
 																>
-																	<Loader2 className="h-4 w-4 animate-spin" />
-																	<span className="sr-only">Deleting</span>
+																	<Pencil className="h-4 w-4" />
+																	<span className="sr-only">Edit</span>
 																</Button>
-															) : (
-																<PopConfirm
-																	triggerElement={
-																		<Button
-																			variant="ghost"
-																			size="icon"
-																			className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
-																			disabled={isDeleting}
-																		>
-																			<Trash2 className="h-4 w-4" />
-																			<span className="sr-only">Delete</span>
-																		</Button>
-																	}
-																	message={`Are you sure you want to remove "${skill.name}" from your resume?`}
-																	onYes={() => handleDelete(skill.id)}
-																/>
-															)}
+																{skill.id === deletingId ? (
+																	<Button
+																		variant="ghost"
+																		size="icon"
+																		className="h-8 w-8"
+																		disabled
+																	>
+																		<Loader2 className="h-4 w-4 animate-spin" />
+																		<span className="sr-only">Deleting</span>
+																	</Button>
+																) : (
+																	<PopConfirm
+																		triggerElement={
+																			<Button
+																				variant="ghost"
+																				size="icon"
+																				className="h-8 w-8 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+																				disabled={isDeleting}
+																			>
+																				<Trash2 className="h-4 w-4" />
+																				<span className="sr-only">Delete</span>
+																			</Button>
+																		}
+																		message={`Are you sure you want to remove "${skill.name}" from your resume?`}
+																		onYes={() => handleDelete(skill.id)}
+																	/>
+																)}
+															</div>
 														</div>
-													</div>
-												))}
-											</div>
-										</CollapsibleContent>
-									</Collapsible>
-								))}
-							</div>
-						) : (
-							<div className="text-center py-8 px-4 border border-dashed rounded-lg bg-neutral-50">
-								<div className="mb-3 text-muted-foreground">No skills added yet</div>
-								<Button
-									onClick={handleAddNew}
-									className="bg-flame-500 hover:bg-flame-600 text-white"
-								>
-									<Plus className="h-4 w-4 mr-2" />
-									Add Your First Skill
-								</Button>
-							</div>
-						)}
-					</motion.div>
-				)}
-			</AnimatePresence>
-		</div>
+													))}
+												</div>
+											</CollapsibleContent>
+										</Collapsible>
+									))}
+								</div>
+							) : (
+								<div className="text-center py-8 px-4 border border-dashed rounded-lg bg-neutral-50">
+									<div className="mb-3 text-muted-foreground">No skills added yet</div>
+									<Button
+										onClick={handleAddNew}
+										className="bg-flame-500 hover:bg-flame-600 text-white"
+									>
+										<Plus className="h-4 w-4 mr-2" />
+										Add Your First Skill
+									</Button>
+								</div>
+							)}
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</div>
+		</ScrollMask>
 	)
 }
 

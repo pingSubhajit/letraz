@@ -1,5 +1,5 @@
 import NewResumeInput from '@/components/NewResumeInput'
-import OnboardingWelcome from '@/components/OnboardingWelcome'
+import OnboardingWelcome from '@/components/onboarding/OnboardingWelcome'
 import {Suspense} from 'react'
 
 const AppHome = () => {

@@ -3,119 +3,93 @@
 import {generateObject} from 'ai'
 import {google} from '@ai-sdk/google'
 import {z} from 'zod'
+import {ResumeMutation, ResumeMutationSchema} from '@/lib/resume/types'
 
-// Simplified schemas compatible with Google Gemini
-const GeminiUserInfoSchema = z.object({
-	title: z.string().describe('The title of the user, ex. Mr. Mrs. etc.').nullable().optional(),
-	first_name: z.string().describe('The first name of the user'),
-	last_name: z.string().describe('The last name of the user'),
-	email: z.string().describe('The email address of the user'),
-	phone: z.string().describe('The phone number of the user').nullable().optional(),
-	dob: z.string().describe('The date of birth as ISO string').nullable().optional(),
-	nationality: z.string().describe('The nationality of the user').nullable().optional(),
-	address: z.string().describe('The address of the user').nullable().optional(),
-	city: z.string().describe('The city of the user').nullable().optional(),
-	postal: z.string().describe('The postal code of the user').nullable().optional(),
-	country: z.object({
-		code: z.string().describe('The country code'),
-		name: z.string().describe('The country name')
-	}).describe('The country information').nullable().optional(),
-	website: z.string().describe('The website URL of the user').nullable().optional(),
-	profile_text: z.string().describe('The profile text or bio of the user').nullable().optional()
-})
+/**
+ * Ensure that HTML produced for Tiptap includes our expected classes.
+ * - paragraph -> text-node
+ * - heading (h1..h6) -> heading-node
+ * - blockquote -> block-node
+ * - ul/ol -> list-node
+ * - code (inline) -> inline
+ * If the input is plain text, wrap it in a paragraph with class text-node.
+ */
+const ALLOWED_TAGS = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'ul', 'ol', 'code'] as const
+type AllowedTag = typeof ALLOWED_TAGS[number]
 
-const GeminiJobSchema = z.object({
-	title: z.string().describe('The job title'),
-	description: z.string().describe('The job description'),
-	company_name: z.string().describe('The company name'),
-	location: z.string().describe('The job location'),
-	job_url: z.string().describe('The job URL'),
-	requirements: z.string().describe('The job requirements').nullable(),
-	responsibilities: z.string().describe('The job responsibilities').nullable(),
-	benefits: z.string().describe('The job benefits').nullable()
-})
+const ensureClassOnTag = (html: string, tag: AllowedTag, className: string): string => {
+	if (!ALLOWED_TAGS.includes(tag)) {
+		throw new Error(`Tag "${tag}" is not allowed`)
+	}
+	const regex = new RegExp(`<${tag}\\b([^>]*)>`, 'gi')
+	return html.replace(regex, (match, attrs: string) => {
+		if (/class\s*=/.test(attrs)) {
+			return match.replace(/class\s*=\s*(["'])(.*?)\1/i, (_m, quote: string, classes: string) => {
+				const classList = classes.trim().split(/\s+/)
+				if (classList.includes(className)) return `class=${quote}${classes}${quote}`
+				const updated = classes ? `${classes} ${className}` : className
+				return `class=${quote}${updated}${quote}`
+			})
+		}
+		const space = attrs?.length ? attrs : ''
+		return `<${tag}${space} class="${className}">`
+	})
+}
 
-const GeminiEducationSchema = z.object({
-	institution_name: z.string().describe('The name of the institution'),
-	field_of_study: z.string().describe('The field of study'),
-	degree: z.string().describe('The degree obtained').optional(),
-	country: z.object({
-		code: z.string().describe('The country code'),
-		name: z.string().describe('The country name')
-	}).describe('The country information'),
-	started_from_month: z.number().describe('The start month').optional(),
-	started_from_year: z.number().describe('The start year').optional(),
-	finished_at_month: z.number().describe('The finish month').optional(),
-	finished_at_year: z.number().describe('The finish year').optional(),
-	current: z.boolean().describe('Whether currently studying'),
-	description: z.string().describe('The description').optional()
-})
+// Normalize certification issue_date to YYYY-MM-DD when possible
+const normalizeCertificationDate = (date: unknown): string | null | undefined => {
+	if (date === null || date === undefined) return date as null | undefined
 
-const GeminiExperienceSchema = z.object({
-	company_name: z.string().describe('The company name'),
-	job_title: z.string().describe('The job title'),
-	country: z.object({
-		code: z.string().describe('The country code'),
-		name: z.string().describe('The country name')
-	}).describe('The country information'),
-	started_from_month: z.number().describe('The start month').optional(),
-	started_from_year: z.number().describe('The start year').optional(),
-	finished_at_month: z.number().describe('The finish month').optional(),
-	finished_at_year: z.number().describe('The finish year').optional(),
-	current: z.boolean().describe('Whether currently working'),
-	description: z.string().describe('The job description').optional()
-})
+	if (date instanceof Date) {
+		return date.toISOString().slice(0, 10)
+	}
 
-const GeminiSkillSchema = z.object({
-	skill: z.object({
-		name: z.string().describe('The skill name'),
-		alias: z.array(z.object({
-			name: z.string().describe('The alias name')
-		})).describe('The skill aliases')
-	}).describe('The skill information'),
-	proficiency: z.string().describe('The proficiency level').optional(),
-	years_of_experience: z.number().describe('Years of experience').optional()
-})
+	if (typeof date === 'string') {
+		if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date
+		if (/^\d{4}-\d{2}-\d{2}T/.test(date)) return date.slice(0, 10)
 
-const GeminiCertificationSchema = z.object({
-	certification_name: z.string().describe('The certification name'),
-	issuing_organization: z.string().describe('The issuing organization'),
-	issued_date: z.string().describe('The issued date').optional(),
-	expiry_date: z.string().describe('The expiry date').optional(),
-	credential_id: z.string().describe('The credential ID').optional(),
-	credential_url: z.string().describe('The credential URL').optional(),
-	description: z.string().describe('The description').optional()
-})
+		const parsed = new Date(date)
+		if (!Number.isNaN(parsed.getTime())) {
+			return parsed.toISOString().slice(0, 10)
+		}
+	}
 
-const GeminiProjectSchema = z.object({
-	project_name: z.string().describe('The project name'),
-	description: z.string().describe('The project description').optional(),
-	technologies_used: z.string().describe('Technologies used').optional(),
-	project_url: z.string().describe('The project URL').optional(),
-	github_url: z.string().describe('The GitHub URL').optional(),
-	started_from_month: z.number().describe('The start month').optional(),
-	started_from_year: z.number().describe('The start year').optional(),
-	finished_at_month: z.number().describe('The finish month').optional(),
-	finished_at_year: z.number().describe('The finish year').optional(),
-	current: z.boolean().describe('Whether currently working on project')
-})
+	return undefined
+}
 
-// Simplified section schema
-const GeminiResumeSectionSchema = z.object({
-	type: z.enum(['Education', 'Experience', 'Skill', 'Project', 'Certification']).describe('The type of the resume section'),
-	education_data: GeminiEducationSchema.optional().describe('Education data if type is Education'),
-	experience_data: GeminiExperienceSchema.optional().describe('Experience data if type is Experience'),
-	skill_data: z.array(GeminiSkillSchema).optional().describe('Skills data if type is Skill'),
-	certification_data: GeminiCertificationSchema.optional().describe('Certification data if type is Certification'),
-	project_data: GeminiProjectSchema.optional().describe('Project data if type is Project')
-})
+const isLikelyHtml = (input: string): boolean => /<\w+[\s\S]*>/.test(input)
 
-// Simplified resume schema compatible with Gemini
-const GeminiResumeSchema = z.object({
-	user: GeminiUserInfoSchema.describe('The user information associated with the resume'),
-	job: GeminiJobSchema.describe('The job information associated with the resume').optional(),
-	sections: z.array(GeminiResumeSectionSchema).describe('The sections included in the resume')
-})
+const normalizeDescriptionToTiptapHTML = (input: string | null | undefined): string | null | undefined => {
+	if (input == null || input === '') return input
+
+	let html = String(input).trim()
+
+	// If not HTML, convert to a simple paragraph
+	if (!isLikelyHtml(html)) {
+		// Preserve basic newlines by splitting into paragraphs
+		const paragraphs = html
+			.split(/\n{2,}/)
+			.map(p => p.trim())
+			.filter(Boolean)
+			.map(p => `<p class="text-node">${p.replace(/\n/g, '<br/>')}</p>`) // single newlines become <br/>
+		html = paragraphs.length ? paragraphs.join('') : '<p class="text-node"></p>'
+	}
+
+	// Enforce classes on common nodes
+	html = ensureClassOnTag(html, 'p', 'text-node')
+	html = ensureClassOnTag(html, 'h1', 'heading-node')
+	html = ensureClassOnTag(html, 'h2', 'heading-node')
+	html = ensureClassOnTag(html, 'h3', 'heading-node')
+	html = ensureClassOnTag(html, 'h4', 'heading-node')
+	html = ensureClassOnTag(html, 'h5', 'heading-node')
+	html = ensureClassOnTag(html, 'h6', 'heading-node')
+	html = ensureClassOnTag(html, 'blockquote', 'block-node')
+	html = ensureClassOnTag(html, 'ul', 'list-node')
+	html = ensureClassOnTag(html, 'ol', 'list-node')
+	html = ensureClassOnTag(html, 'code', 'inline')
+
+	return html
+}
 
 // Generic schema for non-proprietary format
 const GenericResumeSchema = z.object({
@@ -155,34 +129,6 @@ const GenericResumeSchema = z.object({
 	}))
 })
 
-/**
- * Parses an uploaded resume file using Vercel AI SDK with Gemini Flash
- * and returns either a proprietary Resume object or a generic JSON structure.
- *
- * @returns Parsed resume data matching the requested format
- * @param geminiResult
- */
-// Helper function to transform Gemini result to a simple parsed format
-const transformToSimpleFormat = (geminiResult: z.infer<typeof GeminiResumeSchema>) => {
-	return {
-		user: {
-			...geminiResult.user,
-			dob: geminiResult.user?.dob ? new Date(geminiResult.user.dob) : null
-		},
-		job: geminiResult.job ?? null,
-		sections: geminiResult.sections.map((section, index) => ({
-			type: section.type,
-			index: index,
-			data:
-				section.education_data ??
-				section.experience_data ??
-				section.certification_data ??
-				section.project_data ??
-				{skills: section.skill_data ?? []}
-		}))
-	}
-}
-
 export const parseResume = async (
 	file: File,
 	format: 'proprietary' | 'generic' = 'proprietary'
@@ -196,10 +142,35 @@ export const parseResume = async (
 		throw new Error('Uploaded resume is an empty file')
 	}
 
-	const schema = format === 'proprietary' ? GeminiResumeSchema : GenericResumeSchema
+	// For proprietary format, output exactly our internal ResumeMutation schema
+	const schema = format === 'proprietary' ? ResumeMutationSchema : GenericResumeSchema
 
 	const prompt = format === 'proprietary'
-		? 'Parse resume content into structured data. Extract: personal info, education, experience, skills, certifications, projects. Use HTML for descriptions with <ul class="list-node"><li class="text-node">text</li></ul> format. If certain details cannot be found, just leave a blank string for that. Only return the JSON response. Do not include any additional texts, backticks or artifacts.'
+		? `You are a strict JSON generator. Return ONLY JSON matching this schema, no prose:
+{
+  "sections": [
+    { "type": "Education", "data": { "institution_name": string, "field_of_study": string, "degree": string|null, "country": string(ISO3), "started_from_month": string(1-12)|null|undefined, "started_from_year": string(YYYY)|null|undefined, "finished_at_month": string(1-12)|null|undefined, "finished_at_year": string(YYYY)|null|undefined, "current": boolean, "description": string|null } },
+    { "type": "Experience", "data": { "company_name": string, "job_title": string, "country": string(ISO3), "city": string|null, "employment_type": "flt"|"prt"|"con"|"int"|"fre"|"sel"|"vol"|"tra", "started_from_month": string(1-12)|null|undefined, "started_from_year": string(YYYY)|null|undefined, "finished_at_month": string(1-12)|null|undefined, "finished_at_year": string(YYYY)|null|undefined, "current": boolean, "description": string|null } },
+    { "type": "Skill", "data": { "skills": [ { "name": string, "level": "BEG"|"INT"|"ADV"|"EXP"|null, "category": string|null|undefined } ] } },
+    { "type": "Project", "data": { "name": string, "category": string|null, "description": string|null, "role": string|null, "github_url": string|null, "live_url": string|null, "started_from_month": string(1-12)|null|undefined, "started_from_year": string(YYYY)|null|undefined, "finished_at_month": string(1-12)|null|undefined, "finished_at_year": string(YYYY)|null|undefined, "current": boolean|null, "skills_used": [ { "name": string, "category": string|null } ] } },
+    { "type": "Certification", "data": { "name": string, "issuing_organization": string|undefined, "issue_date": string(YYYY-MM-DD) | null | undefined, "credential_url": string|null } }
+  ]
+}
+
+Rules:
+- Use null for unknown optional values where allowed; otherwise use empty string for required strings when unknown.
+- Months MUST be numeric strings from "1" to "12" (do not use names like "Jul").
+- Years MUST be 4-digit numeric strings like "2021".
+- Certification issue_date MUST be a date-only string in the exact format YYYY-MM-DD (e.g., "2024-03-01").
+- Use ISO3 country codes (e.g., USA, IND) when inferring countries.
+- employment_type must be one of: flt, prt, con, int, fre, sel, vol, tra.
+- level must be one of: BEG, INT, ADV, EXP, or null.
+- For every "description" field (Education, Experience, Project), return a Tiptap-compatible HTML string and PREFER BULLETED LISTS:
+   - Default to unordered lists for multi-point content: <ul class="list-node"><li>…</li><li>…</li></ul>
+   - Use a single paragraph only when the content is one succinct sentence: <p class="text-node">…</p>
+   - Allowed classes: paragraphs -> "text-node"; headings h1–h6 -> "heading-node"; blockquotes -> "block-node"; ul/ol -> "list-node"; inline code -> "inline".
+   - Do NOT return Markdown; return HTML only with the classes above. Keep list items concise, one idea per <li>.
+- Return ONLY JSON. No backticks, no extra text.`
 		: 'Parse resume into: personalInfo, education, experience, skills, certifications, projects. Only return the JSON response. Do not include any additional texts, backticks or artifacts.'
 
 	// Convert file to data URL format as required by AI SDK
@@ -229,10 +200,26 @@ export const parseResume = async (
 			temperature: 0 // More deterministic, faster
 		})
 
+		// Normalize any date-time strings to date-only for certification issue_date
 		if (format === 'proprietary') {
-			// Transform to simple parsed format without metadata
-			const geminiResult = result.object as z.infer<typeof GeminiResumeSchema>
-			return transformToSimpleFormat(geminiResult)
+			const payload = result.object as ResumeMutation
+			for (const section of payload.sections) {
+				if (section.type === 'Certification') {
+					section.data.issue_date = normalizeCertificationDate(section.data.issue_date)
+				}
+
+				// Normalize description fields to Tiptap-compatible HTML
+				if (section.type === 'Education') {
+					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+				}
+				if (section.type === 'Experience') {
+					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+				}
+				if (section.type === 'Project') {
+					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+				}
+			}
+			return payload
 		}
 
 		return result.object
