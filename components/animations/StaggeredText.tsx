@@ -29,6 +29,7 @@ const StaggeredText = ({text, show, className}: StaggeredTextProps) => {
 			{letters.map((letter, index) => (
 				<motion.span
 					key={index}
+					style={{display: 'inline-block'}}
 					variants={{
 						hidden: {
 							y: '200%',

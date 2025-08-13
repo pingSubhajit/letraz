@@ -201,6 +201,8 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 							onKeyDown={handleKeyDown}
 							role="button"
 							aria-label="Click or drop your resume here (.pdf, .txt, .doc, .docx, .rtf, .odt)"
+							aria-disabled={isParsing}
+							aria-busy={isParsing}
 							tabIndex={0}
 						>
 							<input
@@ -226,7 +228,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 								</motion.div>}
 
 								{isParsing && !isDragging && (
-									<motion.div key="PARSING_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none">
+									<motion.div key="PARSING_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none" role="status" aria-live="polite">
 										<StaggeredText
 											text={PARSING_MESSAGES[parsingMessageIndex]}
 											show={showParsingText}

@@ -14,7 +14,13 @@ import {ResumeMutation, ResumeMutationSchema} from '@/lib/resume/types'
  * - code (inline) -> inline
  * If the input is plain text, wrap it in a paragraph with class text-node.
  */
-const ensureClassOnTag = (html: string, tag: string, className: string): string => {
+const ALLOWED_TAGS = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'ul', 'ol', 'code'] as const
+type AllowedTag = typeof ALLOWED_TAGS[number]
+
+const ensureClassOnTag = (html: string, tag: AllowedTag, className: string): string => {
+	if (!ALLOWED_TAGS.includes(tag)) {
+		throw new Error(`Tag "${tag}" is not allowed`)
+	}
 	const regex = new RegExp(`<${tag}\\b([^>]*)>`, 'gi')
 	return html.replace(regex, (match, attrs: string) => {
 		if (/class\s*=/.test(attrs)) {
@@ -28,6 +34,27 @@ const ensureClassOnTag = (html: string, tag: string, className: string): string 
 		const space = attrs?.length ? attrs : ''
 		return `<${tag}${space} class="${className}">`
 	})
+}
+
+// Normalize certification issue_date to YYYY-MM-DD when possible
+const normalizeCertificationDate = (date: unknown): string | null | undefined => {
+	if (date === null || date === undefined) return date as null | undefined
+
+	if (date instanceof Date) {
+		return date.toISOString().slice(0, 10)
+	}
+
+	if (typeof date === 'string') {
+		if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date
+		if (/^\d{4}-\d{2}-\d{2}T/.test(date)) return date.slice(0, 10)
+
+		const parsed = new Date(date)
+		if (!Number.isNaN(parsed.getTime())) {
+			return parsed.toISOString().slice(0, 10)
+		}
+	}
+
+	return undefined
 }
 
 const isLikelyHtml = (input: string): boolean => /<\w+[\s\S]*>/.test(input)
@@ -180,30 +207,7 @@ Rules:
 			const payload = result.object as ResumeMutation
 			for (const section of payload.sections) {
 				if (section.type === 'Certification') {
-					const d: unknown = section.data.issue_date
-					if (d instanceof Date) {
-						const iso = d.toISOString()
-						section.data.issue_date = iso.slice(0, 10)
-					} else if (typeof d === 'string') {
-						// If it includes a time component, strip to date-only
-						if (/^\d{4}-\d{2}-\d{2}T/.test(d)) {
-							section.data.issue_date = d.slice(0, 10)
-						} else if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
-							// already date-only, keep as is
-							section.data.issue_date = d
-						} else {
-							// Try to parse looser formats and convert
-							const parsed = new Date(d)
-							if (!Number.isNaN(parsed.getTime())) {
-								section.data.issue_date = parsed.toISOString().slice(0, 10)
-							} else {
-								// Unknown format -> clear the field (optional)
-								section.data.issue_date = undefined as unknown as never
-							}
-						}
-					} else if (d === null || d === undefined) {
-						// leave as-is (allowed)
-					}
+					section.data.issue_date = normalizeCertificationDate(section.data.issue_date)
 				}
 
 				// Normalize description fields to Tiptap-compatible HTML

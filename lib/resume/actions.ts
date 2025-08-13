@@ -4,6 +4,7 @@ import {Resume, ResumeMutation, ResumeMutationSchema, ResumeSchema} from '@/lib/
 import {parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
+import {ACCEPTED_MIME_TYPES, isAcceptedByName} from '@/lib/resume/accept'
 
 /**
  * Retrieves a single resume object from the database by its ID
@@ -49,6 +50,20 @@ export const parseUploadedResume = async (
 	const file = formData.get('file')
 	if (!file || !(file instanceof File)) {
 		throw new Error('No file provided in form data under key "file"')
+	}
+
+	// Basic validation: size and type
+	const maxBytes = 10 * 1024 * 1024 // 10MB
+	if (file.size === 0) {
+		throw new Error('Uploaded file is empty')
+	}
+	if (file.size > maxBytes) {
+		throw new Error('File too large. Maximum allowed size is 10MB')
+	}
+	const mimeOk = (file.type ? (ACCEPTED_MIME_TYPES as readonly string[]).includes(file.type) : false)
+	const nameOk = isAcceptedByName((file.name ?? '').toLowerCase())
+	if (!mimeOk && !nameOk) {
+		throw new Error('Unsupported file type. Please upload a PDF, DOC, DOCX, RTF, ODT, or TXT file')
 	}
 
 	const result = await parseResume(file, format)

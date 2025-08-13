@@ -24,7 +24,7 @@ type ParseResumeParams = {
 }
 
 export const useParseResumeMutation = () => {
-	return useMutation<any, Error, ParseResumeParams>({
+	return useMutation<ResumeMutation, Error, ParseResumeParams>({
 		mutationFn: async ({formData, format = 'proprietary'}) => parseUploadedResume(formData, format)
 	})
 }
