@@ -31,9 +31,9 @@ export const resumeSkillsQueryOptions = (resumeId: string = 'base') => queryOpti
  * Query hook for fetching skills associated with the current resume
  */
 export const useCurrentResumeSkills = (resumeId: string) => {
-    return useQuery<ResumeSkill[]>({
-        ...resumeSkillsQueryOptions(resumeId)
-    })
+	return useQuery<ResumeSkill[]>({
+		...resumeSkillsQueryOptions(resumeId)
+	})
 }
 
 /**
@@ -48,7 +48,7 @@ export const skillCategoriesQueryOptions = (resumeId: string = 'base') => queryO
  * Query hook for fetching skill categories for the current resume
  */
 export const useSkillCategories = (resumeId: string) => {
-    return useQuery<string[]>({
-        ...skillCategoriesQueryOptions(resumeId)
-    })
+	return useQuery<string[]>({
+		...skillCategoriesQueryOptions(resumeId)
+	})
 }

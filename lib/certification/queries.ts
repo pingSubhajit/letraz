@@ -9,5 +9,5 @@ export const certificationOptions = (resumeId: string) => queryOptions({
 
 
 export const useCurrentCertifications = (resumeId: string) => {
-    return useQuery(certificationOptions(resumeId))
+	return useQuery(certificationOptions(resumeId))
 }

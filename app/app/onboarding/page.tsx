@@ -36,8 +36,8 @@ const OnboardingPage = async (
 	const queryClient = new QueryClient()
 
 	//  Pre-fetch the educations from the database
-	await queryClient.prefetchQuery(educationOptions)
-	await queryClient.prefetchQuery(experienceQueryOptions)
+	await queryClient.prefetchQuery(educationOptions())
+	await queryClient.prefetchQuery(experienceQueryOptions())
 
 	const dehydratedState = dehydrate(queryClient)
 

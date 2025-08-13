@@ -13,7 +13,7 @@ export const globalSkillsQueryOptions = queryOptions({
 })
 
 export const useCurrentProjects = (resumeId: string) => {
-    return useQuery(projectQueryOptions(resumeId))
+	return useQuery(projectQueryOptions(resumeId))
 }
 
 export const useGlobalSkills = () => useQuery(globalSkillsQueryOptions)
