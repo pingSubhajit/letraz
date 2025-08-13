@@ -37,7 +37,6 @@ export const listResumesForUser = async (): Promise<ResumeListItem[]> => {
 		const data = await api.get<unknown[]>('/resume/')
 		return (data || []).map(item => ResumeListItemSchema.parse(item))
 	} catch (error) {
-		console.log(error)
 		return handleErrors(error, 'list resumes')
 	}
 }
