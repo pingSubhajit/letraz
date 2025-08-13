@@ -1,9 +1,7 @@
-import PersonalDetailsForm from '@/components/onboarding/PersonalDetailsForm'
 import TextAnimate from '@/components/animations/TextAnimations'
-
-
-import {dehydrate, QueryClient, HydrationBoundary} from '@tanstack/react-query'
+import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
 import {userInfoQueryOptions} from '@/lib/user-info/queries'
+import OnboardingFlowControl from '@/components/onboarding/OnboardingFlowControl'
 
 const PersonalDetails = async () => {
 
@@ -22,7 +20,7 @@ const PersonalDetails = async () => {
 						className="text-5xl leading-snug flex justify-center" />
 				</div>
 
-				<PersonalDetailsForm />
+				<OnboardingFlowControl />
 			</div>
 		</HydrationBoundary>
 	)

@@ -11,7 +11,7 @@ import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Certification, CertificationMutation, CertificationMutationSchema} from '@/lib/certification/types'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
-import {certificationOptions, useCurrentCertifications} from '@/lib/certification/queries'
+import {certificationQueryOptions, useCurrentCertifications} from '@/lib/certification/queries'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {
 	useAddCertificationMutation,
@@ -34,6 +34,7 @@ import {Input} from '@/components/ui/input'
 import DatePicker from '@/components/ui/date-picker'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
+import ScrollMask from '@/components/ui/scroll-mask'
 
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
@@ -60,11 +61,11 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const queryClient = useQueryClient()
 	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
-	// Auto-focus the first field when form is opened
+	// Autofocus the first field when form is opened
 	useAutoFocusField(view === 'form', 'name')
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: certificationOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: certificationQueryOptions.queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
@@ -214,127 +215,140 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 
 	if (view === 'form') {
 		return (
-			<div className={cn('space-y-6', className)}>
-				<EditorHeader
-					title={editingIndex !== null ? 'Update Certification' : 'Add New Certification'}
-					description={editingIndex !== null
-						? 'Ensure that the details are correct and reflect your professional certifications'
-						: 'Adding professional certifications can significantly enhance your resume and demonstrate your expertise'
-					}
-					className="mb-10"
-				/>
+			<ScrollMask
+				className={cn('space-y-6', className)}
+				style={{height: 'calc(100vh - 162px)'}}
+				data-lenis-prevent
+			>
+				<div className="space-y-6 px-1">
+					<EditorHeader
+						title={editingIndex !== null ? 'Update Certification' : 'Add New Certification'}
+						description={editingIndex !== null
+							? 'Ensure that the details are correct and reflect your professional certifications'
+							: 'Adding professional certifications can significantly enhance your resume and demonstrate your expertise'
+						}
+						className="mb-10"
+					/>
 
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-						<TextFormField
-							form={form}
-							name="name"
-							label="Certification Name"
-							placeholder="e.g. AWS Certified Solutions Architect"
-							disabled={isSubmitting}
-						/>
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+							<TextFormField
+								form={form}
+								name="name"
+								label="Certification Name"
+								placeholder="e.g. AWS Certified Solutions Architect"
+								disabled={isSubmitting}
+							/>
 
-						<TextFormField
-							form={form}
-							name="issuing_organization"
-							label="Issuing Organization"
-							placeholder="e.g. Amazon Web Services"
-							disabled={isSubmitting}
-						/>
+							<TextFormField
+								form={form}
+								name="issuing_organization"
+								label="Issuing Organization"
+								placeholder="e.g. Amazon Web Services"
+								disabled={isSubmitting}
+							/>
 
-						<DatePicker
-							form={form}
-							label="Issue Date"
-							name="issue_date"
-							disabled={isSubmitting}
-						/>
+							<DatePicker
+								form={form}
+								label="Issue Date"
+								name="issue_date"
+								disabled={isSubmitting}
+							/>
 
-						<FormField
-							control={form.control}
-							name="credential_url"
-							render={({field}) => (
-								<FormItem>
-									<FormLabel className="text-foreground">Credential URL</FormLabel>
-									<FormControl>
-										<Input
-											type="url"
-											placeholder="https://www.example.com/credential"
-											disabled={isSubmitting}
-											{...field}
-											value={field.value || ''}
-										/>
-									</FormControl>
-									<FormMessage className="text-xs" />
-								</FormItem>
-							)}
-						/>
+							<FormField
+								control={form.control}
+								name="credential_url"
+								render={({field}) => (
+									<FormItem>
+										<FormLabel className="text-foreground">Credential URL</FormLabel>
+										<FormControl>
+											<Input
+												type="url"
+												placeholder="https://www.example.com/credential"
+												disabled={isSubmitting}
+												{...field}
+												value={field.value || ''}
+											/>
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
+							/>
 
-						<FormButtons
-							onCancel={handleCancel}
-							isSubmitting={isSubmitting}
-							isEditing={editingIndex !== null}
-							editingSubmitLabel="Update Certification"
-							addingSubmitLabel="Add Certification"
-						/>
-					</form>
-				</Form>
-			</div>
+							<FormButtons
+								onCancel={handleCancel}
+								isSubmitting={isSubmitting}
+								isEditing={editingIndex !== null}
+								editingSubmitLabel="Update Certification"
+								addingSubmitLabel="Add Certification"
+							/>
+						</form>
+					</Form>
+				</div>
+			</ScrollMask>
 		)
 	}
 
 	return (
-		<div className={cn('space-y-6', className)}>
-			<EditorHeader
-				title="Certifications"
-				showAddButton={isMounted && !isLoading}
-				onAddNew={handleAddNew}
-				isDisabled={isDeleting}
-				addButtonText="Add New Certification"
-			/>
+		<ScrollMask
+			className={cn('flex flex-col', className)}
+			style={{height: 'calc(100vh - 162px)'}}
+			data-lenis-prevent
+		>
+			<div className="space-y-6 px-1">
+				<EditorHeader
+					title="Certifications"
+					showAddButton={isMounted && !isLoading}
+					onAddNew={handleAddNew}
+					isDisabled={isDeleting}
+					addButtonText="Add New Certification"
+					className="flex-shrink-0"
+				/>
 
-			<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
-				{isLoading && (
-					<motion.div
-						key="skeleton"
-						{...DEFAULT_FADE_ANIMATION}
-					>
-						<CertificationEditorSkeleton />
-					</motion.div>
-				)}
+				<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+					{isLoading && (
+						<motion.div
+							key="skeleton"
+							{...DEFAULT_FADE_ANIMATION}
+						>
+							<CertificationEditorSkeleton />
+						</motion.div>
+					)}
 
-				{error && (
-					<motion.div
-						key="error"
-						{...DEFAULT_FADE_ANIMATION}
-						className="text-center py-10 text-red-500"
-					>
-						Error loading certifications. Please try again later.
-					</motion.div>
-				)}
+					{error && (
+						<motion.div
+							key="error"
+							{...DEFAULT_FADE_ANIMATION}
+							className="text-center py-10 text-red-500"
+						>
+							Error loading certifications. Please try again later.
+						</motion.div>
+					)}
 
-				{!isLoading && !error && (
-					<motion.div
-						key="content"
-						{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
-					>
-						{certifications.length > 0 ? (
-							<div className="space-y-4" ref={parent}>
-								{certifications.map((certification, index) => renderCertificationItem(certification, index))}
-							</div>
-						) : (
-							<Button
-								onClick={handleAddNew}
-								className="w-full"
-								variant="outline"
-							>
-								<Plus className="h-4 w-4 mr-2" />
-								Add New Certification
-							</Button>
-						)}
-					</motion.div>
-				)}
-			</AnimatePresence>
-		</div>
+					{!isLoading && !error && (
+						<motion.div
+							key="content"
+							{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+						>
+							{certifications.length > 0 ? (
+								<div className="space-y-4" ref={parent}>
+									{certifications.map((certification, index) => renderCertificationItem(certification, index))}
+								</div>
+							) : (
+								<Button
+									onClick={handleAddNew}
+									className="w-full"
+									variant="outline"
+								>
+									<Plus className="h-4 w-4 mr-2" />
+									Add New Certification
+								</Button>
+							)}
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</div>
+		</ScrollMask>
 	)
 }
 
