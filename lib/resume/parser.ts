@@ -164,10 +164,8 @@ Rules:
 - Certification issue_date MUST be a date-only string in the exact format YYYY-MM-DD (e.g., "2024-03-01").
 - Use ISO3 country codes (e.g., USA, IND) when inferring countries.
 - employment_type must be one of: flt, prt, con, int, fre, sel, vol, tra.
-- skill_id should be "custom:<skill name>" if not a known global id.
 - level must be one of: BEG, INT, ADV, EXP, or null.
-- For every "description" field (Education, Experience, Project), return a Tiptap-compatible HTML string. Use minimal semantic tags and include these exact classes:
- - For every "description" field (Education, Experience, Project), return a Tiptap-compatible HTML string and PREFER BULLETED LISTS:
+- For every "description" field (Education, Experience, Project), return a Tiptap-compatible HTML string and PREFER BULLETED LISTS:
    - Default to unordered lists for multi-point content: <ul class="list-node"><li>…</li><li>…</li></ul>
    - Use a single paragraph only when the content is one succinct sentence: <p class="text-node">…</p>
    - Allowed classes: paragraphs -> "text-node"; headings h1–h6 -> "heading-node"; blockquotes -> "block-node"; ul/ol -> "list-node"; inline code -> "inline".
