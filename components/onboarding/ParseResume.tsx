@@ -24,6 +24,8 @@ const PARSING_MESSAGES = [
 	'Polishing the results…'
 ]
 
+const MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024 // 4 MB
+
 const ParseResume = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
 	const [parsed, setParsed] = useState(false)
 	const [particlesSeed] = useState<number>(() => Date.now())
@@ -55,8 +57,14 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 		event.preventDefault()
 		setIsDragging(false)
 
+		if (isParsing) return
+
 		const files = Array.from(event.dataTransfer.files)
 		const acceptedFiles = files.filter(isAcceptedFile)
+		if (acceptedFiles.length > 0 && acceptedFiles[0].size > MAX_FILE_SIZE_BYTES) {
+			toast.error('File is too large. Maximum allowed size is 4 MB')
+			return
+		}
 
 		if (acceptedFiles.length > 0 && !isParsing) {
 			void handleFilesUpload(acceptedFiles)
@@ -66,6 +74,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	}
 
 	const handleOpenFileDialog = (): void => {
+		if (isParsing) return
 		fileInputRef.current?.click()
 	}
 
@@ -77,8 +86,16 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	}
 
 	const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+		if (isParsing) return
+
 		const files = Array.from(event.target.files ?? [])
 		const acceptedFiles = files.filter(isAcceptedFile)
+		if (acceptedFiles.length > 0 && acceptedFiles[0].size > MAX_FILE_SIZE_BYTES) {
+			toast.error('File is too large. Maximum allowed size is 4 MB')
+			// Reset value to allow selecting the same file again
+			event.target.value = ''
+			return
+		}
 		if (acceptedFiles.length > 0 && !isParsing) {
 			void handleFilesUpload(acceptedFiles)
 		} else if (files.length > 0) {
@@ -90,6 +107,10 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 
 	const handleFilesUpload = async (files: File[]): Promise<void> => {
 		try {
+			if (files[0] && files[0].size > MAX_FILE_SIZE_BYTES) {
+				toast.error('File is too large. Maximum allowed size is 4 MB')
+				return
+			}
 			setIsParsing(true)
 			const formData = new FormData()
 			// Use the first accepted file for now
@@ -175,8 +196,8 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 							onDragOver={handleDragOver}
 							onDragEnter={handleDragEnter}
 							onDragLeave={handleDragLeave}
-							onDrop={isParsing ? undefined : handleDrop}
-							onClick={isParsing ? undefined : handleOpenFileDialog}
+							onDrop={handleDrop}
+							onClick={handleOpenFileDialog}
 							onKeyDown={handleKeyDown}
 							role="button"
 							aria-label="Click or drop your resume here (.pdf, .txt, .doc, .docx, .rtf, .odt)"
@@ -186,7 +207,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 								ref={fileInputRef}
 								type="file"
 								accept={ACCEPT_ATTRIBUTE}
-								onChange={isParsing ? undefined : handleFileInputChange}
+								onChange={handleFileInputChange}
 								className="sr-only pointer-events-none"
 								disabled={isParsing}
 							/>

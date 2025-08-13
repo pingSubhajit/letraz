@@ -9,7 +9,7 @@ import {JSX} from 'react'
 import Experience from '@/components/onboarding/Experience'
 import BaseResume from '@/components/onboarding/BaseResume'
 import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
-import {educationOptions} from '@/lib/education/queries'
+import {educationQueryOptions} from '@/lib/education/queries'
 import {experienceQueryOptions} from '@/lib/experience/queries'
 
 /**
@@ -36,8 +36,8 @@ const OnboardingPage = async (
 	const queryClient = new QueryClient()
 
 	//  Pre-fetch the educations from the database
-	await queryClient.prefetchQuery(educationOptions)
-	await queryClient.prefetchQuery(experienceQueryOptions)
+	await queryClient.prefetchQuery(educationQueryOptions())
+	await queryClient.prefetchQuery(experienceQueryOptions())
 
 	const dehydratedState = dehydrate(queryClient)
 
