@@ -14,10 +14,10 @@ import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {Badge} from '@/components/ui/badge'
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '@/components/ui/collapsible'
 import {
-    resumeSkillsQueryOptions,
-    useCurrentResumeSkills,
-    useGlobalSkills,
-    useSkillCategories
+	resumeSkillsQueryOptions,
+	useCurrentResumeSkills,
+	useGlobalSkills,
+	useSkillCategories
 } from '@/lib/skill/queries'
 import {useParams} from 'next/navigation'
 import {useAddSkillMutation, useRemoveSkillMutation, useUpdateSkillMutation} from '@/lib/skill/mutations'
@@ -72,9 +72,9 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	useAutoFocus(view === 'form')
 
 	// Load skills data
-    const params = useParams<{ resumeId?: string }>()
-    const resumeId = (params?.resumeId as string) ?? 'base'
-    const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills()
+	const params = useParams<{ resumeId?: string }>()
+	const resumeId = (params?.resumeId as string) ?? 'base'
+	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills()
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} = useGlobalSkills()
 	const {data: skillCategories = [], isLoading: isLoadingCategories} = useSkillCategories()
 
@@ -122,15 +122,15 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	const {mutateAsync: addSkill, isPending: isAddingPending} = useAddSkillMutation({
 		onMutate: async (newSkill) => {
-            await queryClient.cancelQueries({queryKey: resumeSkillsQueryOptions(resumeId).queryKey})
+			await queryClient.cancelQueries({queryKey: resumeSkillsQueryOptions(resumeId).queryKey})
 
-            const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions(resumeId).queryKey)
+			const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions(resumeId).queryKey)
 
 			// Find the skill details from global skills
 			const skillDetails = globalSkills.find(gs => gs.id === newSkill.skill_id)
 
 			if (skillDetails) {
-                queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
+				queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
 					const data = oldData || []
 					return [...data, {
 						id: `temp-id-${Date.now()}`,
@@ -144,7 +144,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 			return {prevSkills}
 		},
 		onError: (err, _newSkill, context: any) => {
-            queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, context?.prevSkills)
+			queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, context?.prevSkills)
 			toast.error(`Failed to add skill: ${err.message}`)
 		},
 		onSettled: () => {
@@ -159,11 +159,11 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	const {mutateAsync: updateSkill, isPending: isUpdatingPending} = useUpdateSkillMutation({
 		onMutate: async ({id, data}) => {
-            await queryClient.cancelQueries({queryKey: resumeSkillsQueryOptions(resumeId).queryKey})
+			await queryClient.cancelQueries({queryKey: resumeSkillsQueryOptions(resumeId).queryKey})
 
-            const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions(resumeId).queryKey)
+			const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions(resumeId).queryKey)
 
-            queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
+			queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
 				const dataArr = oldData || []
 				return dataArr.map((item: ResumeSkill) => item.id === id ? {
 					...item,
@@ -175,7 +175,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		},
 		onError: (err, _updateData, context: unknown) => {
 			const contextData = context as { prevSkills: ResumeSkill[] | undefined } | undefined
-            queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, contextData?.prevSkills)
+			queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, contextData?.prevSkills)
 			toast.error(`Failed to update skill: ${err.message}`)
 		},
 		onSettled: () => {
@@ -194,11 +194,11 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		onMutate: async (skillId) => {
 			setDeletingId(skillId)
 
-            await queryClient.cancelQueries({queryKey: resumeSkillsQueryOptions(resumeId).queryKey})
+			await queryClient.cancelQueries({queryKey: resumeSkillsQueryOptions(resumeId).queryKey})
 
-            const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions(resumeId).queryKey)
+			const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions(resumeId).queryKey)
 
-            queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
+			queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
 				const data = oldData || []
 				return data.filter((item: ResumeSkill) => item.id !== skillId)
 			})
@@ -206,8 +206,8 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 			return {prevSkills}
 		},
 		onError: (err, _skillId, context: unknown) => {
-            const contextData = context as { prevSkills: ResumeSkill[] | undefined } | undefined
-            queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, contextData?.prevSkills)
+			const contextData = context as { prevSkills: ResumeSkill[] | undefined } | undefined
+			queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, contextData?.prevSkills)
 			toast.error(`Failed to remove skill: ${err.message}`)
 		},
 		onSettled: () => {
