@@ -12,8 +12,8 @@ export const baseResumeQueryOptions = queryOptions({
 export const useBaseResume = () => useQuery(baseResumeQueryOptions)
 
 export const resumesListQueryOptions = queryOptions<ResumeListItem[]>({
-    queryKey: RESUMES_KEYS,
-    queryFn: () => listResumesForUser()
+	queryKey: RESUMES_KEYS,
+	queryFn: () => listResumesForUser()
 })
 
 export const useResumes = () => useQuery(resumesListQueryOptions)
