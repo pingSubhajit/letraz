@@ -7,8 +7,8 @@ export const useAddEducationMutation = (options?: MutationOptions<Education|unde
 	...options
 })
 
-export const useUpdateEducationMutation = (options?: MutationOptions<Education|undefined, Error, {id: string, data: Partial<EducationMutation>}>) => useMutation({
-	mutationFn: ({id, data}) => updateEducationInDB(id, data),
+export const useUpdateEducationMutation = (options?: MutationOptions<Education|undefined, Error, {id: string, data: Partial<EducationMutation>, resumeId?: string}>) => useMutation({
+    mutationFn: ({id, data, resumeId}) => updateEducationInDB(id, data, resumeId || 'base'),
 	...options
 })
 

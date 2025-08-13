@@ -225,8 +225,8 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 			formattedValues.live_url = formatUrl(formattedValues.live_url)
 
 			if (editingIndex !== null) {
-				const projectId = projects[editingIndex]?.id
-				await updateProject({id: projectId, data: formattedValues})
+                const projectId = projects[editingIndex]?.id
+                await updateProject({id: projectId, data: formattedValues, resumeId})
 			} else {
                 await addProject({data: formattedValues, resumeId})
 			}

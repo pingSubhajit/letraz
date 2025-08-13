@@ -1,11 +1,16 @@
 import {queryOptions, useQuery} from '@tanstack/react-query'
+import {useParams} from 'next/navigation'
 import {EXPERIENCE_KEYS} from '@/lib/experience/keys'
 import {getExperiencesFromDB} from '@/lib/experience/actions'
 
-export const experienceQueryOptions = queryOptions({
-	queryKey: EXPERIENCE_KEYS,
-	queryFn: () => getExperiencesFromDB('base')
+export const experienceQueryOptions = (resumeId: string) => queryOptions({
+    queryKey: [...EXPERIENCE_KEYS, resumeId],
+    queryFn: () => getExperiencesFromDB(resumeId)
 })
 
 
-export const useCurrentExperiences = () => useQuery(experienceQueryOptions)
+export const useCurrentExperiences = () => {
+    const params = useParams<{ resumeId?: string }>()
+    const resumeId = (params?.resumeId as string) ?? 'base'
+    return useQuery(experienceQueryOptions(resumeId))
+}

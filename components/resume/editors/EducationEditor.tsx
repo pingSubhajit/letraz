@@ -76,7 +76,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	useAutoFocusField(view === 'form', 'institution_name')
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: educationOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
@@ -162,7 +162,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		try {
 			if (editingIndex !== null) {
 				const educationId = localEducations[editingIndex]?.id
-				await updateEducation({id: educationId, data: values})
+                await updateEducation({id: educationId, data: values, resumeId})
 			} else {
                 await addEducation({data: values, resumeId})
 			}

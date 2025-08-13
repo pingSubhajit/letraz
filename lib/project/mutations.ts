@@ -7,8 +7,8 @@ export const useAddProjectMutation = (options?: MutationOptions<Project, Error, 
 	...options
 })
 
-export const useUpdateProjectMutation = (options?: MutationOptions<Project, Error, {id: string, data: Partial<ProjectMutation>}>) => useMutation({
-	mutationFn: ({id, data}) => updateProjectInDB(id, data),
+export const useUpdateProjectMutation = (options?: MutationOptions<Project, Error, {id: string, data: Partial<ProjectMutation>, resumeId?: string}>) => useMutation({
+    mutationFn: ({id, data, resumeId}) => updateProjectInDB(id, data, resumeId || 'base'),
 	...options
 })
 

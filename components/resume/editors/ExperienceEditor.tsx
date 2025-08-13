@@ -80,7 +80,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: experienceQueryOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 
@@ -170,12 +170,12 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 				finished_at_year: values.current ? null : values.finished_at_year
 			}
 
-			if (editingIndex !== null) {
-				const experienceId = localExperiences[editingIndex]?.id
-				await updateExperience({id: experienceId, data: submissionValues})
-			} else {
+            if (editingIndex !== null) {
+                const experienceId = localExperiences[editingIndex]?.id
+                await updateExperience({id: experienceId, data: submissionValues, resumeId})
+            } else {
                 await addExperience({data: submissionValues, resumeId})
-			}
+            }
 
 			form.reset(DEFAULT_EXPERIENCE_VALUES)
 			setView('list')

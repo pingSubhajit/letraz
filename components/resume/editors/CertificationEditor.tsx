@@ -67,7 +67,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	useAutoFocusField(view === 'form', 'name')
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: certificationOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: certificationOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
 	}
 

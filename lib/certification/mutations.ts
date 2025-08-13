@@ -7,8 +7,8 @@ export const useAddCertificationMutation = (options?: MutationOptions<Certificat
 	...options
 })
 
-export const useUpdateCertificationMutation = (options?: MutationOptions<Certification|undefined, Error, {id: string, data: Partial<CertificationMutation>}>) => useMutation({
-	mutationFn: ({id, data}) => updateCertificationInDB(id, data),
+export const useUpdateCertificationMutation = (options?: MutationOptions<Certification|undefined, Error, {id: string, data: Partial<CertificationMutation>, resumeId?: string}>) => useMutation({
+    mutationFn: ({id, data, resumeId}) => updateCertificationInDB(id, data, resumeId || 'base'),
 	...options
 })
 
