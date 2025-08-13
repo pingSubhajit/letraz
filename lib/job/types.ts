@@ -9,10 +9,10 @@ export const JobSchema = z.object({
 	title: z.string().describe('The title of the job position.'),
 	company_name: z.string().describe('The name of the company offering the job.'),
 	location: z.string().describe('The location where the job is based.'),
-	requirements: z.string().nullable().describe('The requirements for the job position. Nullable if not specified.'),
+    requirements: z.string().nullable().optional().describe('The requirements for the job position. Nullable if not specified.'),
 	description: z.string().describe('The description of the job position.'),
-	responsibilities: z.string().nullable().describe('The responsibilities associated with the job position. Nullable if not specified.'),
-	benefits: z.string().nullable().describe('The benefits provided by the company for the job position. Nullable if not specified.'),
+    responsibilities: z.string().nullable().optional().describe('The responsibilities associated with the job position. Nullable if not specified.'),
+    benefits: z.string().nullable().optional().describe('The benefits provided by the company for the job position. Nullable if not specified.'),
 	status: z.string().describe('Indicates if the job is currently being processed.').nullable().optional()
 })
 

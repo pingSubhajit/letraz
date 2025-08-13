@@ -56,7 +56,8 @@ export const ResumeSchema = z.object({
 	user: UserInfoSchema.describe('The user information associated with the resume.'),
 	job: JobSchema.describe('The job information associated with the resume.'),
 	status: z.string().describe('Indicates if the resume is currently being processed.').nullable().optional(),
-	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.')
+	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.'),
+	thumbnail: z.string().describe('The thumbnail of the resume.').nullable().optional()
 })
 
 // Infer TypeScript types from the schema
@@ -103,3 +104,36 @@ export const ResumeMutationSchema = z.object({
 })
 
 export type ResumeMutation = z.infer<typeof ResumeMutationSchema>
+
+/**
+ * Lightweight schema for listing resumes for a user
+ */
+export const ResumeListItemSchema = z.discriminatedUnion('base', [
+    z.object({
+        id: z.string(),
+        base: z.literal(true),
+        job: JobSchema.partial({
+            requirements: true,
+            responsibilities: true,
+            benefits: true,
+            status: true
+        }),
+        user: z.string().optional(),
+        status: z.string().nullable().optional(),
+        thumbnail: z.string().nullable().optional()
+    }),
+    z.object({
+        id: z.string(),
+        base: z.literal(false),
+        job: JobSchema.extend({
+            requirements: JobSchema.shape.requirements.optional(),
+            responsibilities: JobSchema.shape.responsibilities.optional(),
+            benefits: JobSchema.shape.benefits.optional()
+        }),
+        user: z.string().optional(),
+        status: z.string().nullable().optional(),
+        thumbnail: z.string().nullable().optional()
+    })
+])
+
+export type ResumeListItem = z.infer<typeof ResumeListItemSchema>
