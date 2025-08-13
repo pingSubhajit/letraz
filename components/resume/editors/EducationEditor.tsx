@@ -88,7 +88,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		mode: 'onChange'
 	})
 
-	const {data: educationsData, isLoading, error} = useCurrentEducations()
+	const {data: educationsData, isLoading, error} = useCurrentEducations(resumeId)
 
 	const {mutateAsync: addEducation, isPending: isAdding} = useAddEducationMutation({
 		onSuccess: () => {

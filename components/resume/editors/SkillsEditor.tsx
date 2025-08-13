@@ -74,9 +74,9 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	// Load skills data
 	const params = useParams<{ resumeId?: string }>()
 	const resumeId = (params?.resumeId as string) ?? 'base'
-	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills()
+	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills, error: resumeSkillsError} = useCurrentResumeSkills(resumeId)
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} = useGlobalSkills()
-	const {data: skillCategories = [], isLoading: isLoadingCategories} = useSkillCategories()
+	const {data: skillCategories = [], isLoading: isLoadingCategories} = useSkillCategories(resumeId)
 
 	// Group skills by category
 	const skillsByCategory = useMemo(() => {

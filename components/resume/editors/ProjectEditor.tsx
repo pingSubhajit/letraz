@@ -94,7 +94,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 		mode: 'onChange'
 	})
 
-	const {data: projects = [], isLoading, error} = useCurrentProjects()
+	const {data: projects = [], isLoading, error} = useCurrentProjects(resumeId)
 	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills} = useCurrentResumeSkills()
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} =
     useGlobalSkills()

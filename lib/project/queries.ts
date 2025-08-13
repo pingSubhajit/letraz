@@ -1,5 +1,4 @@
 import {queryOptions, useQuery} from '@tanstack/react-query'
-import {useParams} from 'next/navigation'
 import {getGlobalSkills, getProjectsFromDB} from './actions'
 import {PROJECT_KEYS} from './keys'
 
@@ -13,10 +12,8 @@ export const globalSkillsQueryOptions = queryOptions({
 	queryFn: getGlobalSkills
 })
 
-export const useCurrentProjects = () => {
-	const params = useParams<{ resumeId?: string }>()
-	const resumeId = (params?.resumeId as string) ?? 'base'
-	return useQuery(projectQueryOptions(resumeId))
+export const useCurrentProjects = (resumeId: string) => {
+    return useQuery(projectQueryOptions(resumeId))
 }
 
 export const useGlobalSkills = () => useQuery(globalSkillsQueryOptions)

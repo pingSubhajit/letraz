@@ -77,7 +77,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	// Auto-focus the first field when form is opened
 	useAutoFocusField(view === 'form', 'job_title')
 
-	const {data: experiencesData, isLoading, error} = useCurrentExperiences()
+	const {data: experiencesData, isLoading, error} = useCurrentExperiences(resumeId)
 
 	const revalidate = () => {
 		queryClient.invalidateQueries({queryKey: experienceQueryOptions(resumeId).queryKey})

@@ -79,7 +79,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		mode: 'onChange'
 	})
 
-	const {data: certifications = [], isLoading, error} = useCurrentCertifications()
+	const {data: certifications = [], isLoading, error} = useCurrentCertifications(resumeId)
 
 	const {mutateAsync: addCertification, isPending: isAdding} = useAddCertificationMutation({
 		onSuccess: () => {
