@@ -145,6 +145,7 @@ export const parseResume = async (
 	// For proprietary format, output exactly our internal ResumeMutation schema
 	const schema = format === 'proprietary' ? ResumeMutationSchema : GenericResumeSchema
 
+	const currentYear = new Date().getFullYear()
 	const prompt = format === 'proprietary'
 		? `You are a strict JSON generator. Return ONLY JSON matching this schema, no prose:
 {
@@ -165,6 +166,9 @@ Rules:
 - Use ISO3 country codes (e.g., USA, IND) when inferring countries.
 - employment_type must be one of: flt, prt, con, int, fre, sel, vol, tra.
 - level must be one of: BEG, INT, ADV, EXP, or null.
+- The current calendar year is ${currentYear}. Do NOT output any future years. If you encounter a year greater than ${currentYear} in the source resume:
+  - For that date field, set the associated month and year fields to null, and
+  - Set the "current" flag to true for that section when available (Education, Experience, Project).
 - For every "description" field (Education, Experience, Project), return a Tiptap-compatible HTML string and PREFER BULLETED LISTS:
    - Default to unordered lists for multi-point content: <ul class="list-node"><li>…</li><li>…</li></ul>
    - Use a single paragraph only when the content is one succinct sentence: <p class="text-node">…</p>
@@ -211,12 +215,51 @@ Rules:
 				// Normalize description fields to Tiptap-compatible HTML
 				if (section.type === 'Education') {
 					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+					// Clamp future dates and set current flag when needed
+					const sYear = typeof section.data.started_from_year === 'string' ? parseInt(section.data.started_from_year, 10) : NaN
+					const fYear = typeof section.data.finished_at_year === 'string' ? parseInt(section.data.finished_at_year, 10) : NaN
+					if (!Number.isNaN(sYear) && sYear > currentYear) {
+						section.data.started_from_year = null
+						section.data.started_from_month = null
+						section.data.current = true
+					}
+					if (!Number.isNaN(fYear) && fYear > currentYear) {
+						section.data.finished_at_year = null
+						section.data.finished_at_month = null
+						section.data.current = true
+					}
 				}
 				if (section.type === 'Experience') {
 					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+					// Clamp future dates and set current flag when needed
+					const sYear = typeof section.data.started_from_year === 'string' ? parseInt(section.data.started_from_year, 10) : NaN
+					const fYear = typeof section.data.finished_at_year === 'string' ? parseInt(section.data.finished_at_year, 10) : NaN
+					if (!Number.isNaN(sYear) && sYear > currentYear) {
+						section.data.started_from_year = null
+						section.data.started_from_month = null
+						section.data.current = true
+					}
+					if (!Number.isNaN(fYear) && fYear > currentYear) {
+						section.data.finished_at_year = null
+						section.data.finished_at_month = null
+						section.data.current = true
+					}
 				}
 				if (section.type === 'Project') {
 					section.data.description = normalizeDescriptionToTiptapHTML(section.data.description)
+					// Clamp future dates and set current flag when needed
+					const sYear = typeof section.data.started_from_year === 'string' ? parseInt(section.data.started_from_year, 10) : NaN
+					const fYear = typeof section.data.finished_at_year === 'string' ? parseInt(section.data.finished_at_year, 10) : NaN
+					if (!Number.isNaN(sYear) && sYear > currentYear) {
+						section.data.started_from_year = null
+						section.data.started_from_month = null
+						section.data.current = true
+					}
+					if (!Number.isNaN(fYear) && fYear > currentYear) {
+						section.data.finished_at_year = null
+						section.data.finished_at_month = null
+						section.data.current = true
+					}
 				}
 			}
 			return payload
