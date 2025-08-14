@@ -1,6 +1,13 @@
 'use server'
 
-import {Resume, ResumeMutation, ResumeMutationSchema, ResumeSchema} from '@/lib/resume/types'
+import {
+	Resume,
+	ResumeListItem,
+	ResumeListItemSchema,
+	ResumeMutation,
+	ResumeMutationSchema,
+	ResumeSchema
+} from '@/lib/resume/types'
 import {parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
@@ -18,6 +25,19 @@ export const getResumeFromDB = async (resumeId?: string | 'base'): Promise<Resum
 		return ResumeSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'fetch resume')
+	}
+}
+
+/**
+ * Retrieves all resumes for the current user
+ * GET /resume/
+ */
+export const listResumesForUser = async (): Promise<ResumeListItem[]> => {
+	try {
+		const data = await api.get<unknown[]>('/resume/')
+		return (data || []).map(item => ResumeListItemSchema.parse(item))
+	} catch (error) {
+		return handleErrors(error, 'list resumes')
 	}
 }
 
