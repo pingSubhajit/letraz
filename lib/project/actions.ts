@@ -22,15 +22,7 @@ export const getProjectsFromDB = async (resumeId: string = 'base'): Promise<Proj
 	try {
 		const data = await api.get<any[]>(`/resume/${resumeId}/project/`)
 
-		// Only normalize resume_section when backend returns it as an id string
-		const normalized: any[] = (Array.isArray(data) ? data : []).map((p: any) => ({
-			...p,
-			resume_section: typeof p?.resume_section === 'string'
-				? {id: p.resume_section, resume: resumeId, index: 0, type: 'Project'}
-				: p?.resume_section
-		}))
-
-		return z.array(ProjectSchema).parse(normalized)
+		return z.array(ProjectSchema).parse(data)
 	} catch (error) {
 		return handleErrors(error, 'fetch projects')
 	}
