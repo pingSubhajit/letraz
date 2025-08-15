@@ -39,6 +39,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
+import ScrollMask from '@/components/ui/scroll-mask'
 
 type ViewState = 'list' | 'form'
 
@@ -250,155 +251,168 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 
 	if (view === 'form') {
 		return (
-			<div className={cn('space-y-6', className)}>
-				<EditorHeader
-					title={editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
-					description={editingIndex !== null
-						? 'Ensure that the details are correct and reflect your professional background'
-						: 'Adding detailed work experience helps employers understand your qualifications and achievements'
-					}
-					className="mb-10"
-				/>
+			<ScrollMask
+				className={cn('space-y-6', className)}
+				style={{height: 'calc(100vh - 162px)'}}
+				data-lenis-prevent
+			>
+				<div className="space-y-6 px-1">
+					<EditorHeader
+						title={editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
+						description={editingIndex !== null
+							? 'Ensure that the details are correct and reflect your professional background'
+							: 'Adding detailed work experience helps employers understand your qualifications and achievements'
+						}
+						className="mb-10"
+					/>
 
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-						<div className="grid grid-cols-2 gap-4">
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+							<div className="grid grid-cols-2 gap-4">
+								<TextFormField
+									form={form}
+									name="job_title"
+									label="Job Title"
+									placeholder="e.g. Senior Software Engineer"
+									disabled={isSubmitting}
+								/>
+								<TextFormField
+									form={form}
+									name="company_name"
+									label="Company Name"
+									placeholder="e.g. Google"
+									disabled={isSubmitting}
+								/>
+							</div>
+
+							<div className="grid grid-cols-2 gap-4">
+								<FormField
+									control={form.control}
+									name="employment_type"
+									render={({field}) => (
+										<FormItem>
+											<FormLabel>Employment Type</FormLabel>
+											<Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
+												<FormControl>
+													<SelectTrigger>
+														<SelectValue placeholder="Select employment type" />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{employmentTypes.map(type => (
+														<SelectItem key={type.value} value={type.value}>
+															{type.label}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<CountrySelect
+									form={form}
+									name="country"
+									disabled={isSubmitting}
+								/>
+							</div>
+
 							<TextFormField
 								form={form}
-								name="job_title"
-								label="Job Title"
-								placeholder="e.g. Senior Software Engineer"
+								name="city"
+								label="City"
+								placeholder="e.g. New York"
 								disabled={isSubmitting}
 							/>
-							<TextFormField
+
+							<DateRangeFields
 								form={form}
-								name="company_name"
-								label="Company Name"
-								placeholder="e.g. Google"
-								disabled={isSubmitting}
+								isSubmitting={isSubmitting}
+								currentLabel="I currently work here"
 							/>
-						</div>
 
-						<div className="grid grid-cols-2 gap-4">
-							<FormField
-								control={form.control}
-								name="employment_type"
-								render={({field}) => (
-									<FormItem>
-										<FormLabel>Employment Type</FormLabel>
-										<Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder="Select employment type" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{employmentTypes.map(type => (
-													<SelectItem key={type.value} value={type.value}>
-														{type.label}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<CountrySelect
+							<RichTextFormField
 								form={form}
-								name="country"
+								name="description"
+								label="Description"
+								placeholder="Describe your key responsibilities, accomplishments, and the impact you made in this role..."
 								disabled={isSubmitting}
 							/>
-						</div>
 
-						<TextFormField
-							form={form}
-							name="city"
-							label="City"
-							placeholder="e.g. New York"
-							disabled={isSubmitting}
-						/>
-
-						<DateRangeFields
-							form={form}
-							isSubmitting={isSubmitting}
-							currentLabel="I currently work here"
-						/>
-
-						<RichTextFormField
-							form={form}
-							name="description"
-							label="Description"
-							placeholder="Describe your key responsibilities, accomplishments, and the impact you made in this role..."
-							disabled={isSubmitting}
-						/>
-
-						<FormButtons
-							onCancel={handleCancel}
-							isSubmitting={isSubmitting}
-							isEditing={editingIndex !== null}
-							editingSubmitLabel="Update Experience"
-							addingSubmitLabel="Add Experience"
-						/>
-					</form>
-				</Form>
-			</div>
+							<FormButtons
+								onCancel={handleCancel}
+								isSubmitting={isSubmitting}
+								isEditing={editingIndex !== null}
+								editingSubmitLabel="Update Experience"
+								addingSubmitLabel="Add Experience"
+							/>
+						</form>
+					</Form>
+				</div>
+			</ScrollMask>
 		)
 	}
 
 	return (
-		<div className={cn('space-y-6', className)}>
-			<EditorHeader
-				title="Experience"
-				showAddButton={isMounted && !isLoading}
-				onAddNew={handleAddNew}
-				isDisabled={isDeleting}
-				addButtonText="Add New Experience"
-			/>
+		<ScrollMask
+			className={cn('flex flex-col', className)}
+			style={{height: 'calc(100vh - 162px)'}}
+			data-lenis-prevent
+		>
+			<div className="space-y-6 px-1">
+				<EditorHeader
+					title="Experience"
+					showAddButton={isMounted && !isLoading}
+					onAddNew={handleAddNew}
+					isDisabled={isDeleting}
+					addButtonText="Add New Experience"
+					className="flex-shrink-0"
+				/>
 
-			<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
-				{isLoading && (
-					<motion.div
-						key="skeleton"
-						{...DEFAULT_FADE_ANIMATION}
-					>
-						<ExperienceEditorSkeleton />
-					</motion.div>
-				)}
+				<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+					{isLoading && (
+						<motion.div
+							key="skeleton"
+							{...DEFAULT_FADE_ANIMATION}
+						>
+							<ExperienceEditorSkeleton />
+						</motion.div>
+					)}
 
-				{error && (
-					<motion.div
-						key="error"
-						{...DEFAULT_FADE_ANIMATION}
-						className="text-center py-10 text-red-500"
-					>
-						Error loading experience details. Please try again later.
-					</motion.div>
-				)}
+					{error && (
+						<motion.div
+							key="error"
+							{...DEFAULT_FADE_ANIMATION}
+							className="text-center py-10 text-red-500"
+						>
+							Error loading experience details. Please try again later.
+						</motion.div>
+					)}
 
-				{!isLoading && !error && (
-					<motion.div
-						key="content"
-						{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
-					>
-						{localExperiences.length > 0 ? (
-							<div className="space-y-4" ref={parent}>
-								{localExperiences.map((experience, index) => renderExperienceItem(experience, index))}
-							</div>
-						) : (
-							<Button
-								onClick={handleAddNew}
-								className="w-full"
-								variant="outline"
-							>
-								<Plus className="h-4 w-4 mr-2" />
-								Add New Experience
-							</Button>
-						)}
-					</motion.div>
-				)}
-			</AnimatePresence>
-		</div>
+					{!isLoading && !error && (
+						<motion.div
+							key="content"
+							{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+						>
+							{localExperiences.length > 0 ? (
+								<div className="space-y-4" ref={parent}>
+									{localExperiences.map((experience, index) => renderExperienceItem(experience, index))}
+								</div>
+							) : (
+								<Button
+									onClick={handleAddNew}
+									className="w-full"
+									variant="outline"
+								>
+									<Plus className="h-4 w-4 mr-2" />
+									Add New Experience
+								</Button>
+							)}
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</div>
+		</ScrollMask>
 	)
 }
 

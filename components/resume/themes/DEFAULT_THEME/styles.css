@@ -212,6 +212,9 @@
 .default-theme-container .job-details {
   margin-bottom: 6px;
   font-weight: 400;
+  line-height: 1.27;
+  font-size: 13px;
+  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .job-details ul {
@@ -221,13 +224,10 @@
 }
 
 .default-theme-container .job-details li {
-  font-size: 13px;
   margin-bottom: 2.5px;
-  line-height: 1.27;
   font-weight: 400;
   position: relative;
   padding-left: 10px;
-  font-family: "Charter", "Times New Roman", Times, serif;
 }
 
 .default-theme-container .job-details li::before {

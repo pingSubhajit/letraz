@@ -730,8 +730,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 											</div>
 										</div>
 										<p className="text-sm text-muted-foreground">
-											{project.role}
-											{project.category && ` | ${project.category}`}
+											{[project.role, project.category].filter(Boolean).join(' | ')}
 										</p>
 										<p className="text-sm">
 											{project.started_from_month &&

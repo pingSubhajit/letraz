@@ -1,7 +1,8 @@
 import {MutationOptions, useMutation, useQueryClient} from '@tanstack/react-query'
-import {rearrangeResumeSections, tailorResumeInDB} from '@/lib/resume/actions'
+import {parseUploadedResume, rearrangeResumeSections, replaceResume, tailorResumeInDB} from '@/lib/resume/actions'
 import {BASE_RESUME_KEYS} from '@/lib/resume/key'
 import {toast} from 'sonner'
+import {Resume, ResumeMutation} from '@/lib/resume/types'
 import type {TailorResumeResponse} from '@/lib/resume/types'
 
 export const useRearrangeResumeSectionsMutation = () => {
@@ -24,3 +25,32 @@ export const useTailorResumeMutation = (
 	mutationFn: (payload) => tailorResumeInDB(payload),
 	...options
 })
+
+type ParseResumeParams = {
+  formData: FormData
+  format?: 'proprietary' | 'generic'
+}
+
+export const useParseResumeMutation = () => {
+	return useMutation<ResumeMutation, Error, ParseResumeParams>({
+		mutationFn: async ({formData, format = 'proprietary'}) => parseUploadedResume(formData, format)
+	})
+}
+
+type ReplaceResumeParams = {
+  payload: ResumeMutation
+  resumeId?: string | 'base'
+}
+
+export const useReplaceResumeMutation = () => {
+	const queryClient = useQueryClient()
+	return useMutation<Resume, Error, ReplaceResumeParams>({
+		mutationFn: async ({payload, resumeId = 'base'}) => replaceResume(payload, resumeId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({queryKey: BASE_RESUME_KEYS})
+		},
+		onError: () => {
+			toast.error('Failed to replace resume')
+		}
+	})
+}

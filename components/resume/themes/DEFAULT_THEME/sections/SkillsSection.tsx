@@ -18,7 +18,7 @@ const SkillsSection = ({data}: { data: SkillsData }) => {
 					{' '}
 					<span className="skill-list">
 						{skills.map((skill, index) => (
-							<span key={skill.name}>
+							<span key={skill.name + index}>
 								{skill.name}
 								{index < skills.length - 1 && ', '}
 							</span>
