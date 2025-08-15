@@ -119,6 +119,15 @@ const envSchema = z.object({
 	NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED: z.string()
 		.optional()
 		.default('true')
+  ,
+
+  // Optional Algolia search configuration for client-side search
+  NEXT_PUBLIC_ALGOLIA_APPLICATION_ID: z.string()
+    .optional(),
+  NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY: z.string()
+    .optional(),
+  NEXT_PUBLIC_ALGOLIA_INDEX_NAME: z.string()
+    .optional()
 })
 
 
