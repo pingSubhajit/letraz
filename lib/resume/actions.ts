@@ -7,8 +7,8 @@ import {
 	ResumeMutation,
 	ResumeMutationSchema,
 	ResumeSchema,
-    TailorResumeResponse,
-    TailorResumeResponseSchema
+	TailorResumeResponse,
+	TailorResumeResponseSchema
 } from '@/lib/resume/types'
 import {parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
