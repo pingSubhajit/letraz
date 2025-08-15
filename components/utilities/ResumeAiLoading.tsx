@@ -86,7 +86,7 @@ const DEFAULT_STAGES: Stage[] = [
 	}
 ]
 
-const STAGE_DURATION_MS = 5000
+const STAGE_DURATION_MS = 10000
 
 const ResumeAiLoading = ({
 	stages = DEFAULT_STAGES,
@@ -131,15 +131,14 @@ const ResumeAiLoading = ({
 			transition={{duration: 0.5, ease: 'easeOut'}}
 		>
 			{/* Ball video */}
-			<AiLoading loading text="" centered videoClass="scale-[1.8] blur-lg" textClass="hidden" />
-
-			{/* Stage title (subtle) */}
-			<div className="absolute top-[18%] left-1/2 -translate-x-1/2 text-sm tracking-wide text-neutral-600/80 z-20">
-				{stage?.title}
-			</div>
+			<AiLoading loading text="" centered videoClass="scale-[1.3] blur-md" textClass="hidden" />
 
 			{/* Stage message with smooth blur/fade vertical animation */}
 			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[720px] text-center z-20">
+				{/* Stage title (subtle) */}
+				<motion.div layout className="text-sm mb-6 tracking-wide text-neutral-600/80 z-20">
+					{stage?.title}
+				</motion.div>
 				<AnimatePresence mode="wait">
 					<motion.div
 						key={`${stage?.id}-${messageKey}`}
@@ -147,7 +146,7 @@ const ResumeAiLoading = ({
 						animate={{opacity: 1, y: 0, filter: 'blur(0px)'}}
 						exit={{opacity: 0, y: -24, filter: 'blur(6px)'}}
 						transition={{duration: 0.5, ease: 'easeOut'}}
-						className="text-[18px] sm:text-[22px] md:text-[26px] leading-snug font-medium text-neutral-600 drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
+						className="text-[18px] sm:text-[22px] md:text-[26px] leading-snug font-medium text-neutral-900 drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)] max-w-96 mx-auto"
 					>
 						{message}
 					</motion.div>
