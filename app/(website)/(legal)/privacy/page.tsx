@@ -16,7 +16,8 @@ const PrivacyPolicyPage = () => {
 		<main className="min-h-[80vh] bg-white">
 			<Image
 				src={LetrazBrainImage}
-				alt="An artistic representation of the intelligence behind Letraz, the Letraz brain"
+				alt=""
+				aria-hidden
 				className="absolute left-1/2 -translate-x-1/2 -top-[900px] blur-lg"
 			/>
 
