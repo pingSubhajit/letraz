@@ -1,8 +1,9 @@
-import {useMutation, useQueryClient} from '@tanstack/react-query'
-import {parseUploadedResume, rearrangeResumeSections, replaceResume} from '@/lib/resume/actions'
+import {MutationOptions, useMutation, useQueryClient} from '@tanstack/react-query'
+import {parseUploadedResume, rearrangeResumeSections, replaceResume, tailorResumeInDB} from '@/lib/resume/actions'
 import {BASE_RESUME_KEYS} from '@/lib/resume/key'
 import {toast} from 'sonner'
 import {Resume, ResumeMutation} from '@/lib/resume/types'
+import type {TailorResumeResponse} from '@/lib/resume/types'
 
 export const useRearrangeResumeSectionsMutation = () => {
 	const queryClient = useQueryClient()
@@ -17,6 +18,13 @@ export const useRearrangeResumeSectionsMutation = () => {
 		}
 	})
 }
+
+export const useTailorResumeMutation = (
+	options?: MutationOptions<TailorResumeResponse|undefined, Error, { target: string }>
+) => useMutation({
+	mutationFn: (payload) => tailorResumeInDB(payload),
+	...options
+})
 
 type ParseResumeParams = {
   formData: FormData

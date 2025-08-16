@@ -37,8 +37,8 @@ const OnboardingPage = async (
 
 	//  Pre-fetch the educations and experiences from the database in parallel
 	await Promise.all([
-		queryClient.prefetchQuery(educationOptions),
-		queryClient.prefetchQuery(experienceQueryOptions)
+		queryClient.prefetchQuery(educationOptions()),
+		queryClient.prefetchQuery(experienceQueryOptions())
 	])
 
 	const dehydratedState = dehydrate(queryClient)

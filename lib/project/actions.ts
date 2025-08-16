@@ -1,7 +1,14 @@
 'use server'
 
 import {z} from 'zod'
-import {Project, ProjectMutation, ProjectMutationSchema, ProjectSchema, GlobalSkillSchema, GlobalSkill} from '@/lib/project/types'
+import {
+	GlobalSkill,
+	GlobalSkillSchema,
+	Project,
+	ProjectMutation,
+	ProjectMutationSchema,
+	ProjectSchema
+} from '@/lib/project/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 
@@ -13,7 +20,8 @@ import {handleErrors} from '@/lib/misc/error-handler'
  */
 export const getProjectsFromDB = async (resumeId: string = 'base'): Promise<Project[]> => {
 	try {
-		const data = await api.get<Project[]>(`/resume/${resumeId}/project/`)
+		const data = await api.get<any[]>(`/resume/${resumeId}/project/`)
+
 		return z.array(ProjectSchema).parse(data)
 	} catch (error) {
 		return handleErrors(error, 'fetch projects')

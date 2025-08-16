@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import {useParams} from 'next/navigation'
 import {apiDateToDate, cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -53,6 +54,8 @@ interface CertificationEditorProps {
 
 const CertificationEditor = ({className, isTabSwitch = false}: CertificationEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+	const params = useParams<{ resumeId?: string }>()
+	const resumeId = (params?.resumeId as string) ?? 'base'
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -65,8 +68,10 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	useAutoFocusField(view === 'form', 'name')
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: certificationQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: certificationQueryOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		// Ensure resume preview refreshes immediately
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const form = useForm<CertificationMutation>({
@@ -75,7 +80,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		mode: 'onChange'
 	})
 
-	const {data: certifications = [], isLoading, error} = useCurrentCertifications()
+	const {data: certifications = [], isLoading, error} = useCurrentCertifications(resumeId)
 
 	const {mutateAsync: addCertification, isPending: isAdding} = useAddCertificationMutation({
 		onSuccess: () => {
@@ -151,9 +156,9 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 		try {
 			if (editingIndex !== null) {
 				const certificationId = certifications[editingIndex]?.id
-				await updateCertification({id: certificationId, data: values})
+				await updateCertification({id: certificationId, data: values, resumeId})
 			} else {
-				await addCertification(values)
+				await addCertification({data: values, resumeId})
 			}
 
 			form.reset(DEFAULT_CERTIFICATION_VALUES)
@@ -186,7 +191,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-			await deleteCertification(id)
+			await deleteCertification({id, resumeId})
 			if (editingIndex !== null && certifications[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_CERTIFICATION_VALUES)
