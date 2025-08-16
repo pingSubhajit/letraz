@@ -52,7 +52,7 @@ const LandingPage = async (
 				<div className="lg:absolute lg:bottom-16 right-8 lg:right-16 z-30 lg:w-[calc(100%-128px)] flex justify-between items-center">
 					<p>Closed beta starting soon</p>
 
-					<div>
+					<nav>
 						<Link href="/terms">
 							<Button variant="link" className="pl-0  font-semibold">Terms of use</Button>
 						</Link>
@@ -60,7 +60,7 @@ const LandingPage = async (
 						<Link href="/privacy">
 							<Button variant="link" className="pl-0  font-semibold">Privacy policy</Button>
 						</Link>
-					</div>
+					</nav>
 				</div>
 			</div>
 		</main>

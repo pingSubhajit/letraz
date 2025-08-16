@@ -15,7 +15,7 @@ const TermsOfUsePage = () => {
 		<main className="min-h-[80vh] bg-white">
 			<Image
 				src={LetrazBrainImage}
-				alt="An artistic representation of the intelligence behind Letraz, the Letraz brain"
+				alt="" aria-hidden
 				className="absolute left-1/2 -translate-x-1/2 -top-[900px] blur-lg"
 			/>
 
@@ -27,7 +27,7 @@ const TermsOfUsePage = () => {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<EyeOff className="text-flame-600" size={20} />
+							<EyeOff className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">AS IS and availability</h3>
 						</div>
 						<p className="text-sm opacity-80">The service is provided “AS IS” and “AS AVAILABLE” without warranties.</p>
@@ -35,7 +35,7 @@ const TermsOfUsePage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<Lock className="text-flame-600" size={20} />
+							<Lock className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">Limited liability</h3>
 						</div>
 						<p className="text-sm opacity-80">Our liability is limited to the maximum extent permitted by law.</p>
@@ -43,7 +43,7 @@ const TermsOfUsePage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<Lock className="text-flame-600" size={20} />
+							<Lock className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">Acceptable use</h3>
 						</div>
 						<p className="text-sm opacity-80">Don’t upload unlawful content, abuse share links, or disrupt the service.</p>
@@ -51,7 +51,7 @@ const TermsOfUsePage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<ShieldCheck className="text-flame-600" size={20} />
+							<ShieldCheck className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">Governing law & venue</h3>
 						</div>
 						<p className="text-sm opacity-80">These Terms are governed by Indian law and subject to courts in India.</p>
@@ -146,8 +146,8 @@ const TermsOfUsePage = () => {
 
 				<h2 className="text-xl font-semibold mt-10 mb-3">Contact</h2>
 				<p>
-					Questions about these Terms? Contact <a className="text-flame-600 underline" href="mailto:subhajit@letraz.app">subhajit@letraz.app</a>
-					or reach us via our{' '}<a className="text-flame-600 underline" href="https://discord.gg/jTkyKCYz2M" target="_blank" rel="noreferrer noopener">Discord community</a>.
+					Questions about these Terms? Contact <a className="text-flame-600 underline" href="mailto:subhajit@letraz.app">subhajit@letraz.app</a> or
+					reach us via our{' '}<a className="text-flame-600 underline" href="https://discord.gg/jTkyKCYz2M" target="_blank" rel="noreferrer noopener">Discord community</a>.
 				</p>
 			</section>
 		</main>

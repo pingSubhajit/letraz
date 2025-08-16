@@ -16,8 +16,7 @@ const PrivacyPolicyPage = () => {
 		<main className="min-h-[80vh] bg-white">
 			<Image
 				src={LetrazBrainImage}
-				alt=""
-				aria-hidden
+				alt="" aria-hidden
 				className="absolute left-1/2 -translate-x-1/2 -top-[900px] blur-lg"
 			/>
 
@@ -29,7 +28,7 @@ const PrivacyPolicyPage = () => {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<ShieldCheck className="text-flame-600" size={20} />
+							<ShieldCheck className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">We never sell your data</h3>
 						</div>
 						<p className="text-sm opacity-80">Your personal and resume information is not sold to third parties.</p>
@@ -37,7 +36,7 @@ const PrivacyPolicyPage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<EyeOff className="text-flame-600" size={20} />
+							<EyeOff className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">No AI training on your content</h3>
 						</div>
 						<p className="text-sm text-neutral-600">We only use your data to provide and improve Letraz—not to train generalized AI models.</p>
@@ -45,7 +44,7 @@ const PrivacyPolicyPage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<Trash2 className="text-flame-600" size={20} />
+							<Trash2 className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">Easy deletion</h3>
 						</div>
 						<p className="text-sm text-neutral-600">Live data is deleted immediately on account closure; backups auto-delete within 30 days.</p>
@@ -53,7 +52,7 @@ const PrivacyPolicyPage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<LinkIcon className="text-flame-600" size={20} />
+							<LinkIcon className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">You control sharing</h3>
 						</div>
 						<p className="text-sm text-neutral-600">Shareable resume links are optional and can be revoked at any time.</p>
@@ -61,7 +60,7 @@ const PrivacyPolicyPage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<Cookie className="text-flame-600" size={20} />
+							<Cookie className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">Cookie & analytics choice</h3>
 						</div>
 						<p className="text-sm text-neutral-600">Cookie banner supported. Analytics run only on our production domain and can be limited.</p>
@@ -69,7 +68,7 @@ const PrivacyPolicyPage = () => {
 
 					<div className="rounded-xl border border-neutral-200 p-5 shadow-sm">
 						<div className="flex items-center gap-3 mb-2">
-							<Lock className="text-flame-600" size={20} />
+							<Lock className="text-flame-600" size={20} aria-hidden />
 							<h3 className="font-semibold">Security-first</h3>
 						</div>
 						<p className="text-sm text-neutral-600">Encryption in transit and at rest (for sensitive data). We notify of breaches without undue delay.</p>
@@ -190,8 +189,8 @@ const PrivacyPolicyPage = () => {
 
 				<h2 className="text-xl font-semibold mt-10 mb-3">Contact</h2>
 				<p>
-					For privacy requests or questions, contact <a className="text-flame-600 underline" href="mailto:subhajit@letraz.app">subhajit@letraz.app</a>
-					or reach us via our{' '}
+					For privacy requests or questions, contact <a className="text-flame-600 underline" href="mailto:subhajit@letraz.app">subhajit@letraz.app</a> or
+					reach us via our{' '}
 					<a className="text-flame-600 underline" href="https://discord.gg/jTkyKCYz2M" target="_blank" rel="noreferrer noopener">Discord community</a>.
 				</p>
 			</section>
