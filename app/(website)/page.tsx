@@ -7,6 +7,8 @@ import LandingPageDescription from '@/app/(website)/page.description'
 import LandingPageFooter from '@/app/(website)/page-footer'
 import LandingPageVideo from '@/app/(website)/page.video'
 import LandingPageGradientShadows from '@/app/(website)/page.gradientShadows'
+import {Button} from '@/components/ui/button'
+import {Link} from 'next-view-transitions'
 
 export const metadata: Metadata = {
 	title: 'Letraz — Craft unique resumes for each job application effortlessly',
@@ -42,10 +44,24 @@ const LandingPage = async (
 				<LandingPageGradientShadows />
 			</div>
 
-			<div className="w-full lg:w-[80%] h-svh flex justify-center items-center overflow-hidden">
+			<div className="w-full lg:w-[80%] h-svh flex justify-center items-center overflow-hidden relative">
 				<Suspense fallback={<div className="w-full h-full bg-neutral-100 animate-pulse"/>}>
 					<LandingPageVideo />
 				</Suspense>
+
+				<div className="lg:absolute lg:bottom-16 right-8 lg:right-16 z-30 lg:w-[calc(100%-128px)] flex justify-between items-center">
+					<p>Closed beta starting soon</p>
+
+					<nav>
+						<Link href="/terms">
+							<Button variant="link" className="pl-0  font-semibold">Terms of use</Button>
+						</Link>
+
+						<Link href="/privacy">
+							<Button variant="link" className="pl-0  font-semibold">Privacy policy</Button>
+						</Link>
+					</nav>
+				</div>
 			</div>
 		</main>
 	)
