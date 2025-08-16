@@ -1,11 +1,8 @@
 import Image from 'next/image'
 import LetrazBrainImage from '@/public/brain.webp'
+import {ReactNode} from 'react'
 
-interface LegalLayoutProps {
-	children: React.ReactNode
-}
-
-const LegalLayout = ({ children }: LegalLayoutProps) => {
+const LegalLayout = ({children}: {children: ReactNode}) => {
 	return (
 		<main className="min-h-[80vh] bg-white">
 			<Image
