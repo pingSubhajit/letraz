@@ -59,6 +59,7 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 	const [cachedResults, setCachedResults] = useState<ResumeListItem[]>([])
 	const [isInitialLoad, setIsInitialLoad] = useState(true)
 	const hasScrolledRef = useRef(false)
+	const lastQueryRef = useRef<string>('')
 
 	// Convert Algolia hits to ResumeListItem format
 	const resumes: ResumeListItem[] = hits.map(hit => {
@@ -121,17 +122,28 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 		return resumeStatus === 'Success' || resumeStatus === 'Processing'
 	})
 
-	// Update cached results when we have new data
+	// Cache latest results once search is idle to avoid flicker during loading
 	useEffect(() => {
-		if (filtered.length > 0) {
+		if (status === 'idle') {
 			setCachedResults(filtered)
+		}
+	}, [status, filtered])
+
+	// Mark initial load complete after the first non-loading state
+	useEffect(() => {
+		if (isInitialLoad && status !== 'loading' && status !== 'stalled') {
 			setIsInitialLoad(false)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filtered.length])
+	}, [status, isInitialLoad])
 
 	// Smart scroll to first match
 	useLayoutEffect(() => {
+		// Reset scroll flag when query changes
+		if (searchQuery !== lastQueryRef.current) {
+			hasScrolledRef.current = false
+			lastQueryRef.current = searchQuery
+		}
+
 		// Only scroll if we have a search query and haven't scrolled yet for this query
 		if (searchQuery && filtered.length > 0 && !hasScrolledRef.current) {
 			// Small delay to ensure DOM is ready
@@ -150,15 +162,11 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 						}
 					}
 				}
+				// Mark as scrolled after attempting (whether it scrolled or not)
+				hasScrolledRef.current = true
 			}, 100)
 
-			hasScrolledRef.current = true
 			return () => clearTimeout(timer)
-		}
-		
-		// Reset scroll flag when search query changes
-		if (!searchQuery) {
-			hasScrolledRef.current = false
 		}
 	}, [searchQuery, filtered.length])
 
