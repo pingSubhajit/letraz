@@ -55,14 +55,14 @@ const SearchController = ({query}: {query: string}) => {
 // Component to render Algolia search results
 const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) => {
 	const {status} = useInstantSearch()
-	const {hits} = useHits<AlgoliaResumeHit>()
+	const {items} = useHits<AlgoliaResumeHit>() // 'hits' is deprecated, use 'items'
 	const [cachedResults, setCachedResults] = useState<ResumeListItem[]>([])
 	const [isInitialLoad, setIsInitialLoad] = useState(true)
 	const hasScrolledRef = useRef(false)
 	const lastQueryRef = useRef<string>('')
 
 	// Convert Algolia hits to ResumeListItem format
-	const resumes: ResumeListItem[] = hits.map(hit => {
+	const resumes: ResumeListItem[] = items.map(hit => {
 		const baseFields = {
 			id: hit.id ?? hit.objectID,
 			user: hit.user,
