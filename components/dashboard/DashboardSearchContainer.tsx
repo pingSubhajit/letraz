@@ -16,7 +16,7 @@ const DashboardSearchContainer = ({userId}: DashboardSearchContainerProps) => {
 	return (
 		<>
 			{/* Search bar with margins */}
-			<div className="mb-12 px-12">
+			<div className="mb-16 px-12">
 				<DashboardSearchInput
 					value={searchQuery}
 					onChange={setSearchQuery}

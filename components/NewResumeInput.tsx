@@ -45,9 +45,9 @@ const NewResumeInput = ({className}: {className?: string}) => {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className={cn('min-h-96 overflow-hidden bg-white p-4 pt-6 flex ' +
+				className={cn('min-h-96 overflow-hidden bg-white shadow-lg p-4 pt-6 flex ' +
 				'flex-col justify-between gap-4 relative z-40 hover:shadow-2xl focus-within:shadow-2xl ' +
-				'shadow-flame-300 transition', className)}
+				'transition', className)}
 			>
 				<FormField
 					control={form.control}
