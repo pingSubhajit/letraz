@@ -201,7 +201,7 @@ export const createTheme = (config: ThemeConfig) => {
 
 		// Common theme structure - consistent across all themes
 		return (
-			<SmoothScrollProvider className={cn('h-full p-12 overflow-y-auto', config.className)}>
+			<SmoothScrollProvider className={cn('h-full p-12 overflow-y-auto hide-scrollbar', config.className)}>
 				<PersonalInfoController personalInfoData={personalInfoData}>
 					{(data) => (
 						<HighlightWrapper itemType="personal">

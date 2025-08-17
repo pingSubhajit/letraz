@@ -3,8 +3,8 @@
 import {Configure, InstantSearch, useHits, useInstantSearch, useSearchBox} from 'react-instantsearch'
 import {liteClient as algoliasearch} from 'algoliasearch/lite'
 import {useEffect, useMemo} from 'react'
-import ResumeCard from './ResumeCard'
 import {ResumeListItem} from '@/lib/resume/types'
+import ResumeCard from "@/components/dashboard/ResumeCard";
 
 // Algolia Hit type based on the schema
 interface AlgoliaResumeHit {
