@@ -1,6 +1,6 @@
 import React from 'react'
 
-export function highlightText(text: string, searchQuery: string): React.ReactNode {
+export const highlightText = (text: string, searchQuery: string): React.ReactNode => {
   if (!searchQuery || !text) return text
 
   // Split search query into words and escape special regex characters
@@ -14,7 +14,7 @@ export function highlightText(text: string, searchQuery: string): React.ReactNod
 
   // Create regex pattern that matches any of the search words
   const pattern = new RegExp(`(${searchWords.join('|')})`, 'gi')
-  
+
   // Split text by the pattern
   const parts = text.split(pattern)
 
@@ -25,7 +25,7 @@ export function highlightText(text: string, searchQuery: string): React.ReactNod
         const isHighlighted = searchWords.some(
           word => new RegExp(`^${word}$`, 'i').test(part)
         )
-        
+
         if (isHighlighted) {
           return (
             <mark
@@ -36,9 +36,10 @@ export function highlightText(text: string, searchQuery: string): React.ReactNod
             </mark>
           )
         }
-        
+
         return <span key={index}>{part}</span>
       })}
     </>
   )
 }
+

@@ -12,12 +12,12 @@ interface DashboardSearchInputProps {
   className?: string
 }
 
-export default function DashboardSearchInput({
+const DashboardSearchInput = ({
   value,
   onChange,
-  placeholder = "Search your resumes . . .",
+  placeholder = 'Search your resumes . . .',
   className
-}: DashboardSearchInputProps) {
+}: DashboardSearchInputProps) => {
   const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus'>('idle')
 
   return (
@@ -38,13 +38,15 @@ export default function DashboardSearchInput({
             if (fieldState !== 'focus') setFieldState('idle')
           }}
         />
-        
+
         <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0 }}
+          initial={{width: 0}}
+          animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
           className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
         />
       </div>
     </div>
   )
 }
+
+export default DashboardSearchInput
