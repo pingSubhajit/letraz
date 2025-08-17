@@ -51,7 +51,7 @@ function SearchController({query}: {query: string}) {
 }
 
 // Component to render Algolia search results
-function AlgoliaHits({excludeBase}: {excludeBase?: boolean}) {
+function AlgoliaHits({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) {
   const {status, error} = useInstantSearch()
   const {hits} = useHits<AlgoliaResumeHit>()
 
@@ -140,7 +140,7 @@ function AlgoliaHits({excludeBase}: {excludeBase?: boolean}) {
   return (
     <>
       {filtered.map((resume) => (
-        <ResumeCard key={resume.id} resume={resume} />
+        <ResumeCard key={resume.id} resume={resume} searchQuery={searchQuery} />
       ))}
       {filtered.length === 0 && (
         <div className="col-span-full text-center py-12">
@@ -185,7 +185,7 @@ export default function ResumeSearch({userId, searchQuery}: ResumeSearchProps) {
     <IS searchClient={searchClient} indexName={indexName}>
       {userId && <CFG facetFilters={[`user:${userId}`]} />}
       <SearchController query={searchQuery} />
-      <AlgoliaHits excludeBase />
+      <AlgoliaHits excludeBase searchQuery={searchQuery} />
     </IS>
   )
 }

@@ -18,7 +18,7 @@ export default function DashboardSearchInput({
   placeholder = "Search your resumes . . .",
   className
 }: DashboardSearchInputProps) {
-  const [fieldState, setFieldState] = useState<'idle' | 'hover'>('idle')
+  const [fieldState, setFieldState] = useState<'idle' | 'hover' | 'focus'>('idle')
 
   return (
     <div className={cn('relative mb-2', className)}>
@@ -29,13 +29,19 @@ export default function DashboardSearchInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          onMouseEnter={() => setFieldState('hover')}
-          onMouseLeave={() => setFieldState('idle')}
+          onFocus={() => setFieldState('focus')}
+          onBlur={() => setFieldState('idle')}
+          onMouseEnter={() => {
+            if (fieldState !== 'focus') setFieldState('hover')
+          }}
+          onMouseLeave={() => {
+            if (fieldState !== 'focus') setFieldState('idle')
+          }}
         />
         
         <motion.div
-          initial={{width: 0}}
-          animate={{width: fieldState === 'hover' ? '50%' : 0}}
+          initial={{ width: 0 }}
+          animate={{ width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0 }}
           className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
         />
       </div>
