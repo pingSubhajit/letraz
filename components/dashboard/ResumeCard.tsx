@@ -53,7 +53,7 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 									<p className="truncate flex-1 font-medium text-base">{highlightText(resume.job.title, searchQuery)}</p>
 									<p className="text-xs text-neutral-500 truncate">
 										<span>{highlightText(resume.job.company_name, searchQuery)}</span>
-										{resume.job.location && <span>, {resume.job.location}</span>}
+										{resume.job.location && <span>, {highlightText(resume.job.location, searchQuery)}</span>}
 									</p>
 								</div>
 

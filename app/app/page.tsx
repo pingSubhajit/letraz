@@ -40,8 +40,10 @@ const AppHome = async () => {
 				)}
 			</div>
 
-			{/* Search and Resume Grid Container */}
-			<DashboardSearchContainer userId={userId || undefined} />
+			{/* Search and Resume Grid Container - Only show if user has resumes apart from base */}
+			{resumes && resumes.filter(r => !r.base).length > 0 && (
+				<DashboardSearchContainer userId={userId || undefined} />
+			)}
 		</div>
 	)
 }
