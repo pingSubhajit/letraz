@@ -2,7 +2,7 @@
 
 import {Configure, InstantSearch, useHits, useInstantSearch, useSearchBox} from 'react-instantsearch'
 import {liteClient as algoliasearch} from 'algoliasearch/lite'
-import {useEffect, useMemo} from 'react'
+import {useEffect, useMemo, useState, useRef, useLayoutEffect} from 'react'
 import {ResumeListItem} from '@/lib/resume/types'
 import ResumeCard from "@/components/dashboard/ResumeCard";
 
@@ -52,8 +52,11 @@ const SearchController = ({query}: {query: string}) => {
 
 // Component to render Algolia search results
 const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) => {
-	const {status, error} = useInstantSearch()
+	const {status} = useInstantSearch()
 	const {hits} = useHits<AlgoliaResumeHit>()
+	const [cachedResults, setCachedResults] = useState<ResumeListItem[]>([])
+	const [isInitialLoad, setIsInitialLoad] = useState(true)
+	const hasScrolledRef = useRef(false)
 
 	// Convert Algolia hits to ResumeListItem format
 	const resumes: ResumeListItem[] = hits.map(hit => {
@@ -116,8 +119,54 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 		return resumeStatus === 'Success' || resumeStatus === 'Processing'
 	})
 
-	// Handle loading state
-	if (status === 'loading' || status === 'stalled') {
+	// Update cached results when we have new data
+	useEffect(() => {
+		if (filtered.length > 0) {
+			setCachedResults(filtered)
+			setIsInitialLoad(false)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filtered.length])
+
+	// Smart scroll to first match
+	useLayoutEffect(() => {
+		// Only scroll if we have a search query and haven't scrolled yet for this query
+		if (searchQuery && filtered.length > 0 && !hasScrolledRef.current) {
+			// Small delay to ensure DOM is ready
+			const timer = setTimeout(() => {
+				// Find the grid container in the parent
+				const gridContainer = document.querySelector('.grid.grid-cols-1')
+				if (gridContainer) {
+					const firstCard = gridContainer.querySelector('a') // ResumeCard is wrapped in Link
+					if (firstCard) {
+						const rect = firstCard.getBoundingClientRect()
+						const isInViewport = rect.top >= 0 && rect.bottom <= window.innerHeight
+						
+						// Only scroll if the element is not already in viewport
+						if (!isInViewport) {
+							firstCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+						}
+					}
+				}
+			}, 100)
+
+			hasScrolledRef.current = true
+			return () => clearTimeout(timer)
+		}
+		
+		// Reset scroll flag when search query changes
+		if (!searchQuery) {
+			hasScrolledRef.current = false
+		}
+	}, [searchQuery, filtered.length])
+
+	// Use cached results during loading to prevent blinking
+	const displayResults = (status === 'loading' || status === 'stalled') && cachedResults.length > 0 
+		? cachedResults 
+		: filtered
+
+	// Handle loading state only on initial load
+	if ((status === 'loading' || status === 'stalled') && isInitialLoad) {
 		return (
 			<div className="col-span-full flex justify-center py-12">
 				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -131,7 +180,7 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 			<div className="col-span-full text-center py-12">
 				<p className="text-red-500 text-lg">Search temporarily unavailable</p>
 				<p className="text-neutral-400 text-sm mt-2">
-					{error?.message || 'Please check your connection and try again'}
+					Please check your connection and try again
 				</p>
 			</div>
 		)
@@ -139,10 +188,14 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 
 	return (
 		<>
-			{filtered.map((resume) => (
-				<ResumeCard key={resume.id} resume={resume} searchQuery={searchQuery} />
+			{displayResults.map((resume) => (
+				<ResumeCard 
+					key={resume.id} 
+					resume={resume} 
+					searchQuery={searchQuery}
+				/>
 			))}
-			{filtered.length === 0 && (
+			{displayResults.length === 0 && (
 				<div className="col-span-full text-center py-12">
 					<p className="text-neutral-500 text-lg">No resumes found</p>
 					<p className="text-neutral-400 text-sm mt-2">Try searching with different keywords</p>
