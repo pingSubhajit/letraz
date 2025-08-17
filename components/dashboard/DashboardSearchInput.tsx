@@ -29,6 +29,7 @@ const DashboardSearchInput = ({
 					value={value}
 					onChange={(e) => onChange(e.target.value)}
 					placeholder={placeholder}
+					aria-label={placeholder}
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
 					onMouseEnter={() => {
@@ -42,7 +43,7 @@ const DashboardSearchInput = ({
 				<motion.div
 					initial={{width: 0}}
 					animate={{width: fieldState === 'focus' ? '100%' : fieldState === 'hover' ? '50%' : 0}}
-					className="absolute w-0 h-[1px] inset-x-0 bottom-0 bg-primary origin-left"
+					className="absolute left-0 h-[1px] bottom-0 bg-primary origin-left"
 				/>
 			</div>
 		</div>

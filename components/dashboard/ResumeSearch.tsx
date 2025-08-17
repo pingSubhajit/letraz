@@ -181,9 +181,13 @@ const ResumeSearch = ({userId, searchQuery}: ResumeSearchProps) => {
 	}
 
 	// Show Algolia search results (empty query returns all resumes)
+	if (!userId) {
+		return null
+	}
+
 	return (
 		<IS searchClient={searchClient} indexName={indexName}>
-			{userId && <CFG facetFilters={[`user:${userId}`]} />}
+			<CFG facetFilters={[`user:${userId}`]} />
 			<SearchController query={searchQuery} />
 			<AlgoliaHits excludeBase searchQuery={searchQuery} />
 		</IS>
