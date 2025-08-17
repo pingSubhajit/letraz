@@ -1,8 +1,10 @@
 'use client'
 
 import {Configure, InstantSearch, useHits, useInstantSearch, useSearchBox} from 'react-instantsearch'
+import type {InstantSearchProps} from 'react-instantsearch'
 import {liteClient as algoliasearch} from 'algoliasearch/lite'
 import {useEffect, useMemo, useState, useRef, useLayoutEffect} from 'react'
+import type {ComponentType} from 'react'
 import {ResumeListItem} from '@/lib/resume/types'
 import ResumeCard from "@/components/dashboard/ResumeCard";
 
@@ -30,9 +32,9 @@ interface AlgoliaResumeHit {
   [key: string]: any // Index signature for Algolia BaseHit compatibility
 }
 
-// JSX workaround for React 19 - proper typing
-const IS = InstantSearch as any
-const CFG = Configure as any
+// JSX typing for React 19 compatibility
+const IS: ComponentType<InstantSearchProps> = InstantSearch as unknown as ComponentType<InstantSearchProps>
+const CFG = Configure
 
 interface ResumeSearchProps {
   userId?: string
@@ -67,7 +69,7 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 			status: hit.status ?? undefined
 		}
 		// Check if it's a base resume - base resumes typically have empty job fields
-		const isBase = hit.base === true || (!hit.job?.id && !hit.job?.title && !hit.job?.company_name)
+		const isBase = Boolean(hit.base) || (!hit.job?.id && !hit.job?.title && !hit.job?.company_name)
 
 		if (isBase) {
 			return {
@@ -135,7 +137,7 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 			// Small delay to ensure DOM is ready
 			const timer = setTimeout(() => {
 				// Find the grid container in the parent
-				const gridContainer = document.querySelector('.grid.grid-cols-1')
+				const gridContainer = document.querySelector('[data-resume-grid]')
 				if (gridContainer) {
 					const firstCard = gridContainer.querySelector('a') // ResumeCard is wrapped in Link
 					if (firstCard) {
