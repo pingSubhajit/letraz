@@ -24,7 +24,7 @@ const DashboardSearchInput = ({
 		<div className={cn('relative mb-2', className)}>
 			<div className="relative">
 				<Input
-					className="text-xl font-medium px-0 py-2 h-auto border-0 ring-0 border-b-2"
+					className="text-2xl font-medium px-0 py-2 h-auto border-0 ring-0 border-b-2 italic"
 					type="text"
 					value={value}
 					onChange={(e) => onChange(e.target.value)}

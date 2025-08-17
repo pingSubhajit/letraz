@@ -33,7 +33,7 @@ const AppHome = async () => {
 			</div>
 
 			{/* Top row with centered Input box and Base Resume */}
-			<div className="flex justify-center gap-8 mb-16">
+			<div className="flex justify-center gap-8 mb-20">
 				<NewResumeInput className="rounded-lg h-96 w-72" />
 				{baseResume && (
 					<ResumeCard resume={baseResume} className="w-72" />
