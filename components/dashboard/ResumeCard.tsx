@@ -6,13 +6,15 @@ import {ResumeListItem} from '@/lib/resume/types'
 import LoadingDots from '@/components/ui/loading-dots'
 import {Button} from '@/components/ui/button'
 import {Download} from 'lucide-react'
+import {highlightText} from '@/components/ui/highlight'
 
 type ResumeCardProps = {
   resume: ResumeListItem
   className?: string
+  searchQuery?: string
 }
 
-const ResumeCard = ({resume, className}: ResumeCardProps) => {
+const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 	const isProcessing = !resume.base && resume.status === 'Processing'
 
 	return (
@@ -48,8 +50,11 @@ const ResumeCard = ({resume, className}: ResumeCardProps) => {
 						{!resume.base && (
 							<div className="flex items-center gap-2 justify-between">
 								<div className="text-sm flex flex-col min-w-0">
-									<p className="truncate flex-1 font-medium text-base">{resume.job.title}</p>
-									<p className="text-xs text-neutral-500 truncate">{resume.job.company_name}{resume.job.location && `, ${resume.job.location}`}</p>
+									<p className="truncate flex-1 font-medium text-base">{highlightText(resume.job.title, searchQuery)}</p>
+									<p className="text-xs text-neutral-500 truncate">
+										<span>{highlightText(resume.job.company_name, searchQuery)}</span>
+										{resume.job.location && <span>, {resume.job.location}</span>}
+									</p>
 								</div>
 
 								{!isProcessing && (

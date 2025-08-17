@@ -28,7 +28,7 @@ type CommandDialogProps = DialogProps & { title?: string; description?: string }
 const CommandDialog = ({children, title = 'Search', description, ...props}: CommandDialogProps) => {
 	return (
 		<Dialog {...props}>
-      <DialogContent className="overflow-hidden p-0 shadow-lg" aria-label={title}>
+      <DialogContent className="overflow-hidden p-0 shadow-lg">
         {/* Visually hidden accessible name/description for screen readers */}
         <DialogTitle className="sr-only">{title}</DialogTitle>
         {description ? (
