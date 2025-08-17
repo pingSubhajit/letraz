@@ -54,7 +54,7 @@ const SearchController = ({query}: {query: string}) => {
 
 // Component to render Algolia search results
 const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) => {
-	const {status} = useInstantSearch()
+	const {status} = useInstantSearch({ catchError: true })
 	const {items} = useHits<AlgoliaResumeHit>() // 'hits' is deprecated, use 'items'
 	const [cachedResults, setCachedResults] = useState<ResumeListItem[]>([])
 	const [isInitialLoad, setIsInitialLoad] = useState(true)
