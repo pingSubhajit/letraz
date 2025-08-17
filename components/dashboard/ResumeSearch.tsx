@@ -1,18 +1,40 @@
 'use client'
 
-import {InstantSearch, Configure, useHits, useSearchBox} from 'react-instantsearch-hooks-web'
+import {InstantSearch, Configure, useHits, useSearchBox, useInstantSearch} from 'react-instantsearch-hooks-web'
 import {liteClient as algoliasearch} from 'algoliasearch/lite'
 import {useMemo, useEffect} from 'react'
-import DashboardResumeGrid from './DashboardResumeGrid'
 import ResumeCard from './ResumeCard'
 import {ResumeListItem} from '@/lib/resume/types'
-import {useResumes} from '@/lib/resume/queries'
 
-// JSX workaround for React 19
-const IS: any = InstantSearch
-const CFG: any = Configure
+// Algolia Hit type based on the schema
+interface AlgoliaResumeHit {
+  objectID: string
+  id: string
+  user: string
+  base?: boolean
+  thumbnail?: string
+  status?: string | null
+  job?: {
+    id?: string
+    job_url?: string
+    title?: string
+    company_name?: string
+    location?: string
+    description?: string
+    status?: string
+  }
+  sections?: Array<{
+    type?: string
+    data?: Record<string, any>
+  }>
+  [key: string]: any // Index signature for Algolia BaseHit compatibility
+}
 
-interface SearchableResumeGridProps {
+// JSX workaround for React 19 - proper typing
+const IS = InstantSearch as any
+const CFG = Configure as any
+
+interface ResumeSearchProps {
   userId?: string
   searchQuery: string
 }
@@ -30,27 +52,8 @@ function SearchController({query}: {query: string}) {
 
 // Component to render Algolia search results
 function AlgoliaHits({excludeBase}: {excludeBase?: boolean}) {
-  const {hits} = useHits<{
-    objectID: string
-    id: string
-    user: string
-    base?: boolean
-    thumbnail?: string
-    status?: string | null
-    job?: {
-      id?: string
-      job_url?: string
-      title?: string
-      company_name?: string
-      location?: string
-      description?: string
-      status?: string
-    }
-    sections?: Array<{
-      type?: string
-      data?: Record<string, any>
-    }>
-  }>()
+  const {status, error} = useInstantSearch()
+  const {hits} = useHits<AlgoliaResumeHit>()
 
   // Convert Algolia hits to ResumeListItem format
   const resumes: ResumeListItem[] = hits.map(hit => {
@@ -113,6 +116,27 @@ function AlgoliaHits({excludeBase}: {excludeBase?: boolean}) {
     return resumeStatus === 'Success' || resumeStatus === 'Processing'
   })
 
+  // Handle loading state
+  if (status === 'loading' || status === 'stalled') {
+    return (
+      <div className="col-span-full flex justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  // Handle error state
+  if (status === 'error') {
+    return (
+      <div className="col-span-full text-center py-12">
+        <p className="text-red-500 text-lg">Search temporarily unavailable</p>
+        <p className="text-neutral-400 text-sm mt-2">
+          {error?.message || 'Please check your connection and try again'}
+        </p>
+      </div>
+    )
+  }
+
   return (
     <>
       {filtered.map((resume) => (
@@ -128,10 +152,7 @@ function AlgoliaHits({excludeBase}: {excludeBase?: boolean}) {
   )
 }
 
-export default function SearchableResumeGrid({userId, searchQuery}: SearchableResumeGridProps) {
-  const {data: apiResumes, isLoading} = useResumes()
-  const hasSearchQuery = searchQuery.trim().length > 0
-
+export default function ResumeSearch({userId, searchQuery}: ResumeSearchProps) {
   // Algolia configuration
   const appId = process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID
   const apiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY
@@ -139,35 +160,27 @@ export default function SearchableResumeGrid({userId, searchQuery}: SearchableRe
   
   const searchClient = useMemo(() => {
     if (appId && apiKey) {
-      return algoliasearch(appId, apiKey)
+      try {
+        return algoliasearch(appId, apiKey) 
+      } catch (error) {
+        console.error('Failed to initialize Algolia client:', error)
+        return null
+      }
     }
     return null
   }, [appId, apiKey])
 
-  // If no search query, show API results
-  if (!hasSearchQuery) {
-    return (
-      <DashboardResumeGrid
-        resumes={apiResumes || []}
-        isLoading={isLoading}
-        excludeBase
-      />
-    )
-  }
-
-  // If Algolia not configured, show filtered API results
+  // If Algolia not configured, show error message
   if (!searchClient) {
     return (
-      <DashboardResumeGrid
-        resumes={apiResumes || []}
-        isLoading={isLoading}
-        searchQuery={searchQuery}
-        excludeBase
-      />
+      <div className="col-span-full text-center py-12">
+        <p className="text-neutral-500 text-lg">Search is not configured</p>
+        <p className="text-neutral-400 text-sm mt-2">Please contact support if this issue persists</p>
+      </div>
     )
   }
 
-  // Show Algolia search results
+  // Show Algolia search results (empty query returns all resumes)
   return (
     <IS searchClient={searchClient} indexName={indexName}>
       {userId && <CFG facetFilters={[`user:${userId}`]} />}
