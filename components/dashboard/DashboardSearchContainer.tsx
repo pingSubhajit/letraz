@@ -3,7 +3,7 @@
 import {useState} from 'react'
 import {useDebouncedValue} from '@mantine/hooks'
 import DashboardSearchInput from './DashboardSearchInput'
-import ResumeSearch from './ResumeSearch'
+import ResumeSearch from "@/components/dashboard/ResumeSearch";
 
 interface DashboardSearchContainerProps {
   userId?: string

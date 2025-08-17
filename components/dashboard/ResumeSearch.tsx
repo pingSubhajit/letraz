@@ -1,8 +1,8 @@
 'use client'
 
-import {InstantSearch, Configure, useHits, useSearchBox, useInstantSearch} from 'react-instantsearch-hooks-web'
+import {Configure, InstantSearch, useHits, useInstantSearch, useSearchBox} from 'react-instantsearch-core'
 import {liteClient as algoliasearch} from 'algoliasearch/lite'
-import {useMemo, useEffect} from 'react'
+import {useEffect, useMemo} from 'react'
 import ResumeCard from './ResumeCard'
 import {ResumeListItem} from '@/lib/resume/types'
 
