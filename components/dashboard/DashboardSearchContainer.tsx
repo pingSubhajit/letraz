@@ -3,7 +3,7 @@
 import {useState} from 'react'
 import {useDebouncedValue} from '@mantine/hooks'
 import DashboardSearchInput from './DashboardSearchInput'
-import ResumeSearch from "@/components/dashboard/ResumeSearch";
+import ResumeSearch from '@/components/dashboard/ResumeSearch'
 
 interface DashboardSearchContainerProps {
   userId?: string
@@ -16,7 +16,7 @@ const DashboardSearchContainer = ({userId}: DashboardSearchContainerProps) => {
 	return (
 		<>
 			{/* Search bar with margins */}
-			<div className="mb-12 px-16">
+			<div className="mb-12 px-12">
 				<DashboardSearchInput
 					value={searchQuery}
 					onChange={setSearchQuery}
