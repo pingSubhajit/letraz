@@ -40,18 +40,18 @@ interface ResumeSearchProps {
 }
 
 // Component to sync search query with InstantSearch
-function SearchController({query}: {query: string}) {
+const SearchController = ({query}: {query: string}) => {
   const {refine} = useSearchBox()
-  
+
   useEffect(() => {
     refine(query)
   }, [query, refine])
-  
+
   return null
 }
 
 // Component to render Algolia search results
-function AlgoliaHits({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) {
+const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) => {
   const {status, error} = useInstantSearch()
   const {hits} = useHits<AlgoliaResumeHit>()
 
@@ -61,7 +61,7 @@ function AlgoliaHits({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
       id: hit.id ?? hit.objectID,
       user: hit.user,
       thumbnail: hit.thumbnail ?? undefined,
-      status: hit.status ?? undefined,
+      status: hit.status ?? undefined
     }
     // Check if it's a base resume - base resumes typically have empty job fields
     const isBase = hit.base === true || (!hit.job?.id && !hit.job?.title && !hit.job?.company_name)
@@ -101,16 +101,16 @@ function AlgoliaHits({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
   if (excludeBase) {
     filtered = filtered.filter(r => !r.base)
   }
-  
+
   // Filter by visibility criteria
   filtered = filtered.filter(r => {
     // Base resumes are always visible (unless excluded)
     if (r.base) return !excludeBase
-    
+
     // For non-base resumes, check job status
     const jobStatus = r.job?.status
     if (!jobStatus || jobStatus !== 'Success') return false
-    
+
     // Check resume status
     const resumeStatus = r.status
     return resumeStatus === 'Success' || resumeStatus === 'Processing'
@@ -152,18 +152,18 @@ function AlgoliaHits({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
   )
 }
 
-export default function ResumeSearch({userId, searchQuery}: ResumeSearchProps) {
+const ResumeSearch = ({userId, searchQuery}: ResumeSearchProps) => {
   // Algolia configuration
   const appId = process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID
   const apiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY
   const indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || 'resume'
-  
+
   const searchClient = useMemo(() => {
     if (appId && apiKey) {
       try {
-        return algoliasearch(appId, apiKey) 
+        return algoliasearch(appId, apiKey)
       } catch (error) {
-        console.error('Failed to initialize Algolia client:', error)
+        // Silently fail - error will be handled by showing fallback UI
         return null
       }
     }
@@ -189,3 +189,5 @@ export default function ResumeSearch({userId, searchQuery}: ResumeSearchProps) {
     </IS>
   )
 }
+
+export default ResumeSearch
