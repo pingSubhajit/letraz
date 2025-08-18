@@ -11,10 +11,13 @@ import {handleErrors} from '@/lib/misc/error-handler'
  * @returns {Promise<Experience>} - The updated experience object
  * @throws {Error} If validation, authentication, or API request fails.
  */
-export const addExperienceToDB = async (experienceValues: ExperienceMutation): Promise<Experience> => {
+export const addExperienceToDB = async (
+	experienceValues: ExperienceMutation,
+	resumeId: string = 'base'
+): Promise<Experience> => {
 	try {
 		const params = ExperienceMutationSchema.parse(experienceValues)
-		const data = await api.post<Experience>('/resume/base/experience/', params)
+		const data = await api.post<Experience>(`/resume/${resumeId}/experience/`, params)
 		return ExperienceSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'add experience')

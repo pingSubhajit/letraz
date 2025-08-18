@@ -1,18 +1,24 @@
 import {Experience, ExperienceMutation} from '@/lib/experience/types'
 import {MutationOptions, useMutation} from '@tanstack/react-query'
-import {deleteExperienceFromDB, addExperienceToDB, updateExperienceInDB} from '@/lib/experience/actions'
+import {addExperienceToDB, deleteExperienceFromDB, updateExperienceInDB} from '@/lib/experience/actions'
 
-export const useAddUserExperienceMutation = (options?: MutationOptions<Experience, Error, ExperienceMutation>) => useMutation({
-	mutationFn: addExperienceToDB,
+export const useAddUserExperienceMutation = (options?: MutationOptions<Experience, Error, {data: ExperienceMutation, resumeId?: string}>) => useMutation({
+	mutationFn: ({data, resumeId}) => {
+		return addExperienceToDB(data, resumeId || 'base')
+	},
 	...options
 })
 
-export const useUpdateExperienceMutation = (options?: MutationOptions<Experience, Error, {id: string, data: Partial<ExperienceMutation>}>) => useMutation({
-	mutationFn: ({id, data}) => updateExperienceInDB(id, data),
+export const useUpdateExperienceMutation = (options?: MutationOptions<Experience, Error, {id: string, data: Partial<ExperienceMutation>, resumeId?: string}>) => useMutation({
+	mutationFn: ({id, data, resumeId}) => {
+		return updateExperienceInDB(id, data, resumeId || 'base')
+	},
 	...options
 })
 
-export const useDeleteExperienceMutation = (options?:MutationOptions<void, Error, string>) => useMutation({
-	mutationFn: (experienceId) => deleteExperienceFromDB(experienceId, 'base'),
+export const useDeleteExperienceMutation = (options?:MutationOptions<void, Error, {id: string, resumeId?: string}>) => useMutation({
+	mutationFn: ({id, resumeId}) => {
+		return deleteExperienceFromDB(id, resumeId || 'base')
+	},
 	...options
 })

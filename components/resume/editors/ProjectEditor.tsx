@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useMemo, useState} from 'react'
+import {useParams} from 'next/navigation'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -69,6 +70,8 @@ const newSkillSchema = z.object({
 
 const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => {
 	const [view, setView] = useState<ViewState>('list')
+	const params = useParams<{ resumeId?: string }>()
+	const resumeId = (params?.resumeId as string) ?? 'base'
 	const [projectListAnimationRef] = useAutoAnimate()
 	const [skillListAnimationRef] = useAutoAnimate()
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -91,12 +94,12 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 		mode: 'onChange'
 	})
 
-	const {data: projects = [], isLoading, error} = useCurrentProjects()
-	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills} = useCurrentResumeSkills()
+	const {data: projects = [], isLoading, error} = useCurrentProjects(resumeId)
+	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills} = useCurrentResumeSkills(resumeId)
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} =
     useGlobalSkills()
 	const {data: skillCategories = [], isLoading: isLoadingCategories} =
-    useSkillCategories()
+    useSkillCategories(resumeId)
 
 	// Merge and prioritize skills - user's resume skills come first
 	const mergedSkills = useMemo(() => {
@@ -117,13 +120,10 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	}, [resumeSkills, globalSkills])
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: projectQueryOptions.queryKey})
-		queryClient.invalidateQueries({
-			queryKey: baseResumeQueryOptions.queryKey
-		})
-		queryClient.invalidateQueries({
-			queryKey: globalSkillsQueryOptions.queryKey
-		})
+		queryClient.invalidateQueries({queryKey: projectQueryOptions(resumeId).queryKey})
+		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: globalSkillsQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const {mutateAsync: addProject, isPending: isAddingPending} = useAddProjectMutation({
@@ -223,9 +223,9 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 
 			if (editingIndex !== null) {
 				const projectId = projects[editingIndex]?.id
-				await updateProject({id: projectId, data: formattedValues})
+				await updateProject({id: projectId, data: formattedValues, resumeId})
 			} else {
-				await addProject(formattedValues)
+				await addProject({data: formattedValues, resumeId})
 			}
 
 			form.reset(DEFAULT_PROJECT_VALUES)
@@ -269,7 +269,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-			await deleteProject(id)
+			await deleteProject({id, resumeId})
 			if (editingIndex !== null && projects[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_PROJECT_VALUES)
