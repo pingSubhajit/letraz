@@ -13,7 +13,7 @@ const ChangesPageHeading = () => {
 				exit={{opacity: 0}}
 			>News & updates about the development</motion.h1>
 			<motion.h2
-				className="mt-8 text-base lg::text-lg opacity-70 max-w-[75%]"
+				className="mt-8 text-base lg:text-lg opacity-70 max-w-[75%]"
 				initial={{opacity: 0}}
 				animate={{opacity: 1}}
 				exit={{opacity: 0}}
