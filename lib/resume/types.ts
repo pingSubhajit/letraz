@@ -7,6 +7,21 @@ import {JobSchema} from '@/lib/job/types'
 import {CertificationMutationSchema, CertificationSchema} from '@/lib/certification/types'
 import {ProjectMutationSchema, ProjectSchema} from '@/lib/project/types'
 
+// Utility function to normalize thumbnail URLs by adding HTTPS protocol if missing
+export const normalizeThumbnailUrl = (url: string | null | undefined): string | null => {
+	if (!url) return null
+	// If the URL doesn't start with http:// or https://, add https://
+	if (!url.startsWith('http://') && !url.startsWith('https://')) {
+		return `https://${url}`
+	}
+	return url
+}
+
+// Custom schema for thumbnail URLs that automatically adds HTTPS protocol if missing
+const ThumbnailUrlSchema = z.string().transform((value) => {
+	return normalizeThumbnailUrl(value) || value
+}).pipe(z.string().url())
+
 /*
  * Base schema for Resume and its sections
  * Check https://outline.letraz.app/api-reference/resume-object/get-resume-by-id for more information
@@ -55,14 +70,23 @@ export const ResumeSchema = z.object({
 	base: z.boolean().describe('Indicates if this is the base resume.'),
 	user: UserInfoSchema.describe('The user information associated with the resume.'),
 	job: JobSchema.describe('The job information associated with the resume.'),
-	status: z.string().describe('Indicates if the resume is currently being processed.').nullable().optional(),
-	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.'),
-	thumbnail: z.string().describe('The thumbnail of the resume.').nullable().optional()
+	status: z.string().nullable().optional().describe('Processing status at the root of resume.'),
+	thumbnail: ThumbnailUrlSchema.nullable().optional().describe('Thumbnail image URL for the resume preview.'),
+	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.')
 })
 
 // Infer TypeScript types from the schema
 export type ResumeSection = z.infer<typeof ResumeSectionSchema>
 export type Resume = z.infer<typeof ResumeSchema>
+
+// Tailor API response
+export const TailorResumeResponseSchema = z.object({
+	id: z.string(),
+	processing: z.boolean().optional(),
+	status: z.string().nullable().optional()
+})
+
+export type TailorResumeResponse = z.infer<typeof TailorResumeResponseSchema>
 
 /**
  * Mutation schemas for replacing a resume
@@ -112,7 +136,7 @@ const ResumeListItemCommonFields = z.object({
 	id: z.string(),
 	user: z.string().optional(),
 	status: z.string().nullable().optional(),
-	thumbnail: z.string().url().nullish()
+	thumbnail: ThumbnailUrlSchema.nullish().optional()
 })
 
 export const ResumeListItemSchema = z.discriminatedUnion('base', [

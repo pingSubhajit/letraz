@@ -64,19 +64,19 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 
 	const {mutateAsync, isPending} = useAddUserExperienceMutation({
 		onMutate: async (newExperience) => {
-			await queryClient.cancelQueries(experienceQueryOptions)
-			const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
+			await queryClient.cancelQueries(experienceQueryOptions())
+			const prevExperiences = queryClient.getQueryData(experienceQueryOptions().queryKey)
 			// TODO remove this any the
-			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData:any) => oldData ? [...oldData, newExperience] : oldData)
+			queryClient.setQueryData(experienceQueryOptions().queryKey, (oldData:any) => oldData ? [...oldData, newExperience] : oldData)
 			return {prevExperiences}
 		},
 		// TODO remove this any the
 		onError: (err, newExperience, context:any) => {
-			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+			queryClient.setQueryData(experienceQueryOptions().queryKey, context?.prevExperiences)
 			throw Error('Failed to add experience')
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(experienceQueryOptions)
+			queryClient.invalidateQueries(experienceQueryOptions())
 		}
 	})
 
@@ -138,7 +138,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 	 */
 	const insertExperience = async (values: ExperienceMutation): Promise<Experience> => {
 		const params = ExperienceMutationSchema.parse(values)
-		return mutateAsync(params)
+		return mutateAsync({data: params})
 	}
 
 	/**

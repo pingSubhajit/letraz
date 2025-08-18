@@ -13,7 +13,8 @@ import {apiDateToDate, dateToApiFormat} from '@/lib/utils'
  * @throws {Error} If validation, authentication, or API request fails.
  */
 export const addCertificationToDB = async (
-	certificationValues: CertificationMutation
+	certificationValues: CertificationMutation,
+	resumeId: string = 'base'
 ): Promise<Certification> => {
 	try {
 		const params = CertificationMutationSchema.parse(certificationValues)
@@ -24,7 +25,7 @@ export const addCertificationToDB = async (
 			issue_date: params.issue_date ? dateToApiFormat(params.issue_date as Date) : undefined
 		}
 
-		const data = await api.post<Certification>('/resume/base/certification/', apiParams)
+		const data = await api.post<Certification>(`/resume/${resumeId}/certification/`, apiParams)
 
 		return CertificationSchema.parse(data)
 	} catch (error) {

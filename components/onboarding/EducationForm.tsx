@@ -69,20 +69,20 @@ const EducationForm = ({
 	// Fixing the mutation options
 	const {mutateAsync, isPending} = useAddEducationMutation({
 		onMutate: async (newEducation) => {
-			await queryClient.cancelQueries(educationOptions)
-			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
+			await queryClient.cancelQueries(educationOptions())
+			const prevEducations = queryClient.getQueryData(educationOptions().queryKey)
 			// TODO remove this any
-			queryClient.setQueryData(educationOptions.queryKey, (oldData:any) => [...oldData, newEducation])
+			queryClient.setQueryData(educationOptions().queryKey, (oldData:any) => [...oldData, newEducation])
 			return {prevEducations}
 		},
 		// TODO remove this any the
 		onError: (err, newEducation, context:any) => {
-			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+			queryClient.setQueryData(educationOptions().queryKey, context?.prevEducations)
 
 			throw Error('Failed to add education')
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(educationOptions)
+			queryClient.invalidateQueries(educationOptions())
 		}
 	})
 
@@ -143,7 +143,7 @@ const EducationForm = ({
 	 * @returns {Promise<Education|undefined>} The newly added education entry.
 	 */
 	const insertEducation = async (values: EducationMutation): Promise<Education|undefined> => {
-		return await mutateAsync(values)
+		return await mutateAsync({data: values})
 	}
 
 	/**

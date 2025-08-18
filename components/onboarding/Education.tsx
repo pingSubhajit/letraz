@@ -37,24 +37,24 @@ const Education = (): JSX.Element => {
 
 	const {mutateAsync} = useDeleteEducationMutation({
 		onMutate: async (educationId) => {
-			await queryClient.cancelQueries(educationOptions)
-			const prevEducations = queryClient.getQueryData(educationOptions.queryKey)
-			queryClient.setQueryData(educationOptions.queryKey, (oldData) => oldData ? oldData.filter(i => i.id != educationId) : oldData )
+			await queryClient.cancelQueries(educationOptions())
+			const prevEducations = queryClient.getQueryData(educationOptions().queryKey)
+			queryClient.setQueryData(educationOptions().queryKey, (oldData) => oldData ? oldData.filter(i => i.id !== educationId.id) : oldData )
 			return {prevEducations}
 		},
 		// TODO remove this any the
 		onError: (err, newEducation, context:any) => {
-			queryClient.setQueryData(educationOptions.queryKey, context?.prevEducations)
+			queryClient.setQueryData(educationOptions().queryKey, context?.prevEducations)
 			toast.error('Failed to delete education.')
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(educationOptions)
+			queryClient.invalidateQueries(educationOptions())
 		}
 
 	})
 
 	const handleDeleteEducation = (id:string) => {
-		mutateAsync(id)
+		mutateAsync({id})
 	}
 
 
