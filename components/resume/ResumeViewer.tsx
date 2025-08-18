@@ -60,7 +60,7 @@ const ResumeViewer = ({resume, resumeRef, className, showAnimation = true, showT
 				}
 			/>
 		</div>
-		{showToolbar && <ResumeActionsToolbar resumeId={resume.id} />}
+		{showToolbar && <ResumeActionsToolbar resumeId={resume.id} isBaseResume={resume.base} />}
 		</>
 	)
 }

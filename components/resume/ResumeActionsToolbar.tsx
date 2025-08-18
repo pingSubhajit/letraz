@@ -15,9 +15,10 @@ import {cn} from '@/lib/utils'
 interface ResumeActionsToolbarProps {
 	resumeId: string
 	className?: string
+	isBaseResume?: boolean
 }
 
-const ResumeActionsToolbar = ({resumeId, className}: ResumeActionsToolbarProps) => {
+const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: ResumeActionsToolbarProps) => {
 	const {mutateAsync: exportResume, isPending: isExporting} = useExportResumeMutation()
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
@@ -46,6 +47,71 @@ const ResumeActionsToolbar = ({resumeId, className}: ResumeActionsToolbarProps) 
 		}
 	}
 
+	// Download button component (reusable)
+	const DownloadButton = () => (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button
+					variant="default"
+					size="default"
+					style={isBaseResume ? undefined : {
+						borderRadius: '0',
+						borderTopLeftRadius: '9999px',
+						borderBottomLeftRadius: '9999px',
+						borderTopRightRadius: '0.5rem',
+						borderBottomRightRadius: '0.5rem'
+					}}
+					className={isBaseResume ? "rounded-full pl-4 pr-2 gap-2 shadow-lg" : "pl-4 pr-2 gap-2"}
+					disabled={isExporting}
+				>
+					{isExporting ? (
+						<>
+							<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+							<span>Exporting...</span>
+						</>
+					) : (
+						<>
+							<Download className="h-4 w-4" />
+							<span>Download</span>
+							<ChevronDownIcon className="h-4 w-4 ml-1 fill-current" />
+						</>
+					)}
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="min-w-[180px]">
+				<DropdownMenuItem 
+					onClick={() => handleExport('pdf')}
+					className="cursor-pointer"
+					disabled={isExporting}
+				>
+					Download as PDF
+				</DropdownMenuItem>
+				<DropdownMenuItem 
+					onClick={() => handleExport('tex')}
+					className="cursor-pointer"
+					disabled={isExporting}
+				>
+					Download .tex file
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	)
+
+	// For base resume, only show download button
+	if (isBaseResume) {
+		return (
+			<div 
+				className={cn(
+					'fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50',
+					className
+				)}
+			>
+				<DownloadButton />
+			</div>
+		)
+	}
+
+	// For non-base resumes, show all buttons
 	return (
 		<div 
 			className={cn(
@@ -55,46 +121,7 @@ const ResumeActionsToolbar = ({resumeId, className}: ResumeActionsToolbarProps) 
 				className
 			)}
 		>
-			{/* Download button with dropdown */}
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button
-						variant="default"
-						size="default"
-						className="rounded-tl-full rounded-bl-full rounded-tr-lg rounded-br-lg pl-4 pr-2 gap-2"
-						disabled={isExporting}
-					>
-						{isExporting ? (
-							<>
-								<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-								<span>Exporting...</span>
-							</>
-						) : (
-							<>
-								<Download className="h-4 w-4" />
-								<span>Download</span>
-								<ChevronDownIcon className="h-4 w-4 ml-1 fill-current" />
-							</>
-						)}
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end" className="min-w-[180px]">
-					<DropdownMenuItem 
-						onClick={() => handleExport('pdf')}
-						className="cursor-pointer"
-						disabled={isExporting}
-					>
-						Download as PDF
-					</DropdownMenuItem>
-					<DropdownMenuItem 
-						onClick={() => handleExport('tex')}
-						className="cursor-pointer"
-						disabled={isExporting}
-					>
-						Download .tex file
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
+			<DownloadButton />
 
 			{/* Job details button - disabled */}
 			<Button
