@@ -1,6 +1,6 @@
 'use client'
 
-import {useSignUp} from '@clerk/nextjs'
+import {useSignIn} from '@clerk/nextjs'
 import {OAuthStrategy} from '@clerk/types'
 import {BsGithub} from 'react-icons/bs'
 import {Button} from '@/components/ui/button'
@@ -8,12 +8,12 @@ import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 
 const GithubAuthButton = ({className}: { className?: string }) => {
-	const {signUp} = useSignUp()
+	const {signIn} = useSignIn()
 
-	if (!signUp) return null
+	if (!signIn) return null
 
 	const signInWith = (strategy: OAuthStrategy) => {
-		return signUp.authenticateWithRedirect({
+		return signIn.authenticateWithRedirect({
 			strategy,
 			redirectUrl: '/signup/sso-callback',
 			redirectUrlComplete: `${window.location.origin}/app`
