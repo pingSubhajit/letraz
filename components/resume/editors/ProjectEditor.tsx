@@ -99,7 +99,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} =
     useGlobalSkills()
 	const {data: skillCategories = [], isLoading: isLoadingCategories} =
-    useSkillCategories()
+    useSkillCategories(resumeId)
 
 	// Merge and prioritize skills - user's resume skills come first
 	const mergedSkills = useMemo(() => {
