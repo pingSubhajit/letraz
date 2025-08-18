@@ -1,11 +1,11 @@
 'use client'
 
-import {Configure, InstantSearch, useHits, useInstantSearch, useSearchBox} from 'react-instantsearch'
 import type {InstantSearchProps} from 'react-instantsearch'
+import {Configure, InstantSearch, useHits, useInstantSearch, useSearchBox} from 'react-instantsearch'
 import {liteClient as algoliasearch} from 'algoliasearch/lite'
-import {useEffect, useMemo, useState, useRef, useLayoutEffect} from 'react'
 import type {ComponentType} from 'react'
-import {ResumeListItem} from '@/lib/resume/types'
+import {useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react'
+import {normalizeThumbnailUrl, ResumeListItem} from '@/lib/resume/types'
 import ResumeCard from "@/components/dashboard/ResumeCard";
 
 // Algolia Hit type based on the schema
@@ -66,7 +66,7 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 		const baseFields = {
 			id: hit.id ?? hit.objectID,
 			user: hit.user,
-			thumbnail: hit.thumbnail ?? undefined,
+			thumbnail: normalizeThumbnailUrl(hit.thumbnail) ?? undefined,
 			status: hit.status ?? undefined
 		}
 		// Check if it's a base resume - base resumes typically have empty job fields

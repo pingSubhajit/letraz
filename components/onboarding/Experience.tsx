@@ -32,18 +32,18 @@ const Experience = (): JSX.Element => {
 
 	const {mutateAsync} = useDeleteExperienceMutation({
 		onMutate: async (experienceId) => {
-			await queryClient.cancelQueries(experienceQueryOptions)
-			const prevExperiences = queryClient.getQueryData(experienceQueryOptions.queryKey)
-			queryClient.setQueryData(experienceQueryOptions.queryKey, (oldData) => oldData ? oldData.filter(i => i.id != experienceId) : oldData )
+			await queryClient.cancelQueries(experienceQueryOptions())
+			const prevExperiences = queryClient.getQueryData(experienceQueryOptions().queryKey)
+			queryClient.setQueryData(experienceQueryOptions().queryKey, (oldData) => oldData ? oldData.filter(i => i.id !== experienceId.id) : oldData )
 			return {prevExperiences}
 		},
 		// TODO remove this any the
 		onError: (err, newExperience, context:any) => {
-			queryClient.setQueryData(experienceQueryOptions.queryKey, context?.prevExperiences)
+			queryClient.setQueryData(experienceQueryOptions().queryKey, context?.prevExperiences)
 			toast.error('Failed to delete experience.')
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(experienceQueryOptions)
+			queryClient.invalidateQueries(experienceQueryOptions())
 		}
 	})
 
@@ -52,7 +52,7 @@ const Experience = (): JSX.Element => {
 	 * @param {string} experienceId - Index of the experience entry to delete
 	 */
 	const handleDeleteExperience = async (experienceId:string) => {
-		await mutateAsync(experienceId)
+		await mutateAsync({id: experienceId})
 	}
 
 	return (
