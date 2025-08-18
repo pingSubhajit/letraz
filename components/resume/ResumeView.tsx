@@ -44,7 +44,7 @@ const ResumeView = () => {
 							)}
 							{resume && (
 								<motion.div {...DEFAULT_FADE_ANIMATION} key="content">
-									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" />
+									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" showToolbar />
 								</motion.div>
 							)}
 						</AnimatePresence>

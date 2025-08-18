@@ -8,7 +8,9 @@ import {
 	ResumeMutationSchema,
 	ResumeSchema,
 	TailorResumeResponse,
-	TailorResumeResponseSchema
+	TailorResumeResponseSchema,
+	ExportResumeResponse,
+	ExportResumeResponseSchema
 } from '@/lib/resume/types'
 import {parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
@@ -123,3 +125,20 @@ export const replaceResume = async (
 		return handleErrors(error, 'replace resume')
 	}
 }
+
+/**
+ * Exports a resume in PDF or TEX format
+ * GET /resume/{id}/export
+ * @param {string} resumeId - The ID of the resume to export
+ * @returns {Promise<ExportResumeResponse>} - URLs for the exported files
+ * @throws {Error} If authentication or API request fails.
+ */
+export const exportResumeFromDB = async (resumeId: string): Promise<ExportResumeResponse> => {
+	try {
+		const data = await api.get<ExportResumeResponse>(`/resume/${resumeId}/export`)
+		return ExportResumeResponseSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'export resume')
+	}
+}
+

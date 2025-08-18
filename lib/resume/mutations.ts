@@ -1,8 +1,8 @@
 import {MutationOptions, useMutation, useQueryClient} from '@tanstack/react-query'
-import {parseUploadedResume, rearrangeResumeSections, replaceResume, tailorResumeInDB} from '@/lib/resume/actions'
+import {parseUploadedResume, rearrangeResumeSections, replaceResume, tailorResumeInDB, exportResumeFromDB} from '@/lib/resume/actions'
 import {BASE_RESUME_KEYS} from '@/lib/resume/key'
 import {toast} from 'sonner'
-import {Resume, ResumeMutation} from '@/lib/resume/types'
+import {Resume, ResumeMutation, ExportResumeResponse} from '@/lib/resume/types'
 import type {TailorResumeResponse} from '@/lib/resume/types'
 
 export const useRearrangeResumeSectionsMutation = () => {
@@ -51,6 +51,15 @@ export const useReplaceResumeMutation = () => {
 		},
 		onError: () => {
 			toast.error('Failed to replace resume')
+		}
+	})
+}
+
+export const useExportResumeMutation = () => {
+	return useMutation<ExportResumeResponse, Error, string>({
+		mutationFn: async (resumeId: string) => exportResumeFromDB(resumeId),
+		onError: () => {
+			toast.error('Failed to export resume. Please try again.')
 		}
 	})
 }

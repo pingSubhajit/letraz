@@ -88,6 +88,14 @@ export const TailorResumeResponseSchema = z.object({
 
 export type TailorResumeResponse = z.infer<typeof TailorResumeResponseSchema>
 
+// Export API response
+export const ExportResumeResponseSchema = z.object({
+	pdf_url: z.string(),
+	latex_url: z.string()
+})
+
+export type ExportResumeResponse = z.infer<typeof ExportResumeResponseSchema>
+
 /**
  * Mutation schemas for replacing a resume
  * Consists of section mutation schemas only; excludes id, base, status, user, and job
