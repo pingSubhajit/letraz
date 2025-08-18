@@ -95,7 +95,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	})
 
 	const {data: projects = [], isLoading, error} = useCurrentProjects(resumeId)
-	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills} = useCurrentResumeSkills()
+	const {data: resumeSkills = [], isLoading: isLoadingResumeSkills} = useCurrentResumeSkills(resumeId)
 	const {data: globalSkills = [], isLoading: isLoadingGlobalSkills} =
     useGlobalSkills()
 	const {data: skillCategories = [], isLoading: isLoadingCategories} =
