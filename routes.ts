@@ -24,6 +24,18 @@ const routes: Record<'website' | 'app', Record<string, Route>> = {
 			segment: 'changes',
 			route: '/changes',
 			mainNav: true
+		},
+		privacy: {
+			title: 'Privacy',
+			segment: 'privacy',
+			route: '/privacy',
+			mainNav: false
+		},
+		terms: {
+			title: 'Terms',
+			segment: 'terms',
+			route: '/terms',
+			mainNav: false
 		}
 	},
 	app: {
