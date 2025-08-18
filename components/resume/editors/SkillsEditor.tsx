@@ -128,7 +128,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 			const prevSkills = queryClient.getQueryData(resumeSkillsQueryOptions(resumeId).queryKey)
 
 			// Find the skill details from global skills
-			const skillDetails = globalSkills.find(gs => gs.id === newSkill.skill_id)
+			const skillDetails = globalSkills.find(gs => gs.id === newSkill.data.skill_id)
 
 			if (skillDetails) {
 				queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
@@ -137,7 +137,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 						id: `temp-id-${Date.now()}`,
 						skill: skillDetails,
 						resume_section: 'temp-section',
-						level: newSkill.level
+						level: newSkill.data.level
 					}]
 				})
 			}
@@ -193,7 +193,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	const {mutateAsync: removeSkill, isPending: isDeleting} = useRemoveSkillMutation({
 		onMutate: async (skillId) => {
-			setDeletingId(skillId)
+			setDeletingId(skillId.id)
 
 			await queryClient.cancelQueries({queryKey: resumeSkillsQueryOptions(resumeId).queryKey})
 
@@ -201,7 +201,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 			queryClient.setQueryData(resumeSkillsQueryOptions(resumeId).queryKey, (oldData: ResumeSkill[] | undefined) => {
 				const data = oldData || []
-				return data.filter((item: ResumeSkill) => item.id !== skillId)
+				return data.filter((item: ResumeSkill) => item.id !== skillId.id)
 			})
 
 			return {prevSkills}
