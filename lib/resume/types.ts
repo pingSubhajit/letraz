@@ -55,14 +55,23 @@ export const ResumeSchema = z.object({
 	base: z.boolean().describe('Indicates if this is the base resume.'),
 	user: UserInfoSchema.describe('The user information associated with the resume.'),
 	job: JobSchema.describe('The job information associated with the resume.'),
-	status: z.string().describe('Indicates if the resume is currently being processed.').nullable().optional(),
-	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.'),
-	thumbnail: z.string().describe('The thumbnail of the resume.').nullable().optional()
+	status: z.string().nullable().optional().describe('Processing status at the root of resume.'),
+	thumbnail: z.string().url().nullable().optional().describe('Thumbnail image URL for the resume preview.'),
+	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.')
 })
 
 // Infer TypeScript types from the schema
 export type ResumeSection = z.infer<typeof ResumeSectionSchema>
 export type Resume = z.infer<typeof ResumeSchema>
+
+// Tailor API response
+export const TailorResumeResponseSchema = z.object({
+	id: z.string(),
+	processing: z.boolean().optional(),
+	status: z.string().nullable().optional()
+})
+
+export type TailorResumeResponse = z.infer<typeof TailorResumeResponseSchema>
 
 /**
  * Mutation schemas for replacing a resume

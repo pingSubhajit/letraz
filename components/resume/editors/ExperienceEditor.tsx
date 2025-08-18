@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import {useParams} from 'next/navigation'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
@@ -63,6 +64,8 @@ interface ExperienceEditorProps {
 
 const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+	const params = useParams<{ resumeId?: string }>()
+	const resumeId = (params?.resumeId as string) ?? 'base'
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -75,11 +78,13 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	// Auto-focus the first field when form is opened
 	useAutoFocusField(view === 'form', 'job_title')
 
-	const {data: experiences = [], isLoading, error} = useCurrentExperiences()
+	const {data: experiencesData, isLoading, error} = useCurrentExperiences(resumeId)
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: experienceQueryOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: experienceQueryOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		// Also revalidate the current resume so the viewer updates instantly
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const {mutateAsync: addExperience, isPending: isAdding} = useAddUserExperienceMutation({
@@ -115,8 +120,11 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	const isSubmitting = isAdding || isUpdating
 
 	useEffect(() => {
-		setLocalExperiences(experiences)
-	}, [experiences])
+		// Only update when server data is available; avoids infinite loops from new [] reference each render
+		if (experiencesData) {
+			setLocalExperiences(experiencesData)
+		}
+	}, [experiencesData])
 
 	useEffect(() => {
 		setIsMounted(true)
@@ -170,9 +178,9 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 
 			if (editingIndex !== null) {
 				const experienceId = localExperiences[editingIndex]?.id
-				await updateExperience({id: experienceId, data: submissionValues})
+				await updateExperience({id: experienceId, data: submissionValues, resumeId})
 			} else {
-				await addExperience(submissionValues)
+				await addExperience({data: submissionValues, resumeId})
 			}
 
 			form.reset(DEFAULT_EXPERIENCE_VALUES)
@@ -214,7 +222,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-			await deleteExperience(id)
+			await deleteExperience({id, resumeId})
 			if (editingIndex !== null && localExperiences[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_EXPERIENCE_VALUES)

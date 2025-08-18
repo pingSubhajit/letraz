@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import {useParams} from 'next/navigation'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form} from '@/components/ui/form'
@@ -61,6 +62,8 @@ interface EducationEditorProps {
 
 const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+	const params = useParams<{ resumeId?: string }>()
+	const resumeId = (params?.resumeId as string) ?? 'base'
 	const [view, setView] = useState<ViewState>('list')
 	const [editingIndex, setEditingIndex] = useState<number | null>(null)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -74,8 +77,10 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	useAutoFocusField(view === 'form', 'institution_name')
 
 	const revalidate = () => {
-		queryClient.invalidateQueries({queryKey: educationOptions.queryKey})
+		queryClient.invalidateQueries({queryKey: educationOptions(resumeId).queryKey})
 		queryClient.invalidateQueries({queryKey: baseResumeQueryOptions.queryKey})
+		// Also revalidate the current resume so the viewer updates instantly
+		queryClient.invalidateQueries({queryKey: ['resume', resumeId]})
 	}
 
 	const form = useForm<EducationMutation>({
@@ -84,7 +89,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		mode: 'onChange'
 	})
 
-	const {data: educations = [], isLoading, error} = useCurrentEducations()
+	const {data: educationsData, isLoading, error} = useCurrentEducations(resumeId)
 
 	const {mutateAsync: addEducation, isPending: isAdding} = useAddEducationMutation({
 		onSuccess: () => {
@@ -119,8 +124,11 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const isSubmitting = isAdding || isUpdating
 
 	useEffect(() => {
-		setLocalEducations(educations)
-	}, [educations])
+		// Only update when server data is available; avoids infinite loops from new [] reference each render
+		if (educationsData) {
+			setLocalEducations(educationsData)
+		}
+	}, [educationsData])
 
 	useEffect(() => {
 		setIsMounted(true)
@@ -160,9 +168,9 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		try {
 			if (editingIndex !== null) {
 				const educationId = localEducations[editingIndex]?.id
-				await updateEducation({id: educationId, data: values})
+				await updateEducation({id: educationId, data: values, resumeId})
 			} else {
-				await addEducation(values)
+				await addEducation({data: values, resumeId})
 			}
 
 			form.reset(DEFAULT_EDUCATION_VALUES)
@@ -198,7 +206,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	const handleDelete = async (id: string) => {
 		try {
 			setDeletingId(id)
-			await deleteEducation(id)
+			await deleteEducation({id, resumeId})
 			if (editingIndex !== null && localEducations[editingIndex]?.id === id) {
 				setEditingIndex(null)
 				form.reset(DEFAULT_EDUCATION_VALUES)

@@ -76,6 +76,7 @@ const fetchApi = async <T>(
 
 	const fullUrl = buildUrlWithParams(`${process.env.API_URL}${url}`, params)
 
+
 	const response = await fetch(fullUrl, {
 		method,
 		headers: {
@@ -91,6 +92,7 @@ const fetchApi = async <T>(
 	})
 
 	if (!response.ok) {
+		const errText = await response.clone().text().catch(() => '')
 		const {error} = ((await response.json()) || response.statusText) as { error: ApiError }
 		if (typeof window === 'undefined') {
 		} else {
@@ -107,7 +109,8 @@ const fetchApi = async <T>(
 		return {} as T
 	}
 
-	return response.json()
+	const json = await response.json()
+	return json
 }
 
 export const api = {
