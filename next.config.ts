@@ -47,14 +47,12 @@ export default withSentryConfig(nextConfig, {
 
 	// Automatically annotate React components to show their full name in breadcrumbs and session replay
 	reactComponentAnnotation: {
-		enabled: true
+		enabled: false,
+		ignoredComponents: ['ResumeSearch']
 	},
 
 	// Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
 	tunnelRoute: '/monitoring',
-
-	// Hides source maps from generated client bundles
-	hideSourceMaps: true,
 
 	// Automatically tree-shake Sentry logger statements to reduce bundle size
 	disableLogger: true,
