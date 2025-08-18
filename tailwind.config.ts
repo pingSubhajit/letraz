@@ -7,6 +7,14 @@ const config: Config = {
 		'./components/**/*.{js,ts,jsx,tsx,mdx}',
 		'./app/**/*.{js,ts,jsx,tsx,mdx}'
 	],
+	// Safelist dynamic classes used in password strength meter
+	safelist: [
+		'bg-red-500',
+		'bg-orange-500',
+		'bg-yellow-500',
+		'bg-green-500',
+		'bg-emerald-500'
+	],
 	theme: {
 		extend: {
 			colors: {

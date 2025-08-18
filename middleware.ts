@@ -23,6 +23,11 @@ export default clerkMiddleware(async (auth, req) => {
 	// Continue with Clerk protection for application routes
 	const {userId} = await auth()
 
+	// If user is on home page and already authenticated, redirect to app
+	if (req.nextUrl.pathname === '/' && userId) {
+		return NextResponse.redirect(new URL('/app', req.url))
+	}
+
 	if (isProtectedRoute(req)) {
 		await auth.protect()
 
