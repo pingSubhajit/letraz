@@ -5,6 +5,7 @@ import {OnboardingMetadata} from '@/lib/onboarding/types'
 const isProtectedRoute = createRouteMatcher(['/app(.*)'])
 const isOnboardingRoute = createRouteMatcher(['/app/onboarding(.*)'])
 const isApiRoute = createRouteMatcher(['/api(.*)'])
+const isAuthRoute = createRouteMatcher(['/signin(.*)', '/signup(.*)'])
 
 export default clerkMiddleware(async (auth, req) => {
 	// Auth header protection for all API routes using SELF_SECRET_KEY
@@ -25,6 +26,11 @@ export default clerkMiddleware(async (auth, req) => {
 
 	// If user is on home page and already authenticated, redirect to app
 	if (req.nextUrl.pathname === '/' && userId) {
+		return NextResponse.redirect(new URL('/app', req.url))
+	}
+
+	// If user is on auth pages (signin/signup) and already authenticated, redirect to app
+	if (isAuthRoute(req) && userId) {
 		return NextResponse.redirect(new URL('/app', req.url))
 	}
 
