@@ -61,66 +61,70 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 	const hasScrolledRef = useRef(false)
 	const lastQueryRef = useRef<string>('')
 
-	// Convert Algolia hits to ResumeListItem format
-	const resumes: ResumeListItem[] = items.map(hit => {
-		const baseFields = {
-			id: hit.id ?? hit.objectID,
-			user: hit.user,
-			thumbnail: normalizeThumbnailUrl(hit.thumbnail) ?? undefined,
-			status: hit.status ?? undefined
-		}
-		// Check if it's a base resume - base resumes typically have empty job fields
-		const isBase = Boolean(hit.base) || (!hit.job?.id && !hit.job?.title && !hit.job?.company_name)
+	// Convert Algolia hits to ResumeListItem format and filter
+	const filtered = useMemo(() => {
+		const resumes: ResumeListItem[] = items.map(hit => {
+			const baseFields = {
+				id: hit.id ?? hit.objectID,
+				user: hit.user,
+				thumbnail: normalizeThumbnailUrl(hit.thumbnail) ?? undefined,
+				status: hit.status ?? undefined
+			}
+			// Check if it's a base resume - base resumes typically have empty job fields
+			const isBase = Boolean(hit.base) || (!hit.job?.id && !hit.job?.title && !hit.job?.company_name)
 
-		if (isBase) {
-			return {
-				...baseFields,
-				base: true as const,
-				job: {
-					job_url: hit.job?.job_url || '',
-					title: hit.job?.title || '',
-					company_name: hit.job?.company_name || '',
-					location: hit.job?.location || '',
-					description: hit.job?.description || '',
-					...(hit.job?.status && {status: hit.job.status})
+			if (isBase) {
+				return {
+					...baseFields,
+					base: true as const,
+					job: {
+						job_url: hit.job?.job_url || '',
+						title: hit.job?.title || '',
+						company_name: hit.job?.company_name || '',
+						location: hit.job?.location || '',
+						description: hit.job?.description || '',
+						...(hit.job?.status && {status: hit.job.status})
+					}
+				}
+			} else {
+				return {
+					...baseFields,
+					base: false as const,
+					job: {
+						...(hit.job?.id && {id: hit.job.id}),
+						job_url: hit.job?.job_url || '',
+						title: hit.job?.title || '',
+						company_name: hit.job?.company_name || '',
+						location: hit.job?.location || '',
+						description: hit.job?.description || '',
+						...(hit.job?.status && {status: hit.job.status})
+					}
 				}
 			}
-		} else {
-			return {
-				...baseFields,
-				base: false as const,
-				job: {
-					...(hit.job?.id && {id: hit.job.id}),
-					job_url: hit.job?.job_url || '',
-					title: hit.job?.title || '',
-					company_name: hit.job?.company_name || '',
-					location: hit.job?.location || '',
-					description: hit.job?.description || '',
-					...(hit.job?.status && {status: hit.job.status})
-				}
-			}
+		})
+
+		// Filter resumes
+		let filtered = resumes
+		if (excludeBase) {
+			filtered = filtered.filter(r => !r.base)
 		}
-	})
 
-	// Filter resumes
-	let filtered = resumes
-	if (excludeBase) {
-		filtered = filtered.filter(r => !r.base)
-	}
+		// Filter by visibility criteria
+		filtered = filtered.filter(r => {
+			// Base resumes are always visible (unless excluded)
+			if (r.base) return !excludeBase
 
-	// Filter by visibility criteria
-	filtered = filtered.filter(r => {
-		// Base resumes are always visible (unless excluded)
-		if (r.base) return !excludeBase
+			// For non-base resumes, check job status
+			const jobStatus = r.job?.status
+			if (!jobStatus || jobStatus !== 'Success') return false
 
-		// For non-base resumes, check job status
-		const jobStatus = r.job?.status
-		if (!jobStatus || jobStatus !== 'Success') return false
+			// Check resume status
+			const resumeStatus = r.status
+			return resumeStatus === 'Success' || resumeStatus === 'Processing'
+		})
 
-		// Check resume status
-		const resumeStatus = r.status
-		return resumeStatus === 'Success' || resumeStatus === 'Processing'
-	})
+		return filtered
+	}, [items, excludeBase])
 
 	// Cache latest results once search is idle to avoid flicker during loading
 	useEffect(() => {

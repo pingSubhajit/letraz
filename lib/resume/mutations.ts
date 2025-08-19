@@ -1,8 +1,8 @@
 import {MutationOptions, useMutation, useQueryClient} from '@tanstack/react-query'
-import {parseUploadedResume, rearrangeResumeSections, replaceResume, tailorResumeInDB} from '@/lib/resume/actions'
+import {parseUploadedResume, rearrangeResumeSections, replaceResume, tailorResumeInDB, exportResumeFromDB, deleteResumeFromDB} from '@/lib/resume/actions'
 import {BASE_RESUME_KEYS} from '@/lib/resume/key'
 import {toast} from 'sonner'
-import {Resume, ResumeMutation} from '@/lib/resume/types'
+import {Resume, ResumeMutation, ExportResumeResponse} from '@/lib/resume/types'
 import type {TailorResumeResponse} from '@/lib/resume/types'
 
 export const useRearrangeResumeSectionsMutation = () => {
@@ -51,6 +51,29 @@ export const useReplaceResumeMutation = () => {
 		},
 		onError: () => {
 			toast.error('Failed to replace resume')
+		}
+	})
+}
+
+export const useExportResumeMutation = () => {
+	return useMutation<ExportResumeResponse, Error, string>({
+		mutationFn: async (resumeId: string) => exportResumeFromDB(resumeId),
+		onError: () => {
+			toast.error('Failed to export resume. Please try again.')
+		}
+	})
+}
+
+export const useDeleteResumeMutation = () => {
+	const queryClient = useQueryClient()
+	return useMutation<void, Error, string>({
+		mutationFn: async (resumeId: string) => deleteResumeFromDB(resumeId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({queryKey: BASE_RESUME_KEYS})
+			toast.success('Resume deleted successfully')
+		},
+		onError: () => {
+			toast.error('Failed to delete resume. Please try again.')
 		}
 	})
 }
