@@ -119,3 +119,21 @@ export const model = anthropic('claude-3-haiku-20240307')
 
 // Misc.
 export const discordAnnouncementChannelId = '1325855779126902884'
+
+// Password strength configuration
+export const passwordStrengthConfig = {
+	requirements: {
+		minLength: 8,
+		requireUppercase: true,
+		requireLowercase: true,
+		requireNumbers: true,
+		requireSpecialChars: true
+	},
+	strengthLevels: {
+		weak: {minScore: 0, color: 'bg-red-500', label: 'Weak'},
+		fair: {minScore: 2, color: 'bg-orange-500', label: 'Fair'},
+		good: {minScore: 3, color: 'bg-yellow-500', label: 'Good'},
+		strong: {minScore: 4, color: 'bg-green-500', label: 'Strong'},
+		veryStrong: {minScore: 5, color: 'bg-emerald-500', label: 'Very Strong'}
+	}
+}
