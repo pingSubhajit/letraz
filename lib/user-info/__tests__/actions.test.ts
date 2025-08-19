@@ -39,10 +39,7 @@ describe('user-info actions', () => {
 				address: '123 Main St',
 				city: 'New York',
 				postal: '10001',
-				country: {
-					code: 'USA',
-					name: 'United States'
-				},
+				country: 'USA',
 				website: 'https://example.com',
 				profile_text: 'Software developer'
 			}
@@ -88,10 +85,7 @@ describe('user-info actions', () => {
 				first_name: 'John',
 				last_name: 'Doe',
 				email: 'john@example.com',
-				country: {
-					code: 'USA',
-					name: 'United States'
-				},
+				country: 'USA',
 				dob: null
 			}
 
@@ -128,10 +122,7 @@ describe('user-info actions', () => {
 				first_name: 'John',
 				last_name: 'Doe',
 				email: 'john@example.com',
-				country: {
-					code: 'USA',
-					name: 'United States'
-				}
+				country: 'USA'
 			}
 
 			const apiError = new Error('API Error')
@@ -240,10 +231,7 @@ describe('user-info actions', () => {
 				first_name: 'John',
 				last_name: 'Doe',
 				email: 'john@example.com',
-				country: {
-					code: 'USA',
-					name: 'United States'
-				},
+				country: 'USA',
 				dob: originalDate
 			}
 

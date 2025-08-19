@@ -50,10 +50,7 @@ const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 	dob: new Date(),
 	address: '',
 	city: '',
-	country: {
-		code: 'IND',
-		name: 'India'
-	},
+	country: 'IND',
 	nationality: '',
 	postal: '',
 	profile_text: '',
@@ -119,8 +116,10 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 
 	const form = useForm<UserInfoMutation>({
 		resolver: zodResolver(UserInfoMutationSchema),
-		defaultValues:
-			userInfo || DEFAULT_DETAILS_VALUES
+		defaultValues: userInfo ? {
+			...userInfo,
+			country: userInfo.country?.code || null
+		} : DEFAULT_DETAILS_VALUES
 	})
 
 	const isSubmitting = isUpdatingPending
@@ -138,13 +137,23 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	// Reset form when userInfo data is loaded
 	useEffect(() => {
 		if (userInfo) {
-			form.reset(userInfo)
+			// Convert country object to string for form compatibility
+			const formData = {
+				...userInfo,
+				country: userInfo.country?.code || null
+			}
+			form.reset(formData)
 		}
 	}, [userInfo, form])
 
 	const handleUpdate = () => {
 		if (userInfo) {
-			form.reset(userInfo)
+			// Convert country object to string for form compatibility
+			const formData = {
+				...userInfo,
+				country: userInfo.country?.code || null
+			}
+			form.reset(formData)
 		}
 		// Reset scroll position when transitioning to form view
 		if (scrollRef.current) {
@@ -159,7 +168,16 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	}
 
 	const handleCancel = () => {
-		form.reset(userInfo || DEFAULT_DETAILS_VALUES)
+		if (userInfo) {
+			// Convert country object to string for form compatibility
+			const formData = {
+				...userInfo,
+				country: userInfo.country?.code || null
+			}
+			form.reset(formData)
+		} else {
+			form.reset(DEFAULT_DETAILS_VALUES)
+		}
 		// Reset scroll position when transitioning to list view
 		if (scrollRef.current) {
 			scrollRef.current.scrollTop = 0
@@ -322,12 +340,11 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 													<FormLabel className="text-foreground">Country</FormLabel>
 
 													<CountryDropdown
-														key={field.value?.code || 'default'}
+														key={field.value || 'default'}
 														placeholder="Select country"
-														defaultValue={field.value?.code || 'IND'}
+														defaultValue={field.value || 'IND'}
 														onChange={({ioc, name}) => {
-															form.setValue('country.code', ioc)
-															form.setValue('country.name', name)
+															field.onChange(ioc)
 														}}
 													/>
 													<FormMessage />

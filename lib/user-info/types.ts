@@ -37,11 +37,13 @@ export const UserInfoSchema = z.object({
 /**
  * Schema for UserInfoMutation
  * Derived by omitting read-only fields from UserInfoSchema
+ * Note: country field accepts only country code as string for mutations
  */
 export const UserInfoMutationSchema = UserInfoSchema.omit({
 	id: true,
 	created_at: true,
-	updated_at: true
+	updated_at: true,
+	country: true
 }).extend({
 	country: z.string().nullable().optional().describe('The country code of the user. Nullable and optional.')
 }).partial()
