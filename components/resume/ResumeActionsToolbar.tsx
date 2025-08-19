@@ -54,14 +54,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 				<Button
 					variant="default"
 					size="default"
-					style={isBaseResume ? undefined : {
-						borderRadius: '0',
-						borderTopLeftRadius: '9999px',
-						borderBottomLeftRadius: '9999px',
-						borderTopRightRadius: '0.5rem',
-						borderBottomRightRadius: '0.5rem'
-					}}
-					className={isBaseResume ? "rounded-full pl-4 pr-2 gap-2 shadow-lg" : "pl-4 pr-2 gap-2"}
+					className={isBaseResume ? "rounded-full pl-4 pr-2 gap-2 shadow-lg" : "rounded-tl-[36px] rounded-bl-[36px] rounded-tr-[12px] rounded-br-[12px] pl-4 pr-2 gap-2"}
 					disabled={isExporting}
 				>
 					{isExporting ? (
@@ -73,7 +66,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 						<>
 							<Download className="h-4 w-4" />
 							<span>Download</span>
-							<ChevronDownIcon className="h-4 w-4 ml-1 fill-current" />
+							<ChevronDownIcon className="h-4 w-4 fill-current" />
 						</>
 					)}
 				</Button>
@@ -102,7 +95,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 		return (
 			<div 
 				className={cn(
-					'fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50',
+					'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50',
 					className
 				)}
 			>
@@ -115,7 +108,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 	return (
 		<div 
 			className={cn(
-				'fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex items-center gap-2 bg-[#e5e5e5] rounded-full shadow-lg px-1 py-1',
+				'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[#e5e5e5] rounded-full shadow-lg px-1 py-1',
 				'border border-gray-200',
 				'max-w-[calc(100vw-2rem)] md:max-w-none overflow-x-auto',
 				className
@@ -152,11 +145,11 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 					<Button
 						variant="secondary"
 						size="default"
-						className="rounded-r-full rounded-l-lg pl-4 pr-2 gap-2 bg-[#fbfbfb] hidden md:inline-flex"
+						className="rounded-tl-[12px] rounded-bl-[12px] rounded-tr-[36px] rounded-br-[36px] pl-4 pr-2 gap-2 bg-[#fbfbfb] hidden md:inline-flex"
 						disabled
 					>
 						<span>Default theme</span>
-						<ChevronDownIcon className="h-4 w-4 ml-1 fill-current" />
+						<ChevronDownIcon className="h-4 w-4 fill-current" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end" className="min-w-[180px]">
