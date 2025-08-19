@@ -18,7 +18,7 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 	const isProcessing = !resume.base && resume.status === 'Processing'
 
 	return (
-		<Link href={`/app/craft?jobId=${encodeURIComponent(resume.id)}`} className="group">
+		<Link href={`/app/craft/resumes/${encodeURIComponent(resume.id)}`} className="group">
 			<div className={cn(isProcessing && 'processing-border rounded-lg')}>
 				<div className={cn(
 					'h-96 w-full rounded-lg transition hover:shadow-2xl focus-within:shadow-2xl overflow-hidden border bg-white flex flex-col',
