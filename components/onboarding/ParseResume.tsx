@@ -8,6 +8,7 @@ import {FileCheck} from 'lucide-react'
 import DEFAULT_FADE_ANIMATION, {ANIMATE_PRESENCE_MODE} from '@/components/animations/DefaultFade'
 import ParticlesBurst from '@/components/animations/ParticlesBurst'
 import {useParseResumeMutation, useReplaceResumeMutation} from '@/lib/resume/mutations'
+import {useUpdateUserInfoMutation} from '@/lib/user-info/mutations'
 import {ACCEPT_ATTRIBUTE, isAcceptedFile} from '@/lib/resume/accept'
 import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
@@ -33,6 +34,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	const fileInputRef = useRef<HTMLInputElement | null>(null)
 	const {mutateAsync: parseResumeMutation} = useParseResumeMutation()
 	const {mutateAsync: replaceResume} = useReplaceResumeMutation()
+	const {mutateAsync: updateUserInfo} = useUpdateUserInfoMutation()
 	const [isParsing, setIsParsing] = useState(false)
 	const router = useRouter()
 	const [parsingMessageIndex, setParsingMessageIndex] = useState(0)
@@ -115,8 +117,20 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 			const formData = new FormData()
 			// Use the first accepted file for now
 			formData.append('file', files[0])
-			const payload = await parseResumeMutation({formData, format: 'proprietary'})
-			await replaceResume({payload, resumeId: 'base'})
+			const enhancedPayload = await parseResumeMutation({formData, format: 'proprietary'})
+
+			// Extract sections and user profile from the enhanced payload
+			const sectionsPayload = {sections: enhancedPayload.sections}
+			const userProfileData = enhancedPayload.userProfile
+
+			// Update resume sections
+			await replaceResume({payload: sectionsPayload, resumeId: 'base'})
+
+			// Update user profile data if any profile information was extracted
+			if (userProfileData && Object.keys(userProfileData).length > 0) {
+				await updateUserInfo(userProfileData)
+			}
+
 			setParsed(true)
 		} catch (error) {
 			toast.error('Failed to parse resume')

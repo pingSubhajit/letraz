@@ -1,9 +1,17 @@
 import {MutationOptions, useMutation, useQueryClient} from '@tanstack/react-query'
-import {parseUploadedResume, rearrangeResumeSections, replaceResume, tailorResumeInDB, exportResumeFromDB, deleteResumeFromDB} from '@/lib/resume/actions'
+import {
+	deleteResumeFromDB,
+	exportResumeFromDB,
+	parseUploadedResume,
+	rearrangeResumeSections,
+	replaceResume,
+	tailorResumeInDB
+} from '@/lib/resume/actions'
+import {EnhancedResumeMutation} from '@/lib/resume/parser'
 import {BASE_RESUME_KEYS} from '@/lib/resume/key'
 import {toast} from 'sonner'
-import {Resume, ResumeMutation, ExportResumeResponse} from '@/lib/resume/types'
 import type {TailorResumeResponse} from '@/lib/resume/types'
+import {ExportResumeResponse, Resume, ResumeMutation} from '@/lib/resume/types'
 
 export const useRearrangeResumeSectionsMutation = () => {
 	const queryClient = useQueryClient()
@@ -32,7 +40,7 @@ type ParseResumeParams = {
 }
 
 export const useParseResumeMutation = () => {
-	return useMutation<ResumeMutation, Error, ParseResumeParams>({
+	return useMutation<EnhancedResumeMutation, Error, ParseResumeParams>({
 		mutationFn: async ({formData, format = 'proprietary'}) => parseUploadedResume(formData, format)
 	})
 }

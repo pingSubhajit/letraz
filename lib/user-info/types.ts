@@ -42,6 +42,8 @@ export const UserInfoMutationSchema = UserInfoSchema.omit({
 	id: true,
 	created_at: true,
 	updated_at: true
+}).extend({
+	country: z.string().nullable().optional().describe('The country code of the user. Nullable and optional.')
 }).partial()
 
 // Infer TypeScript types from the schema

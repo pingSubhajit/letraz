@@ -3,7 +3,8 @@
 import {generateObject} from 'ai'
 import {google} from '@ai-sdk/google'
 import {z} from 'zod'
-import {ResumeMutation, ResumeMutationSchema} from '@/lib/resume/types'
+import {ResumeMutationSchema} from '@/lib/resume/types'
+import {UserInfoMutationSchema} from '@/lib/user-info/types'
 
 /**
  * Ensure that HTML produced for Tiptap includes our expected classes.
@@ -91,6 +92,14 @@ const normalizeDescriptionToTiptapHTML = (input: string | null | undefined): str
 	return html
 }
 
+// Enhanced schema that includes both user profile data and resume sections
+const EnhancedResumeMutationSchema = z.object({
+	userProfile: UserInfoMutationSchema.partial(),
+	sections: ResumeMutationSchema.shape.sections
+})
+
+export type EnhancedResumeMutation = z.infer<typeof EnhancedResumeMutationSchema>
+
 // Generic schema for non-proprietary format
 const GenericResumeSchema = z.object({
 	personalInfo: z.object({
@@ -132,7 +141,7 @@ const GenericResumeSchema = z.object({
 export const parseResume = async (
 	file: File,
 	format: 'proprietary' | 'generic' = 'proprietary'
-): Promise<any> => {
+): Promise<EnhancedResumeMutation | any> => {
 	// Validate input
 	if (!file || !(file instanceof File)) {
 		throw new Error('Uploaded resume is not a file')
@@ -142,24 +151,42 @@ export const parseResume = async (
 		throw new Error('Uploaded resume is an empty file')
 	}
 
-	// For proprietary format, output exactly our internal ResumeMutation schema
-	const schema = format === 'proprietary' ? ResumeMutationSchema : GenericResumeSchema
+	// For proprietary format, output exactly our internal ResumeMutation schema + user profile
+	const schema = format === 'proprietary' ? EnhancedResumeMutationSchema : GenericResumeSchema
 
 	const currentYear = new Date().getFullYear()
 	const prompt = format === 'proprietary'
-		? `You are a strict JSON generator. Return ONLY JSON matching this schema, no prose:
+		? `You are a strict JSON generator that extracts BOTH personal profile information AND resume sections. Return ONLY JSON matching the schema, no prose.
+
+CRITICAL INSTRUCTIONS FOR USER PROFILE EXTRACTION:
+1. ALWAYS extract the person's name from the resume header - split into first_name and last_name
+2. ALWAYS look for contact information (email, phone number) typically found at the top of the resume
+3. ALWAYS extract location information (address, city, postal code, country) from the contact section
+4. Look for LinkedIn/portfolio websites in the contact section
+5. Extract any professional summary or objective statement as profile_text
+6. If you find a date of birth, format it as an ISO date string (YYYY-MM-DD)
+7. Extract nationality if mentioned anywhere in the resume
+8. Do NOT leave userProfile fields empty if the information exists in the resume
+
+Example userProfile extraction:
+If resume shows "John Smith, john.smith@email.com, (555) 123-4567, 123 Main St, New York, NY 10001"
+Then userProfile should be:
 {
-  "sections": [
-    { "type": "Education", "data": { "institution_name": string, "field_of_study": string, "degree": string|null, "country": string(ISO3), "started_from_month": string(1-12)|null|undefined, "started_from_year": string(YYYY)|null|undefined, "finished_at_month": string(1-12)|null|undefined, "finished_at_year": string(YYYY)|null|undefined, "current": boolean, "description": string|null } },
-    { "type": "Experience", "data": { "company_name": string, "job_title": string, "country": string(ISO3), "city": string|null, "employment_type": "flt"|"prt"|"con"|"int"|"fre"|"sel"|"vol"|"tra", "started_from_month": string(1-12)|null|undefined, "started_from_year": string(YYYY)|null|undefined, "finished_at_month": string(1-12)|null|undefined, "finished_at_year": string(YYYY)|null|undefined, "current": boolean, "description": string|null } },
-    { "type": "Skill", "data": { "skills": [ { "name": string, "level": "BEG"|"INT"|"ADV"|"EXP"|null, "category": string|null|undefined } ] } },
-    { "type": "Project", "data": { "name": string, "category": string|null, "description": string|null, "role": string|null, "github_url": string|null, "live_url": string|null, "started_from_month": string(1-12)|null|undefined, "started_from_year": string(YYYY)|null|undefined, "finished_at_month": string(1-12)|null|undefined, "finished_at_year": string(YYYY)|null|undefined, "current": boolean|null, "skills_used": [ { "name": string, "category": string|null } ] } },
-    { "type": "Certification", "data": { "name": string, "issuing_organization": string|undefined, "issue_date": string(YYYY-MM-DD) | null | undefined, "credential_url": string|null } }
-  ]
+  "first_name": "John",
+  "last_name": "Smith", 
+  "email": "john.smith@email.com",
+  "phone": "(555) 123-4567",
+  "address": "123 Main St",
+  "city": "New York", 
+  "postal": "10001",
+  "country": "USA"
 }
 
 Rules:
+- MANDATORY: Extract personal contact information from resume header/contact section
 - Use null for unknown optional values where allowed; otherwise use empty string for required strings when unknown.
+- For userProfile.dob, if a date of birth is found, format it as an ISO date string (YYYY-MM-DD).
+- For userProfile.country, provide the ISO# code (like "USA", "IND").
 - Months MUST be numeric strings from "1" to "12" (do not use names like "Jul").
 - Years MUST be 4-digit numeric strings like "2021".
 - Certification issue_date MUST be a date-only string in the exact format YYYY-MM-DD (e.g., "2024-03-01").
@@ -206,7 +233,7 @@ Rules:
 
 		// Normalize any date-time strings to date-only for certification issue_date
 		if (format === 'proprietary') {
-			const payload = result.object as ResumeMutation
+			const payload = result.object as z.infer<typeof EnhancedResumeMutationSchema>
 			for (const section of payload.sections) {
 				if (section.type === 'Certification') {
 					section.data.issue_date = normalizeCertificationDate(section.data.issue_date)

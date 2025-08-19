@@ -1,6 +1,8 @@
 'use server'
 
 import {
+	ExportResumeResponse,
+	ExportResumeResponseSchema,
 	Resume,
 	ResumeListItem,
 	ResumeListItemSchema,
@@ -8,11 +10,9 @@ import {
 	ResumeMutationSchema,
 	ResumeSchema,
 	TailorResumeResponse,
-	TailorResumeResponseSchema,
-	ExportResumeResponse,
-	ExportResumeResponseSchema
+	TailorResumeResponseSchema
 } from '@/lib/resume/types'
-import {parseResume} from '@/lib/resume/parser'
+import {EnhancedResumeMutation, parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 import {ACCEPTED_MIME_TYPES, isAcceptedByName} from '@/lib/resume/accept'
@@ -85,7 +85,7 @@ export const tailorResumeInDB = async (
 export const parseUploadedResume = async (
 	formData: FormData,
 	format: 'proprietary' | 'generic' = 'proprietary'
-): Promise<any> => {
+): Promise<EnhancedResumeMutation | any> => {
 	const file = formData.get('file')
 	if (!file || !(file instanceof File)) {
 		throw new Error('No file provided in form data under key "file"')
