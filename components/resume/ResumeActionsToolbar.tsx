@@ -7,10 +7,12 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {ChevronDownIcon, Download, Briefcase, Trash2} from 'lucide-react'
-import {useExportResumeMutation} from '@/lib/resume/mutations'
+import {ChevronDownIcon, Download, Briefcase, Trash2, Loader2} from 'lucide-react'
+import {useExportResumeMutation, useDeleteResumeMutation} from '@/lib/resume/mutations'
 import {toast} from 'sonner'
 import {cn} from '@/lib/utils'
+import PopConfirm from '@/components/ui/pop-confirm'
+import {useRouter} from 'next/navigation'
 
 interface ResumeActionsToolbarProps {
 	resumeId: string
@@ -20,6 +22,8 @@ interface ResumeActionsToolbarProps {
 
 const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: ResumeActionsToolbarProps) => {
 	const {mutateAsync: exportResume, isPending: isExporting} = useExportResumeMutation()
+	const {mutateAsync: deleteResume, isPending: isDeleting} = useDeleteResumeMutation()
+	const router = useRouter()
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		try {
@@ -44,6 +48,17 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 		} catch (error) {
 			// Error handling is already done in the mutation
 			console.error('Export failed:', error)
+		}
+	}
+
+	const handleDelete = async () => {
+		try {
+			await deleteResume(resumeId)
+			// Navigate to dashboard after successful deletion
+			router.push('/app')
+		} catch (error) {
+			// Error handling is already done in the mutation
+			console.error('Delete failed:', error)
 		}
 	}
 
@@ -127,17 +142,26 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 				<Briefcase className="h-4 w-4" />
 			</Button>
 
-			{/* Delete button - disabled */}
-			<Button
-				variant="secondary"
-				size="icon"
-				className="rounded-lg text-black bg-[#fbfbfb]"
-				disabled
-				title="Coming soon"
-
-			>
-				<Trash2 className="h-4 w-4" />
-			</Button>
+			{/* Delete button */}
+			<PopConfirm
+				triggerElement={
+					<Button
+						variant="secondary"
+						size="icon"
+						className="rounded-lg text-black bg-[#fbfbfb]"
+						disabled={isDeleting}
+					>
+						{isDeleting ? (
+							<Loader2 className="h-4 w-4 animate-spin" />
+						) : (
+							<Trash2 className="h-4 w-4" />
+						)}
+						<span className="sr-only">Delete resume</span>
+					</Button>
+				}
+				message="Are you sure you want to delete this resume? This action cannot be undone."
+				onYes={handleDelete}
+			/>
 
 			{/* Theme selector dropdown - hidden on mobile */}
 			<DropdownMenu>

@@ -142,3 +142,18 @@ export const exportResumeFromDB = async (resumeId: string): Promise<ExportResume
 	}
 }
 
+/**
+ * Deletes a resume by its ID
+ * DELETE /resume/{id}/
+ * @param {string} resumeId - The ID of the resume to delete
+ * @returns {Promise<void>}
+ * @throws {Error} If the resume is a base resume, authentication fails, or API request fails.
+ */
+export const deleteResumeFromDB = async (resumeId: string): Promise<void> => {
+	try {
+		await api.delete(`/resume/${resumeId}/`)
+	} catch (error) {
+		return handleErrors(error, 'delete resume')
+	}
+}
+
