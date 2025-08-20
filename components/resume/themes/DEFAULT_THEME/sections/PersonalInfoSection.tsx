@@ -26,7 +26,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 				<div className="contact-info">
 					{(() => {
 						const contactItems = []
-						
+
 						if (data.location.hasLocation) {
 							contactItems.push(
 								<span key="location">
@@ -34,7 +34,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 								</span>
 							)
 						}
-						
+
 						if (data.contact.email) {
 							contactItems.push(
 								<span key="email">
@@ -42,7 +42,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 								</span>
 							)
 						}
-						
+
 						if (data.contact.phone) {
 							contactItems.push(
 								<span key="phone">
@@ -50,7 +50,7 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 								</span>
 							)
 						}
-						
+
 						return contactItems.map((item, index) => (
 							<span key={index}>
 								{item}

@@ -167,6 +167,7 @@ CRITICAL INSTRUCTIONS FOR USER PROFILE EXTRACTION:
 6. If you find a date of birth, format it as an ISO date string (YYYY-MM-DD)
 7. Extract nationality if mentioned anywhere in the resume
 8. Do NOT leave userProfile fields empty if the information exists in the resume
+9. If not profile_text is found in the resume gGenerate a concise professional profile text that would work well as a LinkedIn summary or resume objective. Focus on their expertise, experience level, and key accomplishments. Return only the profile text, no additional formatting or explanation.
 
 Example userProfile extraction:
 If resume shows "John Smith, john.smith@email.com, (555) 123-4567, 123 Main St, New York, NY 10001"

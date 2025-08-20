@@ -6,7 +6,7 @@ import {liteClient as algoliasearch} from 'algoliasearch/lite'
 import type {ComponentType} from 'react'
 import {useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react'
 import {normalizeThumbnailUrl, ResumeListItem} from '@/lib/resume/types'
-import ResumeCard from "@/components/dashboard/ResumeCard";
+import ResumeCard from '@/components/dashboard/ResumeCard'
 
 // Algolia Hit type based on the schema
 interface AlgoliaResumeHit {
@@ -54,7 +54,7 @@ const SearchController = ({query}: {query: string}) => {
 
 // Component to render Algolia search results
 const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) => {
-	const {status} = useInstantSearch({ catchError: true })
+	const {status} = useInstantSearch({catchError: true})
 	const {items} = useHits<AlgoliaResumeHit>() // 'hits' is deprecated, use 'items'
 	const [cachedResults, setCachedResults] = useState<ResumeListItem[]>([])
 	const [isInitialLoad, setIsInitialLoad] = useState(true)
@@ -159,10 +159,10 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 					if (firstCard) {
 						const rect = firstCard.getBoundingClientRect()
 						const isInViewport = rect.top >= 0 && rect.bottom <= window.innerHeight
-						
+
 						// Only scroll if the element is not already in viewport
 						if (!isInViewport) {
-							firstCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+							firstCard.scrollIntoView({behavior: 'smooth', block: 'nearest'})
 						}
 					}
 				}
@@ -175,8 +175,8 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 	}, [searchQuery, filtered.length])
 
 	// Use cached results during loading to prevent blinking
-	const displayResults = (status === 'loading' || status === 'stalled') && cachedResults.length > 0 
-		? cachedResults 
+	const displayResults = (status === 'loading' || status === 'stalled') && cachedResults.length > 0
+		? cachedResults
 		: filtered
 
 	// Handle loading state only on initial load
@@ -203,9 +203,9 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 	return (
 		<>
 			{displayResults.map((resume) => (
-				<ResumeCard 
-					key={resume.id} 
-					resume={resume} 
+				<ResumeCard
+					key={resume.id}
+					resume={resume}
 					searchQuery={searchQuery}
 				/>
 			))}

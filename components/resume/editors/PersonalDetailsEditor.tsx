@@ -425,7 +425,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 												<div>
 													<h3 className="text-lg font-semibold text-foreground">
 														{userInfo?.title && `${userInfo.title} `}
-														{userInfo.first_name || 'First Name'} {userInfo.last_name || 'Last Name'}
+														{userInfo.first_name} {userInfo.last_name}
 													</h3>
 													<p className="text-sm text-muted-foreground">Personal Information</p>
 												</div>

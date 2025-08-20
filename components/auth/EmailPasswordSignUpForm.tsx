@@ -60,8 +60,8 @@ interface EmailPasswordSignUpFormProps {
 	onVerificationStateChange?: (isVerifying: boolean) => void
 }
 
-const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: EmailPasswordSignUpFormProps) => {
-	const { signUp, setActive } = useSignUp()
+const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPasswordSignUpFormProps) => {
+	const {signUp, setActive} = useSignUp()
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 	const [showPassword, setShowPassword] = useState(false)
@@ -85,7 +85,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 	// Password strength calculation (zxcvbn for strength + requirements for checklist)
 	const passwordStrength = useMemo(() => {
 		if (!password) {
-			return { zxScore: 0, level: 'weak', requirements: [], requirementsScore: 0 }
+			return {zxScore: 0, level: 'weak', requirements: [], requirementsScore: 0}
 		}
 
 		const requirements = [
@@ -121,7 +121,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 			zxScore === 2 ? 'good' :
 			zxScore === 3 ? 'strong' : 'veryStrong'
 
-		return { zxScore, level, requirements, requirementsScore }
+		return {zxScore, level, requirements, requirementsScore}
 	}, [password])
 
 	const onSubmit = async (data: SignUpFormData) => {
@@ -139,11 +139,11 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 			})
 
 			if (result.status === 'complete') {
-				await setActive({ session: result.createdSessionId })
+				await setActive({session: result.createdSessionId})
 				router.push('/app')
 			} else {
 				// Send verification email
-				await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+				await signUp.prepareEmailAddressVerification({strategy: 'email_code'})
 				setVerificationPending(true)
 				setError(null)
 				onVerificationStateChange?.(true)
@@ -173,7 +173,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 			})
 
 			if (result.status === 'complete') {
-				await setActive({ session: result.createdSessionId })
+				await setActive({session: result.createdSessionId})
 				router.push('/app')
 			} else {
 				setError('Verification failed. Please check your code and try again.')
@@ -196,9 +196,9 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 	if (verificationPending) {
 		return (
 			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 0.1 }}
+				initial={{opacity: 0, y: 20}}
+				animate={{opacity: 1, y: 0}}
+				transition={{delay: 0.1}}
 				className={cn('w-full', className)}
 			>
 				<div className="space-y-6">
@@ -225,8 +225,8 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 
 					{error && (
 						<motion.div
-							initial={{ opacity: 0, height: 0 }}
-							animate={{ opacity: 1, height: 'auto' }}
+							initial={{opacity: 0, height: 0}}
+							animate={{opacity: 1, height: 'auto'}}
 							className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-3"
 						>
 							{error}
@@ -268,9 +268,9 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 
 	return (
 		<motion.div
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ delay: 0.1 }}
+			initial={{opacity: 0, y: 20}}
+			animate={{opacity: 1, y: 0}}
+			transition={{delay: 0.1}}
 			className={cn('w-full', className)}
 		>
 			<Form {...form}>
@@ -280,7 +280,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 						<FormField
 							control={form.control}
 							name="firstName"
-							render={({ field }) => (
+							render={({field}) => (
 								<FormItem>
 									<FormLabel className="text-sm font-medium text-neutral-700">
 										First Name
@@ -301,7 +301,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 						<FormField
 							control={form.control}
 							name="lastName"
-							render={({ field }) => (
+							render={({field}) => (
 								<FormItem>
 									<FormLabel className="text-sm font-medium text-neutral-700">
 										Last Name
@@ -324,7 +324,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 					<FormField
 						control={form.control}
 						name="email"
-						render={({ field }) => (
+						render={({field}) => (
 							<FormItem>
 								<FormLabel className="text-sm font-medium text-neutral-700">
 									Email Address
@@ -346,7 +346,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 					<FormField
 						control={form.control}
 						name="password"
-						render={({ field }) => (
+						render={({field}) => (
 							<FormItem>
 								<FormLabel className="text-sm font-medium text-neutral-700">
 									Password
@@ -382,8 +382,8 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 					{/* Password Strength Indicator */}
 					{password && (
 						<motion.div
-							initial={{ opacity: 0, height: 0 }}
-							animate={{ opacity: 1, height: 'auto' }}
+							initial={{opacity: 0, height: 0}}
+							animate={{opacity: 1, height: 'auto'}}
 							className="space-y-3"
 						>
 							{/* Progress Bar */}
@@ -400,7 +400,7 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 											'h-2 rounded-full transition-all duration-300',
 											passwordStrengthConfig.strengthLevels[passwordStrength.level as keyof typeof passwordStrengthConfig.strengthLevels].color
 										)}
-										style={{ width: `${((passwordStrength.zxScore + 1) / 5) * 100}%` }}
+										style={{width: `${((passwordStrength.zxScore + 1) / 5) * 100}%`}}
 									/>
 								</div>
 							</div>
@@ -429,8 +429,8 @@ const EmailPasswordSignUpForm = ({ className, onVerificationStateChange }: Email
 					{/* Error Message */}
 					{error && (
 						<motion.div
-							initial={{ opacity: 0, height: 0 }}
-							animate={{ opacity: 1, height: 'auto' }}
+							initial={{opacity: 0, height: 0}}
+							animate={{opacity: 1, height: 'auto'}}
 							className={cn(
 								'text-sm border rounded-md p-3',
 								verificationPending

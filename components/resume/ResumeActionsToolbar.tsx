@@ -1,14 +1,9 @@
 'use client'
 
 import {Button} from '@/components/ui/button'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {ChevronDownIcon, Download, Briefcase, Trash2, Loader2} from 'lucide-react'
-import {useExportResumeMutation, useDeleteResumeMutation} from '@/lib/resume/mutations'
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
+import {Briefcase, ChevronDownIcon, Download, Loader2, Trash2} from 'lucide-react'
+import {useDeleteResumeMutation, useExportResumeMutation} from '@/lib/resume/mutations'
 import {toast} from 'sonner'
 import {cn} from '@/lib/utils'
 import PopConfirm from '@/components/ui/pop-confirm'
@@ -28,13 +23,13 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		try {
 			const response = await exportResume(resumeId)
-			
+
 			const downloadUrl = format === 'pdf' ? response.pdf_url : response.latex_url
 			const fileExtension = format === 'pdf' ? 'pdf' : 'tex'
-			
+
 			// Add https:// to the URL if it doesn't start with http
 			const fullUrl = downloadUrl.startsWith('http') ? downloadUrl : `https://${downloadUrl}`
-			
+
 			// Create a temporary anchor element to trigger download
 			const link = document.createElement('a')
 			link.href = fullUrl
@@ -43,7 +38,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 			document.body.appendChild(link)
 			link.click()
 			document.body.removeChild(link)
-			
+
 			toast.success(`Resume exported as ${format.toUpperCase()} successfully`)
 		} catch (error) {
 			// Error handling is already done in the mutation
@@ -69,7 +64,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 				<Button
 					variant="default"
 					size="default"
-					className={isBaseResume ? "rounded-full pl-4 pr-2 gap-2 shadow-lg" : "rounded-tl-[36px] rounded-bl-[36px] rounded-tr-[12px] rounded-br-[12px] pl-4 pr-2 gap-2"}
+					className={isBaseResume ? 'rounded-full pl-4 pr-2 gap-2 shadow-lg' : 'rounded-tl-[36px] rounded-bl-[36px] rounded-tr-[12px] rounded-br-[12px] pl-4 pr-2 gap-2'}
 					disabled={isExporting}
 				>
 					{isExporting ? (
@@ -87,14 +82,14 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="min-w-[180px]">
-				<DropdownMenuItem 
+				<DropdownMenuItem
 					onClick={() => handleExport('pdf')}
 					className="cursor-pointer"
 					disabled={isExporting}
 				>
 					Download as PDF
 				</DropdownMenuItem>
-				<DropdownMenuItem 
+				<DropdownMenuItem
 					onClick={() => handleExport('tex')}
 					className="cursor-pointer"
 					disabled={isExporting}
@@ -108,7 +103,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 	// For base resume, only show download button
 	if (isBaseResume) {
 		return (
-			<div 
+			<div
 				className={cn(
 					'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50',
 					className
@@ -121,7 +116,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 
 	// For non-base resumes, show all buttons
 	return (
-		<div 
+		<div
 			className={cn(
 				'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[#e5e5e5] rounded-full shadow-lg px-1 py-1',
 				'border border-gray-200',
