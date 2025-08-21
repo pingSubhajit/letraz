@@ -90,7 +90,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
 			)}
 		>
 			{/* Drag Handle - positioned relative to content */}
-			<div className="h-full absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+			<motion.div
+				className="h-full absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 				<Button
 					variant="outline"
 					size="sm"
@@ -101,7 +102,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 				>
 					<GripVertical className="h-3 w-3" />
 				</Button>
-			</div>
+			</motion.div>
 
 			{/* Section Content */}
 			<motion.div
