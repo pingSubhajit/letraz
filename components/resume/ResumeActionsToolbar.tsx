@@ -1,5 +1,9 @@
 'use client'
 
+import {useState, useRef} from 'react'
+import {useRouter} from 'next/navigation'
+import {toast} from 'sonner'
+import {ChevronDownIcon, Download, Briefcase, Trash2, Loader2} from 'lucide-react'
 import {Button} from '@/components/ui/button'
 import {
 	DropdownMenu,
@@ -7,15 +11,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {ChevronDownIcon, Download, Briefcase, Trash2, Loader2} from 'lucide-react'
-import {useExportResumeMutation, useDeleteResumeMutation} from '@/lib/resume/mutations'
-import {toast} from 'sonner'
-import {cn} from '@/lib/utils'
 import PopConfirm from '@/components/ui/pop-confirm'
-import {useRouter} from 'next/navigation'
-import {useState, useRef} from 'react'
 import JobDetailsModal from '@/components/resume/JobDetailsModal'
+import {useExportResumeMutation, useDeleteResumeMutation} from '@/lib/resume/mutations'
 import {Job} from '@/lib/job/types'
+import {cn} from '@/lib/utils'
 
 interface ResumeActionsToolbarProps {
 	resumeId: string

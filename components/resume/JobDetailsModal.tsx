@@ -1,13 +1,13 @@
 'use client'
 
-import {Badge} from '@/components/ui/badge'
-import {Briefcase, MapPin, Building2, Link, FileText, Target, Gift, X} from 'lucide-react'
-import {Job} from '@/lib/job/types'
-import {Button} from '@/components/ui/button'
-import type {ReactNode} from 'react'
-import {motion, AnimatePresence} from 'framer-motion'
-import {createPortal} from 'react-dom'
 import {useEffect, useState} from 'react'
+import type {ReactNode} from 'react'
+import {createPortal} from 'react-dom'
+import {motion, AnimatePresence} from 'framer-motion'
+import {Briefcase, MapPin, Building2, Link, FileText, Target, Gift, X} from 'lucide-react'
+import {Badge} from '@/components/ui/badge'
+import {Button} from '@/components/ui/button'
+import {Job} from '@/lib/job/types'
 
 interface JobDetailsModalProps {
 	isOpen: boolean
