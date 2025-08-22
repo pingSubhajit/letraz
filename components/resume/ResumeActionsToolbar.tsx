@@ -13,17 +13,22 @@ import {toast} from 'sonner'
 import {cn} from '@/lib/utils'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {useRouter} from 'next/navigation'
+import {useState} from 'react'
+import JobDetailsModal from '@/components/resume/JobDetailsModal'
+import {Job} from '@/lib/job/types'
 
 interface ResumeActionsToolbarProps {
 	resumeId: string
 	className?: string
 	isBaseResume?: boolean
+	job?: Job | null
 }
 
-const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: ResumeActionsToolbarProps) => {
+const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: ResumeActionsToolbarProps) => {
 	const {mutateAsync: exportResume, isPending: isExporting} = useExportResumeMutation()
 	const {mutateAsync: deleteResume, isPending: isDeleting} = useDeleteResumeMutation()
 	const router = useRouter()
+	const [showJobDetails, setShowJobDetails] = useState(false)
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		try {
@@ -39,7 +44,6 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 			const link = document.createElement('a')
 			link.href = fullUrl
 			link.download = `resume.${fileExtension}`
-			link.target = '_blank'
 			document.body.appendChild(link)
 			link.click()
 			document.body.removeChild(link)
@@ -131,13 +135,14 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 		>
 			<DownloadButton />
 
-			{/* Job details button - disabled */}
+			{/* Job details button */}
 			<Button
 				variant="secondary"
 				size="icon"
 				className="rounded-lg bg-[#fbfbfb]"
-				disabled
-				title="Coming soon"
+				disabled={!job}
+				title={job ? "View job details" : "No job associated with this resume"}
+				onClick={() => setShowJobDetails(true)}
 			>
 				<Briefcase className="h-4 w-4" />
 			</Button>
@@ -182,6 +187,15 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
+			
+			{/* Job Details Modal */}
+			{job && (
+				<JobDetailsModal
+					isOpen={showJobDetails}
+					onClose={() => setShowJobDetails(false)}
+					job={job}
+				/>
+			)}
 		</div>
 	)
 }

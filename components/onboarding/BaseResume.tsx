@@ -15,7 +15,7 @@ const BaseResume = async () => {
 	return (
 		<BaseResumeProvider>
 			<div className="w-full h-full flex flex-col justify-start">
-				<ResumeView />
+				<ResumeView showToolbar={false} />
 				<OnboardingCompletionButton />
 			</div>
 		</BaseResumeProvider>
