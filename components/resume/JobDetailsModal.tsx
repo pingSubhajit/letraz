@@ -1,12 +1,5 @@
 'use client'
 
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle
-} from '@/components/ui/dialog'
 import {Badge} from '@/components/ui/badge'
 import {Briefcase, MapPin, Building2, Link, FileText, Target, Gift, X} from 'lucide-react'
 import {Job} from '@/lib/job/types'
@@ -24,8 +17,14 @@ interface JobDetailsModalProps {
 }
 
 const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProps) => {
-	if (!job) return null
+	// Hooks must be called before any early returns
+	const [mounted, setMounted] = useState(false)
 
+	useEffect(() => {
+		setMounted(true)
+	}, [])
+
+	// Helper functions
 	const renderSection = (title: string, content: string | null, icon: ReactNode) => {
 		if (!content) return null
 		
@@ -75,12 +74,8 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 		}
 	}
 
-	const [mounted, setMounted] = useState(false)
-
-	useEffect(() => {
-		setMounted(true)
-	}, [])
-
+	// Early returns after hooks
+	if (!job) return null
 	if (!mounted) return null
 
 	return createPortal(
