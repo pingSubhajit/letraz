@@ -8,18 +8,22 @@ import {
 	DialogTitle
 } from '@/components/ui/dialog'
 import {Badge} from '@/components/ui/badge'
-import {Briefcase, MapPin, Building2, Link, FileText, Target, Gift} from 'lucide-react'
+import {Briefcase, MapPin, Building2, Link, FileText, Target, Gift, X} from 'lucide-react'
 import {Job} from '@/lib/job/types'
 import {Button} from '@/components/ui/button'
 import type {ReactNode} from 'react'
+import {motion, AnimatePresence} from 'framer-motion'
+import {createPortal} from 'react-dom'
+import {useEffect, useState} from 'react'
 
 interface JobDetailsModalProps {
 	isOpen: boolean
 	onClose: () => void
 	job: Job | null
+	buttonRect?: DOMRect | null
 }
 
-const JobDetailsModal = ({isOpen, onClose, job}: JobDetailsModalProps) => {
+const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProps) => {
 	if (!job) return null
 
 	const renderSection = (title: string, content: string | null, icon: ReactNode) => {
@@ -51,19 +55,82 @@ const JobDetailsModal = ({isOpen, onClose, job}: JobDetailsModalProps) => {
 		)
 	}
 
-	return (
-		<Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-			<DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border border-gray-200 shadow-xl">
-				<DialogHeader>
-					<DialogTitle className="text-2xl font-bold text-gray-900">
-						Job Details
-					</DialogTitle>
-					<DialogDescription className="sr-only">
-						Details about the job position
-					</DialogDescription>
-				</DialogHeader>
+	// Calculate initial position based on button rect
+	const getInitialPosition = () => {
+		if (!buttonRect) return { x: 0, y: 0, scale: 0.3 }
+		
+		const modalWidth = 768 // max-w-3xl
+		const modalHeight = window.innerHeight * 0.9
+		
+		const centerX = window.innerWidth / 2 - modalWidth / 2
+		const centerY = window.innerHeight / 2 - modalHeight / 2
+		
+		const buttonCenterX = buttonRect.left + buttonRect.width / 2
+		const buttonCenterY = buttonRect.top + buttonRect.height / 2
+		
+		return {
+			x: buttonCenterX - centerX - modalWidth / 2,
+			y: buttonCenterY - centerY - modalHeight / 2,
+			scale: 0.05
+		}
+	}
 
-				<div className="space-y-8 py-6">
+	const [mounted, setMounted] = useState(false)
+
+	useEffect(() => {
+		setMounted(true)
+	}, [])
+
+	if (!mounted) return null
+
+	return createPortal(
+		<AnimatePresence>
+			{isOpen && (
+				<>
+					{/* Backdrop */}
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.2 }}
+						className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
+						onClick={onClose}
+					/>
+					
+					{/* Modal */}
+					<motion.div
+						className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+					>
+						<motion.div
+							initial={getInitialPosition()}
+							animate={{ x: 0, y: 0, scale: 1 }}
+							exit={getInitialPosition()}
+							transition={{
+								type: "spring",
+								damping: 25,
+								stiffness: 300,
+								duration: 0.4
+							}}
+							className="max-w-3xl w-full max-h-[90vh] bg-white rounded-2xl shadow-2xl pointer-events-auto overflow-hidden"
+						>
+							{/* Custom Dialog Content */}
+							<div className="relative bg-white rounded-2xl overflow-y-auto max-h-[90vh]">
+								{/* Close Button */}
+								<button
+									onClick={onClose}
+									className="absolute right-4 top-4 rounded-full bg-gray-100 p-2 opacity-70 hover:opacity-100 hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 z-10"
+								>
+									<X className="h-4 w-4" />
+									<span className="sr-only">Close</span>
+								</button>
+								
+								{/* Header */}
+								<div className="px-6 py-4 border-b">
+									<h2 className="text-2xl font-bold text-gray-900">Job Details</h2>
+								</div>
+
+								{/* Content */}
+								<div className="px-6 space-y-8 py-6">
 					{/* Job Title and Company */}
 					<div className="space-y-4">
 						<div className="flex items-start justify-between gap-4">
@@ -147,15 +214,21 @@ const JobDetailsModal = ({isOpen, onClose, job}: JobDetailsModalProps) => {
 						job.benefits,
 						<Gift className="h-4 w-4 text-flame-600" />
 					)}
-				</div>
+								</div>
 
-				<div className="flex justify-end pt-4 border-t">
-					<Button variant="outline" onClick={onClose}>
-						Close
-					</Button>
-				</div>
-			</DialogContent>
-		</Dialog>
+								{/* Footer */}
+								<div className="flex justify-end px-6 py-4 border-t">
+									<Button variant="outline" onClick={onClose}>
+										Close
+									</Button>
+								</div>
+							</div>
+						</motion.div>
+					</motion.div>
+				</>
+			)}
+		</AnimatePresence>,
+		document.body
 	)
 }
 

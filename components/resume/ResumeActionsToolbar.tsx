@@ -13,7 +13,7 @@ import {toast} from 'sonner'
 import {cn} from '@/lib/utils'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {useRouter} from 'next/navigation'
-import {useState} from 'react'
+import {useState, useRef} from 'react'
 import JobDetailsModal from '@/components/resume/JobDetailsModal'
 import {Job} from '@/lib/job/types'
 
@@ -29,6 +29,8 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 	const {mutateAsync: deleteResume, isPending: isDeleting} = useDeleteResumeMutation()
 	const router = useRouter()
 	const [showJobDetails, setShowJobDetails] = useState(false)
+	const [buttonRect, setButtonRect] = useState<DOMRect | null>(null)
+	const jobButtonRef = useRef<HTMLButtonElement>(null)
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		try {
@@ -158,12 +160,18 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 
 			{/* Job details button */}
 			<Button
+				ref={jobButtonRef}
 				variant="secondary"
 				size="icon"
 				className="rounded-lg bg-[#fbfbfb]"
 				disabled={!job}
 				title={job ? "View job details" : "No job associated with this resume"}
-				onClick={() => setShowJobDetails(true)}
+				onClick={() => {
+					if (jobButtonRef.current) {
+						setButtonRect(jobButtonRef.current.getBoundingClientRect())
+					}
+					setShowJobDetails(true)
+				}}
 			>
 				<Briefcase className="h-4 w-4" />
 			</Button>
@@ -215,6 +223,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 					isOpen={showJobDetails}
 					onClose={() => setShowJobDetails(false)}
 					job={job}
+					buttonRect={buttonRect}
 				/>
 			)}
 		</div>
