@@ -11,6 +11,7 @@ import {Badge} from '@/components/ui/badge'
 import {Briefcase, MapPin, Building2, Link, FileText, Target, Gift} from 'lucide-react'
 import {Job} from '@/lib/job/types'
 import {Button} from '@/components/ui/button'
+import type {ReactNode} from 'react'
 
 interface JobDetailsModalProps {
 	isOpen: boolean
@@ -21,7 +22,7 @@ interface JobDetailsModalProps {
 const JobDetailsModal = ({isOpen, onClose, job}: JobDetailsModalProps) => {
 	if (!job) return null
 
-	const renderSection = (title: string, content: string | null, icon: React.ReactNode) => {
+	const renderSection = (title: string, content: string | null, icon: ReactNode) => {
 		if (!content) return null
 		
 		return (
@@ -51,7 +52,7 @@ const JobDetailsModal = ({isOpen, onClose, job}: JobDetailsModalProps) => {
 	}
 
 	return (
-		<Dialog open={isOpen} onOpenChange={onClose}>
+		<Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
 			<DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border border-gray-200 shadow-xl">
 				<DialogHeader>
 					<DialogTitle className="text-2xl font-bold text-gray-900">
@@ -100,10 +101,12 @@ const JobDetailsModal = ({isOpen, onClose, job}: JobDetailsModalProps) => {
 								variant="outline"
 								size="sm"
 								className="w-fit"
-								onClick={() => window.open(job.job_url, '_blank')}
+								asChild
 							>
-								<Link className="h-4 w-4 mr-2" />
-								View Original Posting
+								<a href={job.job_url} target="_blank" rel="noopener noreferrer">
+									<Link className="h-4 w-4 mr-2" />
+									View Original Posting
+								</a>
 							</Button>
 						)}
 					</div>

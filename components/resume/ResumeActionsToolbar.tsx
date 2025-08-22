@@ -36,11 +36,38 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 			
 			const downloadUrl = format === 'pdf' ? response.pdf_url : response.latex_url
 			
-			// Add https:// to the URL if it doesn't start with http
-			const fullUrl = downloadUrl.startsWith('http') ? downloadUrl : `https://${downloadUrl}`
+			// Validate the URL exists
+			if (!downloadUrl || typeof downloadUrl !== 'string' || downloadUrl.trim() === '') {
+				toast.error('No download URL received from server')
+				return
+			}
 			
-			// Simply open in new tab - browsers will handle PDF/TEX files appropriately
-			window.open(fullUrl, '_blank')
+			// Properly construct the URL
+			let fullUrl: string
+			try {
+				// If it's already a full URL, use it as-is
+				if (downloadUrl.startsWith('http://') || downloadUrl.startsWith('https://')) {
+					fullUrl = downloadUrl
+				} 
+				// If it starts with //, it's protocol-relative
+				else if (downloadUrl.startsWith('//')) {
+					fullUrl = 'https:' + downloadUrl
+				}
+				// Otherwise, assume it needs https://
+				else {
+					fullUrl = 'https://' + downloadUrl
+				}
+				
+				// Validate the URL is properly formed
+				new URL(fullUrl)
+			} catch (urlError) {
+				console.error('Invalid URL:', downloadUrl)
+				toast.error('Invalid download URL received')
+				return
+			}
+			
+			// Open in new tab with security attributes
+			window.open(fullUrl, '_blank', 'noopener,noreferrer')
 			
 			toast.success(`Resume exported as ${format.toUpperCase()} successfully`)
 		} catch (error) {
