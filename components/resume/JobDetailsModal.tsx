@@ -5,12 +5,11 @@ import {
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
-	DialogTitle,
+	DialogTitle
 } from '@/components/ui/dialog'
 import {Badge} from '@/components/ui/badge'
 import {Briefcase, MapPin, Building2, Link, FileText, Target, Gift} from 'lucide-react'
 import {Job} from '@/lib/job/types'
-import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 
 interface JobDetailsModalProps {

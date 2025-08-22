@@ -35,18 +35,12 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 			const response = await exportResume(resumeId)
 			
 			const downloadUrl = format === 'pdf' ? response.pdf_url : response.latex_url
-			const fileExtension = format === 'pdf' ? 'pdf' : 'tex'
 			
 			// Add https:// to the URL if it doesn't start with http
 			const fullUrl = downloadUrl.startsWith('http') ? downloadUrl : `https://${downloadUrl}`
 			
-			// Create a temporary anchor element to trigger download
-			const link = document.createElement('a')
-			link.href = fullUrl
-			link.download = `resume.${fileExtension}`
-			document.body.appendChild(link)
-			link.click()
-			document.body.removeChild(link)
+			// Simply open in new tab - browsers will handle PDF/TEX files appropriately
+			window.open(fullUrl, '_blank')
 			
 			toast.success(`Resume exported as ${format.toUpperCase()} successfully`)
 		} catch (error) {
