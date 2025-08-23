@@ -1,44 +1,76 @@
 'use client'
 
-import {Button} from '@/components/ui/button'
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
-import {Briefcase, ChevronDownIcon, Download, Loader2, Trash2} from 'lucide-react'
-import {useDeleteResumeMutation, useExportResumeMutation} from '@/lib/resume/mutations'
-import {toast} from 'sonner'
-import {cn} from '@/lib/utils'
-import PopConfirm from '@/components/ui/pop-confirm'
+import {useState, useRef} from 'react'
 import {useRouter} from 'next/navigation'
+import {toast} from 'sonner'
+import {ChevronDownIcon, Download, Briefcase, Trash2, Loader2} from 'lucide-react'
+import {Button} from '@/components/ui/button'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import PopConfirm from '@/components/ui/pop-confirm'
+import JobDetailsModal from '@/components/resume/JobDetailsModal'
+import {useExportResumeMutation, useDeleteResumeMutation} from '@/lib/resume/mutations'
+import {Job} from '@/lib/job/types'
+import {cn} from '@/lib/utils'
 
 interface ResumeActionsToolbarProps {
 	resumeId: string
 	className?: string
 	isBaseResume?: boolean
+	job?: Job | null
 }
 
-const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: ResumeActionsToolbarProps) => {
+const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: ResumeActionsToolbarProps) => {
 	const {mutateAsync: exportResume, isPending: isExporting} = useExportResumeMutation()
 	const {mutateAsync: deleteResume, isPending: isDeleting} = useDeleteResumeMutation()
 	const router = useRouter()
+	const [showJobDetails, setShowJobDetails] = useState(false)
+	const [buttonRect, setButtonRect] = useState<DOMRect | null>(null)
+	const jobButtonRef = useRef<HTMLButtonElement>(null)
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		try {
 			const response = await exportResume(resumeId)
 
 			const downloadUrl = format === 'pdf' ? response.pdf_url : response.latex_url
-			const fileExtension = format === 'pdf' ? 'pdf' : 'tex'
 
-			// Add https:// to the URL if it doesn't start with http
-			const fullUrl = downloadUrl.startsWith('http') ? downloadUrl : `https://${downloadUrl}`
+			// Validate the URL exists
+			if (!downloadUrl || typeof downloadUrl !== 'string' || downloadUrl.trim() === '') {
+				toast.error('No download URL received from server')
+				return
+			}
 
-			// Create a temporary anchor element to trigger download
-			const link = document.createElement('a')
-			link.href = fullUrl
-			link.download = `resume.${fileExtension}`
-			link.target = '_blank'
-			document.body.appendChild(link)
-			link.click()
-			document.body.removeChild(link)
+			// Properly construct the URL
+			let fullUrl: string
+			try {
+				// If it's already a full URL, use it as-is
+				if (downloadUrl.startsWith('http://') || downloadUrl.startsWith('https://')) {
+					fullUrl = downloadUrl
+				}
+				// If it starts with //, it's protocol-relative
+				else if (downloadUrl.startsWith('//')) {
+					fullUrl = 'https:' + downloadUrl
+				}
+				// Otherwise, assume it needs https://
+				else {
+					fullUrl = 'https://' + downloadUrl
+				}
 
+				// Validate the URL is properly formed
+				new URL(fullUrl)
+			} catch (urlError) {
+				console.error('Invalid URL:', downloadUrl)
+				toast.error('Invalid download URL received')
+				return
+			}
+
+			// Open in new tab with security attributes
+			window.open(fullUrl, '_blank', 'noopener,noreferrer')
+			
 			toast.success(`Resume exported as ${format.toUpperCase()} successfully`)
 		} catch (error) {
 			// Error handling is already done in the mutation
@@ -126,13 +158,20 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 		>
 			<DownloadButton />
 
-			{/* Job details button - disabled */}
+			{/* Job details button */}
 			<Button
+				ref={jobButtonRef}
 				variant="secondary"
 				size="icon"
 				className="rounded-lg bg-[#fbfbfb]"
-				disabled
-				title="Coming soon"
+				disabled={!job}
+				title={job ? "View job details" : "No job associated with this resume"}
+				onClick={() => {
+					if (jobButtonRef.current) {
+						setButtonRect(jobButtonRef.current.getBoundingClientRect())
+					}
+					setShowJobDetails(true)
+				}}
 			>
 				<Briefcase className="h-4 w-4" />
 			</Button>
@@ -177,6 +216,16 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false}: Resum
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
+
+			{/* Job Details Modal */}
+			{job && (
+				<JobDetailsModal
+					isOpen={showJobDetails}
+					onClose={() => setShowJobDetails(false)}
+					job={job}
+					buttonRect={buttonRect}
+				/>
+			)}
 		</div>
 	)
 }
