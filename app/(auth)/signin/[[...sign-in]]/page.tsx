@@ -1,7 +1,7 @@
-import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 import SignInPageTitle from '@/app/(auth)/signin/[[...sign-in]]/SignInPage.title'
-import {AnimatePresence} from 'motion/react'
-import GithubSignInButton from '@/components/auth/GithubSignInButton'
+import GithubAuthButton from '@/components/auth/GithubAuthButton'
+import EmailPasswordSignInForm from '@/components/auth/EmailPasswordSignInForm'
 import {Metadata} from 'next'
 
 export const metadata: Metadata = {
@@ -17,19 +17,27 @@ export const metadata: Metadata = {
 
 const SignInPage = () => {
 	return (
-		<div className="h-screen overflow-hidden flex justify-end items-center">
-			<video autoPlay muted loop className="aspect-video absolute -z-10 w-full h-full">
-				<source src="/letraz-brain.webm" type="video/webm"/>
-			</video>
-			<div className="w-[50vw] h-screen bg-neutral-50 flex flex-col justify-center items-center">
-				<AnimatePresence>
-					<SignInPageTitle />
-				</AnimatePresence>
+		<>
+			<SignInPageTitle />
 
-				<GoogleSignInButton className="mt-16"/>
-				<GithubSignInButton className="mt-6" />
+			<div className="flex flex-col justify-center items-center mt-8 gap-6 w-full">
+				{/* Email/Password Sign In Form */}
+				<EmailPasswordSignInForm className="w-full" />
+
+				{/* Divider */}
+				<div className="flex items-center w-full">
+					<div className="flex-grow h-px bg-neutral-300"></div>
+					<span className="px-4 text-sm text-neutral-500 font-medium">or continue with</span>
+					<div className="flex-grow h-px bg-neutral-300"></div>
+				</div>
+
+				{/* OAuth Providers */}
+				<div className="flex flex-col gap-4 w-full">
+					<GoogleAuthButton className="w-full" />
+					<GithubAuthButton className="w-full" />
+				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 
