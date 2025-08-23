@@ -5,17 +5,20 @@ import {RefObject} from 'react'
 import DefaultTheme from '@/components/resume/themes/DEFAULT_THEME/DefaultTheme'
 import {Resume} from '@/lib/resume/types'
 import {motion} from 'motion/react'
+import ResumeActionsToolbar from '@/components/resume/ResumeActionsToolbar'
 
 type ResumeViewerProps = {
 	resume: Resume
 	resumeRef?: RefObject<HTMLDivElement | null>
 	className?: string
 	showAnimation?: boolean
+	showToolbar?: boolean
 }
 
-const ResumeViewer = ({resume, resumeRef, className, showAnimation = true}: ResumeViewerProps) => {
+const ResumeViewer = ({resume, resumeRef, className, showAnimation = true, showToolbar = false}: ResumeViewerProps) => {
 	return (
-		<div className={cn('size-a4 resume relative overflow-y-hidden', className)}>
+		<>
+			<div className={cn('size-a4 resume relative overflow-y-hidden', className)}>
 			{showAnimation && (
 				<>
 					<motion.div
@@ -57,6 +60,8 @@ const ResumeViewer = ({resume, resumeRef, className, showAnimation = true}: Resu
 				}
 			/>
 		</div>
+		{showToolbar && <ResumeActionsToolbar resumeId={resume.id} isBaseResume={resume.base} job={resume.job} />}
+		</>
 	)
 }
 

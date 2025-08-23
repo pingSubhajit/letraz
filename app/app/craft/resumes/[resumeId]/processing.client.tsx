@@ -69,7 +69,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 		<ResumeHighlightProvider>
 			<div className="flex h-screen w-full" role="main">
 				<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
-					<ResumeViewer resume={resume} className="max-h-screen" />
+					<ResumeViewer resume={resume} className="max-h-screen" showToolbar />
 				</div>
 				<div className="size-full">
 					<ResumeEditor className="size-full bg-neutral-50 p-12" />

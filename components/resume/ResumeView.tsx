@@ -13,7 +13,11 @@ import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighli
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
-const ResumeView = () => {
+interface ResumeViewProps {
+	showToolbar?: boolean
+}
+
+const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 	const resumeRef = useRef<HTMLDivElement>(null)
 
 	const {data: resume, isLoading, isError} = useBaseResume()
@@ -44,7 +48,7 @@ const ResumeView = () => {
 							)}
 							{resume && (
 								<motion.div {...DEFAULT_FADE_ANIMATION} key="content">
-									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" />
+									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" showToolbar={showToolbar} />
 								</motion.div>
 							)}
 						</AnimatePresence>
