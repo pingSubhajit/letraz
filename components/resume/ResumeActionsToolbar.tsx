@@ -1,19 +1,14 @@
 'use client'
 
-import {useState, useRef} from 'react'
+import {useRef, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
-import {ChevronDownIcon, Download, Briefcase, Trash2, Loader2} from 'lucide-react'
+import {Briefcase, ChevronDownIcon, Download, Loader2, Trash2} from 'lucide-react'
 import {Button} from '@/components/ui/button'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
 import PopConfirm from '@/components/ui/pop-confirm'
 import JobDetailsModal from '@/components/resume/JobDetailsModal'
-import {useExportResumeMutation, useDeleteResumeMutation} from '@/lib/resume/mutations'
+import {useDeleteResumeMutation, useExportResumeMutation} from '@/lib/resume/mutations'
 import {Job} from '@/lib/job/types'
 import {cn} from '@/lib/utils'
 
@@ -50,31 +45,25 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 				// If it's already a full URL, use it as-is
 				if (downloadUrl.startsWith('http://') || downloadUrl.startsWith('https://')) {
 					fullUrl = downloadUrl
-				}
-				// If it starts with //, it's protocol-relative
-				else if (downloadUrl.startsWith('//')) {
+				} else if (downloadUrl.startsWith('//')) { // If it starts with //, it's protocol-relative
 					fullUrl = 'https:' + downloadUrl
-				}
-				// Otherwise, assume it needs https://
-				else {
+				} else { // Otherwise, assume it needs https://
 					fullUrl = 'https://' + downloadUrl
 				}
 
 				// Validate the URL is properly formed
 				new URL(fullUrl)
 			} catch (urlError) {
-				console.error('Invalid URL:', downloadUrl)
 				toast.error('Invalid download URL received')
 				return
 			}
 
 			// Open in new tab with security attributes
 			window.open(fullUrl, '_blank', 'noopener,noreferrer')
-			
+
 			toast.success(`Resume exported as ${format.toUpperCase()} successfully`)
 		} catch (error) {
 			// Error handling is already done in the mutation
-			console.error('Export failed:', error)
 		}
 	}
 
@@ -85,7 +74,6 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 			router.push('/app')
 		} catch (error) {
 			// Error handling is already done in the mutation
-			console.error('Delete failed:', error)
 		}
 	}
 
@@ -165,7 +153,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 				size="icon"
 				className="rounded-lg bg-[#fbfbfb]"
 				disabled={!job}
-				title={job ? "View job details" : "No job associated with this resume"}
+				title={job ? 'View job details' : 'No job associated with this resume'}
 				onClick={() => {
 					if (jobButtonRef.current) {
 						setButtonRect(jobButtonRef.current.getBoundingClientRect())
