@@ -16,7 +16,7 @@ interface TableOfContentsProps {
 }
 
 // Server-side function to extract headings from HTML
-function extractHeadingsFromHTML(html: string): TOCItem[] {
+const extractHeadingsFromHTML = (html: string): TOCItem[] => {
 	const headingRegex = /<h([1-6])[^>]*>(.*?)<\/h[1-6]>/gi
 	const items: TOCItem[] = []
 	let match
@@ -48,7 +48,7 @@ function extractHeadingsFromHTML(html: string): TOCItem[] {
 	return items
 }
 
-export function TableOfContents({content = ''}: TableOfContentsProps) {
+const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 	const [tocItems, setTocItems] = useState<TOCItem[]>([])
 	const [activeId, setActiveId] = useState<string>('')
 
@@ -182,41 +182,4 @@ export function TableOfContents({content = ''}: TableOfContentsProps) {
 	)
 }
 
-// Static version for server-side rendering
-export function TableOfContentsStatic({content = ''}: TableOfContentsProps) {
-	const items = extractHeadingsFromHTML(content)
-
-	return (
-		<div className="docs-toc">
-			<div className="space-y-2">
-				<p className="font-medium">On This Page</p>
-				<Separator />
-				{items.length === 0 ? (
-					<p className="text-sm text-muted-foreground px-3 py-2">
-						No headings found
-					</p>
-				) : (
-					<div className="space-y-1">
-						{items.map((item) => (
-							<a
-								key={item.id}
-								href={`#${item.id}`}
-								className={cn(
-									'block px-3 py-1 text-sm rounded transition-colors',
-									'text-muted-foreground hover:text-foreground hover:bg-muted',
-									{
-										'pl-6': item.level === 3,
-										'pl-9': item.level === 4,
-										'pl-12': item.level >= 5
-									}
-								)}
-							>
-								{item.title}
-							</a>
-						))}
-					</div>
-				)}
-			</div>
-		</div>
-	)
-}
+export default TableOfContents

@@ -1,7 +1,8 @@
 import {Separator} from '@/components/ui/separator'
-import {getAllDocumentationPages, getDocumentationPages} from '../lib/basehub'
-import {SearchDocs} from './search-docs'
+import {getAllDocumentationPages, getDocumentationPages} from '../../../lib/basehub'
 import {HierarchicalPageItem} from './hierarchical-page-item'
+import {Button} from '@/components/ui/button'
+import {Search} from 'lucide-react'
 
 export const DocsNavigation = async () => {
 	const [hierarchicalPages, allPages] = await Promise.all([
@@ -11,16 +12,12 @@ export const DocsNavigation = async () => {
 
 	return (
 		<div className="w-full">
-			<div className="pb-4">
-				<h4 className="mb-1 text-sm font-semibold leading-none">Documentation</h4>
-				<p className="text-sm text-muted-foreground">
-					Guides and references for using Letraz
-				</p>
-			</div>
-
 			{/* Search - uses flat list for searching */}
 			<div className="mb-4">
-				<SearchDocs pages={allPages} />
+				<Button variant="secondary" className="w-full text-muted-foreground gap-1.5 justify-start">
+					<Search className="w-4 aspect-square" />
+					Search documentation
+				</Button>
 			</div>
 
 			<Separator className="mb-4" />

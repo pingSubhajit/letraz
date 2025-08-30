@@ -5,7 +5,6 @@ export interface DocPage {
   title: string
   slug: string
   description?: string
-  excerpt?: string
   body?: string
   published: boolean
   children?: DocPage[]
@@ -37,7 +36,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 					title: true,
 					slug: true,
 					description: true,
-					excerpt: true,
 					body: {
 						html: true
 					},
@@ -48,7 +46,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 							title: true,
 							slug: true,
 							description: true,
-							excerpt: true,
 							body: {
 								html: true
 							},
@@ -59,7 +56,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 									title: true,
 									slug: true,
 									description: true,
-									excerpt: true,
 									body: {
 										html: true
 									},
@@ -77,7 +73,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 			title: page.title || '',
 			slug: page.slug || '',
 			description: page.description || '',
-			excerpt: page.excerpt || '',
 			body: page.body?.html || '',
 			published: page.published || false,
 			children: page.children?.items
@@ -92,7 +87,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 
 		return pages
 	} catch (error) {
-		console.error('Error fetching documentation pages:', error)
 		return []
 	}
 }
@@ -118,7 +112,6 @@ export const getDocumentationPage = async (slug: string): Promise<DocPage | null
 					title: true,
 					slug: true,
 					description: true,
-					excerpt: true,
 					body: {
 						html: true
 					},
@@ -129,7 +122,6 @@ export const getDocumentationPage = async (slug: string): Promise<DocPage | null
 							title: true,
 							slug: true,
 							description: true,
-							excerpt: true,
 							body: {
 								html: true
 							},
@@ -147,7 +139,6 @@ export const getDocumentationPage = async (slug: string): Promise<DocPage | null
 				title: page.title || '',
 				slug: page.slug || '',
 				description: page.description || '',
-				excerpt: page.excerpt || '',
 				body: page.body?.html || '',
 				published: page.published || false,
 				children: page.children?.items
@@ -157,7 +148,6 @@ export const getDocumentationPage = async (slug: string): Promise<DocPage | null
 						title: child.title || '',
 						slug: child.slug || '',
 						description: child.description || '',
-						excerpt: child.excerpt || '',
 						body: child.body?.html || '',
 						published: child.published || false
 					})) || []
@@ -226,16 +216,16 @@ export const getAllDocumentationPages = async (): Promise<DocPage[]> => {
 export const getBreadcrumbPath = async (targetSlug: string): Promise<DocPage[]> => {
 	try {
 		const hierarchicalPages = await getDocumentationPages()
-		
+
 		const findPath = (pages: DocPage[], path: DocPage[] = []): DocPage[] | null => {
 			for (const page of pages) {
 				const currentPath = [...path, page]
-				
+
 				// If we found the target page, return the path
 				if (page.slug === targetSlug) {
 					return currentPath
 				}
-				
+
 				// If this page has children, search recursively
 				if (page.children && page.children.length > 0) {
 					const result = findPath(page.children, currentPath)
@@ -244,7 +234,7 @@ export const getBreadcrumbPath = async (targetSlug: string): Promise<DocPage[]> 
 			}
 			return null
 		}
-		
+
 		const path = findPath(hierarchicalPages)
 		return path || []
 	} catch (error) {

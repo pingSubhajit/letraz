@@ -1,13 +1,13 @@
 import React from 'react'
 import {notFound} from 'next/navigation'
-import {getAllDocumentationPages, getBreadcrumbPath, getDocumentationPage} from '../lib/basehub'
+import {getAllDocumentationPages, getBreadcrumbPath, getDocumentationPage} from '@/lib/basehub'
 import {Badge} from '@/components/ui/badge'
 import {Button} from '@/components/ui/button'
 import {Card, CardContent} from '@/components/ui/card'
 import {Separator} from '@/components/ui/separator'
-import {TableOfContents} from '../components/table-of-contents'
 import Link from 'next/link'
-import {ArrowLeft, Calendar, ChevronRight, FileText, Folder, Home} from 'lucide-react'
+import {ArrowLeft, Calendar, ChevronRight, FileText} from 'lucide-react'
+import TableOfContents from '@/app/docs/components/table-of-contents'
 
 /*
  * Using BaseHub's automatic on-demand revalidation instead of ISR
@@ -21,20 +21,19 @@ interface DocPageProps {
 }
 
 // Generate static paths for all documentation pages
-export async function generateStaticParams() {
+export const generateStaticParams = async () => {
 	try {
 		const pages = await getAllDocumentationPages()
 		return pages.map((page) => ({
 			slug: page.slug
 		}))
 	} catch (error) {
-		console.error('Error generating static params:', error)
 		return []
 	}
 }
 
 // Generate metadata for each page
-export async function generateMetadata({params}: DocPageProps) {
+export const generateMetadata = async ({params}: DocPageProps) => {
 	const {slug} = await params
 	const page = await getDocumentationPage(slug)
 
@@ -46,11 +45,11 @@ export async function generateMetadata({params}: DocPageProps) {
 
 	return {
 		title: `${page.title} | Documentation`,
-		description: page.description || page.excerpt
+		description: page.description
 	}
 }
 
-export default async function DocPage({params}: DocPageProps) {
+const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 	const {slug} = await params
 	const [page, breadcrumbPath] = await Promise.all([
 		getDocumentationPage(slug),
@@ -68,11 +67,11 @@ export default async function DocPage({params}: DocPageProps) {
 	return (
 		<div className="flex w-full">
 			{/* Main content */}
-			<div className="flex-1 min-w-0 space-y-6">
+			<div className="flex-1 min-w-0 max-w-4xl space-y-6">
 				{/* Breadcrumbs */}
 				<nav className="flex items-center space-x-1 text-sm text-muted-foreground">
 					<Link href="/docs" className="hover:text-foreground transition-colors">
-						<Home className="h-4 w-4" />
+						<ArrowLeft className="h-4 w-4" />
 					</Link>
 					<ChevronRight className="h-4 w-4" />
 					<Link href="/docs" className="hover:text-foreground transition-colors">
@@ -100,30 +99,8 @@ export default async function DocPage({params}: DocPageProps) {
 					})}
 				</nav>
 
-				{/* Back button */}
-				<Button variant="ghost" size="sm" asChild>
-					<Link href="/docs">
-						<ArrowLeft className="mr-2 h-4 w-4" />
-						Back to Documentation
-					</Link>
-				</Button>
-
 				{/* Page header */}
 				<div className="space-y-4">
-					<div className="flex items-center gap-2">
-						{hasChildren ? (
-							<Folder className="h-5 w-5 text-blue-600" />
-						) : (
-							<FileText className="h-5 w-5 text-blue-600" />
-						)}
-						<Badge variant="outline">{pageType}</Badge>
-						{hasChildren && (
-							<Badge variant="secondary">
-								{page.children!.length} guides
-							</Badge>
-						)}
-					</div>
-
 					<div className="space-y-2">
 						<h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
 							{page.title}
@@ -134,13 +111,6 @@ export default async function DocPage({params}: DocPageProps) {
 							</p>
 						)}
 					</div>
-
-					{/* Show excerpt if available */}
-					{page.excerpt && (
-						<p className="text-sm text-muted-foreground italic">
-							{page.excerpt}
-						</p>
-					)}
 				</div>
 
 				<Separator />
@@ -189,7 +159,7 @@ export default async function DocPage({params}: DocPageProps) {
 												</Link>
 											</h4>
 											<p className="text-sm text-muted-foreground line-clamp-2">
-												{child.description || child.excerpt}
+												{child.description}
 											</p>
 										</CardContent>
 									</Card>
@@ -222,8 +192,8 @@ export default async function DocPage({params}: DocPageProps) {
 
 			{/* Table of Contents - Only show on larger screens and when there's content */}
 			{page.body && (
-				<div className="hidden xl:block xl:w-[280px] xl:shrink-0 xl:pl-8">
-					<div className="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6">
+				<div className="hidden xl:block xl:pl-8">
+					<div className="sticky top-16 overflow-hidden">
 						<TableOfContents content={page.body} />
 					</div>
 				</div>
@@ -231,3 +201,5 @@ export default async function DocPage({params}: DocPageProps) {
 		</div>
 	)
 }
+
+export default IndividualDocumentationPage
