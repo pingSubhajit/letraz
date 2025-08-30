@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {
 	closestCenter,
 	DndContext,
@@ -22,6 +22,7 @@ import {GripVertical} from 'lucide-react'
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import {useRearrangeResumeSectionsMutation} from '@/lib/resume/mutations'
+import {useResumeHighlight} from './contexts/ResumeHighlightContext'
 
 interface ReorderableSectionsProps {
 	sections: ResumeSection[]
@@ -80,29 +81,35 @@ const SortableItem: React.FC<SortableItemProps> = ({
 
 	const sectionData = renderSection(section, isFirstInGroup)
 
+	const {highlightedItem} = useResumeHighlight()
+
 	return (
 		<div
 			ref={setNodeRef}
 			style={style}
 			className={cn(
 				'relative group',
-				isDragging && 'opacity-30 z-[999] transition-opacity duration-150'
+				isDragging
+				&& 'opacity-30 z-[999] transition-opacity duration-150',
 			)}
 		>
 			{/* Drag Handle - positioned relative to content */}
-			<motion.div
-				className="h-full absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-				<Button
-					variant="outline"
-					size="sm"
-					{...attributes}
-					{...listeners}
-					className="h-full min-h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
-					aria-label="Drag to reorder"
-				>
-					<GripVertical className="h-3 w-3" />
-				</Button>
-			</motion.div>
+			{
+				!highlightedItem &&
+				<div
+					className={cn('h-full absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ',)}>
+					<Button
+						variant="outline"
+						size="sm"
+						{...attributes}
+						{...listeners}
+						className="h-full min-h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
+						aria-label="Drag to reorder"
+					>
+						<GripVertical className="h-3 w-3" />
+					</Button>
+				</div>
+			}
 
 			{/* Section Content */}
 			<motion.div
@@ -318,7 +325,7 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		useSensor(KeyboardSensor)
 	)
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setLocalSections(sections)
 	}, [sections])
 

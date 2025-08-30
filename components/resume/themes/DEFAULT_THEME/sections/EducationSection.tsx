@@ -17,6 +17,7 @@ import {Badge} from '@/components/ui/badge'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import SaveIndicator from './SaveIndicator'
 import {AnimatePresence, motion} from 'motion/react'
+import SectionAction from './SectionAction'
 
 interface EducationDates {
 	startMonth?: number
@@ -338,56 +339,21 @@ const EducationSection = ({data}: { data: EducationData }) => {
 		<motion.div
 			initial={{opacity: 0}}
 			animate={{opacity: 1}}
-			className="relative group"
+			className={cn('relative group transition-all duration-200 border-2 border-transparent',
+				isEditing && 'border-2 border-dashed border-gray-200 rounded-none hover:border-flame-300 hover:bg-flame-50/30 transition-all duration-200 cursor-pointer')}
 		>
-			{/* Save Indicator */}
+			{/* Action Buttons */}
 			<AnimatePresence mode="wait">
-				<SaveIndicator
-					isEditing={isEditing}
-					isUpdating={isUpdating || isSaving}
-					hasUnsavedChanges={hasUnsavedChanges}
-				/>
+				{isEditing && (
+					<SectionAction
+						isEditing={isEditing}
+						isUpdating={isUpdating || isSaving}
+						isSaving={isSaving}
+						hasUnsavedChanges={hasUnsavedChanges}
+					/>
+				)}
 			</AnimatePresence>
 
-			{/* Action Buttons */}
-			{isEditing && (
-				<motion.div
-					initial={{opacity: 0, scale: 0.9}}
-					animate={{opacity: 1, scale: 1}}
-					exit={{opacity: 0, scale: 0.9}}
-					className="absolute -top-3 -right-3 flex gap-1 z-10"
-				>
-					{hasUnsavedChanges && (
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={handleManualSave}
-							disabled={isSaving || isUpdating}
-							className="h-8 w-8 p-0 bg-white border shadow-sm hover:bg-green-50 hover:border-green-300"
-							title="Save now"
-						>
-							{isSaving || isUpdating ? (
-								<Loader2Icon className="h-3 w-3 animate-spin" />
-							) : (
-								<CheckIcon className="h-3 w-3" />
-							)}
-						</Button>
-					)}
-
-					{hasUnsavedChanges && (
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={handleReset}
-							disabled={isSaving || isUpdating}
-							className="h-8 w-8 p-0 bg-white border shadow-sm hover:bg-red-50 hover:border-red-300"
-							title="Reset changes"
-						>
-							<RotateCcwIcon className="h-3 w-3" />
-						</Button>
-					)}
-				</motion.div>
-			)}
 
 			<div className={cn(
 				`${charter.className} education-item ${data.spacing.marginTop ? 'mt-2' : ''}`,
@@ -401,9 +367,8 @@ const EducationSection = ({data}: { data: EducationData }) => {
 							contentEditable={true}
 							suppressContentEditableWarning
 							className={cn(
-								'font-semibold focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-300 rounded-md px-2 py-1 cursor-text transition-all duration-200',
+								'font-semibold outline-none rounded-md px-2 py-1 cursor-text transition-all duration-200',
 								(!institutionName && !data.institution.name) && 'text-gray-400 italic',
-								'hover:bg-gray-50'
 							)}
 							onFocus={() => handleFocus('institution')}
 							onBlur={() => handleBlur('institution')}
@@ -423,9 +388,9 @@ const EducationSection = ({data}: { data: EducationData }) => {
 							contentEditable={true}
 							suppressContentEditableWarning
 							className={cn(
-								'focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-300 rounded-md px-2 py-1 cursor-text transition-all duration-200',
+								'outline-none rounded-md px-2 py-1 cursor-text transition-all duration-200',
 								(!degree && !data.degree.formatted) && 'text-gray-400 italic',
-								'hover:bg-gray-50'
+
 							)}
 							onFocus={() => handleFocus('degree')}
 							onBlur={() => handleBlur('degree')}
@@ -443,7 +408,7 @@ const EducationSection = ({data}: { data: EducationData }) => {
 						onChange={handleDateChange}
 					>
 						<span className={cn(
-							'education-date cursor-pointer hover:text-blue-600 border-b border-dashed border-transparent hover:border-blue-400 transition-all duration-200 px-2 py-1 rounded text-sm',
+							'education-date cursor-pointer hover:text-flame-600 border-b border-dashed border-transparent hover:border-flame-400 transition-all duration-200 px-2 py-1 rounded text-sm',
 							!educationDate.hasDates && 'text-gray-400',
 						)}>
 							{educationDate.hasDates
@@ -459,9 +424,8 @@ const EducationSection = ({data}: { data: EducationData }) => {
 					ref={descriptionRef}
 					contentEditable={true}
 					className={cn(
-						'education-details prose prose-sm max-w-none focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-300 rounded-md px-3 py-2 min-h-[3rem] cursor-text mt-3 transition-all duration-200',
+						'education-details prose prose-sm max-w-none outline-none rounded-md px-3 py-2 min-h-[3rem] cursor-text mt-3 transition-all duration-200',
 						(!description && !data.description.sanitizedHtml) && 'text-gray-400 italic',
-						'hover:bg-gray-50 border border-transparent hover:border-gray-200'
 					)}
 					dangerouslySetInnerHTML={{
 						__html: data.description.sanitizedHtml || 'Describe your education, achievements, relevant coursework, honors, or other academic accomplishments...'

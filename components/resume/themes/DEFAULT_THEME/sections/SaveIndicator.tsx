@@ -1,7 +1,11 @@
+'use client'
+
 import {Badge} from '@/components/ui/badge'
 import {cn} from '@/lib/utils'
 import {motion, AnimatePresence} from 'framer-motion'
 import {Loader2, Check, Edit3} from 'lucide-react'
+
+import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip'
 
 interface SaveIndicatorProps {
   isUpdating?: boolean
@@ -16,26 +20,23 @@ const SaveIndicator = ({isUpdating, isEditing, hasUnsavedChanges}: SaveIndicator
 		if (isUpdating) {
 			return {
 				key: 'saving',
-				icon: <Loader2 size={14} />,
-				text: 'Saving...',
-				className: 'bg-blue-600 text-white shadow-lg shadow-blue-600/40 border-blue-500'
+				icon: <Loader2 size={16} />,
+				className: 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100'
 			}
 		}
 
 		if (hasUnsavedChanges) {
 			return {
 				key: 'editing',
-				icon: <Edit3 size={14} />,
-				text: 'Editing...',
-				className: 'bg-amber-500 text-white shadow-lg shadow-amber-500/40 border-amber-400'
+				icon: <Edit3 size={16} />,
+				className: 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100'
 			}
 		}
 
 		return {
 			key: 'saved',
-			icon: <Check size={14} />,
-			text: 'Saved',
-			className: 'bg-green-600 text-white shadow-lg shadow-green-600/40 border-green-500'
+			icon: <Check size={16} />,
+			className: 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100'
 		}
 	}
 
@@ -43,90 +44,56 @@ const SaveIndicator = ({isUpdating, isEditing, hasUnsavedChanges}: SaveIndicator
 
 	return (
 		<motion.div
-			layout="position"
+
 			layoutId="save-indicator"
-			className="absolute -top-12 right-0 z-50"
-			initial={{opacity: 0, scale: 0.8, y: 10}}
-			animate={{opacity: 1, scale: 1, y: 0}}
-			exit={{opacity: 0, scale: 0.9, y: -5}}
+			layout="position"
+			initial={{opacity: 0, scale: 0.5}}
+			animate={{opacity: 1, scale: 1}}
+			exit={{opacity: 0, scale: 0.8}}
 			transition={{
 				type: 'spring',
-				stiffness: 500,
-				damping: 30,
-				mass: 0.8
+				stiffness: 400,
+				damping: 25
 			}}
 		>
 			<AnimatePresence mode="wait">
-				<motion.div
-					key={config.key}
-					initial={{opacity: 0, x: 20}}
-					animate={{opacity: 1, x: 0}}
-					exit={{opacity: 0, x: -20}}
-					transition={{duration: 0.2, ease: 'easeInOut'}}
-				>
-					<Badge
-						className={cn(
-							config.className,
-							'!px-3 !py-1.5 gap-2 font-medium tracking-wide relative overflow-hidden',
-							'backdrop-blur-sm border transition-all duration-200'
-						)}
-					>
-						{/* Background pulse for editing state */}
-						{hasUnsavedChanges && (
-							<motion.div
-								className="absolute inset-0 bg-white/10"
-								animate={{
-									opacity: [0, 0.3, 0],
-									scale: [0.8, 1.1, 0.8]
-								}}
-								transition={{
-									duration: 2,
-									repeat: Infinity,
-									ease: 'easeInOut'
-								}}
-							/>
-						)}
-
-						{/* Success ripple effect */}
-						{!isUpdating && !hasUnsavedChanges && (
-							<motion.div
-								className="absolute inset-0 bg-white/20 rounded-full"
-								initial={{scale: 0, opacity: 1}}
-								animate={{scale: 2, opacity: 0}}
-								transition={{duration: 0.6, ease: 'easeOut'}}
-							/>
-						)}
-
-						{/* Animated icon */}
-						<motion.span
-							key={`icon-${config.key}`}
-							initial={{rotate: -180, scale: 0}}
+				<Tooltip>
+					<TooltipTrigger>
+						<motion.div
+							key={config.key}
+							layoutId="save-indicator-badge"
+							layout="position"
+							initial={{rotate: -90, scale: 0}}
 							animate={{rotate: 0, scale: 1}}
-							transition={{
-								type: 'spring',
-								stiffness: 400,
-								damping: 20,
-								delay: 0.1
-							}}
-							className={cn(
-								isUpdating && 'animate-spin'
-							)}
+							exit={{rotate: 90, scale: 0}}
+							transition={{duration: 0.15}}
 						>
-							{config.icon}
-						</motion.span>
-
-						{/* Animated text */}
-						<motion.span
-							key={`text-${config.key}`}
-							initial={{opacity: 0, y: 10}}
+							<Badge
+								className={cn(
+									config.className,
+									'!p-2 rounded-full border transition-colors duration-200 cursor-default'
+								)}
+							>
+								<motion.span
+									className={cn(isUpdating && 'animate-spin')}
+								>
+									{config.icon}
+								</motion.span>
+							</Badge>
+						</motion.div>
+					</TooltipTrigger>
+					<TooltipContent>
+						<motion.span 
+							initial={{opacity: 0, y: -10}}
 							animate={{opacity: 1, y: 0}}
-							transition={{delay: 0.15, duration: 0.3}}
-							className="text-xs"
+							exit={{opacity: 0, y: -10}}
+							transition={{duration: 0.2}}
+							className="text-xs font-medium !p-2 bg-background rounded-full"
 						>
-							{config.text}
+							{config.key === 'saved' ? 'Saved' : config.key === 'editing' ? 'Editing' : 'Saving'}
 						</motion.span>
-					</Badge>
-				</motion.div>
+					</TooltipContent>
+				</Tooltip>
 			</AnimatePresence>
 		</motion.div>
 	)
