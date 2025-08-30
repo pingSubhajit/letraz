@@ -37,13 +37,13 @@ export default defineConfig({
 
 			// Coverage reporters - multiple formats for different use cases
 			reporter: [
-				'text',        // Console output
+				'text', // Console output
 				'text-summary', // Brief summary
-				'json',        // Machine readable
+				'json', // Machine readable
 				'json-summary', // Brief machine readable
-				'html',        // Interactive HTML report
-				'lcov',        // For external tools
-				'clover'       // XML format for CI tools
+				'html', // Interactive HTML report
+				'lcov', // For external tools
+				'clover' // XML format for CI tools
 			],
 
 			// Coverage output directory
@@ -86,29 +86,29 @@ export default defineConfig({
 				'**/*.spec.{js,jsx,ts,tsx}',
 				'**/test-setup.ts',
 				'**/vitest.config.ts',
-				
+
 				// Build and dependency directories
 				'**/node_modules/**',
 				'**/.next/**',
 				'**/coverage/**',
 				'**/dist/**',
 				'**/build/**',
-				
+
 				// Configuration files
 				'**/*.config.{js,ts,mjs}',
 				'**/*.d.ts',
 				'**/types/**',
-				
+
 				// Next.js specific files
 				'app/layout.tsx',
 				'app/global-error.tsx',
-				'app/globals.css',
+				'app/documentation.css',
 				'app/robots.ts',
 				'app/sitemap.ts',
 				'app/opengraph-image.png',
 				'app/twitter-image.png',
 				'app/favicon.ico',
-				
+
 				// Infrastructure files
 				'middleware.ts',
 				'instrumentation.ts',
@@ -120,14 +120,14 @@ export default defineConfig({
 				'config.ts',
 				'constants.ts',
 				'routes.ts',
-				
+
 				// Font and asset files
 				'app/fonts/**',
 				'public/**',
-				
+
 				// Email templates (often not unit testable)
 				'emails/**',
-				
+
 				// Generated or external code
 				'components.json',
 				'bun.lock',
@@ -135,7 +135,7 @@ export default defineConfig({
 				'tsconfig.json',
 				'README.md',
 				'LICENSE',
-				
+
 				// PDF and document files
 				'documents/**'
 			]
@@ -160,7 +160,6 @@ export default defineConfig({
 				minThreads: 1
 			}
 		},
-
 
 
 		// Clear mocks between tests

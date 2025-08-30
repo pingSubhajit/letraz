@@ -123,7 +123,13 @@ const envSchema = z.object({
 	// Optional Algolia search configuration for client-side search
 	NEXT_PUBLIC_ALGOLIA_APPLICATION_ID: z.string(),
 	NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY: z.string(),
-	NEXT_PUBLIC_ALGOLIA_INDEX_NAME: z.string()
+	NEXT_PUBLIC_ALGOLIA_INDEX_NAME: z.string(),
+
+	// Required BaseHub token for CMS integration
+	BASEHUB_TOKEN: z.string({
+		required_error: 'BaseHub token is required for documentation',
+		invalid_type_error: 'BaseHub token must be a string'
+	})
 })
 
 

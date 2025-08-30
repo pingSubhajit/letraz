@@ -1,0 +1,91 @@
+/* Documentation specific styles */
+.docs-content {
+  @apply prose prose-gray max-w-none dark:prose-invert;
+  @apply prose-headings:scroll-mt-20;
+  @apply prose-h1:text-3xl prose-h1:font-bold prose-h1:tracking-tight;
+  @apply prose-h2:text-2xl prose-h2:font-semibold prose-h2:border-b prose-h2:pb-2 prose-h2:mb-4;
+  @apply prose-h3:text-lg prose-h3:font-semibold prose-h3:mb-3;
+  @apply prose-h4:text-base prose-h4:font-semibold prose-h4:mb-2;
+  @apply prose-p:leading-7 prose-p:mb-4;
+  @apply prose-a:text-blue-600 prose-a:underline-offset-4 prose-a:font-medium;
+  @apply hover:prose-a:text-blue-800 prose-a:transition-colors;
+  @apply prose-strong:font-semibold;
+  @apply prose-em:italic;
+  @apply prose-ul:my-6 prose-ul:ml-6;
+  @apply prose-ol:my-6 prose-ol:ml-6;
+  @apply prose-li:my-2;
+  @apply prose-blockquote:border-l-4 prose-blockquote:border-blue-500;
+  @apply prose-blockquote:bg-blue-50 prose-blockquote:p-4 prose-blockquote:rounded-r;
+  @apply prose-blockquote:my-6 prose-blockquote:italic;
+  @apply prose-table:w-full prose-table:border-collapse prose-table:my-6;
+  @apply prose-th:border prose-th:px-4 prose-th:py-2 prose-th:bg-muted/50;
+  @apply prose-th:font-semibold prose-th:text-left;
+  @apply prose-td:border prose-td:px-4 prose-td:py-2;
+  @apply prose-img:rounded-lg prose-img:border prose-img:shadow-sm prose-img:my-6;
+  @apply prose-hr:my-8 prose-hr:border-border;
+}
+
+.docs-content code:not(pre code) {
+  @apply relative rounded bg-muted px-1.5 py-1 text-sm font-mono;
+  @apply before:content-none after:content-none;
+  @apply text-foreground;
+}
+
+.docs-content pre {
+  @apply overflow-x-auto rounded-lg border bg-muted/50 p-4 my-6;
+  @apply text-sm leading-relaxed;
+}
+
+.docs-content pre code {
+  @apply bg-transparent p-0 text-sm font-mono;
+  @apply text-foreground;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .docs-content {
+    @apply prose-invert;
+    @apply prose-a:text-blue-400 hover:prose-a:text-blue-300;
+    @apply prose-blockquote:bg-blue-950/50 prose-blockquote:border-blue-400;
+  }
+}
+
+/* Custom callout styles */
+.docs-callout {
+  @apply border-l-4 p-4 my-6 rounded-r-lg;
+}
+
+.docs-callout.info {
+  @apply border-blue-500 bg-blue-50 dark:bg-blue-950/30;
+}
+
+.docs-callout.warning {
+  @apply border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30;
+}
+
+.docs-callout.danger {
+  @apply border-red-500 bg-red-50 dark:bg-red-950/30;
+}
+
+.docs-callout.success {
+  @apply border-green-500 bg-green-50 dark:bg-green-950/30;
+}
+
+/* Table of contents styling */
+.docs-toc {
+  @apply space-y-2 text-sm;
+}
+
+.docs-toc a {
+  @apply block px-3 py-1 rounded text-muted-foreground hover:text-foreground;
+  @apply hover:bg-muted transition-colors;
+}
+
+.docs-toc a.active {
+  @apply text-foreground bg-muted font-medium;
+}
+
+/* Search highlight */
+.search-highlight {
+  @apply bg-yellow-200 dark:bg-yellow-800 px-1 rounded;
+}

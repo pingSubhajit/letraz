@@ -12,6 +12,7 @@ import APIProvider from '@/components/providers/ApiProvider'
 import {KnockProvider} from '@/components/providers/KnockProvider'
 import SentryUserProvider from '@/components/providers/SentryUserProvider'
 import {ReactNode} from 'react'
+import {Toolbar} from 'basehub/next-toolbar'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
@@ -44,6 +45,7 @@ const RootLayout = ({children}: Readonly<{ children: ReactNode }>) => <ClerkProv
 									{children}
 								</TooltipProvider>
 								<Toaster richColors/>
+								<Toolbar />
 							</KnockProvider>
 						</APIProvider>
 					</SentryUserProvider>
