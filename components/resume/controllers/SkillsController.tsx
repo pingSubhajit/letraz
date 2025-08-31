@@ -4,6 +4,7 @@ import {ResumeSkill, skillLevels} from '@/lib/skill/types'
 
 // Types for the processed data
 export interface SkillData {
+  id: string
   name: string
   category?: string
   level: {
@@ -39,6 +40,7 @@ export const useSkillsController = (
 				: null
 
 			return {
+				id: resumeSkill.id,
 				name: skill.name,
 				category: skill.category || 'Other',
 				level: {

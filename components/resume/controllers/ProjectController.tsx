@@ -31,6 +31,12 @@ export interface ProjectData {
   dates: {
     hasDates: boolean
     formatted: string
+    // raw fields for editors
+    startMonth?: number | null
+    startYear?: number | null
+    endMonth?: number | null
+    endYear?: number | null
+    current?: boolean | null
   }
   spacing: {
     marginTop: boolean
@@ -110,7 +116,12 @@ export const useProjectController = (
 
 		const dates = {
 			hasDates: Boolean(dateRange),
-			formatted: dateRange
+			formatted: dateRange,
+			startMonth: project.started_from_month,
+			startYear: project.started_from_year,
+			endMonth: project.finished_at_month,
+			endYear: project.finished_at_year,
+			current: project.current
 		}
 
 		// Spacing only between sections within the same group
