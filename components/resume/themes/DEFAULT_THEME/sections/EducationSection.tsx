@@ -2,7 +2,7 @@
 
 import {useRef, useState, useEffect, useCallback} from 'react'
 import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
-import {EducationData} from '@/components/resume/controllers/EducationController'
+import {EducationData, EducationDates} from '@/components/resume/controllers/EducationController'
 import {Loader2Icon, CheckIcon, RotateCcwIcon, PlusIcon, GraduationCapIcon} from 'lucide-react'
 import {debounce} from 'lodash'
 import {cn} from '@/lib/utils'
@@ -19,26 +19,17 @@ import SaveIndicator from './SaveIndicator'
 import {AnimatePresence, motion} from 'motion/react'
 import SectionAction from './SectionAction'
 
-interface EducationDates {
-	startMonth?: number
-	startYear?: number
-	endMonth?: number
-	endYear?: number
-	current?: boolean
-	hasDates?: boolean
-}
-
 interface EducationMutation {
-	institution_name?: string
-	degree?: string
-	description?: string
-	field_of_study?: string
-	country?: { code: string; name: string }
-	current?: boolean
-	started_from_month?: number
-	started_from_year?: number
-	finished_at_month?: number
-	finished_at_year?: number
+	institution_name: string
+	field_of_study: string
+	country: string
+	current: boolean
+	degree?: string | null
+	started_from_month?: string | null
+	started_from_year?: string | null
+	finished_at_month?: string | null
+	finished_at_year?: string | null
+	description?: string | null
 }
 
 const EducationSection = ({data}: { data: EducationData }) => {
@@ -90,7 +81,11 @@ const EducationSection = ({data}: { data: EducationData }) => {
 					data: saveData
 				})
 			} catch (error) {
-				console.error('Auto-save failed:', error)
+				toast.error('Failed to save education changes', {
+					description: 'Please try again or check your connection',
+					duration: 4000
+				})
+				// console.error('Auto-save failed:', error)
 			}
 		}, 2000),
 		[hasUnsavedChanges, updateEducation, data.educationId]
@@ -118,19 +113,19 @@ const EducationSection = ({data}: { data: EducationData }) => {
 	useEffect(() => {
 		if (!isEditing || !hasUnsavedChanges) return
 
-		const saveData: EducationMutation = {
+		const saveData: Partial<EducationMutation> = {
 			institution_name: institutionName,
 			degree: degree,
 			description: description,
 			// Map dates to the expected format
-			started_from_month: educationDate.startMonth,
-			started_from_year: educationDate.startYear,
-			finished_at_month: educationDate.endMonth,
-			finished_at_year: educationDate.endYear,
-			current: educationDate.current
+			started_from_month: educationDate.startMonth?.toString(),
+			started_from_year: educationDate.startYear?.toString(),
+			finished_at_month: educationDate.endMonth?.toString(),
+			finished_at_year: educationDate.endYear?.toString(),
+			current: educationDate.current || false
 		}
 
-		debouncedSave(saveData)
+		debouncedSave(saveData as EducationMutation)
 
 		return () => {
 			debouncedSave.cancel()
@@ -234,11 +229,13 @@ const EducationSection = ({data}: { data: EducationData }) => {
 				institution_name: institutionName,
 				degree: degree,
 				description: description,
-				started_from_month: educationDate.startMonth,
-				started_from_year: educationDate.startYear,
-				finished_at_month: educationDate.endMonth,
-				finished_at_year: educationDate.endYear,
-				current: educationDate.current
+				started_from_month: educationDate.startMonth?.toString(),
+				started_from_year: educationDate.startYear?.toString(),
+				finished_at_month: educationDate.endMonth?.toString(),
+				finished_at_year: educationDate.endYear?.toString(),
+				current: educationDate.current || false,
+				country: 'IND',
+				field_of_study: 'Computer Science'
 			}
 
 			await updateEducation({
@@ -247,7 +244,11 @@ const EducationSection = ({data}: { data: EducationData }) => {
 				data: saveData
 			})
 		} catch (error) {
-			console.error('Manual save failed:', error)
+			// console.error('Manual save failed:', error)
+			toast.error('Failed to save education changes', {
+				description: 'Please try again or check your connection',
+				duration: 4000
+			})
 		}
 	}
 
@@ -346,6 +347,7 @@ const EducationSection = ({data}: { data: EducationData }) => {
 			<AnimatePresence mode="wait">
 				{isEditing && (
 					<SectionAction
+						sectionType="education"
 						isEditing={isEditing}
 						isUpdating={isUpdating || isSaving}
 						isSaving={isSaving}

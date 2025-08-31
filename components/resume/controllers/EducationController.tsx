@@ -18,6 +18,7 @@ export interface EducationData {
 	startYear?:number|null
 	endMonth?:number|null
 	endYear?:number|null
+	current?:boolean|null
   }
   degree: {
     hasDegree: boolean
@@ -33,6 +34,12 @@ export interface EducationData {
     marginTop: boolean
   }
 }
+
+export type EducationDates = EducationData['dates']
+export type EducationInstitution = EducationData['institution']
+export type EducationDegree = EducationData['degree']
+export type EducationDescription = EducationData['description']
+export type EducationSpacing = EducationData['spacing']
 
 // Controller hook that processes raw Education data into display-ready data
 export const useEducationController = (

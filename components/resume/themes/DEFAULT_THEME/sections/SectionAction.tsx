@@ -5,7 +5,17 @@ import React from 'react'
 import SaveIndicator from './SaveIndicator'
 import AddSectionButton from './AddSectionButton'
 
-const SectionAction = ({isEditing, isUpdating, isSaving, hasUnsavedChanges}: {isEditing: boolean, isUpdating: boolean, isSaving: boolean, hasUnsavedChanges: boolean}) => {
+interface SectionActionProps {
+	isEditing: boolean
+	isUpdating: boolean
+	isSaving: boolean
+	sectionType: string
+	hasUnsavedChanges: boolean
+}
+
+
+const SectionAction = ({
+	isEditing, isUpdating, isSaving, hasUnsavedChanges, sectionType}: SectionActionProps) => {
 	return (
 		<motion.div
 			initial={{opacity: 0, scale: 0.9}}
@@ -16,8 +26,7 @@ const SectionAction = ({isEditing, isUpdating, isSaving, hasUnsavedChanges}: {is
 			className="absolute -top-12 right-0 z-50 flex gap-2 items-center"
 		>
 			<AddSectionButton
-				sectionType={'kk'}
-
+				sectionType={sectionType}
 			/>
 			<SaveIndicator
 				isEditing={isEditing}
