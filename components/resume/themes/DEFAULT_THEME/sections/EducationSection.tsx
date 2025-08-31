@@ -3,34 +3,21 @@
 import {useRef, useState, useEffect, useCallback} from 'react'
 import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {EducationData, EducationDates} from '@/components/resume/controllers/EducationController'
-import {Loader2Icon, CheckIcon, RotateCcwIcon, PlusIcon, GraduationCapIcon} from 'lucide-react'
+import {CheckIcon, RotateCcwIcon, PlusIcon, GraduationCapIcon} from 'lucide-react'
 import {debounce} from 'lodash'
 import {cn} from '@/lib/utils'
 import {useUpdateEducationMutation} from '@/lib/education/mutations'
 import {toast} from 'sonner'
 import {useQueryClient} from '@tanstack/react-query'
-import {educationOptions} from '@/lib/education/queries'
+
 import {Button} from '@/components/ui/button'
 
 import DateMonthSelector, {formatDateRange} from '@/components/resume/editors/shared/DateMonthSelector'
-import {Badge} from '@/components/ui/badge'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
-import SaveIndicator from './SaveIndicator'
 import {AnimatePresence, motion} from 'motion/react'
 import SectionAction from './SectionAction'
+import {EducationMutation} from '@/lib/education/types'
 
-interface EducationMutation {
-	institution_name: string
-	field_of_study: string
-	country: string
-	current: boolean
-	degree?: string | null
-	started_from_month?: string | null
-	started_from_year?: string | null
-	finished_at_month?: string | null
-	finished_at_year?: string | null
-	description?: string | null
-}
 
 const EducationSection = ({data}: { data: EducationData }) => {
 	const [isEditing, setIsEditing] = useState(false)
@@ -110,6 +97,8 @@ const EducationSection = ({data}: { data: EducationData }) => {
 			return () => document.removeEventListener('mousedown', handleClickOutside)
 		}
 	}, [isEditing, setHighlightedItem])
+
+	// Handle saving changes
 	useEffect(() => {
 		if (!isEditing || !hasUnsavedChanges) return
 
@@ -302,6 +291,24 @@ const EducationSection = ({data}: { data: EducationData }) => {
 			}
 		}, 100)
 	}, [institutionName, degree, description, data])
+
+
+	// handle escape key to cancel editing, remove the highlighted item and remove focus from the fields
+	const handleEscapeKey = useCallback((e: KeyboardEvent) => {
+		if (e.key === 'Escape' && isEditing) {
+			setIsEditing(false)
+			setHighlightedItem(null)
+			institutionRef.current?.blur()
+			degreeRef.current?.blur()
+			descriptionRef.current?.blur()
+		}
+	}, [isEditing, setHighlightedItem])
+
+	useEffect(() => {
+		document.addEventListener('keydown', handleEscapeKey)
+		return () => document.removeEventListener('keydown', handleEscapeKey)
+	}, [handleEscapeKey])
+
 
 	// Check if this is an empty education entry
 	const isEmpty = !data.institution.name && !data.degree.formatted && !data.description.sanitizedHtml
