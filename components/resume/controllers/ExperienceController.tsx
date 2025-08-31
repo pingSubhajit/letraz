@@ -15,6 +15,7 @@ export interface ExperienceData {
   dates: {
     hasDates: boolean
     formatted: string
+    current?: boolean
   }
   role: {
     hasRole: boolean
@@ -30,6 +31,13 @@ export interface ExperienceData {
     marginTop: boolean
   }
 }
+
+export type ExperienceDates = ExperienceData['dates']
+export type ExperienceCompany = ExperienceData['company']
+export type ExperienceRole = ExperienceData['role']
+export type ExperienceDescription = ExperienceData['description']
+export type ExperienceSpacing = ExperienceData['spacing']
+
 
 // Controller hook that processes raw Experience data into display-ready data
 export const useExperienceController = (
