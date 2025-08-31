@@ -5,6 +5,7 @@ import {Badge} from '@/components/ui/badge'
 import {cn} from '@/lib/utils'
 import {motion} from 'framer-motion'
 import {Plus} from 'lucide-react'
+import {toast} from 'sonner'
 
     interface AddSectionButtonProps {
     sectionType: string
@@ -15,7 +16,6 @@ const AddSectionButton = ({sectionType}: AddSectionButtonProps) => {
 
 	return (
 		<motion.div
-
 			initial={{opacity: 0, scale: 0.5}}
 			animate={{opacity: 1, scale: 1}}
 			exit={{opacity: 0, scale: 0.8}}
@@ -25,7 +25,12 @@ const AddSectionButton = ({sectionType}: AddSectionButtonProps) => {
 				damping: 25
 			}}
 			onClick={() => {
-				console.log('AddSectionButton clicked', sectionType)
+				/*
+				 * TODO: Add functionality to add section
+				 */
+				toast.info('TODO: Add functionality to add section', {
+					description: `Add functionality to add section for ${sectionType}`
+				})
 			}}
 		>
 			<Badge
