@@ -89,7 +89,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 					'pl-4 pr-4 gap-2 hover:translate-y-0',
 					isExporting && 'pr-4',
 					// Styling for standalone button when exporting, or left side of split button when not exporting
-					isExporting 
+					isExporting
 						? (isBaseResume ? 'rounded-full shadow-lg' : 'rounded-tl-[36px] rounded-bl-[36px] rounded-tr-[12px] rounded-br-[12px]')
 						: (isBaseResume ? 'rounded-l-full rounded-r-none shadow-lg' : 'rounded-tl-[36px] rounded-bl-[36px] rounded-tr-none rounded-br-none')
 				)}
@@ -108,7 +108,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 					</>
 				)}
 			</Button>
-			
+
 			{/* Dropdown trigger button - only show when not exporting */}
 			{!isExporting && (
 				<DropdownMenu>
@@ -196,10 +196,10 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 					</Button>
 				</TooltipTrigger>
 				<TooltipContent>
-					{!job 
-						? 'No job associated with this resume' 
-						: job.status !== 'Success' 
-							? 'Job is still processing' 
+					{!job
+						? 'No job associated with this resume'
+						: job.status !== 'Success'
+							? 'Job is still processing'
 							: 'Job details'}
 				</TooltipContent>
 			</Tooltip>

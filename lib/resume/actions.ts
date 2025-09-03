@@ -10,7 +10,9 @@ import {
 	ResumeMutationSchema,
 	ResumeSchema,
 	TailorResumeResponse,
-	TailorResumeResponseSchema
+	TailorResumeResponseSchema,
+	ExportResumeResponse,
+	ExportResumeResponseSchema
 } from '@/lib/resume/types'
 import {EnhancedResumeMutation, parseResume} from '@/lib/resume/parser'
 import {api} from '@/lib/config/api-client'
