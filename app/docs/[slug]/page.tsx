@@ -67,73 +67,69 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 	return (
 		<div className="flex w-full">
 			{/* Main content */}
-			<div className="flex-1 min-w-0 max-w-4xl space-y-6">
-				{/* Breadcrumbs */}
-				<nav className="flex items-center space-x-1 text-sm text-muted-foreground">
-					<Link href="/docs" className="hover:text-foreground transition-colors">
-						<ArrowLeft className="h-4 w-4" />
-					</Link>
-					<ChevronRight className="h-4 w-4" />
-					<Link href="/docs" className="hover:text-foreground transition-colors">
-						Documentation
-					</Link>
+			<div className="flex-1 min-w-0 max-w-4xl">
+				<div>
+					{/* Breadcrumbs */}
+					<nav className="flex items-center space-x-1 text-sm text-muted-foreground">
+						<Link href="/docs" className="hover:text-foreground transition-colors">
+							<ArrowLeft className="h-4 w-4" />
+						</Link>
+						<ChevronRight className="h-4 w-4" />
+						<Link href="/docs" className="hover:text-foreground transition-colors">
+							Documentation
+						</Link>
 
-					{/* Hierarchical breadcrumb path */}
-					{breadcrumbPath.map((breadcrumbPage, index) => {
-						const isLast = index === breadcrumbPath.length - 1
-						return (
-							<React.Fragment key={breadcrumbPage._id}>
-								<ChevronRight className="h-4 w-4" />
-								{isLast ? (
-									<span className="text-foreground font-medium">{breadcrumbPage.title}</span>
-								) : (
-									<Link
-										href={`/docs/${breadcrumbPage.slug}`}
-										className="hover:text-foreground transition-colors"
-									>
-										{breadcrumbPage.title}
-									</Link>
-								)}
-							</React.Fragment>
-						)
-					})}
-				</nav>
+						{/* Hierarchical breadcrumb path */}
+						{breadcrumbPath.map((breadcrumbPage, index) => {
+							const isLast = index === breadcrumbPath.length - 1
+							return (
+								<React.Fragment key={breadcrumbPage._id}>
+									<ChevronRight className="h-4 w-4" />
+									{isLast ? (
+										<span className="text-foreground font-medium">{breadcrumbPage.title}</span>
+									) : (
+										<Link
+											href={`/docs/${breadcrumbPage.slug}`}
+											className="hover:text-foreground transition-colors"
+										>
+											{breadcrumbPage.title}
+										</Link>
+									)}
+								</React.Fragment>
+							)
+						})}
+					</nav>
 
-				{/* Page header */}
-				<div className="space-y-4">
-					<div className="space-y-2">
-						<h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-							{page.title}
-						</h1>
-						{page.description && (
-							<p className="text-xl text-muted-foreground">
-								{page.description}
-							</p>
-						)}
+					{/* Page header */}
+					<div className="mt-6 space-y-4">
+						<div className="space-y-2">
+							<h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
+								{page.title}
+							</h1>
+							{page.description && (
+								<p className="text-xl text-muted-foreground">
+									{page.description}
+								</p>
+							)}
+						</div>
 					</div>
 				</div>
 
-				<Separator />
-
 				{/* Page content */}
-				<div className="docs-content">
-					<Card>
-						<CardContent className="pt-6">
-							{page.body ? (
-								<div
-									dangerouslySetInnerHTML={{__html: page.body}}
-									className="docs-content"
-								/>
-							) : (
-								<div className="text-center py-8 text-muted-foreground">
-									<p>This page has no content yet.</p>
-									{hasChildren && (
-										<p className="mt-2">Explore the guides below to get started.</p>
-									)}
-								</div>
+				<div className="mt-8">
+					{page.body ? (
+						<div
+							dangerouslySetInnerHTML={{__html: page.body}}
+							className="prose [&_li>p]:my-0"
+						/>
+					) : (
+						<div className="text-center py-8 text-muted-foreground">
+							<p>This page has no content yet.</p>
+							{hasChildren && (
+								<p className="mt-2">Explore the guides below to get started.</p>
 							)}
-						</CardContent>
-					</Card>
+						</div>
+					)}
 				</div>
 
 				{/* Show child pages if this is a category */}
@@ -193,7 +189,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 			{/* Table of Contents - Only show on larger screens and when there's content */}
 			{page.body && (
 				<div className="hidden xl:block xl:pl-8">
-					<div className="sticky top-16 overflow-hidden">
+					<div className="sticky top-24 overflow-hidden">
 						<TableOfContents content={page.body} />
 					</div>
 				</div>

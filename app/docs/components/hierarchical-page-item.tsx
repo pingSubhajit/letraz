@@ -25,6 +25,22 @@ export const HierarchicalPageItem = ({page}: HierarchicalPageItemProps) => {
 		return (
 			<Collapsible open={isOpen} onOpenChange={setIsOpen}>
 				<div className="flex items-center w-full group gap-0.5">
+					{/* Page Link - clickable to navigate */}
+					<Button
+						variant="ghost"
+						size="sm"
+						animation="subtle"
+						className={cn(
+							'h-8 flex-1 justify-start font-medium mr-0 rounded-r-none px-0 text-muted-foreground',
+							pathname === `/docs/${page.slug}` && 'text-flame-500'
+						)}
+						asChild
+					>
+						<Link href={`/docs/${page.slug}`}>
+							{page.title}
+						</Link>
+					</Button>
+
 					{/* Accordion Trigger - expandable arrow */}
 					<CollapsibleTrigger asChild>
 						<Button
@@ -43,22 +59,6 @@ export const HierarchicalPageItem = ({page}: HierarchicalPageItemProps) => {
 							)} />
 						</Button>
 					</CollapsibleTrigger>
-
-					{/* Page Link - clickable to navigate */}
-					<Button
-						variant="ghost"
-						size="sm"
-						animation="subtle"
-						className={cn(
-							'h-8 flex-1 justify-start font-medium mr-0 rounded-r-none px-0 text-muted-foreground',
-							pathname === `/docs/${page.slug}` && 'text-flame-500'
-						)}
-						asChild
-					>
-						<Link href={`/docs/${page.slug}`}>
-							{page.title}
-						</Link>
-					</Button>
 				</div>
 
 				<CollapsibleContent className="pl-4">
@@ -90,7 +90,7 @@ export const HierarchicalPageItem = ({page}: HierarchicalPageItemProps) => {
 			size="sm"
 			animation="subtle"
 			className={cn(
-				'h-8 w-full justify-start',
+				'h-8 w-full justify-start px-0',
 				pathname === `/docs/${page.slug}` && 'text-flame-500'
 			)}
 			asChild

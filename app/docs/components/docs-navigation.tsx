@@ -1,4 +1,3 @@
-import {Separator} from '@/components/ui/separator'
 import {getAllDocumentationPages, getDocumentationPages} from '../../../lib/basehub'
 import {HierarchicalPageItem} from './hierarchical-page-item'
 import {Button} from '@/components/ui/button'
@@ -19,8 +18,6 @@ export const DocsNavigation = async () => {
 					Search documentation
 				</Button>
 			</div>
-
-			<Separator className="mb-4" />
 
 			{/* Hierarchical Documentation pages */}
 			{hierarchicalPages.length > 0 && (
