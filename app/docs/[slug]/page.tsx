@@ -1,12 +1,9 @@
 import React from 'react'
 import {notFound} from 'next/navigation'
-import {getAllDocumentationPages, getBreadcrumbPath, getDocumentationPage} from '@/lib/basehub'
-import {Badge} from '@/components/ui/badge'
-import {Button} from '@/components/ui/button'
-import {Card, CardContent} from '@/components/ui/card'
+import {getAllDocumentationPages, getBreadcrumbPath, getDocumentationPage, getPageNavigation} from '@/lib/basehub'
 import {Separator} from '@/components/ui/separator'
 import Link from 'next/link'
-import {ArrowLeft, Calendar, ChevronRight, FileText} from 'lucide-react'
+import {ArrowLeft, ChevronLeft, ChevronRight} from 'lucide-react'
 import TableOfContents from '@/app/docs/components/table-of-contents'
 
 /*
@@ -51,24 +48,22 @@ export const generateMetadata = async ({params}: DocPageProps) => {
 
 const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 	const {slug} = await params
-	const [page, breadcrumbPath] = await Promise.all([
+	const [page, breadcrumbPath, navigation] = await Promise.all([
 		getDocumentationPage(slug),
-		getBreadcrumbPath(slug)
+		getBreadcrumbPath(slug),
+		getPageNavigation(slug)
 	])
 
 	if (!page) {
 		notFound()
 	}
 
-	// Determine if this is a category or guide based on children
-	const hasChildren = !!(page.children && page.children.length > 0)
-	const pageType = hasChildren ? 'Category' : 'Guide'
 
 	return (
 		<div className="flex w-full justify-center">
-			<div className="flex max-w-6xl w-full">
+			<div className="flex max-w-6xl w-full gap-16">
 				{/* Main content */}
-				<div className="flex-1 min-w-0 max-w-4xl">
+				<div className="flex-1 min-w-0 max-w-[65ch]">
 					<div>
 						{/* Breadcrumbs */}
 						<nav className="flex items-center space-x-1 text-sm text-muted-foreground">
@@ -124,70 +119,39 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 						) : (
 							<div className="text-center py-8 text-muted-foreground">
 								<p>This page has no content yet.</p>
-								{hasChildren && (
-									<p className="mt-2">Explore the guides below to get started.</p>
-								)}
 							</div>
 						)}
 					</div>
 
-					{/* Show child pages if this is a category */}
-					{hasChildren && (
-						<div className="space-y-4">
-							<Separator />
-							<div>
-								<h3 className="text-lg font-semibold mb-4">Guides in this section</h3>
-								<div className="grid gap-4 md:grid-cols-2">
-									{page.children!.map((child) => (
-										<Card key={child._id} className="group relative overflow-hidden">
-											<CardContent className="p-4">
-												<div className="flex items-center justify-between mb-2">
-													<Badge variant="outline">Guide</Badge>
-												</div>
-												<h4 className="font-medium mb-2">
-													<Link
-														href={`/docs/${child.slug}`}
-														className="hover:text-blue-600 after:absolute after:inset-0"
-													>
-														<FileText className="mr-2 h-4 w-4 inline" />
-														{child.title}
-													</Link>
-												</h4>
-												<p className="text-sm text-muted-foreground line-clamp-2">
-													{child.description}
-												</p>
-											</CardContent>
-										</Card>
-									))}
-								</div>
-							</div>
+					{/* Show navigation if previous or next pages are available */}
+					<Separator className="mt-16 mb-8 w-2/4 mx-auto" />
+					{(navigation.previous || navigation.next) && (
+						<div className="grid gap-4 md:grid-cols-2 max-w-[65ch]">
+							{navigation.previous && (
+								<Link
+									href={`/docs/${navigation.previous.slug}`}
+									className="hover:text-flame-500 transition font-medium"
+								>
+									<ChevronLeft className="mr-1.5 h-4 w-4 inline" />
+									{navigation.previous.title}
+								</Link>
+							)}
+							{navigation.next && (
+								<Link
+									href={`/docs/${navigation.next.slug}`}
+									className="hover:text-flame-500 transition font-medium flex items-center justify-end"
+								>
+									{navigation.next.title}
+									<ChevronRight className="ml-1.5 h-4 w-4 inline" />
+								</Link>
+							)}
 						</div>
 					)}
-
-					{/* Page footer */}
-					<div className="border-t pt-6">
-						<div className="flex items-center justify-between">
-							<div className="flex items-center gap-4 text-sm text-muted-foreground">
-								<div className="flex items-center gap-1">
-									<Calendar className="h-4 w-4" />
-									<span>Last updated today</span>
-								</div>
-							</div>
-
-							<div className="flex gap-2">
-								<Button variant="outline" size="sm" asChild>
-									<Link href="/docs">
-										All Documentation
-									</Link>
-								</Button>
-							</div>
-						</div>
-					</div>
 				</div>
 
 				{/* Table of Contents - Only show on larger screens and when there's content */}
 				{page.body && (
-					<div className="hidden xl:block xl:pl-8">
+					<div className="hidden xl:block">
 						<div className="sticky top-24 overflow-hidden">
 							<TableOfContents content={page.body} />
 						</div>

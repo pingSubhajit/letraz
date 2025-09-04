@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {ScrollArea} from '@/components/ui/scroll-area'
-import {Separator} from '@/components/ui/separator'
+import {RxTextAlignLeft} from 'react-icons/rx'
 
 interface TOCItem {
   id: string
@@ -108,27 +108,29 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 	return (
 		<div className="docs-toc">
 			<div className="space-y-2">
-				<p className="font-medium">On This Page</p>
-				<Separator />
+				<p className="font-medium flex items-center text-sm gap-1.5">
+					<span><RxTextAlignLeft /></span>
+					On This Page
+				</p>
 				{tocItems.length === 0 ? (
-					<p className="text-sm text-muted-foreground px-3 py-2">
+					<p className="text-sm text-muted-foreground py-2">
 						No headings found
 					</p>
 				) : (
 					<ScrollArea className="pb-6">
-						<div className="space-y-1">
+						<div className="space-y-0.5">
 							{tocItems.map((item) => (
 								<button
 									key={item.id}
 									onClick={() => scrollToHeading(item.id)}
 									className={cn(
-										'block w-full text-left px-3 py-1 text-sm rounded transition-colors',
+										'block w-full text-left px-0 py-0.5 text-sm rounded transition-colors',
 										'text-muted-foreground hover:text-foreground hover:bg-muted',
 										{
 											'text-foreground bg-muted font-medium': activeId === item.id,
-											'pl-6': item.level === 3,
-											'pl-9': item.level === 4,
-											'pl-12': item.level >= 5
+											'pl-3': item.level === 3,
+											'pl-6': item.level === 4,
+											'pl-9': item.level >= 5
 										}
 									)}
 								>
