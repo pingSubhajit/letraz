@@ -139,7 +139,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 							{navigation.next && (
 								<Link
 									href={`/docs/${navigation.next.slug}`}
-									className="hover:text-flame-500 transition font-medium flex items-center justify-end"
+									className="hover:text-flame-500 transition font-medium flex items-center justify-end md:col-start-2"
 								>
 									{navigation.next.title}
 									<ChevronRight className="ml-1.5 h-4 w-4 inline" />

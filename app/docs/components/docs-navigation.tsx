@@ -1,10 +1,10 @@
-import {getAllDocumentationPages, getDocumentationPages} from '../../../lib/basehub'
+import {getAllDocumentationPages, getDocumentationPages} from '@/lib/basehub'
 import {HierarchicalPageItem} from './hierarchical-page-item'
-import {Button} from '@/components/ui/button'
-import {Mail, Newspaper, Search} from 'lucide-react'
+import {Mail, Newspaper} from 'lucide-react'
 import Link from 'next/link'
 import {Discord, GitHubLight} from '@ridemountainpig/svgl-react'
 import {discordHandle, githubHandle} from '@/config'
+import {DocsSearchButton} from '@/app/docs/components/docs-search-button'
 
 export const DocsNavigation = async () => {
 	const [hierarchicalPages, allPages] = await Promise.all([
@@ -16,10 +16,7 @@ export const DocsNavigation = async () => {
 		<div className="w-full">
 			{/* Search - uses flat list for searching */}
 			<div className="mb-6">
-				<Button variant="secondary" className="w-full text-muted-foreground gap-1.5 justify-start">
-					<Search className="w-4 aspect-square" />
-					Search documentation
-				</Button>
+				<DocsSearchButton allPages={allPages} />
 			</div>
 
 			{/* Additional Navigation Links */}
