@@ -4,6 +4,7 @@ import {Button} from '@/components/ui/button'
 import {Mail, Newspaper, Search} from 'lucide-react'
 import Link from 'next/link'
 import {Discord, GitHubLight} from '@ridemountainpig/svgl-react'
+import {discordHandle, githubHandle} from '@/config'
 
 export const DocsNavigation = async () => {
 	const [hierarchicalPages, allPages] = await Promise.all([
@@ -32,7 +33,7 @@ export const DocsNavigation = async () => {
 				</Link>
 
 				<Link
-					href="mailto:support@letraz.com"
+					href="/support"
 					className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg"
 				>
 					<Mail className="w-4 h-4" />
@@ -40,7 +41,7 @@ export const DocsNavigation = async () => {
 				</Link>
 
 				<Link
-					href="https://github.com/letraz/letraz-client"
+					href={githubHandle}
 					target="_blank"
 					className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg"
 				>
@@ -49,7 +50,7 @@ export const DocsNavigation = async () => {
 				</Link>
 
 				<Link
-					href="https://discord.gg/letraz"
+					href={discordHandle}
 					target="_blank"
 					className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg"
 				>
