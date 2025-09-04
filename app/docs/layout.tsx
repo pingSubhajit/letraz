@@ -1,10 +1,26 @@
 import {DocsNavigation} from './components/docs-navigation'
 import {ScrollArea} from '@/components/ui/scroll-area'
+import Image from 'next/image'
+import logoImage from '@/public/logo_mono.svg'
+import {cn} from '@/lib/utils'
+import {Link} from 'next-view-transitions'
+import {Button} from '@/components/ui/button'
 
 const DocumentationLayout = ({children}: {children: React.ReactNode}) => (
 	<div className="">
-		<div className="bg-flame-300 w-full h-16 sticky top-0 z-10">
+		<div className="bg-neutral-50/70 backdrop-blur-lg w-full sticky top-0 z-10 border-b py-4 px-8 flex items-center justify-between">
+			<Link href="/">
+				<Image
+					src={logoImage}
+					alt="Letraz logo"
+					className={cn('w-24 md:w-28 lg:w-36 xl:w-40 2xl:w-32')}
+				/>
+			</Link>
 
+			<nav className="flex items-center gap-4">
+				<Link href="/signin" className="text-sm opacity-80 font-medium hover:opacity-100 transition">Sign in</Link>
+				<Link href="/signup"><Button size="sm">Get started</Button></Link>
+			</nav>
 		</div>
 
 		<div

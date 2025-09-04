@@ -114,7 +114,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 						{page.body ? (
 							<div
 								dangerouslySetInnerHTML={{__html: page.body}}
-								className="docs-content prose [&_li>p]:my-0 [&>img]:rounded-2xl"
+								className="docs-content prose [&_li>p]:my-0 [&>img]:rounded-2xl [&>video]:rounded-2xl"
 							/>
 						) : (
 							<div className="text-center py-8 text-muted-foreground">
