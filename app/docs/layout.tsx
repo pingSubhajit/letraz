@@ -2,7 +2,7 @@ import {DocsNavigation} from './components/docs-navigation'
 import {ScrollArea} from '@/components/ui/scroll-area'
 
 const DocumentationLayout = ({children}: {children: React.ReactNode}) => (
-	<div className="space-y-8">
+	<div className="">
 		<div className="bg-flame-300 w-full h-16 sticky top-0 z-10">
 
 		</div>
@@ -16,12 +16,12 @@ const DocumentationLayout = ({children}: {children: React.ReactNode}) => (
 			{/* Sidebar */}
 			<aside className="fixed top-24 z-30 hidden w-full shrink-0 md:sticky md:block">
 				<ScrollArea className="h-full">
-					<DocsNavigation/>
+					<DocsNavigation />
 				</ScrollArea>
 			</aside>
 
 			{/* Main Content */}
-			<main className="relative">
+			<main className="relative border-l pl-8 pt-8">
 				<div className="mx-auto w-full min-w-0 pb-16">
 					{children}
 				</div>

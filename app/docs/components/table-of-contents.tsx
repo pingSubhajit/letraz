@@ -15,99 +15,58 @@ interface TableOfContentsProps {
   content?: string
 }
 
-// Server-side function to extract headings from HTML
-const extractHeadingsFromHTML = (html: string): TOCItem[] => {
-	const headingRegex = /<h([1-6])[^>]*>(.*?)<\/h[1-6]>/gi
-	const items: TOCItem[] = []
-	let match
-
-	while ((match = headingRegex.exec(html)) !== null) {
-		const level = parseInt(match[1])
-		const title = match[2].replace(/<[^>]*>/g, '').trim() // Strip HTML tags
-
-		if (title) {
-			// Create a unique ID
-			let id = title
-				.toLowerCase()
-				.replace(/[^a-z0-9\s]/g, '')
-				.replace(/\s+/g, '-')
-				.trim()
-
-			// Add index to ensure uniqueness
-			let counter = 0
-			let originalId = id
-			while (items.some(item => item.id === id)) {
-				counter++
-				id = `${originalId}-${counter}`
-			}
-
-			items.push({id, title, level})
-		}
-	}
-
-	return items
-}
-
 const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 	const [tocItems, setTocItems] = useState<TOCItem[]>([])
 	const [activeId, setActiveId] = useState<string>('')
 
 	useEffect(() => {
-		if (!content) {
-			// Extract from DOM if no content provided
+		// Add a small delay to ensure DOM content is fully rendered
+		const timeout = setTimeout(() => {
 			const headingElements = document.querySelectorAll('.docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6')
 			const items: TOCItem[] = []
+			const usedIds = new Set<string>()
 
-			headingElements.forEach((heading, index) => {
+			headingElements.forEach((heading) => {
 				const level = parseInt(heading.tagName.charAt(1))
-				const title = heading.textContent || ''
+				const title = (heading.textContent || '').trim()
 
 				if (title) {
-					let id = heading.id
-					if (!id) {
-						id = title
-							.toLowerCase()
-							.replace(/[^a-z0-9\s]/g, '')
-							.replace(/\s+/g, '-')
-							.trim()
+					// Always generate a fresh ID to avoid conflicts
+					let id = title
+						.toLowerCase()
+						.replace(/[^a-z0-9\s-]/g, '') // Keep letters, numbers, spaces, and hyphens
+						.replace(/\s+/g, '-') // Replace spaces with hyphens
+						.replace(/-{2,}/g, '-') // Replace multiple consecutive hyphens with single hyphen
+						.replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens only
+						.trim()
 
-						// Add index to ensure uniqueness
-						let counter = 0
-						let originalId = id
-						while (items.some(item => item.id === id)) {
-							counter++
-							id = `${originalId}-${counter}`
-						}
-
-						heading.id = id // Set the ID on the element
+					// Ensure uniqueness
+					let counter = 0
+					let originalId = id
+					while (usedIds.has(id)) {
+						counter++
+						id = `${originalId}-${counter}`
 					}
+
+					// Always set the ID, even if heading already has one
+					heading.id = id
+					usedIds.add(id)
 
 					items.push({id, title, level})
 				}
 			})
+			setTocItems(items)
+		}, 100) // Small delay to ensure DOM is ready
 
-			setTocItems(items)
-		} else {
-			// Extract from HTML content
-			const items = extractHeadingsFromHTML(content)
-			setTocItems(items)
-		}
-	}, [content])
+		return () => clearTimeout(timeout)
+	}, [content]) // Re-run when content changes
 
 	useEffect(() => {
 		if (tocItems.length === 0) return
 
-		// Add IDs to actual DOM headings
+		// Set up intersection observer for active heading detection
 		const headingElements = document.querySelectorAll('.docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6')
 
-		headingElements.forEach((heading, index) => {
-			const tocItem = tocItems[index]
-			if (tocItem && !heading.id) {
-				heading.id = tocItem.id
-			}
-		})
-
-		// Intersection Observer for active heading detection
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
@@ -117,7 +76,8 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 				})
 			},
 			{
-				rootMargin: '-80px 0px -80% 0px'
+				rootMargin: '-80px 0px -80% 0px',
+				threshold: 0.5
 			}
 		)
 
@@ -134,6 +94,7 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 
 	const scrollToHeading = (id: string) => {
 		const element = document.getElementById(id)
+
 		if (element) {
 			const offset = 80 // Account for fixed header
 			const elementPosition = element.offsetTop - offset
