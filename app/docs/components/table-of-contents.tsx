@@ -125,9 +125,9 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 									onClick={() => scrollToHeading(item.id)}
 									className={cn(
 										'block w-full text-left px-0 py-0.5 text-sm rounded transition-colors',
-										'text-muted-foreground hover:text-foreground hover:bg-muted',
+										'text-muted-foreground hover:text-flame-500',
 										{
-											'text-foreground bg-muted font-medium': activeId === item.id,
+											'text-flame-500 font-medium': activeId === item.id,
 											'pl-3': item.level === 3,
 											'pl-6': item.level === 4,
 											'pl-9': item.level >= 5
