@@ -124,7 +124,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 					</div>
 
 					{/* Show navigation if previous or next pages are available */}
-					<Separator className="mt-16 mb-8 w-2/4 mx-auto" />
+					<Separator className="mt-16 mb-8" />
 					{(navigation.previous || navigation.next) && (
 						<div className="grid gap-4 md:grid-cols-2 max-w-[65ch]">
 							{navigation.previous && (
