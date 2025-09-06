@@ -8,18 +8,18 @@ import {Button} from '@/components/ui/button'
 
 const DocumentationLayout = ({children}: {children: React.ReactNode}) => (
 	<div className="">
-		<div className="bg-neutral-50/70 backdrop-blur-lg w-full sticky top-0 z-10 border-b py-4 px-8 flex items-center justify-between">
+		<div className="bg-neutral-50/70 backdrop-blur-lg w-full sticky top-0 z-10 border-b py-3 px-8 flex items-center justify-between">
 			<Link href="/">
 				<Image
 					src={logoImage}
 					alt="Letraz logo"
-					className={cn('w-24 md:w-28 lg:w-36 xl:w-40 2xl:w-32')}
+					className={cn('w-14 md:w-16 lg:w-20 xl:w-24 2xl:w-28')}
 				/>
 			</Link>
 
 			<nav className="flex items-center gap-4">
-				<Link href="/signin" className="text-sm opacity-80 font-medium hover:opacity-100 transition">Sign in</Link>
-				<Link href="/signup"><Button size="sm">Get started</Button></Link>
+				<Link href="/signin" className="opacity-80 font-medium hover:opacity-100 transition text-xs">Sign in</Link>
+				<Link href="/signup"><Button className="h-8 text-xs" size="sm">Get started</Button></Link>
 			</nav>
 		</div>
 
