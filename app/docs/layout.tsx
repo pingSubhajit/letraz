@@ -5,6 +5,7 @@ import logoImage from '@/public/logo_mono.svg'
 import {cn} from '@/lib/utils'
 import {Link} from 'next-view-transitions'
 import {Button} from '@/components/ui/button'
+import {Toolbar} from 'basehub/next-toolbar'
 
 const DocumentationLayout = ({children}: {children: React.ReactNode}) => (
 	<div className="">
@@ -40,6 +41,9 @@ const DocumentationLayout = ({children}: {children: React.ReactNode}) => (
 			<main className="relative border-l pl-8 pt-8">
 				<div className="mx-auto w-full min-w-0 pb-16">
 					{children}
+
+					{/* Basehub Toolbar */}
+					<Toolbar />
 				</div>
 			</main>
 		</div>

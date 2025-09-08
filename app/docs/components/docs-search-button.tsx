@@ -11,7 +11,7 @@ interface DocsSearchButtonProps {
 	allPages: DocPage[]
 }
 
-export function DocsSearchButton({allPages}: DocsSearchButtonProps) {
+export const DocsSearchButton = ({allPages}: DocsSearchButtonProps) => {
 	const searchDialogRef = useRef<{openDialog: () => void}>(null)
 
 	const handleClick = () => {
@@ -20,8 +20,8 @@ export function DocsSearchButton({allPages}: DocsSearchButtonProps) {
 
 	return (
 		<>
-			<Button 
-				variant="secondary" 
+			<Button
+				variant="secondary"
 				className="w-full text-muted-foreground gap-1.5 justify-between"
 				onClick={handleClick}
 			>
@@ -32,8 +32,8 @@ export function DocsSearchButton({allPages}: DocsSearchButtonProps) {
 
 				<DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
 			</Button>
-			
-			<DocsSearchDialogRef 
+
+			<DocsSearchDialogRef
 				ref={searchDialogRef}
 				allPages={allPages}
 			/>

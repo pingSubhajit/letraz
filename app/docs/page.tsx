@@ -1,5 +1,5 @@
 import {notFound, redirect} from 'next/navigation'
-import {getDocumentationPages} from '../../lib/basehub'
+import {getDocumentationPages} from '@/lib/basehub'
 
 /*
  * Using BaseHub's automatic on-demand revalidation instead of ISR

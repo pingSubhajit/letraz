@@ -12,7 +12,7 @@ interface CodeBlockProps {
   caption?: string
 }
 
-export function CodeBlock({code, language = 'text', filename, caption}: CodeBlockProps) {
+export const CodeBlock = ({code, language = 'text', filename, caption}: CodeBlockProps) => {
 	const [copied, setCopied] = useState(false)
 
 	const copyToClipboard = async () => {
