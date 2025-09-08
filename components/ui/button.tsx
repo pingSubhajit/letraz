@@ -7,7 +7,7 @@ import {cn} from '@/lib/utils'
 const buttonVariants = cva(
 	'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background ' +
 	'transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
-	'focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:-translate-y-0.5',
+	'focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ',
 	{
 		variants: {
 			variant: {
@@ -23,11 +23,16 @@ const buttonVariants = cva(
 				sm: 'h-9 rounded-md px-3',
 				lg: 'h-11 rounded-md px-8',
 				icon: 'h-10 w-10'
+			},
+			animation: {
+				default: 'hover:-translate-y-0.5',
+				subtle: 'hover:[&>*]text-flame-500 hover:bg-transparent'
 			}
 		},
 		defaultVariants: {
 			variant: 'default',
-			size: 'default'
+			size: 'default',
+			animation: 'default'
 		}
 	}
 )
@@ -39,11 +44,11 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	({className, variant, size, asChild = false, type = 'button', ...props}, ref) => {
+	({className, variant, size, animation, asChild = false, type = 'button', ...props}, ref) => {
 		const Comp = asChild ? Slot : 'button'
 		return (
 			<Comp
-				className={cn(buttonVariants({variant, size, className}))}
+				className={cn(buttonVariants({variant, size, animation, className}))}
 				ref={ref}
 				type={type}
 				{...props}
