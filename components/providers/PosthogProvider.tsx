@@ -4,32 +4,56 @@ import posthog from 'posthog-js'
 import {PostHogProvider} from 'posthog-js/react'
 import {ReactNode, useEffect} from 'react'
 import {useAuth, useUser} from '@clerk/nextjs'
-import {defaultUrl} from '@/config'
+import * as Sentry from '@sentry/nextjs'
 
 if (typeof window !== 'undefined') {
 	posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
 		api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-		person_profiles: 'always',
-		// Enhanced filtering to ensure only production events are captured
+		person_profiles: 'identified_only',
 		opt_out_capturing_by_default: false,
 		capture_pageview: true,
 		capture_pageleave: true,
-		// Additional security and performance options
 		secure_cookie: true,
 		persistence: 'localStorage',
-		// Custom event filtering based on environment
 		before_send: (event) => {
-			// Only allow events from production domain
-			const currentHost = window.location.hostname
-			const isProduction = currentHost === 'letraz.app' || currentHost === 'www.letraz.app'
-
-			if (!isProduction) {
-				return null // Block the event
-			}
-
-			return event // Allow the event
+			if (!event) return null
+			try {
+				const props = event.properties || {}
+				if (props.$current_url) {
+					const url = new URL(props.$current_url)
+					props.$current_url = `${url.origin}${url.pathname}`
+				}
+				if (props.$referrer) {
+					try {
+						const refUrl = new URL(props.$referrer)
+						props.referrer_domain = refUrl.hostname
+						props.$referrer = `${refUrl.protocol}//${refUrl.hostname}`
+					} catch {}
+				}
+				event.properties = props
+			} catch {}
+			return event
 		}
 	})
+
+	// Respect Do Not Track (DNT) and Global Privacy Control (GPC)
+	const dnt = (navigator as any)?.doNotTrack === '1' || (window as any)?.doNotTrack === '1'
+	const gpc = (navigator as any)?.globalPrivacyControl === true
+	if (dnt || gpc) {
+		posthog.opt_out_capturing()
+	} else {
+		posthog.opt_in_capturing()
+	}
+
+	// Super properties for environment and build metadata
+	try {
+		posthog.register({
+			env: process.env.VERCEL_ENV || process.env.NODE_ENV,
+			app_version: process.env.NEXT_PUBLIC_APP_VERSION,
+			is_test_event: (process.env.VERCEL_ENV || process.env.NODE_ENV) !== 'production',
+			preview_branch: process.env.VERCEL_GIT_COMMIT_REF
+		})
+	} catch {}
 }
 
 /**
@@ -84,12 +108,24 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 					current_step: userProperties.currentOnboardingStep
 				})
 			}
+
+			// Correlate with Sentry using PostHog distinct ID
+			try {
+				const distinctId = posthog.get_distinct_id()
+				Sentry.setTag('ph_distinct_id', distinctId)
+			} catch {}
 		} else {
 			// User is not authenticated, reset to anonymous
 			posthog.reset()
 
 			// Set anonymous user group
 			posthog.group('user_segment', 'anonymous')
+
+			// Ensure Sentry correlation is cleared/anonymous
+			try {
+				const distinctId = posthog.get_distinct_id()
+				Sentry.setTag('ph_distinct_id', distinctId || 'anonymous')
+			} catch {}
 		}
 	}, [authLoaded, userLoaded, userId, user])
 
@@ -107,17 +143,6 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 }
 
 const CSPostHogProvider = ({children}: { children: ReactNode }) => {
-	// Enhanced domain filtering logic
-	const currentUrl = typeof window !== 'undefined' ? window.location.hostname : new URL(defaultUrl).hostname
-
-	// Only enable PostHog on production domains
-	const isProductionDomain = currentUrl === 'letraz.app' || currentUrl === 'www.letraz.app'
-
-	// Block PostHog for development, preview, and non-production environments
-	if (!isProductionDomain || process.env.NODE_ENV !== 'production') {
-		return <>{children}</>
-	}
-
 	return (
 		<PostHogProvider client={posthog}>
 			<PosthogUserIdentifier>

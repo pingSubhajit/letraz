@@ -11,6 +11,7 @@ import BaseResume from '@/components/onboarding/BaseResume'
 import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
 import {educationOptions} from '@/lib/education/queries'
 import {experienceQueryOptions} from '@/lib/experience/queries'
+import OnboardingStepTracker from '@/components/onboarding/OnboardingStepTracker.client'
 
 /**
  * OnboardingPage component handles the rendering of different onboarding steps.
@@ -49,6 +50,7 @@ const OnboardingPage = async (
 		<HydrationBoundary state={dehydratedState}>
 			<div className="h-full min-h-dvh w-full relative">
 				<BrainAnimation onboardingStep={step} />
+				<OnboardingStepTracker step={step} />
 
 				{step === OnboardingStep.WELCOME && <Welcome />}
 				{step === OnboardingStep.ABOUT && <About />}

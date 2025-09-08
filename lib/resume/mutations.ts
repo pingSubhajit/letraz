@@ -12,14 +12,17 @@ import {BASE_RESUME_KEYS} from '@/lib/resume/key'
 import {toast} from 'sonner'
 import type {TailorResumeResponse} from '@/lib/resume/types'
 import {ExportResumeResponse, Resume, ResumeMutation} from '@/lib/resume/types'
+import {useAnalytics} from '@/lib/analytics'
 
 export const useRearrangeResumeSectionsMutation = () => {
 	const queryClient = useQueryClient()
+	const {track} = useAnalytics()
 
 	return useMutation({
 		mutationFn: ({resumeId, sectionIds}: {resumeId: string, sectionIds: string[]}) => rearrangeResumeSections(resumeId, sectionIds),
 		onSuccess: () => {
 			queryClient.invalidateQueries({queryKey: BASE_RESUME_KEYS})
+			try {track('section_reordered')} catch {}
 		},
 		onError: (error) => {
 			toast.error('Failed to update section order')
@@ -52,10 +55,15 @@ type ReplaceResumeParams = {
 
 export const useReplaceResumeMutation = () => {
 	const queryClient = useQueryClient()
+	const {track} = useAnalytics()
 	return useMutation<Resume, Error, ReplaceResumeParams>({
 		mutationFn: async ({payload, resumeId = 'base'}) => replaceResume(payload, resumeId),
-		onSuccess: () => {
+		onSuccess: (resume) => {
 			queryClient.invalidateQueries({queryKey: BASE_RESUME_KEYS})
+			try {
+				const sections_count = Array.isArray(resume.sections) ? resume.sections.length : undefined
+				track('resume_saved', {resume_id: resume.id, sections_count})
+			} catch {}
 		},
 		onError: () => {
 			toast.error('Failed to replace resume')

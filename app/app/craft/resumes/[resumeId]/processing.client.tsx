@@ -5,14 +5,17 @@ import ResumeEditorSkeleton from '@/components/skeletons/ResumeEditorSkeleton'
 import ResumeEditor from '@/components/resume/ResumeEditor'
 import dynamic from 'next/dynamic'
 import ResumeAiLoading from '@/components/utilities/ResumeAiLoading'
+import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
+import {useRef} from 'react'
+import {useAnalytics} from '@/lib/analytics'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
-
-import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
 
 
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {data: resume, isLoading, isError} = useResumeById(resumeId)
+	const {track} = useAnalytics()
+	const didTrackRef = useRef(false)
 
 	// Compute status flags
 	const status = resume?.status
@@ -52,6 +55,10 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	}
 
 	if (resume?.status === 'failed') {
+		if (!didTrackRef.current) {
+			track('tailor_resume_failed', {})
+			didTrackRef.current = true
+		}
 		return (
 			<div className="min-h-dvh flex items-center justify-center">
 				<div className="text-center max-w-md">
@@ -64,6 +71,11 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	}
 
 	if (!resume) return null
+
+	if (!didTrackRef.current && resume?.status === 'Success') {
+		track('tailor_resume_ready', {resume_id: resume.id, thumbnail: Boolean(resume.thumbnail)})
+		didTrackRef.current = true
+	}
 
 	return (
 		<ResumeHighlightProvider>

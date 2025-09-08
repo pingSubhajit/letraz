@@ -7,6 +7,7 @@ import {AnimatePresence, motion} from 'motion/react'
 import {Button} from '@/components/ui/button'
 import {ArrowRight} from 'lucide-react'
 import {completeOnboarding} from '@/lib/onboarding/actions'
+import {useAnalytics} from '@/lib/analytics'
 
 const OnboardingCompletionButton = () => {
 	const router = useTransitionRouter()
@@ -15,6 +16,7 @@ const OnboardingCompletionButton = () => {
 	const isOnboarding = searchParams.get('step') === 'resume'
 	const [isVisible, setIsVisible] = useState(false)
 	const [isHovered, setIsHovered] = useState(false)
+    const {track} = useAnalytics()
 
 	useEffect(() => {
 		// Only show button if we're confirmed to be in onboarding flow
@@ -30,6 +32,7 @@ const OnboardingCompletionButton = () => {
 
 	const handleGoToDashboard = async () => {
 		try {
+			track('onboarding_completed')
 			// Mark onboarding as complete and update step to 'resume'
 			await completeOnboarding()
 			// Use router.replace to prevent back navigation to onboarding
