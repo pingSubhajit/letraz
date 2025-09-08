@@ -238,7 +238,6 @@ export const getBreadcrumbPath = async (targetSlug: string): Promise<DocPage[]> 
 		const path = findPath(hierarchicalPages)
 		return path || []
 	} catch (error) {
-		console.error('Error getting breadcrumb path:', error)
 		return []
 	}
 }
@@ -253,20 +252,19 @@ export const getPageNavigation = async (currentSlug: string): Promise<{
 	try {
 		// Get all pages in a flat, ordered list
 		const allPages = await getAllDocumentationPages()
-		
+
 		// Find the current page index
 		const currentIndex = allPages.findIndex(page => page.slug === currentSlug)
-		
+
 		if (currentIndex === -1) {
-			return { previous: null, next: null }
+			return {previous: null, next: null}
 		}
-		
+
 		return {
 			previous: currentIndex > 0 ? allPages[currentIndex - 1] : null,
 			next: currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null
 		}
 	} catch (error) {
-		console.error('Error getting page navigation:', error)
-		return { previous: null, next: null }
+		return {previous: null, next: null}
 	}
 }

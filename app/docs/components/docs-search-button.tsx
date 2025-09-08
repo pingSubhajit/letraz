@@ -12,7 +12,7 @@ interface DocsSearchButtonProps {
 }
 
 export const DocsSearchButton = ({allPages}: DocsSearchButtonProps) => {
-	const searchDialogRef = useRef<{openDialog: () => void}>(null)
+	const searchDialogRef = useRef<{openDialog:() => void}>(null)
 
 	const handleClick = () => {
 		searchDialogRef.current?.openDialog()
