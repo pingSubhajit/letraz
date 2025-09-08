@@ -11,7 +11,6 @@ import {useAnalytics} from '@/lib/analytics'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
-
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {data: resume, isLoading, isError} = useResumeById(resumeId)
 	const {track} = useAnalytics()
@@ -19,10 +18,8 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 
 	// Compute status flags
 	const status = resume?.status
-	const isProcessingStatus = (status || '').toLowerCase() === 'processing'
-
 	// Show the processing overlay ONLY when backend reports processing.
-	const processing = isProcessingStatus
+	const processing = (status || '').toLowerCase() === 'processing'
 
 
 	// Initial load or transient errors: show neutral placeholders without the processing overlay
