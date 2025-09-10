@@ -51,4 +51,3 @@ export const capture = <T extends AnalyticsEventName>(name: T, props?: Analytics
 	} catch {}
 }
 
-
