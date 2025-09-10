@@ -31,7 +31,7 @@ const DocumentationLayout = ({children}: {children: React.ReactNode}) => (
 
 		>
 			{/* Sidebar */}
-			<aside className="fixed top-24 z-30 hidden w-full shrink-0 md:sticky md:block">
+			<aside className="fixed top-20 z-30 hidden w-full shrink-0 md:sticky md:block">
 				<ScrollArea className="h-full">
 					<DocsNavigation />
 				</ScrollArea>

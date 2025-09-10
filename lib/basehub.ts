@@ -36,6 +36,9 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 					title: true,
 					slug: true,
 					description: true,
+					body: {
+						html: true
+					},
 					published: true,
 					children: {
 						items: {
@@ -43,6 +46,9 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 							title: true,
 							slug: true,
 							description: true,
+							body: {
+								html: true
+							},
 							published: true,
 							children: {
 								items: {
@@ -50,6 +56,9 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 									title: true,
 									slug: true,
 									description: true,
+									body: {
+										html: true
+									},
 									published: true
 								}
 							}
