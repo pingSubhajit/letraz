@@ -156,6 +156,7 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 									className={cn(
 										'block w-full text-left px-0 py-0.5 text-sm rounded transition-colors',
 										'text-muted-foreground hover:text-flame-500 no-underline',
+
 										{
 											'text-flame-500 font-medium': activeId === item.id,
 											'pl-3': item.level === 3,
