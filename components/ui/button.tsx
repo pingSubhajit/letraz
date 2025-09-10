@@ -26,7 +26,7 @@ const buttonVariants = cva(
 			},
 			animation: {
 				default: 'hover:-translate-y-0.5',
-				subtle: 'hover:[&>*]text-flame-500 hover:bg-transparent'
+				subtle: 'hover:[&>*]:text-flame-500 hover:bg-transparent'
 			}
 		},
 		defaultVariants: {

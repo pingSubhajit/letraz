@@ -4,6 +4,7 @@ import {useState} from 'react'
 import {Button} from '@/components/ui/button'
 import {Badge} from '@/components/ui/badge'
 import {Check, Copy} from 'lucide-react'
+import {toast} from 'sonner'
 
 interface CodeBlockProps {
   code: string
@@ -16,9 +17,33 @@ export const CodeBlock = ({code, language = 'text', filename, caption}: CodeBloc
 	const [copied, setCopied] = useState(false)
 
 	const copyToClipboard = async () => {
-		await navigator.clipboard.writeText(code)
-		setCopied(true)
-		setTimeout(() => setCopied(false), 2000)
+		try {
+			await navigator.clipboard.writeText(code)
+			setCopied(true)
+			setTimeout(() => setCopied(false), 2000)
+		} catch (error) {
+			// Fallback for browsers that don't support clipboard API or when permissions are denied
+			try {
+				const textarea = document.createElement('textarea')
+				textarea.value = code
+				textarea.style.position = 'fixed'
+				textarea.style.opacity = '0'
+				document.body.appendChild(textarea)
+				textarea.select()
+				const successful = document.execCommand('copy')
+				document.body.removeChild(textarea)
+
+				if (successful) {
+					setCopied(true)
+					setTimeout(() => setCopied(false), 2000)
+				} else {
+					toast.error('Failed to copy code to clipboard')
+				}
+			} catch (fallbackError) {
+				console.error('Clipboard operation failed:', error, fallbackError)
+				toast.error('Failed to copy code to clipboard')
+			}
+		}
 	}
 
 	return (

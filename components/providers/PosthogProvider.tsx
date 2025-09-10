@@ -7,53 +7,75 @@ import {useAuth, useUser} from '@clerk/nextjs'
 import * as Sentry from '@sentry/nextjs'
 
 if (typeof window !== 'undefined') {
-	posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-		api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-		person_profiles: 'identified_only',
-		opt_out_capturing_by_default: false,
-		capture_pageview: true,
-		capture_pageleave: true,
-		secure_cookie: true,
-		persistence: 'localStorage',
-		before_send: (event) => {
-			if (!event) return null
-			try {
-				const props = event.properties || {}
-				if (props.$current_url) {
-					const url = new URL(props.$current_url)
-					props.$current_url = `${url.origin}${url.pathname}`
-				}
-				if (props.$referrer) {
-					try {
-						const refUrl = new URL(props.$referrer)
-						props.referrer_domain = refUrl.hostname
-						props.$referrer = `${refUrl.protocol}//${refUrl.hostname}`
-					} catch {}
-				}
-				event.properties = props
-			} catch {}
-			return event
+	if (!process.env.NEXT_PUBLIC_POSTHOG_KEY || !process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+		if (process.env.NODE_ENV !== 'production') {
+			console.warn('PostHog disabled: missing NEXT_PUBLIC_POSTHOG_KEY or NEXT_PUBLIC_POSTHOG_HOST environment variables')
 		}
-	})
-
-	// Respect Do Not Track (DNT) and Global Privacy Control (GPC)
-	const dnt = (navigator as any)?.doNotTrack === '1' || (window as any)?.doNotTrack === '1'
-	const gpc = (navigator as any)?.globalPrivacyControl === true
-	if (dnt || gpc) {
-		posthog.opt_out_capturing()
 	} else {
-		posthog.opt_in_capturing()
-	}
+		// Respect Do Not Track (DNT) and Global Privacy Control (GPC) BEFORE init
+		const dnt = (navigator as any)?.doNotTrack === '1' || (navigator as any)?.doNotTrack === 'yes' || (window as any)?.doNotTrack === '1'
+		const gpc = (navigator as any)?.globalPrivacyControl === true
+		const trackingBlocked = dnt || gpc
 
-	// Super properties for environment and build metadata
-	try {
-		posthog.register({
-			env: process.env.VERCEL_ENV || process.env.NODE_ENV,
-			app_version: process.env.NEXT_PUBLIC_APP_VERSION,
-			is_test_event: (process.env.VERCEL_ENV || process.env.NODE_ENV) !== 'production',
-			preview_branch: process.env.VERCEL_GIT_COMMIT_REF
+		posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+			api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+			person_profiles: 'identified_only',
+			opt_out_capturing_by_default: trackingBlocked,
+			capture_pageview: !trackingBlocked,
+			capture_pageleave: !trackingBlocked,
+			persistence: 'localStorage', // Removed secure_cookie since it's irrelevant for localStorage
+			before_send: (event) => {
+				if (!event) return null
+				try {
+					const props = event.properties || {}
+
+					// Don't overwrite reserved PostHog properties; add sanitized copies instead
+					if (props.$current_url) {
+						try {
+							const url = new URL(String(props.$current_url))
+							props.sanitized_current_url = `${url.origin}${url.pathname}`
+						} catch (error) {
+							if (process.env.NODE_ENV !== 'production') {
+								console.warn('Failed to sanitize $current_url:', props.$current_url, error)
+							}
+						}
+					}
+					if (props.$referrer) {
+						try {
+							const refUrl = new URL(String(props.$referrer))
+							props.$referring_domain = refUrl.hostname // Use PostHog's standard key
+							props.sanitized_referrer = refUrl.origin
+						} catch (error) {
+							if (process.env.NODE_ENV !== 'production') {
+								console.warn('Failed to sanitize $referrer:', props.$referrer, error)
+							}
+						}
+					}
+					event.properties = props
+				} catch (error) {
+					if (process.env.NODE_ENV !== 'production') {
+						console.warn('Failed to process PostHog event properties:', error)
+					}
+				}
+				return event
+			}
 		})
-	} catch {}
+
+		// Apply opt-out state after init if needed (redundant safety check)
+		if (trackingBlocked) {
+			posthog.opt_out_capturing()
+		}
+
+		// Super properties for environment and build metadata
+		try {
+			posthog.register({
+				env: process.env.VERCEL_ENV || process.env.NODE_ENV,
+				app_version: process.env.NEXT_PUBLIC_APP_VERSION,
+				is_test_event: (process.env.VERCEL_ENV || process.env.NODE_ENV) !== 'production',
+				preview_branch: process.env.VERCEL_GIT_COMMIT_REF
+			})
+		} catch {}
+	}
 }
 
 /**
@@ -65,7 +87,7 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 
 	useEffect(() => {
 		// Only proceed if both auth and user data are loaded and PostHog is available
-		if (!authLoaded || !userLoaded || !posthog) {
+		if (!authLoaded || !userLoaded || !posthog || !posthog.__loaded) {
 			return
 		}
 
@@ -133,7 +155,7 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 	useEffect(() => {
 		return () => {
 			// PostHog will handle cleanup automatically, but we can optionally reset on unmount
-			if (!userId && posthog) {
+			if (!userId && posthog && posthog.__loaded) {
 				posthog.reset()
 			}
 		}
@@ -143,6 +165,11 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 }
 
 const CSPostHogProvider = ({children}: { children: ReactNode }) => {
+	// Only render PostHogProvider if PostHog is actually initialized
+	if (!posthog || !posthog.__loaded) {
+		return <>{children}</>
+	}
+
 	return (
 		<PostHogProvider client={posthog}>
 			<PosthogUserIdentifier>

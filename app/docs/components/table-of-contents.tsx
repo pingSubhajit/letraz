@@ -24,35 +24,54 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 		const timeout = setTimeout(() => {
 			const headingElements = document.querySelectorAll('.docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6')
 			const items: TOCItem[] = []
-			const usedIds = new Set<string>()
+
+			// Seed usedIds with existing DOM IDs to avoid accidental collisions
+			const usedIds = new Set<string>(
+				typeof document !== 'undefined'
+					? Array.from(document.querySelectorAll('[id]'))
+						.map(el => (el as HTMLElement).id)
+						.filter(Boolean)
+						.map(id => id.trim())
+						.filter(id => id.length > 0)
+					: []
+			)
 
 			headingElements.forEach((heading) => {
 				const level = parseInt(heading.tagName.charAt(1))
 				const title = (heading.textContent || '').trim()
 
 				if (title) {
-					// Always generate a fresh ID to avoid conflicts
-					let id = title
-						.toLowerCase()
-						.replace(/[^a-z0-9\s-]/g, '') // Keep letters, numbers, spaces, and hyphens
-						.replace(/\s+/g, '-') // Replace spaces with hyphens
-						.replace(/-{2,}/g, '-') // Replace multiple consecutive hyphens with single hyphen
-						.replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens only
-						.trim()
+					// Respect existing IDs; only generate when absent
+					const existing = (heading as HTMLElement).id?.trim()
+					let finalId: string
 
-					// Ensure uniqueness
-					let counter = 0
-					let originalId = id
-					while (usedIds.has(id)) {
-						counter++
-						id = `${originalId}-${counter}`
+					if (existing) {
+						// Use existing ID, but ensure uniqueness
+						finalId = existing
+					} else {
+						// Generate new ID from title
+						finalId = title
+							.toLowerCase()
+							.replace(/[^a-z0-9\s-]/g, '') // Keep letters, numbers, spaces, and hyphens
+							.replace(/\s+/g, '-') // Replace spaces with hyphens
+							.replace(/-{2,}/g, '-') // Replace multiple consecutive hyphens with single hyphen
+							.replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens only
+							.trim()
 					}
 
-					// Always set the ID, even if heading already has one
-					heading.id = id
-					usedIds.add(id)
+					// Ensure uniqueness by adding numeric suffix if needed
+					let counter = 0
+					const baseFinalId = finalId
+					while (usedIds.has(finalId)) {
+						counter++
+						finalId = `${baseFinalId}-${counter}`
+					}
 
-					items.push({id, title, level})
+					// Set ID only if it was absent or needed deduplication
+					;(heading as HTMLElement).id = finalId
+					usedIds.add(finalId)
+
+					items.push({id: finalId, title, level})
 				}
 			})
 			setTocItems(items)
@@ -98,6 +117,12 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 		if (element) {
 			const offset = 80 // Account for fixed header
 			const elementPosition = element.offsetTop - offset
+
+			// Update URL hash without triggering scroll
+			if (typeof window !== 'undefined') {
+				window.history.pushState(null, '', `#${id}`)
+			}
+
 			window.scrollTo({
 				top: elementPosition,
 				behavior: 'smooth'
@@ -120,12 +145,17 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 					<ScrollArea className="pb-6">
 						<div className="space-y-0.5">
 							{tocItems.map((item) => (
-								<button
+								<a
 									key={item.id}
-									onClick={() => scrollToHeading(item.id)}
+									href={`#${item.id}`}
+									onClick={(e) => {
+										e.preventDefault()
+										scrollToHeading(item.id)
+									}}
+									aria-current={activeId === item.id ? 'true' : undefined}
 									className={cn(
 										'block w-full text-left px-0 py-0.5 text-sm rounded transition-colors',
-										'text-muted-foreground hover:text-flame-500',
+										'text-muted-foreground hover:text-flame-500 no-underline',
 										{
 											'text-flame-500 font-medium': activeId === item.id,
 											'pl-3': item.level === 3,
@@ -135,7 +165,7 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 									)}
 								>
 									{item.title}
-								</button>
+								</a>
 							))}
 						</div>
 					</ScrollArea>

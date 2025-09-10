@@ -210,7 +210,7 @@ const ResumeSearch = ({userId, searchQuery}: ResumeSearchProps) => {
   // If Algolia not configured, show error message
   if (!searchClient) {
     return (
-      <div className="col-span-full text中心 py-12">
+      <div className="col-span-full text-center py-12">
         <p className="text-neutral-500 text-lg">Search is not configured</p>
         <p className="text-neutral-400 text-sm mt-2">Please contact support if this issue persists</p>
       </div>

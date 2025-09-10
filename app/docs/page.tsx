@@ -1,6 +1,8 @@
 import {notFound, redirect} from 'next/navigation'
 import {getDocumentationPages} from '@/lib/basehub'
 
+export const dynamic = 'force-static'
+
 /*
  * Using BaseHub's automatic on-demand revalidation instead of ISR
  * Do not set revalidate as it conflicts with BaseHub's caching system

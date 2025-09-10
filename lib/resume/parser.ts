@@ -138,10 +138,12 @@ const GenericResumeSchema = z.object({
 	}))
 })
 
+export type GenericParsedResume = z.infer<typeof GenericResumeSchema>
+
 export const parseResume = async (
 	file: File,
 	format: 'proprietary' | 'generic' = 'proprietary'
-): Promise<EnhancedResumeMutation | any> => {
+): Promise<EnhancedResumeMutation | GenericParsedResume> => {
 	// Validate input
 	if (!file || !(file instanceof File)) {
 		throw new Error('Uploaded resume is not a file')

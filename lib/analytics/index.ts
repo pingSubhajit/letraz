@@ -16,13 +16,20 @@ export const resultsBucket = (n: number) => bucket(n, [0, 1, 3, 5, 10, 20, 50])
 export const registerAttributionOnce = () => {
 	try {
 		const params = new URLSearchParams(location.search)
-		const utm_source = params.get('utm_source') || undefined
-		const utm_medium = params.get('utm_medium') || undefined
-		const utm_campaign = params.get('utm_campaign') || undefined
-		const referrer_domain = document.referrer ? new URL(document.referrer).hostname : undefined
-		const landing_path = location.pathname
+		const payload: Record<string, string> = {}
+
+		const maybe = (key: string, value: string | null) => {
+			if (value && value.trim()) payload[key] = value
+		}
+
+		maybe('utm_source', params.get('utm_source'))
+		maybe('utm_medium', params.get('utm_medium'))
+		maybe('utm_campaign', params.get('utm_campaign'))
+		maybe('referrer_domain', document.referrer ? new URL(document.referrer).hostname : null)
+		maybe('landing_path', location.pathname)
+
 		// @ts-ignore posthog is a global when initialized
-		window.posthog?.register_once({utm_source, utm_medium, utm_campaign, referrer_domain, landing_path})
+		if (Object.keys(payload).length) window.posthog?.register_once(payload)
 	} catch {}
 }
 

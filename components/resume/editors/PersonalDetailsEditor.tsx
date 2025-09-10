@@ -41,6 +41,22 @@ interface Props {
 
 type ViewState = 'list' | 'form';
 
+// Helper to consistently convert user data to form values
+function toFormValuesFromUser(user: any) {
+	return {
+		...user,
+		country: typeof user?.country === 'string' ? user.country : user?.country?.code ?? null,
+	}
+}
+
+// Helper to maintain consistent country object shape in caches
+const shapeCountry = (old: any, countryCode: string | null | undefined) =>
+	countryCode == null ? null : {
+		code: countryCode,
+		// Reuse previous name or fallback to code
+		name: (typeof old?.country === 'object' && old?.country?.name) || countryCode,
+	}
+
 const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 	title: '',
 	first_name: '',
@@ -82,18 +98,20 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 				const previousUserData = queryClient.getQueryData(userInfoQueryOptions.queryKey)
 				const previousResumeData = queryClient.getQueryData(baseResumeQueryOptions.queryKey)
 
-				// Update user info cache
+				// Update user info cache with proper country object shape
 				queryClient.setQueryData(userInfoQueryOptions.queryKey, (oldData: any) => ({
 					...oldData,
-					...newData
+					...newData,
+					country: shapeCountry(oldData, newData.country),
 				}))
 
-				// Update resume cache to reflect personal info changes
+				// Update resume cache with proper country object shape
 				queryClient.setQueryData(baseResumeQueryOptions.queryKey, (oldData: any) => ({
 					...oldData,
 					user: {
 						...oldData?.user,
-						...newData
+						...newData,
+						country: shapeCountry(oldData?.user, newData.country),
 					}
 				}))
 
@@ -116,10 +134,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 
 	const form = useForm<UserInfoMutation>({
 		resolver: zodResolver(UserInfoMutationSchema),
-		defaultValues: userInfo ? {
-			...userInfo,
-			country: userInfo.country?.code || null
-		} : DEFAULT_DETAILS_VALUES
+		defaultValues: userInfo ? toFormValuesFromUser(userInfo) : DEFAULT_DETAILS_VALUES
 	})
 
 	const isSubmitting = isUpdatingPending
@@ -137,23 +152,13 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	// Reset form when userInfo data is loaded
 	useEffect(() => {
 		if (userInfo) {
-			// Convert country object to string for form compatibility
-			const formData = {
-				...userInfo,
-				country: userInfo.country?.code || null
-			}
-			form.reset(formData)
+			form.reset(toFormValuesFromUser(userInfo))
 		}
 	}, [userInfo, form])
 
 	const handleUpdate = () => {
 		if (userInfo) {
-			// Convert country object to string for form compatibility
-			const formData = {
-				...userInfo,
-				country: userInfo.country?.code || null
-			}
-			form.reset(formData)
+			form.reset(toFormValuesFromUser(userInfo))
 		}
 		// Reset scroll position when transitioning to form view
 		if (scrollRef.current) {
@@ -169,12 +174,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 
 	const handleCancel = () => {
 		if (userInfo) {
-			// Convert country object to string for form compatibility
-			const formData = {
-				...userInfo,
-				country: userInfo.country?.code || null
-			}
-			form.reset(formData)
+			form.reset(toFormValuesFromUser(userInfo))
 		} else {
 			form.reset(DEFAULT_DETAILS_VALUES)
 		}
