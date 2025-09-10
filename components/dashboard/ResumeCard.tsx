@@ -7,6 +7,7 @@ import LoadingDots from '@/components/ui/loading-dots'
 import {Button} from '@/components/ui/button'
 import {Download} from 'lucide-react'
 import {highlightText} from '@/components/ui/highlight'
+import {useAnalytics} from '@/lib/analytics'
 
 type ResumeCardProps = {
   resume: ResumeListItem
@@ -16,9 +17,10 @@ type ResumeCardProps = {
 
 const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 	const isProcessing = !resume.base && resume.status === 'Processing'
+	const {track} = useAnalytics()
 
 	return (
-		<Link href={`/app/craft/resumes/${encodeURIComponent(resume.id)}`} className="group">
+		<Link href={`/app/craft/resumes/${encodeURIComponent(resume.id)}`} className="group" onClick={() => track('resume_opened', {resume_id: resume.id, base: Boolean(resume.base), status: resume.status})}>
 			<div className={cn(isProcessing && 'processing-border rounded-lg')}>
 				<div className={cn(
 					'h-96 w-full rounded-lg transition hover:shadow-2xl focus-within:shadow-2xl overflow-hidden border bg-white flex flex-col',

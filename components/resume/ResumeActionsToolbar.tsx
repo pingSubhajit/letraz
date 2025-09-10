@@ -13,6 +13,7 @@ import {useDeleteResumeMutation, useExportResumeMutation} from '@/lib/resume/mut
 import {useResumeById} from '@/lib/resume/queries'
 import {Job} from '@/lib/job/types'
 import {cn} from '@/lib/utils'
+import {useAnalytics} from '@/lib/analytics'
 
 interface ResumeActionsToolbarProps {
 	resumeId: string
@@ -29,9 +30,11 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 	const [showJobDetails, setShowJobDetails] = useState(false)
 	const [buttonRect, setButtonRect] = useState<DOMRect | null>(null)
 	const jobButtonRef = useRef<HTMLButtonElement>(null)
+    const {track} = useAnalytics()
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		try {
+			track('resume_export_clicked', {resume_id: resumeId, format})
 			const response = await exportResume(resumeId)
 
 			const downloadUrl = format === 'pdf' ? response.pdf_url : response.latex_url
@@ -42,35 +45,37 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 				return
 			}
 
-			// Properly construct the URL
+			// Properly construct/validate the URL
 			let fullUrl: string
 			try {
-				// If it's already a full URL, use it as-is
-				if (downloadUrl.startsWith('http://') || downloadUrl.startsWith('https://')) {
-					fullUrl = downloadUrl
-				} else if (downloadUrl.startsWith('//')) { // If it starts with //, it's protocol-relative
-					fullUrl = 'https:' + downloadUrl
-				} else { // Otherwise, assume it needs https://
-					fullUrl = 'https://' + downloadUrl
-				}
-
-				// Validate the URL is properly formed
-				new URL(fullUrl)
+				// Use URL constructor to handle absolute, protocol-relative, and relative URLs
+				fullUrl = new URL(downloadUrl, window.location.origin).toString()
 			} catch (urlError) {
-				toast.error('Invalid download URL received')
-				return
+				// Fallback for protocol-relative URLs or other edge cases
+				try {
+					fullUrl = new URL(downloadUrl, 'https:').toString()
+				} catch (fallbackError) {
+					if (process.env.NODE_ENV !== 'production') {
+						console.warn('Failed to construct download URL:', downloadUrl, fallbackError)
+					}
+					toast.error('Invalid download URL received')
+					return
+				}
 			}
 
 			// Open in new tab with security attributes
 			window.open(fullUrl, '_blank', 'noopener,noreferrer')
+			track('resume_export_succeeded', {resume_id: resumeId, format})
 		} catch (error) {
 			// Error handling is already done in the mutation
+			track('resume_export_failed', {format})
 		}
 	}
 
 	const handleDelete = async () => {
 		try {
 			await deleteResume(resumeId)
+			track('resume_deleted', {resume_id: resumeId})
 			// Navigate to dashboard after successful deletion
 			router.push('/app')
 		} catch (error) {

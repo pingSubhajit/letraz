@@ -1,9 +1,10 @@
 'use client'
 
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useDebouncedValue} from '@mantine/hooks'
 import DashboardSearchInput from './DashboardSearchInput'
 import ResumeSearch from '@/components/dashboard/ResumeSearch'
+import {bucket, useAnalytics} from '@/lib/analytics'
 
 interface DashboardSearchContainerProps {
   userId?: string
@@ -12,6 +13,12 @@ interface DashboardSearchContainerProps {
 const DashboardSearchContainer = ({userId}: DashboardSearchContainerProps) => {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300)
+    const {track} = useAnalytics()
+
+	useEffect(() => {
+		if (!debouncedSearchQuery) return
+		track('resume_search', {query_length_bucket: bucket(debouncedSearchQuery.length)})
+	}, [debouncedSearchQuery])
 
 	return (
 		<>

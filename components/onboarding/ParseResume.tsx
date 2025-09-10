@@ -14,6 +14,7 @@ import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import StaggeredText from '@/components/animations/StaggeredText'
+import {sizeKbBucket, useAnalytics} from '@/lib/analytics'
 
 
 const PARSING_MESSAGES = [
@@ -39,6 +40,7 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	const router = useRouter()
 	const [parsingMessageIndex, setParsingMessageIndex] = useState(0)
 	const [showParsingText, setShowParsingText] = useState(false)
+	const {track} = useAnalytics()
 
 	const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
 		event.preventDefault()
@@ -69,6 +71,11 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 		}
 
 		if (acceptedFiles.length > 0 && !isParsing) {
+			try {
+				const file = acceptedFiles[0]
+				const file_type = file.type || 'unknown'
+				track('resume_import_submitted', {file_type, file_size_kb_bucket: sizeKbBucket(file.size)})
+			} catch {}
 			void handleFilesUpload(acceptedFiles)
 		} else {
 			toast.info('No accepted files dropped')
@@ -99,6 +106,11 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 			return
 		}
 		if (acceptedFiles.length > 0 && !isParsing) {
+			try {
+				const file = acceptedFiles[0]
+				const file_type = file.type || 'unknown'
+				track('resume_import_submitted', {file_type, file_size_kb_bucket: sizeKbBucket(file.size)})
+			} catch {}
 			void handleFilesUpload(acceptedFiles)
 		} else if (files.length > 0) {
 			toast.warning('Selected files contained unsupported types')
@@ -132,8 +144,13 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 			}
 
 			setParsed(true)
+			try {
+				const extracted_sections_count = enhancedPayload.sections?.length ?? 0
+				track('resume_import_completed', {extracted_sections_count})
+			} catch {}
 		} catch (error) {
 			toast.error('Failed to parse resume')
+			try {track('resume_import_failed', {})} catch {}
 		} finally {
 			setIsParsing(false)
 		}

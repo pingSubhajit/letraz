@@ -18,6 +18,7 @@ import {adjacencyGraphs, dictionary as commonDictionary} from '@zxcvbn-ts/langua
 import {dictionary as enDictionary, translations as enTranslations} from '@zxcvbn-ts/language-en'
 import Link from 'next/link'
 import {InputOTP, InputOTPGroup, InputOTPSlot} from '@/components/ui/input-otp'
+import {useAnalytics} from '@/lib/analytics'
 
 // Configure zxcvbn language packs once per module
 zxcvbnOptions.setOptions({
@@ -69,6 +70,7 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 	const [verificationPending, setVerificationPending] = useState(false)
 	const [verificationCode, setVerificationCode] = useState('')
 	const [isVerifying, setIsVerifying] = useState(false)
+	const {track} = useAnalytics()
 
 	const form = useForm<SignUpFormData>({
 		resolver: zodResolver(signUpSchema),
@@ -129,8 +131,8 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 
 		setIsLoading(true)
 		setError(null)
-
 		try {
+			track('signup_started')
 			const result = await signUp.create({
 				firstName: data.firstName,
 				lastName: data.lastName,
@@ -139,10 +141,10 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 			})
 
 			if (result.status === 'complete') {
+				track('signup_completed')
 				await setActive({session: result.createdSessionId})
 				router.push('/app')
 			} else {
-				// Send verification email
 				await signUp.prepareEmailAddressVerification({strategy: 'email_code'})
 				setVerificationPending(true)
 				setError(null)
@@ -166,13 +168,13 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 
 		setIsVerifying(true)
 		setError(null)
-
 		try {
 			const result = await signUp.attemptEmailAddressVerification({
 				code: verificationCode
 			})
 
 			if (result.status === 'complete') {
+				track('signup_completed')
 				await setActive({session: result.createdSessionId})
 				router.push('/app')
 			} else {

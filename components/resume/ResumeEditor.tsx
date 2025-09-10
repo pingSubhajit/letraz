@@ -13,10 +13,12 @@ import {useState} from 'react'
 import {motion} from 'motion/react'
 import ProjectEditor from '@/components/resume/editors/ProjectEditor'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
+import {useAnalytics} from '@/lib/analytics'
 
 const ResumeEditor = ({className}: {className?: string}) => {
 	const [activeTab, setActiveTab] = useState<number>(0) // Default to Profile (index 0)
 	const [activeTabId, setActiveTabId] = useState<string>('profile') // For traditional tabs
+    const {track} = useAnalytics()
 
 	// Feature flag to switch between new and old tab designs
 	const useNewTabDesign = process.env.NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED === 'true'
@@ -34,6 +36,8 @@ const ResumeEditor = ({className}: {className?: string}) => {
 	const handleTabChange = (index: number | null) => {
 		if (index !== null) {
 			setActiveTab(index)
+			const tab = tabs[index]?.id as 'profile'|'education'|'experience'|'skills'|'certifications'|'projects'
+			if (tab) track('editor_tab_selected', {tab})
 		}
 	}
 
