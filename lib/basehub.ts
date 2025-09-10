@@ -23,7 +23,7 @@ export interface NavItem {
 }
 
 /**
- * Get all documentation pages from BaseHub with hierarchy using new structure
+ * Get all documentation pages from BaseHub with hierarchy
  */
 export const getDocumentationPages = async (): Promise<DocPage[]> => {
 	try {
@@ -36,9 +36,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 					title: true,
 					slug: true,
 					description: true,
-					body: {
-						html: true
-					},
 					published: true,
 					children: {
 						items: {
@@ -46,9 +43,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 							title: true,
 							slug: true,
 							description: true,
-							body: {
-								html: true
-							},
 							published: true,
 							children: {
 								items: {
@@ -56,9 +50,6 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 									title: true,
 									slug: true,
 									description: true,
-									body: {
-										html: true
-									},
 									published: true
 								}
 							}
@@ -87,6 +78,7 @@ export const getDocumentationPages = async (): Promise<DocPage[]> => {
 
 		return pages
 	} catch (error) {
+		// Return empty array to prevent build failures
 		return []
 	}
 }
