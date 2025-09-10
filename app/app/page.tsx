@@ -1,3 +1,4 @@
+import type {Metadata} from 'next'
 import NewResumeInput from '@/components/NewResumeInput'
 import {Suspense} from 'react'
 import OnboardingWelcome from '@/components/onboarding/OnboardingWelcome'
@@ -7,6 +8,11 @@ import {auth} from '@clerk/nextjs/server'
 import {listResumesForUser} from '@/lib/resume/actions'
 import LetrazBrainImage from '@/public/brain.webp'
 import Image from 'next/image'
+
+export const metadata: Metadata = {
+	title: 'Dashboard',
+	description: 'Start crafting tailored resumes, manage drafts, and track your progress.'
+}
 
 const AppHome = async () => {
 	const {userId} = await auth()

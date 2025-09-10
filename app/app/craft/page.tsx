@@ -1,4 +1,24 @@
 import {notFound} from 'next/navigation'
+import type {Metadata} from 'next'
+
+export const generateMetadata = async (
+	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+): Promise<Metadata> => {
+	const searchParams = await props.searchParams
+	const jobId = searchParams.jobId as string | undefined
+
+	if (!jobId) {
+		return {
+			title: 'Job not found',
+			description: 'Specify a job to start crafting a tailored resume.'
+		}
+	}
+
+	return {
+		title: 'Craft — Tailor your resume',
+		description: 'Review the job and tailor your resume for maximum impact.'
+	}
+}
 
 const CraftPage = async (
 	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }

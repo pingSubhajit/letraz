@@ -1,7 +1,14 @@
 import {notFound, redirect} from 'next/navigation'
+import type {Metadata} from 'next'
 import {getDocumentationPages} from '@/lib/basehub'
 
 export const dynamic = 'force-static'
+
+export const metadata: Metadata = {
+	title: 'Documentation',
+	description: 'Browse Letraz documentation and guides.',
+	robots: 'noindex'
+}
 
 /*
  * Using BaseHub's automatic on-demand revalidation instead of ISR
