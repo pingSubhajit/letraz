@@ -105,8 +105,7 @@ export const parseUploadedResume = async (
 		throw new Error('Unsupported file type. Please upload a PDF, DOC, DOCX, RTF, ODT, or TXT file')
 	}
 
-	const result = await parseResume(file, format)
-	return result
+	return await parseResume(file, format)
 }
 
 /**
@@ -156,4 +155,3 @@ export const deleteResumeFromDB = async (resumeId: string): Promise<void> => {
 		return handleErrors(error, 'delete resume')
 	}
 }
-
