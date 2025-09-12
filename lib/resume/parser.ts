@@ -205,7 +205,26 @@ Rules:
    - Allowed classes: paragraphs -> "text-node"; headings h1–h6 -> "heading-node"; blockquotes -> "block-node"; ul/ol -> "list-node"; inline code -> "inline".
    - Do NOT return Markdown; return HTML only with the classes above. Keep list items concise, one idea per <li>.
 - Return ONLY JSON. No backticks, no extra text.`
-		: 'Parse resume into: personalInfo, education, experience, skills, certifications, projects. Only return the JSON response. Do not include any additional texts, backticks or artifacts.'
+		: `You are a strict JSON generator that parses resumes into structured data. Extract information from the resume and organize it into the following sections: personalInfo, education, experience, skills, certifications, and projects.
+
+CRITICAL FORMATTING REQUIREMENTS:
+- Return ONLY raw JSON that matches the schema exactly
+- Do NOT wrap your response in markdown code blocks (no \`\`\`json)
+- Do NOT include any explanatory text or prose
+- Do NOT add any backticks, formatting, or extra characters
+- Your response should start with { and end with }
+
+EXTRACTION GUIDELINES:
+- Extract personal information (name, email, phone, location, summary) from the resume header
+- List all educational institutions with degrees, fields, dates, and GPA if available
+- Include all work experience with company, position, dates, description, and location
+- Extract all technical and soft skills mentioned
+- Include certifications with name, issuer, and date if available
+- List projects with name, description, and technologies used
+- Use empty string for missing required fields, null for optional fields when not found
+- Format dates as strings (e.g., "Jan 2024", "2019-2023")
+
+Return ONLY the JSON object, nothing else.`
 
 	// Convert file to data URL format as required by AI SDK
 	const arrayBuffer = await file.arrayBuffer()
@@ -297,6 +316,7 @@ Rules:
 
 		return result.object
 	} catch (error) {
+		console.log(error)
 		throw new Error(`Failed to parse resume: ${(error as Error).message}`)
 	}
 }
