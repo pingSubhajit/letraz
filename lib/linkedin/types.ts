@@ -63,6 +63,21 @@ export const BrightDataLinkedInProfileSchema = z.object({
 	education: z.array(LinkedInEducationItemSchema).nullable().optional(),
 	languages: z.array(LinkedInLanguageItemSchema).nullable().optional(),
 	certifications: z.array(LinkedInCertificationItemSchema).nullable().optional(),
+	projects: z
+		.array(
+			z
+				.object({
+					title: z.string().nullable().optional(),
+					description: z.string().nullable().optional(),
+					description_html: z.string().nullable().optional(),
+					start_date: z.string().nullable().optional(),
+					end_date: z.string().nullable().optional(),
+					url: z.string().url().nullable().optional(),
+				})
+				.catchall(z.any())
+		)
+		.nullable()
+		.optional(),
 	avatar: z.string().url().nullable().optional(),
 	banner_image: z.string().url().nullable().optional(),
 	first_name: z.string().nullable().optional(),
