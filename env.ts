@@ -120,6 +120,16 @@ const envSchema = z.object({
 		invalid_type_error: 'Gemini API key must be a string'
 	}),
 
+	// Required BrightData credentials for LinkedIn scraping
+	BRIGHTDATA_TOKEN: z.string({
+		required_error: 'BrightData token is required',
+		invalid_type_error: 'BrightData token must be a string'
+	}),
+	BRIGHTDATA_DATASET_ID: z.string({
+		required_error: 'BrightData dataset id is required',
+		invalid_type_error: 'BrightData dataset id must be a string'
+	}),
+
 	// Optional feature flag for Resume Editor tabs new design
 	NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED: z.string()
 		.optional()
