@@ -36,7 +36,7 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 
 	const scheduleHideActions = () => {
 		clearHideTimer()
-		hideTimerRef.current = setTimeout(() => setShowActions(false), 150)
+		hideTimerRef.current = setTimeout(() => setShowActions(false), 30)
 	}
 
 	useEffect(() => () => clearHideTimer(), [])

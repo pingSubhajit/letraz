@@ -48,7 +48,7 @@ const ResumeCardActionsBar = ({resumeId, isProcessing, className, isBaseResume =
 					initial={{opacity: 0, scale: 0.95, translateX: '120%'}}
 					animate={{opacity: 1, scale: 1, translateX: '120%'}}
 					exit={{opacity: 0, scale: 0.95, translateX: '120%'}}
-					transition={{duration: 0.15, ease: 'easeOut'}}
+					transition={{duration: 0.08, ease: 'easeOut'}}
 					className={cn(
 						'py-8 w-10 h-full absolute right-0 translate-x-[120%] top-0 z-10 flex flex-col items-center justify-start gap-4',
 						className
