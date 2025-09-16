@@ -34,7 +34,7 @@ const LandingPage = async (
 				<LandingPageLogo className="relative z-30 mt-8 lg:mt-0" hideOnMobile={true} />
 				<LandingPageHeading className="relative z-30" />
 				<LandingPageDescription className="lg:py-2 relative z-30" />
-				<Waitlist className="relative z-30" referrer={referrer} />
+				<Waitlist className="relative z-30" referrer={referrer} mode="old" />
 
 				<LandingPageFooter className="lg:absolute lg:bottom-16 z-30 lg:w-[calc(100%-128px)]" />
 

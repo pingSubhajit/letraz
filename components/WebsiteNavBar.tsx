@@ -41,7 +41,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 							{/* Link Text */}
 							<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
 								<p className={cn(
-									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-3',
+									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-3 text-sm',
 									currentSegment && currentSegment === link.segment && 'opacity-100'
 								)}>
 									{link.title}
@@ -74,10 +74,14 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 	}
 
 	return (
-		<div className={cn('relative', className)}>
+		<div className={cn('relative lg:px-36 lg:py-4', className)}>
 			{/* Desktop Navigation */}
-			<div className="hidden lg:flex gap-12 justify-end">
-				<NavLinks />
+			<div className="hidden lg:flex gap-12 justify-between items-center">
+				<LandingPageLogo className="mb-1" size="sm" />
+
+				<div className="flex gap-6 items-center">
+					<NavLinks />
+				</div>
 			</div>
 
 			{/* Mobile Navigation */}
