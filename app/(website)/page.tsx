@@ -11,12 +11,12 @@ import {Button} from '@/components/ui/button'
 import {Link} from 'next-view-transitions'
 
 export const metadata: Metadata = {
-	title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
+	title: {absolute: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes'},
 	description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
 	openGraph: {
 		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
 		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
-		images: ['/banner.png'],
+		images: [{url: '/banner.png', alt: 'Letraz – ATS-friendly resume builder'}],
 		url: 'https://letraz.app',
 		siteName: 'Letraz',
 		locale: 'en_US',
@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
 		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story.',
 		images: ['/banner.png'],
+		site: '@letraz',
 		creator: '@letraz'
 	},
 	alternates: {
