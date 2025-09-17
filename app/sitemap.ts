@@ -30,6 +30,18 @@ const sitemap = (): MetadataRoute.Sitemap => [
 		lastModified: new Date(),
 		changeFrequency: 'yearly',
 		priority: 0.8
+	},
+	{
+		url: 'https://letraz.app/signin',
+		lastModified: new Date(),
+		changeFrequency: 'yearly',
+		priority: 0.5
+	},
+	{
+		url: 'https://letraz.app/signup',
+		lastModified: new Date(),
+		changeFrequency: 'yearly',
+		priority: 0.5
 	}
 ]
 
