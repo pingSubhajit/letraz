@@ -24,7 +24,9 @@ const PopConfirm = ({triggerElement, message, onYes}: PopConfirmProps) => {
 
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
-			<PopoverTrigger asChild>
+			<PopoverTrigger asChild onClick={() => {
+				setIsOpen(true)
+			}}>
 				{triggerElement}
 			</PopoverTrigger>
 			<PopoverContent className="w-80">
