@@ -15,12 +15,27 @@ import {ReactNode} from 'react'
 
 export const metadata: Metadata = {
 	metadataBase: new URL(defaultUrl),
+	title: {
+		default: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
+		template: '%s | Letraz'
+	},
+	description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
 	keywords: [
 		'resume builder', 'ATS-friendly resumes', 'resume for job application', 'custom resume builder',
 		'tailored resumes', 'job-seeking tool', 'resume optimizer', 'increase hiring chances'
 	],
 	openGraph: {
-		type: 'website'
+		type: 'website',
+		siteName: 'Letraz',
+		images: ['/banner.png']
+	},
+	twitter: {
+		card: 'summary_large_image',
+		creator: '@letraz',
+		images: ['/banner.png']
+	},
+	alternates: {
+		canonical: defaultUrl
 	},
 	generator: 'Next.js',
 	icons: [

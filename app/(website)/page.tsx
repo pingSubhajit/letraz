@@ -11,14 +11,26 @@ import {Button} from '@/components/ui/button'
 import {Link} from 'next-view-transitions'
 
 export const metadata: Metadata = {
-	title: 'Letraz — Craft unique resumes for each job application effortlessly',
-	description: 'Create tailored resumes for every job application effortlessly with Letraz. Our AI-powered tool ' +
-		'helps you stand out by automatically optimizing your resume for ATS and recruiters, ensuring your skills ' +
-		'and experience match the job\'s requirements. No more generic resumes—Letraz makes every application count.',
+	title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
+	description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
 	openGraph: {
-		title: 'Letraz — Effortless, Tailored Resumes for Every Job Application',
-		description: 'Letraz automates resume creation to match every job\'s requirements, giving job seekers a ' +
-			'higher chance of being noticed by ATS and recruiters. Customize your resume with ease!'
+		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
+		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
+		images: ['/banner.png'],
+		url: 'https://letraz.app',
+		siteName: 'Letraz',
+		locale: 'en_US',
+		type: 'website'
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
+		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story.',
+		images: ['/banner.png'],
+		creator: '@letraz'
+	},
+	alternates: {
+		canonical: 'https://letraz.app'
 	}
 }
 
