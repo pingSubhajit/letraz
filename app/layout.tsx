@@ -28,19 +28,12 @@ export const metadata: Metadata = {
 		type: 'website',
 		siteName: 'Letraz',
 		url: defaultUrl,
-		locale: 'en_US',
-		images: [{
-			url: '/banner.png',
-			width: 1200,
-			height: 630,
-			alt: 'Letraz – ATS-friendly resume builder'
-		}]
+		locale: 'en_US'
 	},
 	twitter: {
 		card: 'summary_large_image',
 		site: '@letraz',
-		creator: '@letraz',
-		images: ['/banner.png']
+		creator: '@letraz'
 	},
 	alternates: {
 		canonical: defaultUrl
