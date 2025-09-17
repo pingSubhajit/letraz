@@ -19,6 +19,11 @@ const envSchema = z.object({
 		message: 'API_URL must be a valid URL'
 	}),
 
+	// Required self URL, must be a valid URL
+	NEXT_PUBLIC_SELF_URL: z.string().url({
+		message: 'SELF_URL must be a valid URL'
+	}),
+
 	// Required Clerk publishable key, must start with "pk_"
 	NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().startsWith('pk_', {
 		message: 'Clerk publishable key must start with "pk_"'
@@ -115,6 +120,16 @@ const envSchema = z.object({
 		invalid_type_error: 'Gemini API key must be a string'
 	}),
 
+	// Required BrightData credentials for LinkedIn scraping
+	BRIGHTDATA_TOKEN: z.string({
+		required_error: 'BrightData token is required',
+		invalid_type_error: 'BrightData token must be a string'
+	}),
+	BRIGHTDATA_DATASET_ID: z.string({
+		required_error: 'BrightData dataset id is required',
+		invalid_type_error: 'BrightData dataset id must be a string'
+	}),
+
 	// Optional feature flag for Resume Editor tabs new design
 	NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED: z.string()
 		.optional()
@@ -123,7 +138,13 @@ const envSchema = z.object({
 	// Optional Algolia search configuration for client-side search
 	NEXT_PUBLIC_ALGOLIA_APPLICATION_ID: z.string(),
 	NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY: z.string(),
-	NEXT_PUBLIC_ALGOLIA_INDEX_NAME: z.string()
+	NEXT_PUBLIC_ALGOLIA_INDEX_NAME: z.string(),
+
+	// Required BaseHub token for CMS integration
+	BASEHUB_TOKEN: z.string({
+		required_error: 'BaseHub token is required for documentation',
+		invalid_type_error: 'BaseHub token must be a string'
+	})
 })
 
 

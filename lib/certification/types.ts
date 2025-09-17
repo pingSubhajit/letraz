@@ -30,7 +30,7 @@ export const CertificationMutationSchema = CertificationSchema.omit({
 	resume_section: true
 }).extend({
 	name: z.string().min(1, {message: 'Required'}).max(255).describe('Name of the certification.'),
-	issuing_organization: z.string().max(255).optional().describe('Organization that issued the certification'),
+	issuing_organization: z.string().max(255).nullable().optional().describe('Organization that issued the certification'),
 	// Accept ISO date string, Date, or null (parser may return null for unknown)
 	issue_date: z.union([z.string(), z.date(), z.null()]).optional().describe('Date when the certification was issued.'),
 	credential_url: z.string().max(200).nullable().optional().describe('Link to the certification credential.')

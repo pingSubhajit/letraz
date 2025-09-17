@@ -30,8 +30,8 @@ interface EmailPasswordSignInFormProps {
 	className?: string
 }
 
-const EmailPasswordSignInForm = ({ className }: EmailPasswordSignInFormProps) => {
-	const { signIn, setActive } = useSignIn()
+const EmailPasswordSignInForm = ({className}: EmailPasswordSignInFormProps) => {
+	const {signIn, setActive} = useSignIn()
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 	const [showPassword, setShowPassword] = useState(false)
@@ -58,7 +58,7 @@ const EmailPasswordSignInForm = ({ className }: EmailPasswordSignInFormProps) =>
 			})
 
 			if (result.status === 'complete') {
-				await setActive({ session: result.createdSessionId })
+				await setActive({session: result.createdSessionId})
 				router.push('/app')
 			} else {
 				// Handle other statuses if needed (e.g., requires verification)
@@ -81,9 +81,9 @@ const EmailPasswordSignInForm = ({ className }: EmailPasswordSignInFormProps) =>
 
 	return (
 		<motion.div
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ delay: 0.1 }}
+			initial={{opacity: 0, y: 20}}
+			animate={{opacity: 1, y: 0}}
+			transition={{delay: 0.1}}
 			className={cn('w-full', className)}
 		>
 			<Form {...form}>
@@ -91,7 +91,7 @@ const EmailPasswordSignInForm = ({ className }: EmailPasswordSignInFormProps) =>
 					<FormField
 						control={form.control}
 						name="email"
-						render={({ field }) => (
+						render={({field}) => (
 							<FormItem>
 								<FormLabel className="text-sm font-medium text-neutral-700">
 									Email Address
@@ -112,7 +112,7 @@ const EmailPasswordSignInForm = ({ className }: EmailPasswordSignInFormProps) =>
 					<FormField
 						control={form.control}
 						name="password"
-						render={({ field }) => (
+						render={({field}) => (
 							<FormItem>
 								<FormLabel className="text-sm font-medium text-neutral-700">
 									Password
@@ -147,8 +147,8 @@ const EmailPasswordSignInForm = ({ className }: EmailPasswordSignInFormProps) =>
 
 					{error && (
 						<motion.div
-							initial={{ opacity: 0, height: 0 }}
-							animate={{ opacity: 1, height: 'auto' }}
+							initial={{opacity: 0, height: 0}}
+							animate={{opacity: 1, height: 'auto'}}
 							className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-3"
 						>
 							{error}

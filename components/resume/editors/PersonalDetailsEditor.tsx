@@ -41,6 +41,22 @@ interface Props {
 
 type ViewState = 'list' | 'form';
 
+// Helper to consistently convert user data to form values
+function toFormValuesFromUser(user: any) {
+	return {
+		...user,
+		country: typeof user?.country === 'string' ? user.country : user?.country?.code ?? null,
+	}
+}
+
+// Helper to maintain consistent country object shape in caches
+const shapeCountry = (old: any, countryCode: string | null | undefined) =>
+	countryCode == null ? null : {
+		code: countryCode,
+		// Reuse previous name or fallback to code
+		name: (typeof old?.country === 'object' && old?.country?.name) || countryCode,
+	}
+
 const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 	title: '',
 	first_name: '',
@@ -50,10 +66,7 @@ const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 	dob: new Date(),
 	address: '',
 	city: '',
-	country: {
-		code: 'IND',
-		name: 'India'
-	},
+	country: 'IND',
 	nationality: '',
 	postal: '',
 	profile_text: '',
@@ -85,18 +98,20 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 				const previousUserData = queryClient.getQueryData(userInfoQueryOptions.queryKey)
 				const previousResumeData = queryClient.getQueryData(baseResumeQueryOptions.queryKey)
 
-				// Update user info cache
+				// Update user info cache with proper country object shape
 				queryClient.setQueryData(userInfoQueryOptions.queryKey, (oldData: any) => ({
 					...oldData,
-					...newData
+					...newData,
+					country: shapeCountry(oldData, newData.country),
 				}))
 
-				// Update resume cache to reflect personal info changes
+				// Update resume cache with proper country object shape
 				queryClient.setQueryData(baseResumeQueryOptions.queryKey, (oldData: any) => ({
 					...oldData,
 					user: {
 						...oldData?.user,
-						...newData
+						...newData,
+						country: shapeCountry(oldData?.user, newData.country),
 					}
 				}))
 
@@ -119,8 +134,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 
 	const form = useForm<UserInfoMutation>({
 		resolver: zodResolver(UserInfoMutationSchema),
-		defaultValues:
-			userInfo || DEFAULT_DETAILS_VALUES
+		defaultValues: userInfo ? toFormValuesFromUser(userInfo) : DEFAULT_DETAILS_VALUES
 	})
 
 	const isSubmitting = isUpdatingPending
@@ -138,13 +152,13 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	// Reset form when userInfo data is loaded
 	useEffect(() => {
 		if (userInfo) {
-			form.reset(userInfo)
+			form.reset(toFormValuesFromUser(userInfo))
 		}
 	}, [userInfo, form])
 
 	const handleUpdate = () => {
 		if (userInfo) {
-			form.reset(userInfo)
+			form.reset(toFormValuesFromUser(userInfo))
 		}
 		// Reset scroll position when transitioning to form view
 		if (scrollRef.current) {
@@ -159,7 +173,11 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	}
 
 	const handleCancel = () => {
-		form.reset(userInfo || DEFAULT_DETAILS_VALUES)
+		if (userInfo) {
+			form.reset(toFormValuesFromUser(userInfo))
+		} else {
+			form.reset(DEFAULT_DETAILS_VALUES)
+		}
 		// Reset scroll position when transitioning to list view
 		if (scrollRef.current) {
 			scrollRef.current.scrollTop = 0
@@ -322,12 +340,11 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 													<FormLabel className="text-foreground">Country</FormLabel>
 
 													<CountryDropdown
-														key={field.value?.code || 'default'}
+														key={field.value || 'default'}
 														placeholder="Select country"
-														defaultValue={field.value?.code || 'IND'}
+														defaultValue={field.value || 'IND'}
 														onChange={({ioc, name}) => {
-															form.setValue('country.code', ioc)
-															form.setValue('country.name', name)
+															field.onChange(ioc)
 														}}
 													/>
 													<FormMessage />
@@ -408,7 +425,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 												<div>
 													<h3 className="text-lg font-semibold text-foreground">
 														{userInfo?.title && `${userInfo.title} `}
-														{userInfo.first_name || 'First Name'} {userInfo.last_name || 'Last Name'}
+														{userInfo.first_name} {userInfo.last_name}
 													</h3>
 													<p className="text-sm text-muted-foreground">Personal Information</p>
 												</div>

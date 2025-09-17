@@ -99,7 +99,7 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 							name="last_name"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="last name" {...field} />
+									<OnboardingFormInput placeholder="last name" {...field} value={field.value || ''} />
 									<FormLabel className="transition">Last name</FormLabel>
 									<FormMessage />
 								</FormItem>

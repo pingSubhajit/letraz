@@ -8,11 +8,13 @@ import {FileCheck} from 'lucide-react'
 import DEFAULT_FADE_ANIMATION, {ANIMATE_PRESENCE_MODE} from '@/components/animations/DefaultFade'
 import ParticlesBurst from '@/components/animations/ParticlesBurst'
 import {useParseResumeMutation, useReplaceResumeMutation} from '@/lib/resume/mutations'
+import {useUpdateUserInfoMutation} from '@/lib/user-info/mutations'
 import {ACCEPT_ATTRIBUTE, isAcceptedFile} from '@/lib/resume/accept'
 import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import StaggeredText from '@/components/animations/StaggeredText'
+import {sizeKbBucket, useAnalytics} from '@/lib/analytics'
 
 
 const PARSING_MESSAGES = [
@@ -33,10 +35,12 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	const fileInputRef = useRef<HTMLInputElement | null>(null)
 	const {mutateAsync: parseResumeMutation} = useParseResumeMutation()
 	const {mutateAsync: replaceResume} = useReplaceResumeMutation()
+	const {mutateAsync: updateUserInfo} = useUpdateUserInfoMutation()
 	const [isParsing, setIsParsing] = useState(false)
 	const router = useRouter()
 	const [parsingMessageIndex, setParsingMessageIndex] = useState(0)
 	const [showParsingText, setShowParsingText] = useState(false)
+	const {track} = useAnalytics()
 
 	const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
 		event.preventDefault()
@@ -67,6 +71,11 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 		}
 
 		if (acceptedFiles.length > 0 && !isParsing) {
+			try {
+				const file = acceptedFiles[0]
+				const file_type = file.type || 'unknown'
+				track('resume_import_submitted', {file_type, file_size_kb_bucket: sizeKbBucket(file.size)})
+			} catch {}
 			void handleFilesUpload(acceptedFiles)
 		} else {
 			toast.info('No accepted files dropped')
@@ -97,6 +106,11 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 			return
 		}
 		if (acceptedFiles.length > 0 && !isParsing) {
+			try {
+				const file = acceptedFiles[0]
+				const file_type = file.type || 'unknown'
+				track('resume_import_submitted', {file_type, file_size_kb_bucket: sizeKbBucket(file.size)})
+			} catch {}
 			void handleFilesUpload(acceptedFiles)
 		} else if (files.length > 0) {
 			toast.warning('Selected files contained unsupported types')
@@ -115,11 +129,28 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 			const formData = new FormData()
 			// Use the first accepted file for now
 			formData.append('file', files[0])
-			const payload = await parseResumeMutation({formData, format: 'proprietary'})
-			await replaceResume({payload, resumeId: 'base'})
+			const enhancedPayload = await parseResumeMutation({formData, format: 'proprietary'})
+
+			// Extract sections and user profile from the enhanced payload
+			const sectionsPayload = {sections: enhancedPayload.sections}
+			const userProfileData = enhancedPayload.userProfile
+
+			// Update resume sections
+			await replaceResume({payload: sectionsPayload, resumeId: 'base'})
+
+			// Update user profile data if any profile information was extracted
+			if (userProfileData && Object.keys(userProfileData).length > 0) {
+				await updateUserInfo(userProfileData)
+			}
+
 			setParsed(true)
+			try {
+				const extracted_sections_count = enhancedPayload.sections?.length ?? 0
+				track('resume_import_completed', {extracted_sections_count})
+			} catch {}
 		} catch (error) {
 			toast.error('Failed to parse resume')
+			try {track('resume_import_failed', {})} catch {}
 		} finally {
 			setIsParsing(false)
 		}
