@@ -16,7 +16,12 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
 		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
-		images: [{url: '/banner.png', alt: 'Letraz – ATS-friendly resume builder'}],
+		images: [{
+			url: 'https://letraz.app/banner.png',
+			width: 1200,
+			height: 630,
+			alt: 'Letraz – ATS-friendly resume builder'
+		}],
 		url: 'https://letraz.app',
 		siteName: 'Letraz',
 		locale: 'en_US',
@@ -26,12 +31,9 @@ export const metadata: Metadata = {
 		card: 'summary_large_image',
 		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
 		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story.',
-		images: ['/banner.png'],
+		images: ['https://letraz.app/banner.png'],
 		site: '@letraz',
 		creator: '@letraz'
-	},
-	alternates: {
-		canonical: 'https://letraz.app'
 	}
 }
 

@@ -27,13 +27,18 @@ export const metadata: Metadata = {
 	openGraph: {
 		type: 'website',
 		siteName: 'Letraz',
-		images: [{url: '/banner.png', alt: 'Letraz – ATS-friendly resume builder'}]
+		images: [{
+			url: 'https://letraz.app/banner.png',
+			width: 1200,
+			height: 630,
+			alt: 'Letraz – ATS-friendly resume builder'
+		}]
 	},
 	twitter: {
 		card: 'summary_large_image',
 		site: '@letraz',
 		creator: '@letraz',
-		images: ['/banner.png']
+		images: ['https://letraz.app/banner.png']
 	},
 	alternates: {
 		canonical: 'https://letraz.app'
