@@ -1,5 +1,4 @@
 import {Suspense} from 'react'
-import {Metadata} from 'next'
 import Waitlist from '@/components/Waitlist'
 import LandingPageHeading from '@/app/(website)/page.heading'
 import LandingPageLogo from '@/app/(website)/page.logo'
@@ -9,33 +8,6 @@ import LandingPageVideo from '@/app/(website)/page.video'
 import LandingPageGradientShadows from '@/app/(website)/page.gradientShadows'
 import {Button} from '@/components/ui/button'
 import {Link} from 'next-view-transitions'
-
-export const metadata: Metadata = {
-	title: {absolute: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes'},
-	description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
-	openGraph: {
-		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
-		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story and land interviews.',
-		images: [{
-			url: 'https://letraz.app/banner.png',
-			width: 1200,
-			height: 630,
-			alt: 'Letraz – ATS-friendly resume builder'
-		}],
-		url: 'https://letraz.app',
-		siteName: 'Letraz',
-		locale: 'en_US',
-		type: 'website'
-	},
-	twitter: {
-		card: 'summary_large_image',
-		title: 'Letraz: Build Unique, ATS-Friendly Resumes in Minutes',
-		description: 'Build tailored, ATS-friendly resumes with Letraz. Stand out with job-specific resumes that highlight your story.',
-		images: ['https://letraz.app/banner.png'],
-		site: '@letraz',
-		creator: '@letraz'
-	}
-}
 
 const LandingPage = async (
 	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
