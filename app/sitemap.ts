@@ -18,6 +18,18 @@ const sitemap = (): MetadataRoute.Sitemap => [
 		lastModified: new Date(),
 		changeFrequency: 'monthly',
 		priority: 1
+	},
+	{
+		url: 'https://letraz.app/terms',
+		lastModified: new Date(),
+		changeFrequency: 'yearly',
+		priority: 0.8
+	},
+	{
+		url: 'https://letraz.app/privacy',
+		lastModified: new Date(),
+		changeFrequency: 'yearly',
+		priority: 0.8
 	}
 ]
 
