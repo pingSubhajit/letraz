@@ -10,7 +10,7 @@ import {Button} from '@/components/ui/button'
 import LandingPageLogo from '@/app/(website)/page.logo'
 import useDOMMounted from '@/hooks/useDOMMounted'
 import {MenuIcon} from '@/components/ui/menu'
-import NavMenuBg from '@/public/nav_menu_bg.png'
+import navMenuBg from '@/public/nav_menu_bg.png'
 import Image from 'next/image'
 
 const WebsiteNavBar = ({className}: {className?: string}) => {
@@ -116,7 +116,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 							{/* Background Image */}
 							<Image
 								priority={true}
-								src={NavMenuBg}
+								src={navMenuBg}
 								alt="Background Image"
 								className="absolute bottom-0 left-0 w-full"
 							/>
