@@ -25,14 +25,12 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 			const headingElements = document.querySelectorAll('.docs-content h1, .docs-content h2, .docs-content h3, .docs-content h4, .docs-content h5, .docs-content h6')
 			const items: TOCItem[] = []
 
-			// Seed usedIds with existing DOM IDs to avoid accidental collisions
+			// Seed with all existing DOM IDs to avoid collisions when we GENERATE new ones.
 			const usedIds = new Set<string>(
 				typeof document !== 'undefined'
 					? Array.from(document.querySelectorAll('[id]'))
-						.map(el => (el as HTMLElement).id)
-						.filter(Boolean)
-						.map(id => id.trim())
-						.filter(id => id.length > 0)
+						.map(el => (el as HTMLElement).id?.trim())
+						.filter((id): id is string => !!id && id.length > 0)
 					: []
 			)
 
@@ -41,35 +39,32 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 				const title = (heading.textContent || '').trim()
 
 				if (title) {
-					// Respect existing IDs; only generate when absent
 					const existing = (heading as HTMLElement).id?.trim()
 					let finalId: string
 
 					if (existing) {
-						// Use existing ID, but ensure uniqueness
+						// Keep existing IDs untouched to preserve deep links.
 						finalId = existing
 					} else {
-						// Generate new ID from title
+						// Generate new slug from title
 						finalId = title
 							.toLowerCase()
-							.replace(/[^a-z0-9\s-]/g, '') // Keep letters, numbers, spaces, and hyphens
-							.replace(/\s+/g, '-') // Replace spaces with hyphens
-							.replace(/-{2,}/g, '-') // Replace multiple consecutive hyphens with single hyphen
-							.replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens only
+							.replace(/[^a-z0-9\s-]/g, '')
+							.replace(/\s+/g, '-')
+							.replace(/-{2,}/g, '-')
+							.replace(/^-+|-+$/g, '')
 							.trim()
-					}
 
-					// Ensure uniqueness by adding numeric suffix if needed
-					let counter = 0
-					const baseFinalId = finalId
-					while (usedIds.has(finalId)) {
-						counter++
-						finalId = `${baseFinalId}-${counter}`
+						// Ensure uniqueness only for generated IDs
+						let counter = 1
+						const base = finalId || 'section'
+						finalId = base
+						while (usedIds.has(finalId)) {
+							finalId = `${base}-${counter++}`
+						}
+						;(heading as HTMLElement).id = finalId
+						usedIds.add(finalId)
 					}
-
-					// Set ID only if it was absent or needed deduplication
-					;(heading as HTMLElement).id = finalId
-					usedIds.add(finalId)
 
 					items.push({id: finalId, title, level})
 				}

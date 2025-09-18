@@ -40,6 +40,7 @@ export const DocsNavigation = async () => {
 				<Link
 					href={githubHandle}
 					target="_blank"
+					rel="noopener noreferrer"
 					className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg"
 				>
 					<GitHubLight className="w-4 h-4" />
@@ -49,6 +50,7 @@ export const DocsNavigation = async () => {
 				<Link
 					href={discordHandle}
 					target="_blank"
+					rel="noopener noreferrer"
 					className="flex items-center gap-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg"
 				>
 					<Discord className="w-4 h-4" />

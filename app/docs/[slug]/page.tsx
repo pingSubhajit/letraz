@@ -5,6 +5,7 @@ import {Separator} from '@/components/ui/separator'
 import Link from 'next/link'
 import {ArrowLeft, ChevronLeft, ChevronRight} from 'lucide-react'
 import TableOfContents from '@/app/docs/components/table-of-contents'
+import sanitizeHtml from 'sanitize-html'
 
 /*
  * Using BaseHub's automatic on-demand revalidation instead of ISR
@@ -58,6 +59,34 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 		notFound()
 	}
 
+	const sanitizedBody = page.body
+		? sanitizeHtml(page.body, {
+			allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+				'img',
+				'video',
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'pre',
+				'code',
+				'span'
+			]),
+			allowedAttributes: {
+				'*': ['id', 'class', 'style'],
+				a: ['href', 'name', 'target', 'rel'],
+				img: ['src', 'alt', 'title', 'width', 'height', 'loading', 'decoding'],
+				video: ['src', 'controls', 'autoplay', 'loop', 'muted', 'playsinline', 'poster', 'width', 'height'],
+				code: ['class']
+			},
+			allowedSchemesByTag: {
+				img: ['http', 'https', 'data'],
+				video: ['http', 'https']
+			}
+		})
+		: ''
 
 	return (
 		<div className="flex w-full justify-center">
@@ -113,7 +142,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 					<div className="mt-12">
 						{page.body ? (
 							<div
-								dangerouslySetInnerHTML={{__html: page.body}}
+								dangerouslySetInnerHTML={{__html: sanitizedBody}}
 								className="docs-content prose [&_li>p]:my-0 [&>img]:rounded-2xl [&>video]:rounded-2xl"
 							/>
 						) : (
@@ -153,7 +182,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 				{page.body && (
 					<div className="hidden xl:block">
 						<div className="sticky top-24 overflow-hidden">
-							<TableOfContents content={page.body} />
+							<TableOfContents content={sanitizedBody} />
 						</div>
 					</div>
 				)}
