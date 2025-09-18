@@ -24,29 +24,40 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 
 				{/* CONTACT INFO */}
 				<div className="contact-info">
-					{data.location.hasLocation && (
-						<>
-							<span>
-								<FontAwesomeIcon icon={faGlobe} /> {data.location.formatted}
-							</span>
-							<span className="info-separator">|</span>
-						</>
-					)}
+					{(() => {
+						const contactItems = []
 
-					{data.contact.email && (
-						<>
-							<span>
-								<FontAwesomeIcon icon={faEnvelope} /> {data.contact.email}
-							</span>
-							<span className="info-separator">|</span>
-						</>
-					)}
+						if (data.location.hasLocation) {
+							contactItems.push(
+								<span key="location">
+									<FontAwesomeIcon icon={faGlobe} /> {data.location.formatted}
+								</span>
+							)
+						}
 
-					{data.contact.phone && (
-						<span>
-							<FontAwesomeIcon icon={faPhoneFlip} /> {data.contact.phone}
-						</span>
-					)}
+						if (data.contact.email) {
+							contactItems.push(
+								<span key="email">
+									<FontAwesomeIcon icon={faEnvelope} /> {data.contact.email}
+								</span>
+							)
+						}
+
+						if (data.contact.phone) {
+							contactItems.push(
+								<span key="phone">
+									<FontAwesomeIcon icon={faPhoneFlip} /> {data.contact.phone}
+								</span>
+							)
+						}
+
+						return contactItems.map((item, index) => (
+							<span key={index}>
+								{item}
+								{index < contactItems.length - 1 && <span className="info-separator">|</span>}
+							</span>
+						))
+					})()}
 				</div>
 
 				{/* SOCIAL INFO */}

@@ -15,7 +15,7 @@ const GithubAuthButton = ({className}: { className?: string }) => {
 	const signInWith = (strategy: OAuthStrategy) => {
 		return signIn.authenticateWithRedirect({
 			strategy,
-			redirectUrl: '/signup/sso-callback',
+			redirectUrl: '/sso-callback',
 			redirectUrlComplete: `${window.location.origin}/app`
 		})
 	}

@@ -4,9 +4,10 @@ import Link from 'next/link'
 import {cn} from '@/lib/utils'
 import {ResumeListItem} from '@/lib/resume/types'
 import LoadingDots from '@/components/ui/loading-dots'
-import {Button} from '@/components/ui/button'
-import {Download} from 'lucide-react'
 import {highlightText} from '@/components/ui/highlight'
+import {useAnalytics} from '@/lib/analytics'
+import ResumeCardActionsBar from '@/components/dashboard/ResumeCardActionsBar'
+import {useEffect, useRef, useState} from 'react'
 
 type ResumeCardProps = {
   resume: ResumeListItem
@@ -16,12 +17,38 @@ type ResumeCardProps = {
 
 const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 	const isProcessing = !resume.base && resume.status === 'Processing'
+	const {track} = useAnalytics()
+	const [showActions, setShowActions] = useState(false)
+	const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+	const clearHideTimer = () => {
+		if (hideTimerRef.current) {
+			clearTimeout(hideTimerRef.current)
+			hideTimerRef.current = null
+		}
+	}
+
+	const openActions = () => {
+		clearHideTimer()
+		setShowActions(true)
+	}
+
+	const scheduleHideActions = () => {
+		clearHideTimer()
+		hideTimerRef.current = setTimeout(() => setShowActions(false), 30)
+	}
+
+	useEffect(() => () => clearHideTimer(), [])
 
 	return (
-		<Link href={`/app/craft?jobId=${encodeURIComponent(resume.id)}`} className="group">
-			<div className={cn(isProcessing && 'processing-border rounded-lg')}>
+		<div className="group hover:z-20 relative" onPointerEnter={openActions} onPointerLeave={scheduleHideActions}>
+			<Link
+				href={`/app/craft/resumes/${encodeURIComponent(resume.id)}`}
+				className={cn(isProcessing && 'processing-border rounded-lg', 'relative group')}
+				onClick={() => track('resume_opened', {resume_id: resume.id, base: Boolean(resume.base), status: resume.status})}
+			>
 				<div className={cn(
-					'h-96 w-full rounded-lg transition hover:shadow-2xl focus-within:shadow-2xl overflow-hidden border bg-white flex flex-col',
+					'h-96 w-full rounded-lg transition group-hover:shadow-2xl focus-within:shadow-2xl overflow-hidden border bg-white flex flex-col',
 					resume.base && 'border-2 border-flame-400',
 					isProcessing && 'border-2 border-transparent',
 					className
@@ -38,7 +65,11 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 						{!isProcessing && (resume.thumbnail ? (
 							<img
 								src={resume.thumbnail}
-								alt={`${resume.job.title} at ${resume.job.company_name}`}
+								alt={
+									resume.base
+										? 'Base resume preview'
+										: `${resume.job?.title ?? 'Role'}${resume.job?.company_name ? ` at ${resume.job.company_name}` : ''}`
+								}
 								className="h-full w-full object-cover object-top"
 								onError={(e) => {(e.currentTarget as HTMLImageElement).style.display = 'none'}}
 							/>
@@ -50,18 +81,12 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 						{!resume.base && (
 							<div className="flex items-center gap-2 justify-between">
 								<div className="text-sm flex flex-col min-w-0">
-									<p className="truncate flex-1 font-medium text-base">{highlightText(resume.job.title, searchQuery)}</p>
+									<p className="truncate flex-1 font-medium text-base">{highlightText(resume.job?.title ?? 'Role', searchQuery)}</p>
 									<p className="text-xs text-neutral-500 truncate">
-										<span>{highlightText(resume.job.company_name, searchQuery)}</span>
-										{resume.job.location && <span>, {highlightText(resume.job.location, searchQuery)}</span>}
+										<span>{highlightText(resume.job?.company_name ?? '', searchQuery)}</span>
+										{resume.job?.location && <span>, {highlightText(resume.job.location, searchQuery)}</span>}
 									</p>
 								</div>
-
-								{!isProcessing && (
-									<Button className="h-full opacity-0 group-hover:opacity-100" variant="outline">
-										<Download />
-									</Button>
-								)}
 							</div>
 						)}
 
@@ -71,16 +96,22 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 									<p className="truncate flex-1 font-semibold text-base">Base resume</p>
 									<p className="text-xs text-white/70 truncate">Master resume for tailoring</p>
 								</div>
-
-								<Button className="h-full opacity-0 group-hover:opacity-100" variant="outline">
-									<Download />
-								</Button>
 							</div>
 						)}
 					</div>
 				</div>
-			</div>
-		</Link>
+			</Link>
+
+			<ResumeCardActionsBar
+				resumeId={resume.id}
+				isProcessing={isProcessing}
+				job={!resume.base ? resume.job : undefined}
+				isBaseResume={resume.base}
+				visible={showActions}
+				onEnter={openActions}
+				onLeave={scheduleHideActions}
+			/>
+		</div>
 	)
 }
 

@@ -1,4 +1,5 @@
 import BrainAnimation from '@/app/app/onboarding/BrainAnimation.client'
+import type {Metadata} from 'next'
 import Welcome from '@/components/onboarding/Welcome'
 import {notFound} from 'next/navigation'
 import {OnboardingStep} from '@/app/app/onboarding/types'
@@ -11,6 +12,28 @@ import BaseResume from '@/components/onboarding/BaseResume'
 import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
 import {educationOptions} from '@/lib/education/queries'
 import {experienceQueryOptions} from '@/lib/experience/queries'
+import OnboardingStepTracker from '@/components/onboarding/OnboardingStepTracker.client'
+
+export const generateMetadata = async (
+	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+): Promise<Metadata> => {
+	const searchParams = await props.searchParams
+	const step = (searchParams.step as string | undefined) || 'welcome'
+
+	const titleByStep: Record<string, string> = {
+		'welcome': 'Onboarding — Welcome',
+		'about': 'Onboarding — About You',
+		'personal-details': 'Onboarding — Personal Details',
+		'education': 'Onboarding — Education',
+		'experience': 'Onboarding — Experience',
+		'resume': 'Onboarding — Your Base Resume'
+	}
+
+	return {
+		title: titleByStep[step] || 'Onboarding',
+		description: 'Complete a few quick steps so Letraz can tailor your resumes.'
+	}
+}
 
 /**
  * OnboardingPage component handles the rendering of different onboarding steps.
@@ -49,6 +72,7 @@ const OnboardingPage = async (
 		<HydrationBoundary state={dehydratedState}>
 			<div className="h-full min-h-dvh w-full relative">
 				<BrainAnimation onboardingStep={step} />
+				<OnboardingStepTracker step={step} />
 
 				{step === OnboardingStep.WELCOME && <Welcome />}
 				{step === OnboardingStep.ABOUT && <About />}

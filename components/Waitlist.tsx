@@ -12,6 +12,7 @@ import {useState} from 'react'
 import {AnimatePresence, motion} from 'motion/react'
 import {toast} from 'sonner'
 import {discordHandle} from '@/config'
+import {useAnalytics} from '@/lib/analytics'
 
 const formSchema = z.object({
 	email: z.string().email({message: 'Please enter a valid email address'})
@@ -19,6 +20,7 @@ const formSchema = z.object({
 
 const Waitlist = ({className, referrer}: {className?: string, referrer: string | undefined}) => {
 	const [signedUp, setSignedUp] = useState(false)
+	const {track} = useAnalytics()
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -35,6 +37,7 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 		try {
 			setSignedUp(true)
 			await signUpForWaitlist(values.email, referrer)
+			track('waitlist_submitted', {referrer})
 			form.reset()
 		} catch (error) {
 			setSignedUp(false)

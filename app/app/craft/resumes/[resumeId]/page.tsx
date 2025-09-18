@@ -1,8 +1,19 @@
 import {Suspense} from 'react'
+import type {Metadata} from 'next'
 import ProcessingView from './processing.client'
 
 type PageProps = {
   params: Promise<{ resumeId: string }>
+}
+
+export const generateMetadata = async (
+	props: { params: Promise<{ resumeId: string }> }
+): Promise<Metadata> => {
+	const {resumeId} = await props.params
+	return {
+		title: `Processing — ${resumeId}`,
+		description: 'We are processing your resume. This can take a few moments.'
+	}
 }
 
 const ResumeProcessingPage = async ({params}: PageProps) => {
@@ -18,5 +29,3 @@ const ResumeProcessingPage = async ({params}: PageProps) => {
 }
 
 export default ResumeProcessingPage
-
-
