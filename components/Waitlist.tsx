@@ -13,6 +13,7 @@ import {AnimatePresence, motion} from 'motion/react'
 import {toast} from 'sonner'
 import {discordHandle} from '@/config'
 import {useAnalytics} from '@/lib/analytics'
+import posthog from 'posthog-js'
 
 const formSchema = z.object({
 	email: z.string().email({message: 'Please enter a valid email address'})
@@ -37,7 +38,11 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 		try {
 			setSignedUp(true)
 			await signUpForWaitlist(values.email, referrer)
-			track('waitlist_submitted', {referrer})
+			track('waitlist_submitted', {referrer}, {
+				identify: values.email,
+				set: {email: values.email, referrer: referrer ?? null},
+				setOnce: {first_seen_at: new Date().toISOString()}
+			})
 			form.reset()
 		} catch (error) {
 			setSignedUp(false)
