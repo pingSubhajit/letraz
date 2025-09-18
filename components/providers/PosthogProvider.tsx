@@ -8,9 +8,7 @@ import * as Sentry from '@sentry/nextjs'
 
 if (typeof window !== 'undefined') {
 	if (!process.env.NEXT_PUBLIC_POSTHOG_KEY || !process.env.NEXT_PUBLIC_POSTHOG_HOST) {
-		if (process.env.NODE_ENV !== 'production') {
-			console.warn('PostHog disabled: missing NEXT_PUBLIC_POSTHOG_KEY or NEXT_PUBLIC_POSTHOG_HOST environment variables')
-		}
+		// Missing configuration – skip PostHog initialization
 	} else {
 		// Respect Do Not Track (DNT) and Global Privacy Control (GPC) BEFORE init
 		const dnt = (navigator as any)?.doNotTrack === '1' || (navigator as any)?.doNotTrack === 'yes' || (window as any)?.doNotTrack === '1'
@@ -32,31 +30,26 @@ if (typeof window !== 'undefined') {
 					// Don't overwrite reserved PostHog properties; add sanitized copies instead
 					if (props.$current_url) {
 						try {
-							const url = new URL(String(props.$current_url))
-							props.sanitized_current_url = `${url.origin}${url.pathname}`
-						} catch (error) {
-							if (process.env.NODE_ENV !== 'production') {
-								console.warn('Failed to sanitize $current_url:', props.$current_url, error)
+							const raw = String(props.$current_url)
+							if (raw.startsWith('http://') || raw.startsWith('https://')) {
+								const url = new URL(raw)
+								props.sanitized_current_url = `${url.origin}${url.pathname}`
 							}
-						}
+						} catch {}
 					}
 					if (props.$referrer) {
 						try {
-							const refUrl = new URL(String(props.$referrer))
-							props.$referring_domain = refUrl.hostname // Use PostHog's standard key
-							props.sanitized_referrer = refUrl.origin
-						} catch (error) {
-							if (process.env.NODE_ENV !== 'production') {
-								console.warn('Failed to sanitize $referrer:', props.$referrer, error)
+							const raw = String(props.$referrer)
+							// Skip PostHog's special values like "$direct" and non-URL values
+							if (!raw.startsWith('$') && (raw.startsWith('http://') || raw.startsWith('https://'))) {
+								const refUrl = new URL(raw)
+								props.$referring_domain = refUrl.hostname // Use PostHog's standard key
+								props.sanitized_referrer = refUrl.origin
 							}
-						}
+						} catch {}
 					}
 					event.properties = props
-				} catch (error) {
-					if (process.env.NODE_ENV !== 'production') {
-						console.warn('Failed to process PostHog event properties:', error)
-					}
-				}
+				} catch {}
 				return event
 			}
 		})
@@ -74,6 +67,11 @@ if (typeof window !== 'undefined') {
 				is_test_event: (process.env.VERCEL_ENV || process.env.NODE_ENV) !== 'production',
 				preview_branch: process.env.VERCEL_GIT_COMMIT_REF
 			})
+		} catch {}
+
+		// Ensure the PostHog instance is available globally for utilities and debugging
+		try {
+			;(window as any).posthog = posthog
 		} catch {}
 	}
 }
@@ -165,11 +163,6 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 }
 
 const CSPostHogProvider = ({children}: { children: ReactNode }) => {
-	// Only render PostHogProvider if PostHog is actually initialized
-	if (!posthog || !posthog.__loaded) {
-		return <>{children}</>
-	}
-
 	return (
 		<PostHogProvider client={posthog}>
 			<PosthogUserIdentifier>
