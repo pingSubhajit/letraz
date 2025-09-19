@@ -89,7 +89,7 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 						exit={{opacity: 0}}
 						transition={{duration: 0.2}}
 						className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
-						onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClose() }}
+						onClick={(e) => {e.preventDefault(); e.stopPropagation(); onClose()}}
 					/>
 
 					{/* Modal */}
@@ -107,13 +107,13 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 								duration: 0.4
 							}}
 							className="max-w-3xl w-full max-h-[90vh] bg-white rounded-2xl shadow-2xl pointer-events-auto overflow-hidden"
-							onMouseDown={(e) => { e.stopPropagation() }}
+							onMouseDown={(e) => {e.stopPropagation()}}
 						>
 							{/* Custom Dialog Content */}
 							<div className="relative bg-white rounded-2xl overflow-y-auto max-h-[90vh]">
 								{/* Close Button */}
 								<button
-									onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClose() }}
+									onClick={(e) => {e.preventDefault(); e.stopPropagation(); onClose()}}
 									className="absolute right-4 top-4 rounded-full bg-gray-100 p-2 opacity-70 hover:opacity-100 hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 z-10"
 								>
 									<X className="h-4 w-4" />
