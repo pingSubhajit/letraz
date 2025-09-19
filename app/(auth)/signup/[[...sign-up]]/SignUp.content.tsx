@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useMemo, useState} from 'react'
 import SignUpPageTitle from '@/app/(auth)/signup/[[...sign-up]]/SignUpPage.title'
 import EmailPasswordSignUpForm from '@/components/auth/EmailPasswordSignUpForm'
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
@@ -8,10 +8,16 @@ import GithubAuthButton from '@/components/auth/GithubAuthButton'
 
 const SignUpContent = ({preselectedProvider}: { preselectedProvider?: 'google' | 'github' }) => {
 	const [isVerificationMode, setIsVerificationMode] = useState(false)
+    const isRizeFlow = useMemo(() => {
+        try {
+            const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+            return params.get('integrate') === 'rize'
+        } catch { return false }
+    }, [])
 
 	return (
 		<>
-			<SignUpPageTitle isVerification={isVerificationMode} />
+			<SignUpPageTitle isVerification={isVerificationMode} isRizeFlow={isRizeFlow} />
 
 			<div className="flex flex-col justify-center items-center mt-8 gap-6 w-full">
 				{/* Email/Password Sign Up Form */}
