@@ -48,7 +48,7 @@ export const kickoffRizeBackfill = async (userId: string, rizeUserId: string, au
 		await applyProfileToLetraz(profile, authHeaders)
 		await setRizeBackfillStatusForUser(userId, 'complete', {completedAt: new Date().toISOString()})
 	} catch (error: any) {
-		await setRizeBackfillStatusForUser(userId, 'error', {error: error?.message || 'Backfill failed'})
+		await setRizeBackfillStatusForUser(userId, 'error', {error: 'Backfill failed. Please try again.'})
 	}
 }
 
