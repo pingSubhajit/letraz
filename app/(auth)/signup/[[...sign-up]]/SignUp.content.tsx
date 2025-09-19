@@ -1,19 +1,13 @@
 'use client'
 
-import {useMemo, useState} from 'react'
+import {useState} from 'react'
 import SignUpPageTitle from '@/app/(auth)/signup/[[...sign-up]]/SignUpPage.title'
 import EmailPasswordSignUpForm from '@/components/auth/EmailPasswordSignUpForm'
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 import GithubAuthButton from '@/components/auth/GithubAuthButton'
 
-const SignUpContent = ({preselectedProvider}: { preselectedProvider?: 'google' | 'github' }) => {
+const SignUpContent = ({preselectedProvider, isRizeFlow = false}: { preselectedProvider?: 'google' | 'github', isRizeFlow?: boolean }) => {
 	const [isVerificationMode, setIsVerificationMode] = useState(false)
-    const isRizeFlow = useMemo(() => {
-        try {
-            const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
-            return params.get('integrate') === 'rize'
-        } catch { return false }
-    }, [])
 
 	return (
 		<>

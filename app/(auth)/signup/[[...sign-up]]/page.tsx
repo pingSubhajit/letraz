@@ -20,13 +20,14 @@ type SignUpSearchParams = {
 }
 
 const SignUpPage = async (
-	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+    props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 ) => {
 	const cookieStore = await cookies()
 	const searchParamsObj = await props.searchParams as SignUpSearchParams
 	const integrate = searchParamsObj?.integrate as string | undefined
 	const authMethod = String(searchParamsObj?.authMethod || '').toLowerCase()
 	const rizeUserId = searchParamsObj?.userId as string | undefined
+	const isRizeFlow = integrate === 'rize'
 
 	let preselectedProvider: 'google' | 'github' | undefined
 	if (authMethod === 'google') preselectedProvider = 'google'
@@ -45,7 +46,7 @@ const SignUpPage = async (
 		} catch {}
 	}
 
-	return <SignUpContent preselectedProvider={preselectedProvider} />
+	return <SignUpContent preselectedProvider={preselectedProvider} isRizeFlow={isRizeFlow} />
 }
 
 export default SignUpPage
