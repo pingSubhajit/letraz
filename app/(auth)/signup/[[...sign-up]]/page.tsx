@@ -1,5 +1,6 @@
 import SignUpContent from '@/app/(auth)/signup/[[...sign-up]]/SignUp.content'
 import {Metadata} from 'next'
+import {cookies} from 'next/headers'
 
 export const metadata: Metadata = {
 	title: 'Sign up for Letraz — Your Personalized Resume Builder',
@@ -12,8 +13,39 @@ export const metadata: Metadata = {
 	}
 }
 
-const SignUpPage = () => {
-	return <SignUpContent />
+type SignUpSearchParams = {
+    integrate?: string
+    authMethod?: string
+    userId?: string
+}
+
+const SignUpPage = async (
+	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+) => {
+	const cookieStore = await cookies()
+	const searchParamsObj = await props.searchParams as SignUpSearchParams
+	const integrate = searchParamsObj?.integrate as string | undefined
+	const authMethod = String(searchParamsObj?.authMethod || '').toLowerCase()
+	const rizeUserId = searchParamsObj?.userId as string | undefined
+
+	let preselectedProvider: 'google' | 'github' | undefined
+	if (authMethod === 'google') preselectedProvider = 'google'
+	if (authMethod === 'github') preselectedProvider = 'github'
+
+	if (integrate === 'rize' && rizeUserId) {
+		try {
+			const value = JSON.stringify({integrate, authMethod, userId: rizeUserId})
+			cookieStore.set('rize_ctx', value, {
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
+				path: '/',
+				maxAge: 60 * 10 // 10 minutes
+			})
+		} catch {}
+	}
+
+	return <SignUpContent preselectedProvider={preselectedProvider} />
 }
 
 export default SignUpPage

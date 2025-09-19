@@ -130,6 +130,12 @@ const envSchema = z.object({
 		invalid_type_error: 'BrightData dataset id must be a string'
 	}),
 
+	// Rize admin API key for server-to-server calls
+	RIZE_ADMIN_API_KEY: z.string({
+		required_error: 'Rize admin API key is required',
+		invalid_type_error: 'Rize admin API key must be a string'
+	}),
+
 	// Optional feature flag for Resume Editor tabs new design
 	NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED: z.string()
 		.optional()

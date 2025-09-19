@@ -35,7 +35,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		// Open a stub window immediately to preserve user gesture
 		const win = window.open('', '_blank', 'noopener,noreferrer')
-		
+
 		try {
 			track('resume_export_clicked', {resume_id: resumeId, format})
 			const response = await exportResume(resumeId)
@@ -59,9 +59,6 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 				try {
 					fullUrl = new URL(downloadUrl, 'https:').toString()
 				} catch (fallbackError) {
-					if (process.env.NODE_ENV !== 'production') {
-						console.warn('Failed to construct download URL:', downloadUrl, fallbackError)
-					}
 					if (win) win.close()
 					toast.error('Invalid download URL received')
 					return

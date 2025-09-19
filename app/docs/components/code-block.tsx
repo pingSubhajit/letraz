@@ -40,7 +40,6 @@ export const CodeBlock = ({code, language = 'text', filename, caption}: CodeBloc
 					toast.error('Failed to copy code to clipboard')
 				}
 			} catch (fallbackError) {
-				console.error('Clipboard operation failed:', error, fallbackError)
 				toast.error('Failed to copy code to clipboard')
 			}
 		}
