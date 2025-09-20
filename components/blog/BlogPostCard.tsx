@@ -50,46 +50,55 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({post, featured = fals
 									{post.category}
 								</span>
 							)}
-							<time className="text-sm text-gray-500" dateTime={post.publishedAt}>
+							<time className="text-sm text-neutral-500" dateTime={post.publishedAt}>
 								{formattedDate}
 							</time>
 						</div>
 					)}
 
 					{/* Title */}
-						<h3 className={`font-bold text-gray-900 group-hover:text-flame-600 transition-colors mb-3 line-clamp-2 ${
+					<h3 className={`font-bold text-neutral-900 group-hover:text-flame-600 transition-colors mb-3 line-clamp-2 ${
 						featured ? 'text-2xl' : 'text-lg'
 					}`}>
 						{post.title}
 					</h3>
 
 					{/* Excerpt */}
-					<p className={`text-gray-600 mb-4 line-clamp-3 ${
+					<p className={`text-neutral-600 mb-4 line-clamp-3 ${
 						featured ? 'text-base' : 'text-sm'
 					}`}>
 						{post.excerpt}
 					</p>
 
-					{/* Author and Date */}
+					{/* Authors and Date */}
 					<div className="flex items-center justify-between">
 						<div className="flex items-center">
-							{post.author.avatar ? (
+							{/* Show first author's avatar */}
+							{post.authors[0]?.avatar ? (
 								<img
-									src={post.author.avatar.url}
-									alt={post.author.name}
+									src={post.authors[0].avatar.url}
+									alt={post.authors[0].name}
 									className="w-8 h-8 rounded-full mr-3"
 								/>
 							) : (
-								<div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3">
-									<span className="text-gray-600 text-sm font-medium">
-										{post.author.name.charAt(0).toUpperCase()}
+								<div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center mr-3">
+									<span className="text-neutral-600 text-sm font-medium">
+										{post.authors[0]?.name.charAt(0).toUpperCase()}
 									</span>
 								</div>
 							)}
 							<div>
-								<p className="text-sm font-medium text-gray-900">{post.author.name}</p>
+								{/* Show author names */}
+								<p className="text-sm font-medium text-neutral-900">
+									{post.authors.length === 1
+										? post.authors[0].name
+										: post.authors.length === 2
+											? `${post.authors[0].name} & ${post.authors[1].name}`
+											: `${post.authors[0].name} & ${post.authors.length - 1} others`
+									}
+								</p>
 								{post.coverImage && (
-									<p className="text-xs text-gray-500">{formattedDate}</p>
+									<p className="text-xs text-neutral-500">{formattedDate}</p>
 								)}
 							</div>
 						</div>
@@ -100,13 +109,13 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({post, featured = fals
 								{post.tags.slice(0, 2).map((tag) => (
 									<span
 										key={tag}
-										className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded"
+										className="bg-neutral-100 text-neutral-600 text-xs px-2 py-1 rounded"
 									>
 										{tag}
 									</span>
 								))}
 								{post.tags.length > 2 && (
-									<span className="text-xs text-gray-400">+{post.tags.length - 2}</span>
+									<span className="text-xs text-neutral-400">+{post.tags.length - 2}</span>
 								)}
 							</div>
 						)}

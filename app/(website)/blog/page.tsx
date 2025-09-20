@@ -46,11 +46,11 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 
 		if (posts.length === 0 && page === 1) {
 			return (
-				<div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+				<div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
 					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 						<div className="text-center">
-							<h1 className="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
-							<p className="text-xl text-gray-600 mb-8">
+							<h1 className="text-4xl font-bold text-neutral-900 mb-4">Blog</h1>
+							<p className="text-xl text-neutral-600 mb-8">
 								Our blog posts are coming soon. Stay tuned for insights and updates!
 							</p>
 						</div>
@@ -64,7 +64,7 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 		}
 
 		return (
-			<div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+			<div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					{/* Hero Section */}
 					{page === 1 && !category && featuredPosts.length > 0 && (
@@ -81,11 +81,11 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 
 					{/* Page Header */}
 					<div className="text-center py-8">
-						<h1 className="text-4xl font-bold text-gray-900 mb-4">
+						<h1 className="text-4xl font-bold text-neutral-900 mb-4">
 							{category ? `${category} Posts` : 'All Posts'}
 						</h1>
 						{category && (
-							<p className="text-lg text-gray-600">
+							<p className="text-lg text-neutral-600">
 								Explore our {category.toLowerCase()} articles
 							</p>
 						)}
@@ -107,7 +107,7 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 										...(category && {category}),
 										page: String(page - 1)
 									})}`}
-									className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+									className="px-4 py-2 border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
 								>
 									Previous
 								</a>
@@ -125,7 +125,7 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 									return (
 										<div key={pageNum} className="flex items-center">
 											{showEllipsis && (
-												<span className="px-2 text-gray-500">...</span>
+												<span className="px-2 text-neutral-500">...</span>
 											)}
 											<a
 												href={`/blog?${new URLSearchParams({

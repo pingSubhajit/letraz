@@ -281,7 +281,7 @@ export interface BlogPost {
 	coverImage?: {
 		url: string
 	}
-	author: BlogAuthor
+	authors: BlogAuthor[]
 	category?: string
 	tags?: string[]
 	content: {
@@ -368,14 +368,21 @@ export const getBlogPosts = async (options?: {
 			coverImage: post.coverImage ? {
 				url: post.coverImage.url
 			} : undefined,
-			author: {
+			authors: Array.isArray(post.author) ? post.author.map((author: any) => ({
+				_id: author._id,
+				name: author.name || '',
+				bio: author.bio || '',
+				avatar: author.avatar ? {
+					url: author.avatar.url
+				} : undefined
+			})) : [{
 				_id: post.author._id,
 				name: post.author.name || '',
 				bio: post.author.bio || '',
 				avatar: post.author.avatar ? {
 					url: post.author.avatar.url
 				} : undefined
-			},
+			}],
 			category: post.category || undefined,
 			tags: post.tags || [],
 			content: {
@@ -457,7 +464,17 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 			coverImage: post.coverImage ? {
 				url: post.coverImage.url
 			} : undefined,
-			author: {
+			authors: Array.isArray(post.author) ? post.author.map((author: any) => ({
+				_id: author._id,
+				name: author.name || '',
+				bio: author.bio || '',
+				email: author.email || '',
+				twitterHandle: author.twitterHandle || '',
+				linkedinUrl: author.linkedinUrl || '',
+				avatar: author.avatar ? {
+					url: author.avatar.url
+				} : undefined
+			})) : [{
 				_id: post.author._id,
 				name: post.author.name || '',
 				bio: post.author.bio || '',
@@ -467,7 +484,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 				avatar: post.author.avatar ? {
 					url: post.author.avatar.url
 				} : undefined
-			},
+			}],
 			category: post.category || undefined,
 			tags: post.tags || [],
 			content: {

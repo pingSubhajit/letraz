@@ -14,7 +14,7 @@ export const BlogCategories: React.FC<BlogCategoriesProps> = ({
 	}
 
 	return (
-		<section className="py-8 border-b border-gray-200">
+		<section className="py-8 border-b border-neutral-200">
 			<div className="flex flex-wrap items-center justify-center gap-3">
 				{/* All Posts */}
 				<Link
@@ -22,7 +22,7 @@ export const BlogCategories: React.FC<BlogCategoriesProps> = ({
 					className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
 						!selectedCategory
 							? 'bg-flame-600 text-white'
-							: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+							: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
 					}`}
 				>
 					All Posts
@@ -36,7 +36,7 @@ export const BlogCategories: React.FC<BlogCategoriesProps> = ({
 						className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
 							selectedCategory === category
 								? 'bg-flame-600 text-white'
-								: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+								: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
 						}`}
 					>
 						{category}

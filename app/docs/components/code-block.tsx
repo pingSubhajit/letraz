@@ -47,13 +47,13 @@ export const CodeBlock = ({code, language = 'text', filename, caption}: CodeBloc
 	}
 
 	return (
-		<div className="group relative my-6 overflow-hidden rounded-lg border bg-gray-950 text-gray-50">
+		<div className="group relative my-6 overflow-hidden rounded-lg border bg-neutral-950 text-neutral-50">
 			{/* Header */}
 			{(filename || language) && (
-				<div className="flex items-center justify-between border-b border-gray-800 px-4 py-2">
+				<div className="flex items-center justify-between border-b border-neutral-800 px-4 py-2">
 					<div className="flex items-center gap-2">
 						{filename && (
-							<span className="text-sm font-mono text-gray-300">{filename}</span>
+							<span className="text-sm font-mono text-neutral-300">{filename}</span>
 						)}
 						{language && (
 							<Badge variant="secondary" className="text-xs">
@@ -65,7 +65,7 @@ export const CodeBlock = ({code, language = 'text', filename, caption}: CodeBloc
 						size="sm"
 						variant="ghost"
 						onClick={copyToClipboard}
-						className="h-7 px-2 text-gray-400 opacity-0 transition-opacity hover:text-gray-200 group-hover:opacity-100"
+						className="h-7 px-2 text-neutral-400 opacity-0 transition-opacity hover:text-neutral-200 group-hover:opacity-100"
 					>
 						{copied ? (
 							<Check className="h-3 w-3" />
@@ -80,7 +80,7 @@ export const CodeBlock = ({code, language = 'text', filename, caption}: CodeBloc
 			{/* Code */}
 			<div className="overflow-x-auto">
 				<pre className="p-4">
-					<code className="text-sm font-mono leading-relaxed text-gray-100">
+					<code className="text-sm font-mono leading-relaxed text-neutral-100">
 						{code}
 					</code>
 				</pre>
@@ -88,8 +88,8 @@ export const CodeBlock = ({code, language = 'text', filename, caption}: CodeBloc
 
 			{/* Caption */}
 			{caption && (
-				<div className="border-t border-gray-800 px-4 py-2">
-					<p className="text-xs text-gray-400">{caption}</p>
+				<div className="border-t border-neutral-800 px-4 py-2">
+					<p className="text-xs text-neutral-400">{caption}</p>
 				</div>
 			)}
 		</div>
