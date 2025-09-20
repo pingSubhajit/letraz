@@ -26,7 +26,7 @@ interface BlogPageProps {
 const BlogPage = async ({searchParams}: BlogPageProps) => {
 	const {category, page: pageParam} = await searchParams
 	const page = parseInt(pageParam || '1')
-	const postsPerPage = 9
+	const postsPerPage = 50
 	const offset = (page - 1) * postsPerPage
 
 	try {
@@ -38,7 +38,7 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 				category
 			}),
 			getBlogCategories(),
-			page === 1 && !category ? getFeaturedBlogPosts(3) : Promise.resolve([])
+			page === 1 && !category ? getFeaturedBlogPosts(2) : Promise.resolve([])
 		])
 
 		const {posts, total} = postsData
@@ -92,7 +92,7 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 					</div>
 
 					{/* Blog Posts Grid */}
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-16">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 mb-16">
 						{posts.map((post) => (
 							<BlogPostCard key={post._id} post={post} />
 						))}
@@ -100,7 +100,7 @@ const BlogPage = async ({searchParams}: BlogPageProps) => {
 
 					{/* Pagination */}
 					{totalPages > 1 && (
-						<div className="flex justify-center items-center space-x-2 pb-16">
+						<div className="flex justify-center items-center space-x-2 mb-16">
 							{page > 1 && (
 								<a
 									href={`/blog?${new URLSearchParams({

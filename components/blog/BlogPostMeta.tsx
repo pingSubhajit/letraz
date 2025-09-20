@@ -4,49 +4,61 @@ import * as React from 'react'
 import {BlogAuthor} from '@/lib/basehub'
 import {LinkedIn, Twitter} from '@ridemountainpig/svgl-react'
 import {Button} from '@/components/ui/button'
-import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
+import {formatDistanceToNow} from 'date-fns'
+import {HoverCard, HoverCardContent, HoverCardTrigger} from '@/components/ui/hover-card'
 
 interface BlogPostAuthorsProps {
 	authors: BlogAuthor[]
 	publishedAt: string
 	className?: string
+	isList?: boolean
 }
 
-export const BlogPostMeta: React.FC<BlogPostAuthorsProps> = ({authors, publishedAt, className}) => {
+export const BlogPostMeta: React.FC<BlogPostAuthorsProps> = ({authors, publishedAt, className, isList = false}) => {
 	const [openIndex, setOpenIndex] = React.useState<number | null>(null)
+	const formattedDate = formatDistanceToNow(new Date(publishedAt), {addSuffix: true})
 
 	return (
-		<div className={cn('flex items-center justify-center', className)}>
+		<div className={cn('flex items-center justify-center gap-2', className)}>
 			<div className="flex -space-x-2">
 				{authors.map((author, index) => (
-					<Popover
+					<HoverCard
 						key={author._id}
-						open={openIndex === index}
-						onOpenChange={(o) => setOpenIndex(o ? index : null)}
+						openDelay={50} closeDelay={50}
 					>
-						<PopoverTrigger asChild>
-							{author.avatar ? (
-								<Image
-									src={author.avatar.url}
-									alt={author.name}
-									width="128" height="128"
-									className="h-8 w-8 rounded-full ring-2 ring-white shadow cursor-pointer object-cover"
-									onMouseEnter={() => setOpenIndex(index)}
-									onMouseLeave={() => setOpenIndex(prev => (prev === index ? null : prev))}
-								/>
-							) : (
-								<div
-									className="h-8 w-8 text-xs rounded-full ring-2 ring-white shadow cursor-pointer bg-neutral-200 flex items-center justify-center text-neutral-700 font-medium"
-									onMouseEnter={() => setOpenIndex(index)}
-									onMouseLeave={() => setOpenIndex(prev => (prev === index ? null : prev))}
-								>
-									{author.name?.charAt(0).toUpperCase()}
-								</div>
-							)}
-						</PopoverTrigger>
-						<PopoverContent
+						<HoverCardTrigger asChild>
+							<div className="flex items-center gap-2 cursor-pointer">
+								{author.avatar ? (
+									<Image
+										src={author.avatar.url}
+										alt={author.name}
+										width="128" height="128"
+										className={cn(
+											'h-8 w-8 rounded-full ring-2 ring-white shadow cursor-pointer object-cover',
+											isList && 'h-6 w-6'
+										)}
+										onMouseEnter={() => setOpenIndex(index)}
+										onMouseLeave={() => setOpenIndex(prev => (prev === index ? null : prev))}
+									/>
+								) : (
+									<div
+										className={cn(
+											'h-8 w-8 text-xs rounded-full ring-2 ring-white shadow cursor-pointer bg-neutral-200 flex items-center justify-center text-neutral-700 font-medium',
+											isList && 'h-6 w-6'
+										)}
+										onMouseEnter={() => setOpenIndex(index)}
+										onMouseLeave={() => setOpenIndex(prev => (prev === index ? null : prev))}
+									>
+										{author.name?.charAt(0).toUpperCase()}
+									</div>
+								)}
+
+								{authors.length === 1 && <p className="text-sm font-medium">{author.name}</p>}
+							</div>
+						</HoverCardTrigger>
+						<HoverCardContent
 							align="start"
 							side="top"
 							className="w-52"
@@ -99,10 +111,12 @@ export const BlogPostMeta: React.FC<BlogPostAuthorsProps> = ({authors, published
 									)}
 								</div>
 							</div>
-						</PopoverContent>
-					</Popover>
+						</HoverCardContent>
+					</HoverCard>
 				))}
 			</div>
+
+			{isList && <p className="text-sm flex items-center gap-2 opacity-80"><span>·</span>{formattedDate}</p>}
 		</div>
 	)
 }

@@ -395,11 +395,15 @@ export const getBlogPosts = async (options?: {
 		// Apply category filtering and pagination in JS when needed
 		if (applyCategoryFilterInJs && options?.category) {
 			posts = posts.filter(p => p.category === options.category)
+			// Ensure posts remain in reverse chronological order after filtering
+			posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 			const total = posts.length
 			const paginated = posts.slice(offset, offset + limit)
 			return {posts: paginated, total}
 		}
 
+		// Ensure posts are in reverse chronological order
+		posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 		return {posts, total: posts.length}
 	} catch (error) {
 		return {posts: [], total: 0}

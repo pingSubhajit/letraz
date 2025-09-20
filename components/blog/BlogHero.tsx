@@ -11,7 +11,7 @@ export const BlogHero: React.FC<BlogHeroProps> = ({featuredPosts}) => {
 	}
 
 	const mainPost = featuredPosts[0]
-	const sidePosts = featuredPosts.slice(1, 3)
+	const secondPost = featuredPosts[1]
 
 	return (
 		<section className="py-12">
@@ -25,21 +25,11 @@ export const BlogHero: React.FC<BlogHeroProps> = ({featuredPosts}) => {
 				</p>
 			</div>
 
-			{/* Featured Posts Grid */}
-			<div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-				{/* Main Featured Post */}
-				<div className="lg:col-span-2">
-					<BlogPostCard post={mainPost} featured={true} />
-				</div>
-
-				{/* Side Posts */}
-				{sidePosts.length > 0 && (
-					<div className="space-y-6">
-						{sidePosts.map((post) => (
-							<BlogPostCard key={post._id} post={post} />
-						))}
-					</div>
-				)}
+			{/* Featured Posts Grid: Two equal big cards */}
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+				{featuredPosts.map((post) => (
+					<BlogPostCard key={post._id} post={post} featured={true} />
+				))}
 			</div>
 
 			{/* Divider */}
