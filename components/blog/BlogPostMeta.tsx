@@ -80,6 +80,10 @@ export const BlogPostMeta: React.FC<BlogPostAuthorsProps> = ({authors, published
 
 								<p className="font-semibold text-neutral-900 text-center mt-2 mb-1">{author.name}</p>
 
+								{author.title && (
+									<p className="text-xs text-neutral-500 text-center mb-2">{author.title}</p>
+								)}
+
 								{author.bio && (
 									<p className="text-xs opacity-80 text-neutral-600 line-clamp-3 text-center">{author.bio}</p>
 								)}

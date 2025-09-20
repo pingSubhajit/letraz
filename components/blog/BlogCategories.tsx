@@ -1,21 +1,24 @@
 import Link from 'next/link'
+import {cn} from '@/lib/utils'
 
 interface BlogCategoriesProps {
 	categories: string[]
 	selectedCategory?: string
+	className?: string
 }
 
 export const BlogCategories: React.FC<BlogCategoriesProps> = ({
 	categories,
-	selectedCategory
+	selectedCategory,
+	className
 }) => {
 	if (categories.length === 0) {
 		return null
 	}
 
 	return (
-		<section className="py-8 border-b border-neutral-200">
-			<div className="flex flex-wrap items-center justify-center gap-3">
+		<section className={cn(className)}>
+			<div className="flex flex-wrap items-center gap-3">
 				{/* All Posts */}
 				<Link
 					href="/blog"

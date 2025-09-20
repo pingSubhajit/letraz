@@ -16,7 +16,7 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({post, featured = fals
 			<article className="group cursor-pointer overflow-hidden h-full">
 				{/* Cover Image */}
 				{post.coverImage && (
-					<div className={cn(`relative w-full ${imageHeight} overflow-hidden`, featured ? 'rounded-2xl border-4' : 'rounded-xl border-2')}>
+					<div className={cn(`relative w-full ${imageHeight} overflow-hidden`, featured ? 'rounded-2xl border-4 mb-6' : 'rounded-xl border-2 mb-4')}>
 						<img
 							src={post.coverImage.url}
 							alt={post.title}
@@ -35,7 +35,7 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({post, featured = fals
 					{/* Title */}
 					<h3 className={cn(
 						'font-bold text-neutral-900 group-hover:text-flame-600 transition-colors mb-3 line-clamp-2',
-						featured ? 'text-2xl mt-6' : 'text-lg mt-4'
+						featured ? 'text-2xl' : 'text-lg'
 					)}>
 						{post.title}
 					</h3>

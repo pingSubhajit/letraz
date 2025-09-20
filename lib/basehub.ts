@@ -263,6 +263,7 @@ export const getPageNavigation = async (currentSlug: string): Promise<{
 export interface BlogAuthor {
 	_id: string
 	name: string
+	title?: string
 	bio?: string
 	email?: string
 	twitterHandle?: string
@@ -342,6 +343,7 @@ export const getBlogPosts = async (options?: {
 					author: {
 						_id: true,
 						name: true,
+						title: true,
 						bio: true,
 						avatar: {
 							url: true
@@ -371,6 +373,7 @@ export const getBlogPosts = async (options?: {
 			authors: Array.isArray(post.author) ? post.author.map((author: any) => ({
 				_id: author._id,
 				name: author.name || '',
+				title: author.title || '',
 				bio: author.bio || '',
 				avatar: author.avatar ? {
 					url: author.avatar.url
@@ -378,6 +381,7 @@ export const getBlogPosts = async (options?: {
 			})) : [{
 				_id: post.author._id,
 				name: post.author.name || '',
+				title: post.author.title || '',
 				bio: post.author.bio || '',
 				avatar: post.author.avatar ? {
 					url: post.author.avatar.url
@@ -436,6 +440,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 					author: {
 						_id: true,
 						name: true,
+						title: true,
 						bio: true,
 						email: true,
 						twitterHandle: true,
@@ -471,6 +476,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 			authors: Array.isArray(post.author) ? post.author.map((author: any) => ({
 				_id: author._id,
 				name: author.name || '',
+				title: author.title || '',
 				bio: author.bio || '',
 				email: author.email || '',
 				twitterHandle: author.twitterHandle || '',
@@ -481,6 +487,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 			})) : [{
 				_id: post.author._id,
 				name: post.author.name || '',
+				title: post.author.title || '',
 				bio: post.author.bio || '',
 				email: post.author.email || '',
 				twitterHandle: post.author.twitterHandle || '',
