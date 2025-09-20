@@ -193,7 +193,10 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
   }
 
   // Determine which results to display
-  const displayResults = filtered.length > 0 ? filtered : cachedResults
+  const isBusy = status === 'loading' || status === 'stalled'
+  const displayResults = isBusy
+    ? (filtered.length > 0 ? filtered : cachedResults)
+    : filtered
 
   return (
     <>
@@ -204,11 +207,13 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
           searchQuery={searchQuery}
         />
       ))}
-      {displayResults.length === 0 && hasInitialized && (
+      {status === 'idle' && hasInitialized && filtered.length === 0 && (
         <div className="col-span-full text-center py-12">
           <p className="text-neutral-500 text-lg">No resumes found</p>
           <p className="text-neutral-400 text-sm mt-2">
-            {searchQuery ? 'Try searching with different keywords' : 'Start by creating your first resume'}
+            {searchQuery.trim() 
+              ? 'Try searching with different keywords' 
+              : 'Start by creating your first resume'}
           </p>
         </div>
       )}
