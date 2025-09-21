@@ -139,7 +139,7 @@ const BlogPostPage = async ({params}: BlogPostPageProps) => {
 					</div>
 				</article>
 
-				<div className="my-24 max-w-4xl mx-auto px-4 grid grid-cols-3">
+				<div className="my-24 max-w-4xl mx-auto px-4 grid grid-cols-3 gap-2">
 					{relatedPosts.length > 0 && relatedPosts.map((relatedPost) => (
 						<BlogPostCard key={relatedPost._id} post={relatedPost} />
 					))}
