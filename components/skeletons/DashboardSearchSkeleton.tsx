@@ -6,7 +6,7 @@ const DashboardSearchSkeleton = () => {
 			{/* Search bar skeleton */}
 			<div className="mb-10 px-8">
 				<div className="relative mb-2">
-					<div className="h-10 bg-neutral-100 rounded animate-pulse w-full max-w-md" />
+					<div className="h-10 bg-transparent w-full max-w-md" />
 					<div className="absolute left-0 h-[2px] bottom-0 bg-neutral-200 w-full" />
 				</div>
 			</div>
