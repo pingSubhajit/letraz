@@ -114,6 +114,10 @@ export const discordHandle = 'https://discord.gg/jTkyKCYz2M'
 export const githubHandle = 'https://github.com/pingSubhajit/letraz'
 export const twitterHandle = 'https://x.com/LetrazApp'
 
+// Integrations
+export const rizeUrl = 'https://rize.so'
+export const rizeAdminApiUrl = `${rizeUrl}/api/admin`
+
 // AI
 export const model = anthropic('claude-3-haiku-20240307')
 

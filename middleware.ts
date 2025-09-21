@@ -6,10 +6,38 @@ const isProtectedRoute = createRouteMatcher(['/app(.*)'])
 const isOnboardingRoute = createRouteMatcher(['/app/onboarding(.*)'])
 const isApiRoute = createRouteMatcher(['/api(.*)'])
 const isAuthRoute = createRouteMatcher(['/signin(.*)', '/signup(.*)'])
+const isPublicApiRoute = createRouteMatcher([
+    '/api/rize/status'
+])
+
+const setRizeCtxCookie = (
+    res: NextResponse,
+    url: URL,
+    integrate: string | null,
+    authMethod: string | null,
+    rizeUserId: string | null
+) => {
+    try {
+        const value = JSON.stringify({integrate, authMethod, userId: rizeUserId})
+        const secure = url.protocol === 'https:'
+        res.cookies.set('rize_ctx', value, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure,
+            path: '/',
+            maxAge: 60 * 2
+        })
+    } catch {}
+}
 
 export default clerkMiddleware(async (auth, req) => {
 	// Auth header protection for all API routes using SELF_SECRET_KEY
-	if (isApiRoute(req)) {
+    if (isApiRoute(req)) {
+        // Allowlist public, user-session-based API routes
+        if (isPublicApiRoute(req)) {
+            return NextResponse.next()
+        }
+
 		const providedToken = req.headers.get('x-authentication')
 		const secretKey = process.env.SELF_SECRET_KEY
 
@@ -21,6 +49,14 @@ export default clerkMiddleware(async (auth, req) => {
 		return NextResponse.next()
 	}
 
+	// Capture Rize context on /signup and set cookie early
+	const url = new URL(req.url)
+	const isSignup = url.pathname.startsWith('/signup')
+	const integrate = url.searchParams.get('integrate')
+	const authMethod = url.searchParams.get('authMethod')
+	const rizeUserId = url.searchParams.get('userId')
+	const shouldSetRizeCtx = isSignup && integrate === 'rize' && !!rizeUserId
+
 	// Continue with Clerk protection for application routes
 	const {userId} = await auth()
 
@@ -31,7 +67,9 @@ export default clerkMiddleware(async (auth, req) => {
 
 	// If user is on auth pages (signin/signup) and already authenticated, redirect to app
 	if (isAuthRoute(req) && userId) {
-		return NextResponse.redirect(new URL('/app', req.url))
+		const redirect = NextResponse.redirect(new URL('/app', req.url))
+		if (shouldSetRizeCtx) setRizeCtxCookie(redirect, url, integrate, authMethod, rizeUserId)
+		return redirect
 	}
 
 	if (isProtectedRoute(req)) {
@@ -59,6 +97,13 @@ export default clerkMiddleware(async (auth, req) => {
 				// If metadata fetch fails, allow normal flow
 			}
 		}
+	}
+
+	// If unauthenticated and on /signup, set rize_ctx and continue
+	if (shouldSetRizeCtx) {
+		const res = NextResponse.next()
+		setRizeCtxCookie(res, url, integrate, authMethod, rizeUserId)
+		return res
 	}
 })
 
