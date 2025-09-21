@@ -6,6 +6,7 @@ import {BlogPostMeta} from '@/components/blog/BlogPostMeta'
 import * as React from 'react'
 import {formatDistanceToNow} from 'date-fns'
 import {BlogPostCard} from '@/components/blog/BlogPostCard'
+import {sanitizeHtml} from '@/lib/utils'
 
 export const dynamic = 'force-static'
 
@@ -135,7 +136,7 @@ const BlogPostPage = async ({params}: BlogPostPageProps) => {
 
 					{/* Content */}
 					<div className="max-w-2xl mx-auto">
-						<BlogPostContent content={post.content.html} />
+						<BlogPostContent content={sanitizeHtml(post.content.html)} />
 					</div>
 				</article>
 
