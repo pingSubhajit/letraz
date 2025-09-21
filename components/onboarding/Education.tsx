@@ -103,7 +103,7 @@ const Education = (): JSX.Element => {
 								>
 									<PopConfirm
 										triggerElement={
-											<button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 z-10">
+											<button className="absolute top-2 right-2 text-neutral-500 hover:text-neutral-700 z-10">
 												<X size={16} />
 											</button>
 										}
@@ -127,9 +127,9 @@ const Education = (): JSX.Element => {
 									{/* Expandable description section */}
 									{education.description && (
 										<div className="mt-3 max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:max-h-48 group-hover:opacity-100">
-											<div className="border-t border-gray-200">
+											<div className="border-t border-neutral-200">
 												<div
-													className="prose prose-sm max-w-none text-gray-700 max-h-44 overflow-hidden"
+													className="prose prose-sm max-w-none text-neutral-700 max-h-44 overflow-hidden"
 													dangerouslySetInnerHTML={{__html: sanitizeHtml(education.description)}}
 												/>
 											</div>

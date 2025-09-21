@@ -1,6 +1,7 @@
 import {type ClassValue, clsx} from 'clsx'
 import {twMerge} from 'tailwind-merge'
 import DOMPurify from 'dompurify'
+import * as sanitizeAndCleanupHtml from 'sanitize-html'
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
@@ -31,7 +32,32 @@ export const sanitizeHtml = (html: string): string => {
 			ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li', 'a'],
 			ALLOWED_ATTR: ['href', 'target', 'rel']
 		})
+	} else {
+		return sanitizeAndCleanupHtml.default(html, {
+			allowedTags: sanitizeAndCleanupHtml.default.defaults.allowedTags.concat([
+				'img',
+				'video',
+				'h1',
+				'h2',
+				'h3',
+				'h4',
+				'h5',
+				'h6',
+				'pre',
+				'code',
+				'span'
+			]),
+			allowedAttributes: {
+				'*': ['id', 'class', 'style'],
+				a: ['href', 'name', 'target', 'rel'],
+				img: ['src', 'alt', 'title', 'width', 'height', 'loading', 'decoding'],
+				video: ['src', 'controls', 'autoplay', 'loop', 'muted', 'playsinline', 'poster', 'width', 'height'],
+				code: ['class']
+			},
+			allowedSchemesByTag: {
+				img: ['http', 'https', 'data'],
+				video: ['http', 'https']
+			}
+		})
 	}
-	// Return plain text on server-side as fallback
-	return html.replace(/<[^>]*>/g, '')
 }

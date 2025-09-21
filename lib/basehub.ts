@@ -10,18 +10,6 @@ export interface DocPage {
   children?: DocPage[]
 }
 
-export interface NavItem {
-  _id: string
-  label: string
-  href?: string
-  order: number
-  icon?: string
-  pageRef?: {
-    _id: string
-    slug: string
-  }
-}
-
 /**
  * Get all documentation pages from BaseHub with hierarchy
  */
@@ -267,5 +255,281 @@ export const getPageNavigation = async (currentSlug: string): Promise<{
 		}
 	} catch (error) {
 		return {previous: null, next: null}
+	}
+}
+
+// ============ BLOG TYPES ============
+
+export interface BlogAuthor {
+	_id: string
+	name: string
+	title?: string
+	bio?: string
+	email?: string
+	twitterHandle?: string
+	linkedinUrl?: string
+	avatar?: {
+		url: string
+	}
+}
+
+export interface BlogPost {
+	_id: string
+	title: string
+	slug: string
+	excerpt: string
+	publishedAt: string
+	coverImage?: {
+		url: string
+	}
+	authors: BlogAuthor[]
+	category?: string
+	tags?: string[]
+	content: {
+		html: string
+	}
+	published: boolean
+	featured: boolean
+}
+
+// ============ BLOG FUNCTIONS ============
+
+export const getBlogPosts = async (options?: {
+	limit?: number
+	offset?: number
+	featured?: boolean
+	category?: string
+}): Promise<{ posts: BlogPost[], total: number }> => {
+	try {
+		const limit = options?.limit || 10
+		const offset = options?.offset || 0
+
+		const filterConditions: any = {
+			published: true
+		}
+
+		if (options?.featured) {
+			filterConditions.featured = true
+		}
+
+		/*
+		 * NOTE: BaseHub SelectFilter operators vary by schema version; to avoid
+		 * build/runtime incompatibilities, perform category filtering in JS below.
+		 */
+		const applyCategoryFilterInJs = Boolean(options?.category)
+
+		const queryArgs: any = {
+			filter: filterConditions,
+			orderBy: 'publishedAt__DESC',
+			first: applyCategoryFilterInJs ? 1000 : limit,
+			skip: applyCategoryFilterInJs ? 0 : offset
+		}
+
+		const data = await basehub({
+			token: process.env.BASEHUB_TOKEN,
+			draft: false // Explicitly use published content during build
+		}).query({
+			blogPosts: {
+				__args: queryArgs,
+				items: {
+					_id: true,
+					title: true,
+					slug: true,
+					excerpt: true,
+					publishedAt: true,
+					coverImage: {
+						url: true
+					},
+					author: {
+						_id: true,
+						name: true,
+						title: true,
+						bio: true,
+						avatar: {
+							url: true
+						}
+					},
+					category: true,
+					tags: true,
+					content: {
+						html: true
+					},
+					published: true,
+					featured: true
+				}
+			}
+		})
+
+		const items = (data as any).blogPosts?.items || []
+		let posts: BlogPost[] = items.map((post: any) => ({
+			_id: post._id,
+			title: post.title || '',
+			slug: post.slug || '',
+			excerpt: post.excerpt || '',
+			publishedAt: post.publishedAt || '',
+			coverImage: post.coverImage ? {
+				url: post.coverImage.url
+			} : undefined,
+			authors: Array.isArray(post.author) ? post.author.map((author: any) => ({
+				_id: author._id,
+				name: author.name || '',
+				title: author.title || '',
+				bio: author.bio || '',
+				avatar: author.avatar ? {
+					url: author.avatar.url
+				} : undefined
+			})) : [{
+				_id: post.author._id,
+				name: post.author.name || '',
+				title: post.author.title || '',
+				bio: post.author.bio || '',
+				avatar: post.author.avatar ? {
+					url: post.author.avatar.url
+				} : undefined
+			}],
+			category: post.category || undefined,
+			tags: post.tags || [],
+			content: {
+				html: post.content?.html || ''
+			},
+			published: post.published || false,
+			featured: post.featured || false
+		}))
+
+		// Apply category filtering and pagination in JS when needed
+		if (applyCategoryFilterInJs && options?.category) {
+			posts = posts.filter(p => p.category === options.category)
+			// Ensure posts remain in reverse chronological order after filtering
+			posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+			const total = posts.length
+			const paginated = posts.slice(offset, offset + limit)
+			return {posts: paginated, total}
+		}
+
+		// Ensure posts are in reverse chronological order
+		posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+		return {posts, total: posts.length}
+	} catch (error) {
+		return {posts: [], total: 0}
+	}
+}
+
+export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
+	try {
+		const data = await basehub({
+			token: process.env.BASEHUB_TOKEN,
+			draft: false // Explicitly use published content
+		}).query({
+			blogPosts: {
+				__args: {
+					filter: {
+						slug: {eq: slug},
+						published: true
+					},
+					first: 1
+				},
+				items: {
+					_id: true,
+					title: true,
+					slug: true,
+					excerpt: true,
+					publishedAt: true,
+					coverImage: {
+						url: true
+					},
+					author: {
+						_id: true,
+						name: true,
+						title: true,
+						bio: true,
+						email: true,
+						twitterHandle: true,
+						linkedinUrl: true,
+						avatar: {
+							url: true
+						}
+					},
+					category: true,
+					tags: true,
+					content: {
+						html: true
+					},
+					published: true,
+					featured: true
+				}
+			}
+		})
+
+		const post = (data as any).blogPosts?.items?.[0]
+
+		if (!post) return null
+
+		return {
+			_id: post._id,
+			title: post.title || '',
+			slug: post.slug || '',
+			excerpt: post.excerpt || '',
+			publishedAt: post.publishedAt || '',
+			coverImage: post.coverImage ? {
+				url: post.coverImage.url
+			} : undefined,
+			authors: Array.isArray(post.author) ? post.author.map((author: any) => ({
+				_id: author._id,
+				name: author.name || '',
+				title: author.title || '',
+				bio: author.bio || '',
+				email: author.email || '',
+				twitterHandle: author.twitterHandle || '',
+				linkedinUrl: author.linkedinUrl || '',
+				avatar: author.avatar ? {
+					url: author.avatar.url
+				} : undefined
+			})) : [{
+				_id: post.author._id,
+				name: post.author.name || '',
+				title: post.author.title || '',
+				bio: post.author.bio || '',
+				email: post.author.email || '',
+				twitterHandle: post.author.twitterHandle || '',
+				linkedinUrl: post.author.linkedinUrl || '',
+				avatar: post.author.avatar ? {
+					url: post.author.avatar.url
+				} : undefined
+			}],
+			category: post.category || undefined,
+			tags: post.tags || [],
+			content: {
+				html: post.content?.html || ''
+			},
+			published: post.published || false,
+			featured: post.featured || false
+		}
+	} catch (error) {
+		return null
+	}
+}
+
+export const getFeaturedBlogPosts = async (limit: number = 3): Promise<BlogPost[]> => {
+	const {posts} = await getBlogPosts({featured: true, limit})
+	return posts
+}
+
+export const getRecentBlogPosts = async (limit: number = 5): Promise<BlogPost[]> => {
+	const {posts} = await getBlogPosts({limit})
+	return posts
+}
+
+export const getBlogCategories = async (): Promise<string[]> => {
+	try {
+		const {posts} = await getBlogPosts({limit: 1000})
+		const categories = new Set<string>()
+
+		posts.forEach(post => {
+			if (post.category) categories.add(post.category)
+		})
+
+		return Array.from(categories).sort()
+	} catch (error) {
+		return []
 	}
 }

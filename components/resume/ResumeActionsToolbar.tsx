@@ -193,7 +193,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 			<div
 				className={cn(
 					'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[#e5e5e5] rounded-full shadow-lg px-1 py-1',
-					'border border-gray-200',
+					'border border-neutral-200',
 					'max-w-[calc(100vw-2rem)] md:max-w-none',
 					className
 				)}
