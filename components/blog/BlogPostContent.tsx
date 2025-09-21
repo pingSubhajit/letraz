@@ -1,3 +1,5 @@
+import {sanitizeHtml} from '@/lib/utils'
+
 interface BlogPostContentProps {
 	content: string
 }
@@ -21,7 +23,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({content}) => {
 				prose-img:rounded-lg prose-img:shadow-lg prose-img:mb-8
 				prose-hr:border-neutral-200 prose-hr:my-12 [&_li>p]:my-0 [&>img]:rounded-2xl [&>video]:rounded-2xl
 			"
-			dangerouslySetInnerHTML={{__html: content}}
+			dangerouslySetInnerHTML={{__html: sanitizeHtml(content)}}
 		/>
 	)
 }
