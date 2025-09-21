@@ -3,6 +3,9 @@ import {notFound} from 'next/navigation'
 import {getBlogPost, getBlogPosts, getRecentBlogPosts} from '@/lib/basehub'
 import {BlogPostContent} from '@/components/blog/BlogPostContent'
 import {BlogPostMeta} from '@/components/blog/BlogPostMeta'
+import * as React from 'react'
+import {formatDistanceToNow} from 'date-fns'
+import {BlogPostCard} from '@/components/blog/BlogPostCard'
 
 export const dynamic = 'force-static'
 
@@ -82,13 +85,17 @@ const BlogPostPage = async ({params}: BlogPostPageProps) => {
 				{/* Article Header */}
 				<article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
 					{/* Meta information */}
-					<div className="w-full mb-6">
+					<div className="w-full mb-6 flex items-center gap-2 justify-center">
 						{/* Category */}
 						{post.category && (
 							<p className="text-center text-sm font-medium">
 								{post.category}
 							</p>
 						)}
+
+						<span>·</span>
+
+						<p className="text-sm font-medium">{formatDistanceToNow(new Date(post.publishedAt), {addSuffix: true})}</p>
 					</div>
 
 					{/* Title */}
@@ -131,6 +138,12 @@ const BlogPostPage = async ({params}: BlogPostPageProps) => {
 						<BlogPostContent content={post.content.html} />
 					</div>
 				</article>
+
+				<div className="my-24 max-w-4xl mx-auto px-4 grid grid-cols-3">
+					{relatedPosts.length > 0 && relatedPosts.map((relatedPost) => (
+						<BlogPostCard key={relatedPost._id} post={relatedPost} />
+					))}
+				</div>
 			</div>
 		)
 	} catch (error) {
