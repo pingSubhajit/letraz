@@ -1,11 +1,11 @@
 'use client'
 
-import {useState, useEffect, useRef, useCallback} from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 import {FormControl, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useFormContext} from 'react-hook-form'
 import {cn} from '@/lib/utils'
 import {Badge} from '@/components/ui/badge'
-import {motion, AnimatePresence} from 'motion/react'
+import {AnimatePresence, motion} from 'motion/react'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 
 interface ProficiencyLevel {
@@ -48,9 +48,7 @@ const ProficiencySlider = ({
 		if (!audioContextRef.current && typeof window !== 'undefined') {
 			try {
 				audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
-			} catch (error) {
-				// console.warn('Audio context not supported:', error)
-			}
+			} catch (error) {}
 		}
 	}, [])
 
@@ -98,9 +96,7 @@ const ProficiencySlider = ({
 
 			oscillator.start(currentTime)
 			oscillator.stop(currentTime + 0.08)
-		} catch (error) {
-			// console.warn('Error playing sound:', error)
-		}
+		} catch (error) {}
 	}, [disabled])
 
 	// Generate elegant checkpoint magnet sound
@@ -179,9 +175,7 @@ const ProficiencySlider = ({
 			mainOscillator.stop(currentTime + 0.15)
 			subOscillator.stop(currentTime + 0.12)
 			clickOscillator.stop(currentTime + 0.03)
-		} catch (error) {
-			// console.warn('Error playing sound:', error)
-		}
+		} catch (error) {}
 	}, [disabled])
 
 	// Find closest level checkpoint

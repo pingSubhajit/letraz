@@ -42,19 +42,16 @@ interface Props {
 type ViewState = 'list' | 'form';
 
 // Helper to consistently convert user data to form values
-function toFormValuesFromUser(user: any) {
-	return {
-		...user,
-		country: typeof user?.country === 'string' ? user.country : user?.country?.code ?? null,
-	}
-}
+const toFormValuesFromUser = (user: any) => ({
+	...user,
+	country: typeof user?.country === 'string' ? user.country : user?.country?.code ?? null
+})
 
 // Helper to maintain consistent country object shape in caches
-const shapeCountry = (old: any, countryCode: string | null | undefined) =>
-	countryCode == null ? null : {
+const shapeCountry = (old: any, countryCode: string | null | undefined) => countryCode == null ? null : {
 		code: countryCode,
 		// Reuse previous name or fallback to code
-		name: (typeof old?.country === 'object' && old?.country?.name) || countryCode,
+		name: (typeof old?.country === 'object' && old?.country?.name) || countryCode
 	}
 
 const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
@@ -102,7 +99,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 				queryClient.setQueryData(userInfoQueryOptions.queryKey, (oldData: any) => ({
 					...oldData,
 					...newData,
-					country: shapeCountry(oldData, newData.country),
+					country: shapeCountry(oldData, newData.country)
 				}))
 
 				// Update resume cache with proper country object shape
@@ -111,7 +108,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 					user: {
 						...oldData?.user,
 						...newData,
-						country: shapeCountry(oldData?.user, newData.country),
+						country: shapeCountry(oldData?.user, newData.country)
 					}
 				}))
 

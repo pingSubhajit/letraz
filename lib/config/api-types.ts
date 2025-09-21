@@ -9,4 +9,5 @@ export interface ApiError {
 export interface ApiResponse<T> {
 	data?: T
 	error?: ApiError
+	detail?: string
 }

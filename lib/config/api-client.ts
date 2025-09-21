@@ -92,8 +92,7 @@ const fetchApi = async <T>(
 	})
 
 	if (!response.ok) {
-		const errText = await response.clone().text().catch(() => '')
-		const {error} = ((await response.json()) || response.statusText) as { error: ApiError }
+		const {error, detail} = ((await response.json()) || response.statusText) as { error?: ApiError, detail?: string}
 		if (typeof window === 'undefined') {
 		} else {
 			/*
@@ -102,15 +101,14 @@ const fetchApi = async <T>(
 			 */
 		}
 
-		throw new Error(error.message)
+		throw new Error(error?.message || detail)
 	}
 
 	if (response.status === 204) {
 		return {} as T
 	}
 
-	const json = await response.json()
-	return json
+	return await response.json()
 }
 
 export const api = {

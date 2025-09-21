@@ -72,7 +72,7 @@ export const BrightDataLinkedInProfileSchema = z.object({
 					description_html: z.string().nullable().optional(),
 					start_date: z.string().nullable().optional(),
 					end_date: z.string().nullable().optional(),
-					url: z.string().url().nullable().optional(),
+					url: z.string().url().nullable().optional()
 				})
 				.catchall(z.any())
 		)
