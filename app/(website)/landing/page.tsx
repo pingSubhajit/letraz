@@ -5,6 +5,8 @@ import stacksLogo from '@/public/stacks-logo.svg'
 import infosysLogo from '@/public/infosys-logo.svg'
 import rizeLogo from '@/public/rize-logo-dark.svg'
 import HeroHeader from './page.heroHeader'
+import LandingPageFeatures from '@/app/(website)/landing/page.features'
+import LandingPageProcess from '@/app/(website)/landing/page.process'
 
 const HeroVideoSequence = dynamic(() => import('./page.canvas'))
 
@@ -15,7 +17,7 @@ const LandingPage = async (
 	const referrer = searchParams.ref as string | undefined
 
 	return (
-		<main className="bg-white [&>*]:font-jakarta relative overflow-x-clip">
+		<main className=" pb-32 [&>*]:font-jakarta relative overflow-x-clip">
 			{/* Hero Section */}
 			<div className="min-h-[530vh] relative">
 				{/* Background image */}
@@ -41,6 +43,14 @@ const LandingPage = async (
 					<Image src={infosysLogo} alt="Infosys logo" className="w-28" />
 					<Image src={rizeLogo} alt="Infosys logo" className="w-28" />
 				</div>
+			</div>
+
+			<div className="mt-32">
+				<LandingPageProcess />
+			</div>
+
+			<div className="mt-32 max-w-7xl mx-auto">
+				<LandingPageFeatures />
 			</div>
 		</main>
 	)
