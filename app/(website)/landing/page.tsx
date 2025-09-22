@@ -4,7 +4,6 @@ import Image from 'next/image'
 import stacksLogo from '@/public/stacks-logo.svg'
 import infosysLogo from '@/public/infosys-logo.svg'
 import rizeLogo from '@/public/rize-logo-dark.svg'
-import PageFeatures from './page.features'
 import HeroHeader from './page.heroHeader'
 
 const HeroVideoSequence = dynamic(() => import('./page.canvas'))
@@ -43,8 +42,6 @@ const LandingPage = async (
 					<Image src={rizeLogo} alt="Infosys logo" className="w-28" />
 				</div>
 			</div>
-
-			<PageFeatures className="mt-32" />
 		</main>
 	)
 }
