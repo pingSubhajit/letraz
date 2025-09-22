@@ -3,7 +3,7 @@ import landingBg from '@/public/landing-bg.jpg'
 import Image from 'next/image'
 import stacksLogo from '@/public/stacks-logo.svg'
 import infosysLogo from '@/public/infosys-logo.svg'
-import rizeLogo from '@/public/rize-logo.svg'
+import rizeLogo from '@/public/rize-logo-dark.svg'
 import PageFeatures from './page.features'
 import HeroHeader from './page.heroHeader'
 
