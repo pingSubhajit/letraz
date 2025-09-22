@@ -23,6 +23,13 @@ const nextConfig: NextConfig = {
 				port: '',
 				pathname: '*/**',
 				search: ''
+			},
+			{
+				protocol: 'https',
+				hostname: 'i.pinimg.com',
+				port: '',
+				pathname: '*/**',
+				search: ''
 			}
 		]
 	}
