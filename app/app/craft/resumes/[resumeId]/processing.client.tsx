@@ -6,7 +6,7 @@ import ResumeEditor from '@/components/resume/ResumeEditor'
 import dynamic from 'next/dynamic'
 import ResumeAiLoading from '@/components/utilities/ResumeAiLoading'
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
-import {useRef} from 'react'
+import {useEffect, useRef} from 'react'
 import {useAnalytics} from '@/lib/analytics'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
@@ -16,10 +16,24 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {track} = useAnalytics()
 	const didTrackRef = useRef(false)
 
-	// Compute status flags
-	const status = resume?.status
+	// Normalize status for consistent checks
+	const status = (resume?.status || '').toLowerCase()
 	// Show the processing overlay ONLY when backend reports processing.
-	const processing = (status || '').toLowerCase() === 'processing'
+	const processing = status === 'processing'
+
+	// Track transitions once
+	useEffect(() => {
+		if (didTrackRef.current) return
+		if (status === 'failed') {
+			track('tailor_resume_failed', {})
+			didTrackRef.current = true
+			return
+		}
+		if (status === 'success') {
+			track('tailor_resume_ready', {resume_id: resume!.id, thumbnail: Boolean(resume!.thumbnail)})
+			didTrackRef.current = true
+		}
+	}, [status, track, resume])
 
 
 	// Initial load or transient errors: show neutral placeholders without the processing overlay
@@ -51,11 +65,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 		)
 	}
 
-	if (resume?.status === 'failed') {
-		if (!didTrackRef.current) {
-			track('tailor_resume_failed', {})
-			didTrackRef.current = true
-		}
+	if (status === 'failed') {
 		return (
 			<div className="min-h-dvh flex items-center justify-center">
 				<div className="text-center max-w-md">
@@ -69,10 +79,6 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 
 	if (!resume) return null
 
-	if (!didTrackRef.current && resume?.status === 'Success') {
-		track('tailor_resume_ready', {resume_id: resume.id, thumbnail: Boolean(resume.thumbnail)})
-		didTrackRef.current = true
-	}
 
 	return (
 		<ResumeHighlightProvider>

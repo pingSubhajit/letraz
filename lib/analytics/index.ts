@@ -3,6 +3,12 @@
 import {usePostHog} from 'posthog-js/react'
 import type {AnalyticsEventName, AnalyticsEventProps} from '@/lib/analytics/events'
 
+export type TrackOptions = {
+	identify?: string
+	set?: Record<string, unknown>
+	setOnce?: Record<string, unknown>
+}
+
 export const bucket = (n: number, edges: number[] = [0, 50, 100, 250, 500, 1000]) => {
 	for (let i = 0; i < edges.length - 1; i++) {
 		if (n >= edges[i] && n < edges[i + 1]) return `${edges[i]}-${edges[i + 1] - 1}`
@@ -35,19 +41,39 @@ export const registerAttributionOnce = () => {
 
 export const useAnalytics = () => {
 	const ph = usePostHog()
-	const track = <T extends AnalyticsEventName>(name: T, props?: AnalyticsEventProps<T>) => {
+	const track = <T extends AnalyticsEventName>(name: T, props?: AnalyticsEventProps<T>, options?: TrackOptions) => {
 		if (!ph) return
 		try {
-			ph.capture(name, props as any)
+			if (options?.identify) {
+				// Attach person properties when identifying if provided
+				const identifyProps = options.set ? (options.set as Record<string, any>) : undefined
+				ph.identify(options.identify, identifyProps)
+			}
+			const eventProps: Record<string, any> = {
+				...(props as any)
+			}
+			if (options?.set) eventProps.$set = options.set
+			if (options?.setOnce) eventProps.$set_once = options.setOnce
+			ph.capture(name, eventProps)
 		} catch {}
 	}
 	return {track}
 }
 
-export const capture = <T extends AnalyticsEventName>(name: T, props?: AnalyticsEventProps<T>) => {
+export const capture = <T extends AnalyticsEventName>(name: T, props?: AnalyticsEventProps<T>, options?: TrackOptions) => {
 	try {
 		// @ts-ignore global posthog exists when initialized
-		window.posthog?.capture(name, props as any)
+		if (options?.identify) {
+			// @ts-ignore global posthog exists when initialized
+			window.posthog?.identify(options.identify, options.set as any)
+		}
+		const eventProps: Record<string, any> = {
+			...(props as any)
+		}
+		if (options?.set) eventProps.$set = options.set
+		if (options?.setOnce) eventProps.$set_once = options.setOnce
+		// @ts-ignore global posthog exists when initialized
+		window.posthog?.capture(name, eventProps)
 	} catch {}
 }
 

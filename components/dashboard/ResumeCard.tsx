@@ -7,7 +7,6 @@ import LoadingDots from '@/components/ui/loading-dots'
 import {highlightText} from '@/components/ui/highlight'
 import {useAnalytics} from '@/lib/analytics'
 import ResumeCardActionsBar from '@/components/dashboard/ResumeCardActionsBar'
-import type {Job} from '@/lib/job/types'
 import {useEffect, useRef, useState} from 'react'
 
 type ResumeCardProps = {
@@ -66,7 +65,11 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 						{!isProcessing && (resume.thumbnail ? (
 							<img
 								src={resume.thumbnail}
-								alt={`${resume.job.title} at ${resume.job.company_name}`}
+								alt={
+									resume.base
+										? 'Base resume preview'
+										: `${resume.job?.title ?? 'Role'}${resume.job?.company_name ? ` at ${resume.job.company_name}` : ''}`
+								}
 								className="h-full w-full object-cover object-top"
 								onError={(e) => {(e.currentTarget as HTMLImageElement).style.display = 'none'}}
 							/>
@@ -78,10 +81,10 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 						{!resume.base && (
 							<div className="flex items-center gap-2 justify-between">
 								<div className="text-sm flex flex-col min-w-0">
-									<p className="truncate flex-1 font-medium text-base">{highlightText(resume.job.title, searchQuery)}</p>
+									<p className="truncate flex-1 font-medium text-base">{highlightText(resume.job?.title ?? 'Role', searchQuery)}</p>
 									<p className="text-xs text-neutral-500 truncate">
-										<span>{highlightText(resume.job.company_name, searchQuery)}</span>
-										{resume.job.location && <span>, {highlightText(resume.job.location, searchQuery)}</span>}
+										<span>{highlightText(resume.job?.company_name ?? '', searchQuery)}</span>
+										{resume.job?.location && <span>, {highlightText(resume.job.location, searchQuery)}</span>}
 									</p>
 								</div>
 							</div>
@@ -102,7 +105,7 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 			<ResumeCardActionsBar
 				resumeId={resume.id}
 				isProcessing={isProcessing}
-				job={resume.job as unknown as Job}
+				job={!resume.base ? resume.job : undefined}
 				isBaseResume={resume.base}
 				visible={showActions}
 				onEnter={openActions}

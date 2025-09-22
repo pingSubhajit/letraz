@@ -33,11 +33,33 @@ interface AlgoliaResumeHit {
   [key: string]: any // Index signature for Algolia BaseHit compatibility
 }
 
+// Initialize search client once at module level
+const initializeSearchClient = () => {
+  const appId = process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID
+  const apiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY
+
+  if (!appId || !apiKey) {
+    return null
+  }
+
+  try {
+    return algoliasearch(appId, apiKey)
+  } catch (error) {
+    console.error('[Algolia] Failed to initialize client:', error)
+    return null
+  }
+}
+
+// Single instance created at module load
+const searchClient = initializeSearchClient()
+const indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || 'resume'
+
 // JSX typing for React 19 compatibility
 const IS = InstantSearch as unknown as ComponentType<InstantSearchProps>
 
 const SearchController = ({query}: {query: string}) => {
   const {refine} = useSearchBox({queryHook: (q, r) => r(q)})
+
   useEffect(() => {
     refine(query)
   }, [query, refine])
@@ -48,11 +70,10 @@ const SearchController = ({query}: {query: string}) => {
 // Component to render Algolia search results
 const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) => {
   const {status} = useInstantSearch({catchError: true})
-  const {items} = useHits<AlgoliaResumeHit>() // 'hits' is deprecated, use 'items'
+  const {items} = useHits<AlgoliaResumeHit>()
   const [cachedResults, setCachedResults] = useState<ResumeListItem[]>([])
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [hasInitialized, setHasInitialized] = useState(false)
   const hasScrolledRef = useRef(false)
-  const lastQueryRef = useRef<string>('')
   const {track} = useAnalytics()
 
   // Convert Algolia hits to ResumeListItem format and filter
@@ -120,38 +141,46 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
     return filtered
   }, [items, excludeBase])
 
-  // Cache latest results once search is idle to avoid flicker during loading
+  // Cache results and track analytics
   useEffect(() => {
-    if (status === 'idle') {
+    if (status === 'idle' && filtered.length > 0) {
       setCachedResults(filtered)
+      setHasInitialized(true)
       try {
-        track('resume_search', {query_length_bucket: searchQuery ? `${searchQuery.length}` : '0', results_count_bucket: resultsBucket(filtered.length)})
+        track('resume_search', {
+          query_length_bucket: searchQuery ? `${searchQuery.length}` : '0',
+          results_count_bucket: resultsBucket(filtered.length)
+        })
       } catch {}
+    } else if (status === 'idle' && !hasInitialized) {
+      // First load with no results
+      setHasInitialized(true)
     }
-  }, [status, filtered])
-
-  // Mark initial load complete after the first non-loading state
-  useEffect(() => {
-    if (isInitialLoad && status !== 'loading' && status !== 'stalled') {
-      setIsInitialLoad(false)
-    }
-  }, [status, isInitialLoad])
+  }, [status, filtered, searchQuery, track, hasInitialized])
 
   // Smart scroll to first match
   useLayoutEffect(() => {
-    if (hasScrolledRef.current) return
-    if (!searchQuery) return
+    if (hasScrolledRef.current || !searchQuery) return
+
     const grid = document.querySelector('[data-resume-grid]')
     const firstLink = grid?.querySelector('a[href^="/app/craft/resumes/"]') as HTMLAnchorElement | null
     if (firstLink) {
       firstLink.scrollIntoView({behavior: 'smooth', block: 'center'})
       hasScrolledRef.current = true
     }
-  }, [searchQuery, cachedResults])
+  }, [searchQuery, filtered])
 
-  // Results to display
-  const displayResults = isInitialLoad ? filtered : cachedResults
+  // Reset scroll flag when search query changes
+  useEffect(() => {
+    hasScrolledRef.current = false
+  }, [searchQuery])
 
+  // Don't show anything during initial load (it's very fast)
+  if (!hasInitialized && (status === 'loading' || status === 'stalled')) {
+    return null
+  }
+
+  // Handle error state
   if (status === 'error') {
     return (
       <div className="col-span-full text-center py-12">
@@ -163,6 +192,12 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
     )
   }
 
+  // Determine which results to display
+  const isBusy = status === 'loading' || status === 'stalled'
+  const displayResults = isBusy
+    ? (filtered.length > 0 ? filtered : cachedResults)
+    : filtered
+
   return (
     <>
       {displayResults.map((resume) => (
@@ -172,10 +207,14 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
           searchQuery={searchQuery}
         />
       ))}
-      {displayResults.length === 0 && (
+      {status === 'idle' && hasInitialized && filtered.length === 0 && (
         <div className="col-span-full text-center py-12">
           <p className="text-neutral-500 text-lg">No resumes found</p>
-          <p className="text-neutral-400 text-sm mt-2">Try searching with different keywords</p>
+          <p className="text-neutral-400 text-sm mt-2">
+            {searchQuery.trim()
+              ? 'Try searching with different keywords'
+              : 'Start by creating your first resume'}
+          </p>
         </div>
       )}
     </>
@@ -190,24 +229,12 @@ interface ResumeSearchProps {
 const CFG = Configure as unknown as ({facetFilters}: {facetFilters: any}) => JSX.Element
 
 const ResumeSearch = ({userId, searchQuery}: ResumeSearchProps) => {
-  // Algolia configuration
-  const appId = process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID
-  const apiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY
-  const indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || 'resume'
-
-  const searchClient = useMemo(() => {
-    if (appId && apiKey) {
-      try {
-        return algoliasearch(appId, apiKey)
-      } catch (error) {
-        // Silently fail - error will be handled by showing fallback UI
-        return null
-      }
-    }
+  // Early return if no userId
+  if (!userId) {
     return null
-  }, [appId, apiKey])
+  }
 
-  // If Algolia not configured, show error message
+  // Check if Algolia client is available
   if (!searchClient) {
     return (
       <div className="col-span-full text-center py-12">
@@ -217,13 +244,14 @@ const ResumeSearch = ({userId, searchQuery}: ResumeSearchProps) => {
     )
   }
 
-  // Show Algolia search results (empty query returns all resumes)
-  if (!userId) {
-    return null
-  }
-
   return (
-    <IS searchClient={searchClient} indexName={indexName}>
+    <IS
+      searchClient={searchClient}
+      indexName={indexName}
+      future={{
+        preserveSharedStateOnUnmount: true
+      }}
+    >
       <CFG facetFilters={[`user:${userId}`]} />
       <SearchController query={searchQuery} />
       <AlgoliaHits excludeBase searchQuery={searchQuery} />

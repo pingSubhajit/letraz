@@ -1,5 +1,6 @@
 'use client'
 
+import type React from 'react'
 import {useRef, useState} from 'react'
 import {ResumeListItem} from '@/lib/resume/types'
 import {cn} from '@/lib/utils'
@@ -59,6 +60,7 @@ const ResumeCardActionsBar = ({resumeId, isProcessing, className, isBaseResume =
 						variant="secondary"
 						className="w-full aspect-square rounded-full h-auto p-0 shadow-lg"
 						disabled={isExporting}
+						aria-label="Download PDF"
 						onClick={async (e) => {stopEvent(e); await exportPdf(resumeId)}}
 					>
 						<Download className="h-4 w-4" />

@@ -26,7 +26,12 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
 				.refine((u) => /linkedin\.com\/in\//.test(u), 'Must be a LinkedIn profile URL (contains /in/)')
 		})
 
-		const {url} = InputSchema.parse(body)
+		const parsed = InputSchema.safeParse(body)
+		if (!parsed.success) {
+			const issue = parsed.error.issues[0]?.message ?? 'Invalid request body'
+			return NextResponse.json({error: issue}, {status: 400})
+		}
+		const {url} = parsed.data
 
 		const data = await parseLinkedInProfile(url)
 		return NextResponse.json({data})

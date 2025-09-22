@@ -156,6 +156,9 @@ export const parseResume = async (
 	// For proprietary format, output exactly our internal ResumeMutation schema + user profile
 	const schema = format === 'proprietary' ? EnhancedResumeMutationSchema : GenericResumeSchema
 
+	// Choose model based on target format for clarity and maintainability
+	const modelId = format === 'proprietary' ? 'gemini-2.5-flash-lite' : 'gemini-2.5-flash'
+
 	const currentYear = new Date().getFullYear()
 	const prompt = format === 'proprietary'
 		? `You are a strict JSON generator that extracts BOTH personal profile information AND resume sections. Return ONLY JSON matching the schema, no prose.
@@ -231,7 +234,7 @@ Return ONLY the JSON object, nothing else.`
 
 	try {
 		const result = await generateObject({
-			model: google('gemini-2.5-flash-lite'),
+			model: google(modelId),
 			schema,
 			messages: [
 				{
@@ -316,7 +319,6 @@ Return ONLY the JSON object, nothing else.`
 
 		return result.object
 	} catch (error) {
-		console.log(error)
 		throw new Error(`Failed to parse resume: ${(error as Error).message}`)
 	}
 }

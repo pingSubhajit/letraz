@@ -114,11 +114,12 @@ export const parseUploadedResume = async (
  */
 export const replaceResume = async (
 	payload: ResumeMutation,
-	resumeId: string = 'base'
+	resumeId: string = 'base',
+	options?: { headers?: Record<string, string>, cookie?: string }
 ): Promise<Resume> => {
 	try {
 		const parsed = ResumeMutationSchema.parse(payload)
-		const data = await api.put<Resume>(`/resume/${resumeId ?? 'base'}/`, parsed)
+		const data = await api.put<Resume>(`/resume/${resumeId ?? 'base'}/`, parsed, options)
 		return ResumeSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'replace resume')

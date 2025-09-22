@@ -9,7 +9,10 @@ import {apiDateToDate, dateToApiFormat} from '@/lib/utils'
  * @param {UserInfoMutation} userInfoValues - The user information to add or update
  * @returns {Promise<UserInfo>} - The updated user information
  */
-export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation): Promise<UserInfo> => {
+export const addOrUpdateUserInfoToDB = async (
+	userInfoValues: UserInfoMutation,
+	options?: { headers?: Record<string, string> }
+): Promise<UserInfo> => {
 	const params = UserInfoMutationSchema.parse(userInfoValues)
 
 	// Transform date for API compatibility (preserve local timezone)
@@ -18,7 +21,7 @@ export const addOrUpdateUserInfoToDB = async (userInfoValues: UserInfoMutation):
 		dob: dateToApiFormat(params.dob)
 	}
 
-	const response = await api.patch<UserInfo>('/user/', apiParams)
+	const response = await api.patch<UserInfo>('/user/', apiParams, options)
 
 	// Transform string dates back to Date objects for schema validation
 	const transformedResponse = {

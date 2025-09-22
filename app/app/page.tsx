@@ -2,10 +2,8 @@ import type {Metadata} from 'next'
 import NewResumeInput from '@/components/NewResumeInput'
 import {Suspense} from 'react'
 import OnboardingWelcome from '@/components/onboarding/OnboardingWelcome'
-import DashboardSearchContainer from '@/components/dashboard/DashboardSearchContainer'
-import ResumeCard from '@/components/dashboard/ResumeCard'
+import DashboardResumes from '@/components/dashboard/DashboardResumes'
 import {auth} from '@clerk/nextjs/server'
-import {listResumesForUser} from '@/lib/resume/actions'
 import LetrazBrainImage from '@/public/brain.webp'
 import Image from 'next/image'
 
@@ -16,8 +14,6 @@ export const metadata: Metadata = {
 
 const AppHome = async () => {
 	const {userId} = await auth()
-	const resumes = await listResumesForUser()
-	const baseResume = resumes?.find(r => r.base)
 
 	return (
 		<div className="p-8 relative">
@@ -41,15 +37,11 @@ const AppHome = async () => {
 			{/* Top row with centered Input box and Base Resume */}
 			<div className="flex justify-center gap-8 mb-20">
 				<NewResumeInput className="rounded-lg h-96 w-72" />
-				{baseResume && (
-					<ResumeCard resume={baseResume} className="w-72" />
-				)}
+				<DashboardResumes userId={userId || undefined} showBaseOnly />
 			</div>
 
-			{/* Search and Resume Grid Container - Only show if user has resumes apart from base */}
-			{resumes && resumes.filter(r => !r.base).length > 0 && (
-				<DashboardSearchContainer userId={userId || undefined} />
-			)}
+			{/* Search and Resume Grid Container */}
+			<DashboardResumes userId={userId || undefined} showSearchOnly />
 		</div>
 	)
 }

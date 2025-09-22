@@ -1,9 +1,10 @@
 import TextAnimate from '@/components/animations/TextAnimations'
 import {Button} from '@/components/ui/button'
-import {ChevronLeft, ChevronRight} from 'lucide-react'
+import {ChevronLeft} from 'lucide-react'
 import {Link} from 'next-view-transitions'
 import AboutDescription from '@/components/onboarding/AboutDescription'
 import {updateOnboardingStep} from '@/lib/onboarding/actions'
+import AboutNextControl from '@/components/onboarding/AboutNextControl.client'
 
 const About = () => {
 	updateOnboardingStep('about')
@@ -41,16 +42,8 @@ const About = () => {
 					</Button>
 				</Link>
 
-				{/*	/!* NEXT STEP BUTTON *!/ */}
-				<Link href={'/app/onboarding?step=personal-details'}>
-					<Button
-						className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
-						variant="secondary"
-					>
-						Sounds great
-						<ChevronRight className="w-5 h-5 ml-1" />
-					</Button>
-				</Link>
+				{/* Client-only next/skip control */}
+				<AboutNextControl />
 			</div>
 		</div>
 	)

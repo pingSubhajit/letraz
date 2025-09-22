@@ -96,7 +96,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 					size="sm"
 					{...attributes}
 					{...listeners}
-					className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
+					className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-neutral-50 border-neutral-200 cursor-grab active:cursor-grabbing"
 					aria-label="Drag to reorder"
 				>
 					<GripVertical className="h-3 w-3" />
@@ -207,7 +207,7 @@ const SectionGroup: React.FC<SectionGroupProps> = ({
 								size="sm"
 								{...groupDragHandle.attributes}
 								{...groupDragHandle.listeners}
-								className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-gray-50 border-gray-200 cursor-grab active:cursor-grabbing"
+								className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-neutral-50 border-neutral-200 cursor-grab active:cursor-grabbing"
 								aria-label="Drag to reorder section group"
 							>
 								<GripVertical className="h-3 w-3" />
@@ -382,7 +382,7 @@ const ReorderableSections: React.FC<ReorderableSectionsProps> = ({
 		return (
 			<div className="space-y-2">
 				{firstSectionData.title}
-				<div className="text-sm text-gray-500">
+				<div className="text-sm text-neutral-500">
 					{groupSections.length} item{groupSections.length !== 1 ? 's' : ''}
 				</div>
 			</div>

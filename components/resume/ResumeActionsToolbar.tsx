@@ -33,6 +33,9 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
     const {track} = useAnalytics()
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
+		// Open a stub window immediately to preserve user gesture
+		const win = window.open('', '_blank', 'noopener,noreferrer')
+
 		try {
 			track('resume_export_clicked', {resume_id: resumeId, format})
 			const response = await exportResume(resumeId)
@@ -41,6 +44,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 
 			// Validate the URL exists
 			if (!downloadUrl || typeof downloadUrl !== 'string' || downloadUrl.trim() === '') {
+				if (win) win.close()
 				toast.error('No download URL received from server')
 				return
 			}
@@ -55,20 +59,35 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 				try {
 					fullUrl = new URL(downloadUrl, 'https:').toString()
 				} catch (fallbackError) {
-					if (process.env.NODE_ENV !== 'production') {
-						console.warn('Failed to construct download URL:', downloadUrl, fallbackError)
-					}
+					if (win) win.close()
 					toast.error('Invalid download URL received')
 					return
 				}
 			}
 
-			// Open in new tab with security attributes
-			window.open(fullUrl, '_blank', 'noopener,noreferrer')
+			if (win) {
+				try {
+					win.opener = null
+					win.location.replace(fullUrl)
+				} catch {
+					// Fallback if blocked
+					window.open(fullUrl, '_blank', 'noopener=yes,noreferrer=yes')
+				}
+			} else {
+				window.open(fullUrl, '_blank', 'noopener=yes,noreferrer=yes')
+			}
 			track('resume_export_succeeded', {resume_id: resumeId, format})
 		} catch (error) {
+			// Close the blank tab if we opened one and failed
+			if (win) {
+				try {
+					win.close()
+				} catch {
+					// Ignore if we can't close it
+				}
+			}
 			// Error handling is already done in the mutation
-			track('resume_export_failed', {format})
+			track('resume_export_failed', {resume_id: resumeId, format})
 		}
 	}
 
@@ -174,7 +193,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 			<div
 				className={cn(
 					'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[#e5e5e5] rounded-full shadow-lg px-1 py-1',
-					'border border-gray-200',
+					'border border-neutral-200',
 					'max-w-[calc(100vw-2rem)] md:max-w-none',
 					className
 				)}

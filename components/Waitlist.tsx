@@ -39,7 +39,11 @@ const Waitlist = ({className, referrer, mode = 'new'}: {className?: string, refe
 		try {
 			setSignedUp(true)
 			await signUpForWaitlist(values.email, referrer)
-			track('waitlist_submitted', {referrer})
+			track('waitlist_submitted', {referrer}, {
+				identify: values.email,
+				set: {email: values.email, referrer: referrer ?? null},
+				setOnce: {first_seen_at: new Date().toISOString()}
+			})
 			form.reset()
 		} catch (error) {
 			setSignedUp(false)

@@ -5,6 +5,8 @@ import {Separator} from '@/components/ui/separator'
 import Link from 'next/link'
 import {ArrowLeft, ChevronLeft, ChevronRight} from 'lucide-react'
 import TableOfContents from '@/app/docs/components/table-of-contents'
+import {Metadata} from 'next'
+import {sanitizeHtml} from '@/lib/utils'
 
 /*
  * Using BaseHub's automatic on-demand revalidation instead of ISR
@@ -30,7 +32,7 @@ export const generateStaticParams = async () => {
 }
 
 // Generate metadata for each page
-export const generateMetadata = async ({params}: DocPageProps) => {
+export const generateMetadata = async ({params}: DocPageProps): Promise<Metadata> => {
 	const {slug} = await params
 	const page = await getDocumentationPage(slug)
 
@@ -58,6 +60,9 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 		notFound()
 	}
 
+	const sanitizedBody = page.body
+		? sanitizeHtml(page.body)
+		: ''
 
 	return (
 		<div className="flex w-full justify-center">
@@ -113,7 +118,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 					<div className="mt-12">
 						{page.body ? (
 							<div
-								dangerouslySetInnerHTML={{__html: page.body}}
+								dangerouslySetInnerHTML={{__html: sanitizedBody}}
 								className="docs-content prose [&_li>p]:my-0 [&>img]:rounded-2xl [&>video]:rounded-2xl"
 							/>
 						) : (
@@ -153,7 +158,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 				{page.body && (
 					<div className="hidden xl:block">
 						<div className="sticky top-24 overflow-hidden">
-							<TableOfContents content={page.body} />
+							<TableOfContents content={sanitizedBody} />
 						</div>
 					</div>
 				)}

@@ -43,7 +43,7 @@ export const useResumeExportHandler = () => {
 			openDownloadInNewTab(downloadUrl)
 			track('resume_export_succeeded', {resume_id: resumeId, format: 'pdf'})
 		} catch (error) {
-			track('resume_export_failed', {format: 'pdf'})
+			track('resume_export_failed', {resume_id: resumeId, format: 'pdf'})
 			throw error
 		}
 	}, [exportResume, track])
@@ -56,7 +56,7 @@ export const useResumeExportHandler = () => {
 			openDownloadInNewTab(downloadUrl)
 			track('resume_export_succeeded', {resume_id: resumeId, format: 'tex'})
 		} catch (error) {
-			track('resume_export_failed', {format: 'tex'})
+			track('resume_export_failed', {resume_id: resumeId, format: 'tex'})
 			throw error
 		}
 	}, [exportResume, track])
