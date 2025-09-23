@@ -5,6 +5,7 @@ import {FlickeringGrid} from '@/components/ui/flickering-grid'
 import Image from 'next/image'
 import {motion} from 'motion/react'
 import {useState} from 'react'
+import resumeQr from '@/public/qr-code.png'
 
 const RizeAsset = ({isHovered}: {isHovered: boolean}) => {
 	return (
@@ -102,10 +103,17 @@ const LandingPageFeatures = () => {
 				}}
 			>
 				<Card
-					className="bg-neutral-300 rounded-2xl"
+					className="bg-neutral-100 border-none rounded-2xl flex flex-col items-center justify-end px-8 py-4 overflow-hidden relative"
 					style={{gridArea: '7 / 10 / 9 / 13'}}
 				>
+					<Image
+						src={resumeQr} alt="QR Code for resume shared by Bruce Wayne"
+						className="w-32 aspect-square rounded-b-2xl shadow-2xl absolute -top-12"
+					/>
 
+					<p className="text-center text-lg font-medium">
+						Instantly share your resume with a QR, always updated
+					</p>
 				</Card>
 
 				<Card
@@ -136,14 +144,25 @@ const LandingPageFeatures = () => {
 				</Card>
 
 				<Card
-					className="bg-neutral-300 rounded-2xl"
+					className="bg-neutral-100 rounded-2xl p-8 relative overflow-hidden border-none"
 					style={{gridArea: '6 / 1 / 9 / 6'}}
 				>
-
+					<p className="text-2xl font-semibold text-center relative z-10 leading-normal max-w-[80%] mx-auto">
+						Connects with every single job portal you apply for jobs in
+					</p>
+					<video
+						autoPlay
+						muted
+						loop
+						playsInline
+						preload="auto"
+						className="w-full absolute left-0 -bottom-16">
+						<source src="/logo-carousel.mp4" type="video/mp4"/>
+					</video>
 				</Card>
 
 				<Card
-					className="bg-neutral-100 border-none rounded-2xl flex justify-between items-center p-8 pb-0 relative overflow-hidden gap-4"
+					className="bg-[#FFF4C2] border-none rounded-2xl flex justify-between items-center p-8 pb-0 relative overflow-hidden gap-4"
 					style={{gridArea: '4 / 1 / 6 / 6'}}
 					onMouseEnter={() => setIsRizeCardHovered(true)}
 					onMouseLeave={() => setIsRizeCardHovered(false)}
@@ -159,9 +178,25 @@ const LandingPageFeatures = () => {
 				</Card>
 
 				<Card
-					className="bg-flame-500 rounded-2xl"
+					className="bg-[#F54A22] rounded-2xl relative overflow-hidden p-8"
 					style={{gridArea: '1 / 1 / 4 / 6'}}
-				></Card>
+				>
+					<div className="z-10 relative text-neutral-50 text-center">
+						<h3 className="text-3xl font-medium">Apply with confidence</h3>
+						<p className="mt-4 opacity-90 max-w-[80%] mx-auto leading-snug">
+							Put out the best possible version of your resume for that hiring manager to judge you on
+						</p>
+					</div>
+					<video
+						autoPlay
+						muted
+						loop
+						playsInline
+						preload="auto"
+						className="w-full absolute -bottom-28 left-0">
+						<source src="/resume-cards.mp4" type="video/mp4"/>
+					</video>
+				</Card>
 
 				<Card
 					className="rounded-2xl border-none
