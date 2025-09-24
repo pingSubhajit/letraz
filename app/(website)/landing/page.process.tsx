@@ -213,9 +213,9 @@ const LandingPageProcess = () => {
 
 	return (
 		<ReactLenis root>
-			<div className="h-full w-full">
+			<section className="h-full w-full">
 				<StickyCard cards={defaultCards} />
-			</div>
+			</section>
 		</ReactLenis>
 	)
 }

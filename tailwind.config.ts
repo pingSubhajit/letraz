@@ -19,17 +19,17 @@ const config: Config = {
 		extend: {
 			colors: {
 				flame: {
-					50: '#FCC6BC',
-					100: '#FBB3A5',
-					200: '#F88E79',
-					300: '#F6684C',
-					400: '#F55535',
-					500: '#F4421F',
-					600: '#DC3B1C',
-					700: '#C33519',
-					800: '#AB2E16',
-					900: '#822513',
-					950: '#491409'
+					'50': '#FCC6BC',
+					'100': '#FBB3A5',
+					'200': '#F88E79',
+					'300': '#F6684C',
+					'400': '#F55535',
+					'500': '#F4421F',
+					'600': '#DC3B1C',
+					'700': '#C33519',
+					'800': '#AB2E16',
+					'900': '#822513',
+					'950': '#491409'
 				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
@@ -73,31 +73,62 @@ const config: Config = {
 				}
 			},
 			fontFamily: {
-				sans: ['var(--font-geist-sans)'],
-				mono: ['var(--font-geist-mono)'],
-				jakarta: ['var(--font-plus-jakarta-sans)', 'system-ui', 'sans-serif']
+				sans: [
+					'var(--font-geist-sans)'
+				],
+				mono: [
+					'var(--font-geist-mono)'
+				],
+				jakarta: [
+					'var(--font-plus-jakarta-sans)',
+					'system-ui',
+					'sans-serif'
+				]
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
-			boxShadow: ({theme}) => ({
-				subtle: `0 2px 16px ${theme('colors.neutral.950')}15`
-			}),
 			keyframes: {
 				'collapsible-down': {
-					from: { height: '0' },
-					to: { height: 'var(--radix-collapsible-content-height)' }
+					from: {
+						height: '0'
+					},
+					to: {
+						height: 'var(--radix-collapsible-content-height)'
+					}
 				},
 				'collapsible-up': {
-					from: { height: 'var(--radix-collapsible-content-height)' },
-					to: { height: '0' }
+					from: {
+						height: 'var(--radix-collapsible-content-height)'
+					},
+					to: {
+						height: '0'
+					}
+				},
+				'accordion-down': {
+					from: {
+						height: '0'
+					},
+					to: {
+						height: 'var(--radix-accordion-content-height)'
+					}
+				},
+				'accordion-up': {
+					from: {
+						height: 'var(--radix-accordion-content-height)'
+					},
+					to: {
+						height: '0'
+					}
 				}
 			},
 			animation: {
 				'collapsible-down': 'collapsible-down 0.2s ease-out',
-				'collapsible-up': 'collapsible-up 0.2s ease-out'
+				'collapsible-up': 'collapsible-up 0.2s ease-out',
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			}
 		}
 	},

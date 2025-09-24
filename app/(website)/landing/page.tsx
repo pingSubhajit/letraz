@@ -7,6 +7,7 @@ import rizeLogo from '@/public/rize-logo-dark.svg'
 import HeroHeader from './page.heroHeader'
 import LandingPageFeatures from '@/app/(website)/landing/page.features'
 import LandingPageProcess from '@/app/(website)/landing/page.process'
+import LandingPageFaq from '@/app/(website)/landing/page.faq'
 
 const HeroVideoSequence = dynamic(() => import('./page.canvas'))
 
@@ -51,6 +52,10 @@ const LandingPage = async (
 
 			<div className="mt-32 max-w-7xl mx-auto">
 				<LandingPageFeatures />
+			</div>
+
+			<div className="mt-32 max-w-7xl mx-auto">
+				<LandingPageFaq />
 			</div>
 		</main>
 	)
