@@ -43,60 +43,6 @@ const StickyCard = ({
 
 			gsap.set(imageElements[0], {y: '0%', scale: 1, rotation: 0})
 
-			const pauseVideoIn = (el: HTMLElement | null) => {
-				if (!el) return
-				const video = el.querySelector('video') as HTMLVideoElement | null
-				if (!video) return
-				try {
-					video.pause()
-				} catch {}
-			}
-
-			const restartAndPlayVideoIn = (el: HTMLElement | null) => {
-				if (!el) return
-				const video = el.querySelector('video') as HTMLVideoElement | null
-				if (!video) return
-
-				try {
-					video.muted = true
-					;(video as any).playsInline = true
-					video.setAttribute('playsinline', 'true')
-					const tryPlay = () => {
-						video.currentTime = 0
-						const p = video.play()
-						if (p) p.catch(() => {})
-					}
-					if (video.readyState < 2) {
-						const onCanPlay = () => {
-							video.removeEventListener('canplay', onCanPlay)
-							tryPlay()
-						}
-						video.addEventListener('canplay', onCanPlay, {once: true})
-						video.load()
-					} else {
-						tryPlay()
-					}
-				} catch {}
-			}
-
-			// If the first card contains a video, ensure it starts from the beginning
-			{
-				const firstEl = imageElements[0]
-				if (firstEl) {
-					const video = firstEl.querySelector('video') as HTMLVideoElement | null
-					if (video) {
-						try {
-							video.pause()
-							video.currentTime = 0
-							const playPromise = video.play()
-							if (playPromise) {
-								playPromise.catch(() => {})
-							}
-						} catch {}
-					}
-				}
-			}
-
 			for (let i = 1; i < totalCards; i++) {
 				if (!imageElements[i]) continue
 				gsap.set(imageElements[i], {y: '100%', scale: 1, rotation: 0})
@@ -130,8 +76,7 @@ const StickyCard = ({
 					position,
 				)
 
-				// Pause any video in the outgoing card at the start of its transition
-				scrollTimeline.call(() => pauseVideoIn(currentImage), undefined, position)
+				// No video pause/resume hooks; animations only
 
 				scrollTimeline.to(
 					nextImage,
@@ -143,8 +88,7 @@ const StickyCard = ({
 					position,
 				)
 
-				// When the next card begins revealing, restart and play any video inside it
-				scrollTimeline.call(() => restartAndPlayVideoIn(nextImage), undefined, position + 0.01)
+				// No video control calls here
 			}
 
 			const resizeObserver = new ResizeObserver(() => {
@@ -202,8 +146,13 @@ const StepOne = () => (
 			<p className="mt-5 text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
 		</div>
 
-		<div className="bg-white aspect-video w-3/4 rounded-t-2xl">
-
+		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
+			<video
+				src="/upload-resume.mp4"
+				preload="auto"
+				loop autoPlay muted playsInline
+				className="w-full"
+			></video>
 		</div>
 	</div>
 )
@@ -248,7 +197,7 @@ const RizeCard = () => (
 		</div>
 
 		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
-			<video src="/rize-video.mp4" loop autoPlay muted playsInline preload="auto"></video>
+			<video src="/rize-video.mp4" loop autoPlay muted playsInline></video>
 		</div>
 	</div>
 )

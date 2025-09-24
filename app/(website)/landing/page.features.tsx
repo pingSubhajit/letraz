@@ -137,10 +137,25 @@ const LandingPageFeatures = () => {
 				</Card>
 
 				<Card
-					className="rounded-2xl overflow-hidden border-none bg-[radial-gradient(circle,rgba(245,245,245,1)_0%,rgba(229,229,229,1)_100%)]"
+					className="rounded-2xl overflow-hidden border-none
+					bg-[#F4F0E7] relative"
 					style={{gridArea: '4 / 6 / 9 / 10'}}
 				>
-					<FlickeringGrid />
+					<FlickeringGrid className="opacity-40" />
+
+					<div className="text-center absolute left-1/2 -translate-x-1/2 top-8 w-[85%]">
+						<h3 className="text-2xl font-semibold">Download PDF & LaTeX version, edit easily</h3>
+					</div>
+
+					<video
+						autoPlay
+						muted
+						loop
+						playsInline
+						preload="auto"
+						className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
+						<source src="/resume-generation.mp4" type="video/mp4"/>
+					</video>
 				</Card>
 
 				<Card
@@ -178,7 +193,7 @@ const LandingPageFeatures = () => {
 				</Card>
 
 				<Card
-					className="bg-[#F54A22] rounded-2xl relative overflow-hidden p-8"
+					className="bg-[#F54A22] rounded-2xl relative overflow-hidden p-8 border-none"
 					style={{gridArea: '1 / 1 / 4 / 6'}}
 				>
 					<div className="z-10 relative text-neutral-50 text-center">
