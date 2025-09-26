@@ -3,7 +3,7 @@
 import type {ReactNode} from 'react'
 import {useEffect, useState} from 'react'
 import {createPortal} from 'react-dom'
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion} from 'motion/react'
 import {Briefcase, Building2, FileText, Gift, Link, MapPin, Target, X} from 'lucide-react'
 import {Badge} from '@/components/ui/badge'
 import {Button} from '@/components/ui/button'

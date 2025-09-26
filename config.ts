@@ -113,6 +113,7 @@ export const discordBotUrl = 'http://64.227.146.129:4000'
 export const discordHandle = 'https://discord.gg/jTkyKCYz2M'
 export const githubHandle = 'https://github.com/pingSubhajit/letraz'
 export const twitterHandle = 'https://x.com/LetrazApp'
+export const supportEmail = 'hello@letraz.app'
 
 // Integrations
 export const rizeUrl = 'https://rize.so'
