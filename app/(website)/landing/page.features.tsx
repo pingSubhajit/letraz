@@ -224,7 +224,17 @@ const LandingPageFeatures = () => {
 						<p className="mt-4">Make changes to your resume with our state of the art editor, making your life easily all the way</p>
 					</div>
 
-					<div className="bg-white aspect-square w-[45%] rounded-2xl" />
+					<div className="bg-white aspect-square w-[45%] rounded-2xl overflow-hidden">
+						<video
+							autoPlay
+							muted
+							loop
+							playsInline
+							preload="auto"
+							className="h-full">
+							<source src="/tweak-resume.mp4" type="video/webm"/>
+						</video>
+					</div>
 				</Card>
 			</div>
 		</section>

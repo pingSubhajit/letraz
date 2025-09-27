@@ -179,8 +179,13 @@ const StepThree = () => (
 			<p className="mt-5 text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
 		</div>
 
-		<div className="bg-white aspect-video w-3/4 rounded-t-2xl">
-
+		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
+			<video
+				src="/download-and-apply.mp4"
+				preload="auto"
+				loop autoPlay muted playsInline
+				className="w-full"
+			></video>
 		</div>
 	</div>
 )
