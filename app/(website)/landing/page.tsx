@@ -6,7 +6,7 @@ import infosysLogo from '@/public/infosys-logo.svg'
 import rizeLogo from '@/public/rize-logo-dark.svg'
 import HeroHeader from './page.heroHeader'
 
-const HeroVideoSequence = dynamic(() => import('./page.canvas'))
+const HeroVideoSequence = dynamic(() => import('@/app/(website)/landing/page.canvas'))
 const LandingPageFeatures = dynamic(() => import('@/app/(website)/landing/page.features'))
 const LandingPageProcess = dynamic(() => import('@/app/(website)/landing/page.process'))
 const LandingPageFaq = dynamic(() => import('@/app/(website)/landing/page.faq'))
