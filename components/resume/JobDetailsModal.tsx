@@ -212,7 +212,7 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 					)}
 								</div>
 
-								{/* Footer */}
+								{/* WebsiteFooter */}
 								<div className="flex justify-end px-6 py-4 border-t">
 									<Button variant="outline" onClick={onClose}>
 										Close

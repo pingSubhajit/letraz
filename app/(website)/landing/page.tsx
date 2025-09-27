@@ -18,7 +18,7 @@ const LandingPage = async (
 	const referrer = searchParams.ref as string | undefined
 
 	return (
-		<main className=" pb-32 [&>*]:font-jakarta relative overflow-x-clip bg-white">
+		<main className="relative overflow-x-clip bg-white">
 			{/* Hero Section */}
 			<div className="min-h-[530vh] relative">
 				{/* Background image */}
@@ -46,7 +46,7 @@ const LandingPage = async (
 				</div>
 			</div>
 
-			<div className="max-w-7xl mx-auto">
+			<div className="max-w-7xl mx-auto mt-3 lg:mt-8">
 				<video
 					src="/letraz-engine.mp4"
 					preload="auto"
