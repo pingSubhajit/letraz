@@ -147,7 +147,7 @@ const LandingPageFeatures = () => {
 					</div>
 
 					{active && (
-						<video autoPlay muted loop playsInline preload="metadata" poster="/brain.webp" className="absolute -bottom-32 w-full scale-[200%]">
+						<video autoPlay muted loop playsInline preload="none" poster="/brain.webp" className="absolute -bottom-32 w-full scale-[200%]">
 							<source src="/brain-pulse.webm" type="video/webm"/>
 						</video>
 					)}
@@ -165,7 +165,7 @@ const LandingPageFeatures = () => {
 					</div>
 
 					{active && (
-						<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
+						<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
 							<source src="/resume-generation.webm" type="video/webm"/>
 							<source src="/resume-generation.mp4" type="video/mp4"/>
 						</video>
@@ -180,7 +180,7 @@ const LandingPageFeatures = () => {
 						Connects with every single job portal you apply for jobs in
 					</p>
 					{active && (
-						<video autoPlay muted loop playsInline preload="metadata" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
+						<video autoPlay muted loop playsInline preload="none" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
 							<source src="/logo-carousel.webm" type="video/webm"/>
 							<source src="/logo-carousel.mp4" type="video/mp4"/>
 						</video>
@@ -237,7 +237,7 @@ const LandingPageFeatures = () => {
 
 					<div className="bg-white aspect-square w-[45%] rounded-2xl overflow-hidden">
 						{active && (
-							<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="h-full">
+							<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="h-full">
 								<source src="/tweak-resume.webm" type="video/webm"/>
 								<source src="/tweak-resume.mp4" type="video/mp4"/>
 							</video>

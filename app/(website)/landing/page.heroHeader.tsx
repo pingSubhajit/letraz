@@ -2,13 +2,18 @@
 
 import {motion, useMotionTemplate, useScroll, useTransform} from 'motion/react'
 import Waitlist from '@/components/Waitlist'
+import {useEffect, useState} from 'react'
 
-type HeroHeaderProps = {
-	referrer?: string
-}
-
-const HeroHeader = ({referrer}: HeroHeaderProps) => {
+const HeroHeader = () => {
 	const {scrollYProgress} = useScroll()
+	const [referrer, setReferrer] = useState<string | undefined>(undefined)
+
+	useEffect(() => {
+		try {
+			const params = new URLSearchParams(window.location.search)
+			setReferrer(params.get('ref') || undefined)
+		} catch {}
+	}, [])
 
 	// Tighter ranges so the header shrinks/fades with less scroll
 	const scale = useTransform(scrollYProgress, [0, 0.10], [1, 0.82])

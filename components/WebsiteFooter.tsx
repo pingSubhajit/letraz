@@ -15,7 +15,7 @@ const WebsiteFooter = () => {
 					loop
 					playsInline
 					preload="auto"
-					className="absolute -bottom-[100%] left-1/2 -translate-x-1/2 max-w-7xl">
+					className="absolute -bottom-[100%] left-1/2 -translate-x-1/2 max-w-7xl pointer-events-none">
 					<source src="/brain-pulse.webm" type="video/webm"/>
 				</video>
 				<div className="bg-gradient-to-br from-flame-500 to-flame-700 px-16 py-24 relative rounded-2xl max-w-7xl mx-auto z-20 flex flex-col justify-center items-center gap-4">

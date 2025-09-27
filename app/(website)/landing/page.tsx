@@ -1,4 +1,4 @@
-import dynamic from 'next/dynamic'
+import NextDynamic from 'next/dynamic'
 import landingBg from '@/public/landing-bg.webp'
 import Image from 'next/image'
 import stacksLogo from '@/public/stacks-logo.svg'
@@ -6,16 +6,15 @@ import infosysLogo from '@/public/infosys-logo.svg'
 import rizeLogo from '@/public/rize-logo-dark.svg'
 import HeroHeader from './page.heroHeader'
 
-const HeroVideoSequence = dynamic(() => import('@/app/(website)/landing/page.canvas'))
-const LandingPageFeatures = dynamic(() => import('@/app/(website)/landing/page.features'))
-const LandingPageProcess = dynamic(() => import('@/app/(website)/landing/page.process'))
-const LandingPageFaq = dynamic(() => import('@/app/(website)/landing/page.faq'))
+const HeroVideoSequence = NextDynamic(() => import('@/app/(website)/landing/page.canvas'))
+const LandingPageFeatures = NextDynamic(() => import('@/app/(website)/landing/page.features'))
+const LandingPageProcess = NextDynamic(() => import('@/app/(website)/landing/page.process'))
+const LandingPageFaq = NextDynamic(() => import('@/app/(website)/landing/page.faq'))
 
-const LandingPage = async (
-	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
-) => {
-	const searchParams = await props.searchParams
-	const referrer = searchParams.ref as string | undefined
+export const dynamic = 'force-static'
+export const revalidate = 3600
+
+const LandingPage = () => {
 
 	return (
 		<main className="relative overflow-x-clip">
@@ -36,7 +35,7 @@ const LandingPage = async (
 					className="h-[75vh] w-[75vw] absolute top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
 				/>
 
-				<HeroHeader referrer={referrer} />
+                <HeroHeader />
 			</div>
 
 			<div className="pb-20 bg-[#0F0202]">
