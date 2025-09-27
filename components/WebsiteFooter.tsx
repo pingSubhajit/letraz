@@ -40,12 +40,12 @@ const WebsiteFooter = () => {
 						<p className="text-neutral-400 text-xs uppercase font-medium">Company</p>
 
 						<ul className="mt-8 list-none text-neutral-300 flex flex-col gap-2 text-sm">
-							<Link href="/app" className="hover:text-neutral-50 transition"><li>Dashboard</li></Link>
-							<Link href="/story" className="hover:text-neutral-50 transition"><li>Story</li></Link>
-							<Link href="/docs" className="hover:text-neutral-50 transition"><li>Documentation</li></Link>
-							<Link href="/blog" className="hover:text-neutral-50 transition"><li>Blog</li></Link>
-							<Link href="/changes" className="hover:text-neutral-50 transition"><li>Changelog</li></Link>
-							<Link href="/support" className="hover:text-neutral-50 transition"><li>Support</li></Link>
+							<li><Link href="/app" className="hover:text-neutral-50 transition">Dashboard</Link></li>
+							<li><Link href="/story" className="hover:text-neutral-50 transition">Story</Link></li>
+							<li><Link href="/docs" className="hover:text-neutral-50 transition">Documentation</Link></li>
+							<li><Link href="/blog" className="hover:text-neutral-50 transition">Blog</Link></li>
+							<li><Link href="/changes" className="hover:text-neutral-50 transition">Changelog</Link></li>
+							<li><Link href="/support" className="hover:text-neutral-50 transition">Support</Link></li>
 						</ul>
 					</div>
 
@@ -53,8 +53,8 @@ const WebsiteFooter = () => {
 						<p className="text-neutral-400 text-xs uppercase font-medium">Legal</p>
 
 						<ul className="mt-8 list-none text-neutral-300 flex flex-col gap-2 text-sm">
-							<Link href="/privacy" className="hover:text-neutral-50 transition"><li>Privacy policy</li></Link>
-							<Link href="/terms" className="hover:text-neutral-50 transition"><li>Terms of use</li></Link>
+							<li><Link href="/privacy" className="hover:text-neutral-50 transition">Privacy policy</Link></li>
+							<li><Link href="/terms" className="hover:text-neutral-50 transition">Terms of use</Link></li>
 						</ul>
 					</div>
 
@@ -62,11 +62,11 @@ const WebsiteFooter = () => {
 						<p className="text-neutral-400 text-xs uppercase font-medium">Connect</p>
 
 						<ul className="mt-8 list-none text-neutral-300 flex flex-col gap-2 text-sm">
-							<a href={githubHandle} target="_blank" className="hover:text-neutral-50 transition"><li>Github</li></a>
-							<a href={discordHandle} target="_blank" className="hover:text-neutral-50 transition"><li>Discord</li></a>
-							<a href={twitterHandle} target="_blank" className="hover:text-neutral-50 transition"><li>X (Twitter)</li></a>
-							<a href={linkedinHandle} target="_blank" className="hover:text-neutral-50 transition"><li>LinkedIn</li></a>
-							<a href={instagramHandle} target="_blank" className="hover:text-neutral-50 transition"><li>Instagram</li></a>
+							<li><a href={githubHandle} target="_blank" className="hover:text-neutral-50 transition">Github</a></li>
+							<li><a href={discordHandle} target="_blank" className="hover:text-neutral-50 transition">Discord</a></li>
+							<li><a href={twitterHandle} target="_blank" className="hover:text-neutral-50 transition">X (Twitter)</a></li>
+							<li><a href={linkedinHandle} target="_blank" className="hover:text-neutral-50 transition">LinkedIn</a></li>
+							<li><a href={instagramHandle} target="_blank" className="hover:text-neutral-50 transition">Instagram</a></li>
 						</ul>
 					</div>
 				</div>
