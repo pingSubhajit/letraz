@@ -6,7 +6,7 @@ import WebsiteFooter from '@/components/WebsiteFooter'
 const WebsiteLayout = ({children}: {children: ReactNode}) => {
 	return (
 		<div className="relative [&>*]:font-jakarta">
-			<WebsiteNavBar className="fixed top-0 right-7 lg:right-16 z-30 w-[calc(100vw-56px)] lg:w-[calc(100vw-128px)]" />
+			<WebsiteNavBar className="fixed top-0 z-30 w-full" />
 
 			{children}
 

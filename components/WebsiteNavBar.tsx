@@ -5,7 +5,7 @@ import routes, {Route} from '@/routes'
 import {useSelectedLayoutSegment} from 'next/navigation'
 import {Link} from 'next-view-transitions'
 import {AnimatePresence, motion} from 'motion/react'
-import {useId, useState} from 'react'
+import {useEffect, useId, useState} from 'react'
 import {Button} from '@/components/ui/button'
 import LandingPageLogo from '@/app/(website)/page.logo'
 import useDOMMounted from '@/hooks/useDOMMounted'
@@ -16,10 +16,22 @@ import Image from 'next/image'
 const WebsiteNavBar = ({className}: {className?: string}) => {
 	const currentSegment = useSelectedLayoutSegment()
 	const [isOpen, setIsOpen] = useState(false)
+	const [isScrolled, setIsScrolled] = useState(false)
 	const links: Route[] = Object.keys(routes.website).filter(route => routes.website[route].mainNav).map((route) => routes.website[route])
 
 	const mounted = useDOMMounted()
 	const indicatorId = useId()
+
+	useEffect(() => {
+		const handleScroll = () => {
+			setIsScrolled(window.scrollY >= 3000)
+		}
+
+		// Initialize on mount in case user is already scrolled
+		handleScroll()
+		window.addEventListener('scroll', handleScroll, {passive: true})
+		return () => window.removeEventListener('scroll', handleScroll)
+	}, [])
 
 	const NavLinks = ({mobile = false}: {mobile?: boolean}) => {
 		return (
@@ -41,7 +53,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 							{/* Link Text */}
 							<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
 								<p className={cn(
-									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-3 text-sm',
+									'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 text-sm',
 									currentSegment && currentSegment === link.segment && 'opacity-100'
 								)}>
 									{link.title}
@@ -74,10 +86,16 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 	}
 
 	return (
-		<div className={cn('relative lg:px-36 lg:py-4', className)}>
+		<div className={cn(
+			'relative lg:px-36 lg:py-4',
+			// Desktop background on scroll
+			isScrolled ? 'lg:bg-neutral-50 lg:shadow-sm lg:ring-1 lg:ring-black/5' : 'lg:bg-transparent',
+			'lg:transition-colors lg:duration-300',
+			className
+		)}>
 			{/* Desktop Navigation */}
 			<div className="hidden lg:flex gap-12 justify-between items-center">
-				<LandingPageLogo className="mb-1" size="sm" />
+				<LandingPageLogo className="" size="sm" />
 
 				<div className="flex gap-6 items-center">
 					<NavLinks />
