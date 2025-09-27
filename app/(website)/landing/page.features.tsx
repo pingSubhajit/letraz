@@ -5,7 +5,7 @@ import {FlickeringGrid} from '@/components/ui/flickering-grid'
 import Image from 'next/image'
 import {motion} from 'motion/react'
 import {useState} from 'react'
-import resumeQr from '@/public/qr-code.png'
+import resumeQr from '@/public/qr-code.webp'
 
 const RizeAsset = ({isHovered}: {isHovered: boolean}) => {
 	return (

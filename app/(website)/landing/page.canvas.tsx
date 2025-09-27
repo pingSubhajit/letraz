@@ -89,8 +89,8 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 
 		// Initial sizing
 		setCanvasSize()
-		// Preload the first frame and a small lookahead
-		preloadLookahead(0, 6)
+		// Preload the first frame and a larger lookahead
+		preloadLookahead(0, 24)
 
 		// Draw once the very first frame is available
 		const tryInitialDraw = () => {
@@ -118,7 +118,7 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 			onUpdate: () => {
 				const idx = Math.round(frameStateRef.current.frame)
 				drawFrame(idx)
-				preloadLookahead(idx, 8)
+				preloadLookahead(idx, 24)
 			},
 			scrollTrigger: {
 				trigger: mockupRef.current || canvas,
