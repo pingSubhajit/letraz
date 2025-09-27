@@ -147,12 +147,10 @@ const StepOne = () => (
 		</div>
 
 		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
-			<video
-				src="/upload-resume.mp4"
-				preload="auto"
-				loop autoPlay muted playsInline
-				className="w-full"
-			></video>
+			<video preload="auto" loop autoPlay muted playsInline className="w-full">
+				<source src="/upload-resume.webm" type="video/webm" />
+				<source src="/upload-resume.mp4" type="video/mp4" />
+			</video>
 		</div>
 	</div>
 )
@@ -180,12 +178,10 @@ const StepThree = () => (
 		</div>
 
 		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
-			<video
-				src="/download-and-apply.mp4"
-				preload="auto"
-				loop autoPlay muted playsInline
-				className="w-full"
-			></video>
+			<video preload="auto" loop autoPlay muted playsInline className="w-full">
+				<source src="/download-and-apply.webm" type="video/webm" />
+				<source src="/download-and-apply.mp4" type="video/mp4" />
+			</video>
 		</div>
 	</div>
 )
@@ -202,7 +198,10 @@ const RizeCard = () => (
 		</div>
 
 		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
-			<video src="/rize-video.mp4" loop autoPlay muted playsInline></video>
+			<video loop autoPlay muted playsInline preload="auto">
+				<source src="/rize-video.webm" type="video/webm" />
+				<source src="/rize-video.mp4" type="video/mp4" />
+			</video>
 		</div>
 	</div>
 )

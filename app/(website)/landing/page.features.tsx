@@ -23,10 +23,13 @@ const RizeAsset = ({isHovered}: {isHovered: boolean}) => {
 				transition={{duration: 0.3, ease: 'easeOut'}}
 				style={{zIndex: 1}}
 			>
-				<img
+				<Image
+					width={128}
+					height={128}
 					src="https://i.pinimg.com/736x/d6/c5/80/d6c580c2371fdb09fded07bf026aedf2.jpg"
 					alt="Profile example"
 					className="aspect-square object-cover w-32 h-32 rounded-2xl"
+					loading="lazy"
 				/>
 			</motion.div>
 
@@ -70,10 +73,13 @@ const RizeAsset = ({isHovered}: {isHovered: boolean}) => {
 				style={{zIndex: 2}}
 			>
 				<div className="flex flex-col items-center justify-center w-28 h-32 bg-purple-50 border border-purple-200 rounded-2xl p-2">
-					<img
+					<Image
+						width={48}
+						height={48}
 						src="https://i.pinimg.com/736x/eb/da/ed/ebdaed1c261c9cb22e86481fbb08fa1e.jpg"
 						alt="Solana Imani profile picture"
 						className="aspect-square object-cover w-12 h-12 rounded-full"
+						loading="lazy"
 					/>
 					<div className="flex flex-col items-center justify-center mt-2">
 						<span className="text-xs font-medium tracking-tight text-center">
@@ -125,13 +131,7 @@ const LandingPageFeatures = () => {
 						<p className="mt-4 text-sm">We suggest you opportunities of improvement, and optimize your resume with built-in AI functionality</p>
 					</div>
 
-					<video
-						autoPlay
-						muted
-						loop
-						playsInline
-						preload="auto"
-						className="absolute -bottom-32 w-full scale-[200%]">
+					<video autoPlay muted loop playsInline preload="metadata" poster="/brain.webp" className="absolute -bottom-32 w-full scale-[200%]">
 						<source src="/brain-pulse.webm" type="video/webm"/>
 					</video>
 				</Card>
@@ -147,13 +147,8 @@ const LandingPageFeatures = () => {
 						<h3 className="text-2xl font-semibold">Download PDF & LaTeX version, edit easily</h3>
 					</div>
 
-					<video
-						autoPlay
-						muted
-						loop
-						playsInline
-						preload="auto"
-						className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
+					<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
+						<source src="/resume-generation.webm" type="video/webm"/>
 						<source src="/resume-generation.mp4" type="video/mp4"/>
 					</video>
 				</Card>
@@ -165,13 +160,8 @@ const LandingPageFeatures = () => {
 					<p className="text-2xl font-semibold text-center relative z-10 leading-normal max-w-[80%] mx-auto">
 						Connects with every single job portal you apply for jobs in
 					</p>
-					<video
-						autoPlay
-						muted
-						loop
-						playsInline
-						preload="auto"
-						className="w-full absolute left-0 -bottom-16">
+					<video autoPlay muted loop playsInline preload="metadata" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
+						<source src="/logo-carousel.webm" type="video/webm"/>
 						<source src="/logo-carousel.mp4" type="video/mp4"/>
 					</video>
 				</Card>
@@ -225,14 +215,9 @@ const LandingPageFeatures = () => {
 					</div>
 
 					<div className="bg-white aspect-square w-[45%] rounded-2xl overflow-hidden">
-						<video
-							autoPlay
-							muted
-							loop
-							playsInline
-							preload="auto"
-							className="h-full">
-							<source src="/tweak-resume.mp4" type="video/webm"/>
+						<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="h-full">
+							<source src="/tweak-resume.webm" type="video/webm"/>
+							<source src="/tweak-resume.mp4" type="video/mp4"/>
 						</video>
 					</div>
 				</Card>

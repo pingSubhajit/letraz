@@ -23,7 +23,7 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 		if (!context) return
 
 		const frameCount = 362
-		const getFrameSrc = (i: number) => `/landing-sequence/frame${i.toString().padStart(3, '0')}.jpg`
+		const getFrameSrc = (i: number) => `/landing-sequence/frame${i.toString().padStart(3, '0')}.webp`
 
 		const setCanvasSize = () => {
 			const dpr = Math.min(window.devicePixelRatio || 1, 2)

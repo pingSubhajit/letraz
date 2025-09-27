@@ -5,11 +5,11 @@ import stacksLogo from '@/public/stacks-logo.svg'
 import infosysLogo from '@/public/infosys-logo.svg'
 import rizeLogo from '@/public/rize-logo-dark.svg'
 import HeroHeader from './page.heroHeader'
-import LandingPageFeatures from '@/app/(website)/landing/page.features'
-import LandingPageProcess from '@/app/(website)/landing/page.process'
-import LandingPageFaq from '@/app/(website)/landing/page.faq'
 
 const HeroVideoSequence = dynamic(() => import('./page.canvas'))
+const LandingPageFeatures = dynamic(() => import('@/app/(website)/landing/page.features'))
+const LandingPageProcess = dynamic(() => import('@/app/(website)/landing/page.process'))
+const LandingPageFaq = dynamic(() => import('@/app/(website)/landing/page.faq'))
 
 const LandingPage = async (
 	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
@@ -26,6 +26,9 @@ const LandingPage = async (
 					src={landingBg}
 					alt="Landing Page background image of a sunny landscape"
 					className="sticky inset-0 w-full object-cover pointer-events-none"
+					priority
+					placeholder="blur"
+					sizes="100vw"
 				/>
 
 				{/* Canvas sequence */}
@@ -47,12 +50,10 @@ const LandingPage = async (
 			</div>
 
 			<div className="max-w-7xl mx-auto mt-3 lg:mt-8">
-				<video
-					src="/letraz-engine.mp4"
-					preload="auto"
-					loop autoPlay muted playsInline
-					className="w-full"
-				></video>
+				<video preload="auto" loop autoPlay muted playsInline className="w-full">
+					<source src="/letraz-engine.webm" type="video/webm" />
+					<source src="/letraz-engine.mp4" type="video/mp4" />
+				</video>
 			</div>
 
 			<div>
