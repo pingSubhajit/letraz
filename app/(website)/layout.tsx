@@ -2,6 +2,7 @@ import {ReactNode} from 'react'
 import WebsiteNavBar from '@/components/WebsiteNavBar'
 import AcquisitionTracker from '@/components/analytics/AcquisitionTracker'
 import WebsiteFooter from '@/components/WebsiteFooter'
+import {SpeedInsights} from '@vercel/speed-insights/next'
 
 const WebsiteLayout = ({children}: {children: ReactNode}) => {
 	return (
@@ -14,6 +15,7 @@ const WebsiteLayout = ({children}: {children: ReactNode}) => {
 				<WebsiteFooter />
 			</div>
 
+			<SpeedInsights />
 			<AcquisitionTracker />
 		</div>
 	)

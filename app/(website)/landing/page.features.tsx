@@ -4,7 +4,7 @@ import {Card} from '@/components/ui/card'
 import {FlickeringGrid} from '@/components/ui/flickering-grid'
 import Image from 'next/image'
 import {motion} from 'motion/react'
-import {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import resumeQr from '@/public/qr-code.webp'
 
 const RizeAsset = ({isHovered}: {isHovered: boolean}) => {
@@ -97,9 +97,24 @@ const RizeAsset = ({isHovered}: {isHovered: boolean}) => {
 
 const LandingPageFeatures = () => {
 	const [isRizeCardHovered, setIsRizeCardHovered] = useState(false)
+	const sectionRef = useRef<HTMLElement | null>(null)
+	const [active, setActive] = useState(false)
+
+	useEffect(() => {
+		const el = sectionRef.current
+		if (!el) return
+		const io = new IntersectionObserver((entries) => {
+			if (entries.some((e) => e.isIntersecting)) {
+				setActive(true)
+				io.disconnect()
+			}
+		}, {rootMargin: '200px'})
+		io.observe(el)
+		return () => io.disconnect()
+	}, [])
 
 	return (
-		<section className="w-full px-4">
+		<section ref={sectionRef} className="w-full px-4">
 			{/* Bento Grid Container */}
 			<div
 				className="grid gap-4 w-full max-w-7xl mx-auto min-h-[800px] lg:min-h-[900px]"
@@ -131,9 +146,11 @@ const LandingPageFeatures = () => {
 						<p className="mt-4 text-sm">We suggest you opportunities of improvement, and optimize your resume with built-in AI functionality</p>
 					</div>
 
-					<video autoPlay muted loop playsInline preload="metadata" poster="/brain.webp" className="absolute -bottom-32 w-full scale-[200%]">
-						<source src="/brain-pulse.webm" type="video/webm"/>
-					</video>
+					{active && (
+						<video autoPlay muted loop playsInline preload="metadata" poster="/brain.webp" className="absolute -bottom-32 w-full scale-[200%]">
+							<source src="/brain-pulse.webm" type="video/webm"/>
+						</video>
+					)}
 				</Card>
 
 				<Card
@@ -147,10 +164,12 @@ const LandingPageFeatures = () => {
 						<h3 className="text-2xl font-semibold">Download PDF & LaTeX version, edit easily</h3>
 					</div>
 
-					<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
-						<source src="/resume-generation.webm" type="video/webm"/>
-						<source src="/resume-generation.mp4" type="video/mp4"/>
-					</video>
+					{active && (
+						<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
+							<source src="/resume-generation.webm" type="video/webm"/>
+							<source src="/resume-generation.mp4" type="video/mp4"/>
+						</video>
+					)}
 				</Card>
 
 				<Card
@@ -160,10 +179,12 @@ const LandingPageFeatures = () => {
 					<p className="text-2xl font-semibold text-center relative z-10 leading-normal max-w-[80%] mx-auto">
 						Connects with every single job portal you apply for jobs in
 					</p>
-					<video autoPlay muted loop playsInline preload="metadata" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
-						<source src="/logo-carousel.webm" type="video/webm"/>
-						<source src="/logo-carousel.mp4" type="video/mp4"/>
-					</video>
+					{active && (
+						<video autoPlay muted loop playsInline preload="metadata" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
+							<source src="/logo-carousel.webm" type="video/webm"/>
+							<source src="/logo-carousel.mp4" type="video/mp4"/>
+						</video>
+					)}
 				</Card>
 
 				<Card
@@ -215,10 +236,12 @@ const LandingPageFeatures = () => {
 					</div>
 
 					<div className="bg-white aspect-square w-[45%] rounded-2xl overflow-hidden">
-						<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="h-full">
-							<source src="/tweak-resume.webm" type="video/webm"/>
-							<source src="/tweak-resume.mp4" type="video/mp4"/>
-						</video>
+						{active && (
+							<video autoPlay muted loop playsInline preload="metadata" poster="/letraz.png" className="h-full">
+								<source src="/tweak-resume.webm" type="video/webm"/>
+								<source src="/tweak-resume.mp4" type="video/mp4"/>
+							</video>
+						)}
 					</div>
 				</Card>
 			</div>
