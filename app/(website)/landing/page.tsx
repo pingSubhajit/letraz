@@ -18,7 +18,7 @@ const LandingPage = async (
 	const referrer = searchParams.ref as string | undefined
 
 	return (
-		<main className="relative overflow-x-clip bg-white">
+		<main className="relative overflow-x-clip">
 			{/* Hero Section */}
 			<div className="min-h-[530vh] relative">
 				{/* Background image */}
@@ -49,12 +49,12 @@ const LandingPage = async (
 				</div>
 			</div>
 
-			<div className="max-w-7xl mx-auto mt-3 lg:mt-8">
-				<video preload="auto" loop autoPlay muted playsInline className="w-full">
-					<source src="/letraz-engine.webm" type="video/webm" />
-					<source src="/letraz-engine.mp4" type="video/mp4" />
-				</video>
-			</div>
+			{/* <div className="max-w-7xl mx-auto mt-3 lg:mt-8">*/}
+			{/*	<video preload="auto" loop autoPlay muted playsInline className="w-full">*/}
+			{/*		<source src="/letraz-engine.webm" type="video/webm" />*/}
+			{/*		<source src="/letraz-engine.mp4" type="video/mp4" />*/}
+			{/*	</video>*/}
+			{/* </div>*/}
 
 			<div>
 				<LandingPageProcess />

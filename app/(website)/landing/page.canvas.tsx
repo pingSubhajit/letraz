@@ -12,6 +12,9 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 	const frameStateRef = useRef({frame: 0})
 	const imagesCacheRef = useRef<Map<number, HTMLImageElement>>(new Map())
 	const lastDrawnRef = useRef<number>(-1)
+	const canvasSizeRef = useRef<{width: number; height: number}>({width: 0, height: 0})
+	const rafScheduledRef = useRef(false)
+	const pendingIndexRef = useRef<number | null>(null)
 
 	useEffect(() => {
 		gsap.registerPlugin(ScrollTrigger)
@@ -28,6 +31,7 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 		const setCanvasSize = () => {
 			const dpr = Math.min(window.devicePixelRatio || 1, 2)
 			const {clientWidth, clientHeight} = canvas
+			canvasSizeRef.current = {width: clientWidth, height: clientHeight}
 			canvas.width = Math.max(1, Math.floor(clientWidth * dpr))
 			canvas.height = Math.max(1, Math.floor(clientHeight * dpr))
 			context.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -37,7 +41,7 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 			if (index === lastDrawnRef.current) return
 			const cached = imagesCacheRef.current.get(index)
 			if (cached && cached.complete) {
-				const {clientWidth, clientHeight} = canvas
+				const {width: clientWidth, height: clientHeight} = canvasSizeRef.current
 				// Clear
 				context.clearRect(0, 0, clientWidth, clientHeight)
 				// Cover behavior
@@ -111,13 +115,24 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 		const scrubAmount = 0.5
 		const scrollLength = Math.max(window.innerHeight * 4, 2000)
 		const topOffsetPx = 120
+		const scheduleDraw = (idx: number) => {
+			pendingIndexRef.current = idx
+			if (rafScheduledRef.current) return
+			rafScheduledRef.current = true
+			requestAnimationFrame(() => {
+				rafScheduledRef.current = false
+				const i = pendingIndexRef.current
+				if (i != null) drawFrame(i)
+			})
+		}
+
 		const tween = gsap.to(frameStateRef.current, {
 			frame: frameCount - 1,
 			snap: {frame: 1},
 			ease: 'none',
 			onUpdate: () => {
 				const idx = Math.round(frameStateRef.current.frame)
-				drawFrame(idx)
+				scheduleDraw(idx)
 				preloadLookahead(idx, 24)
 			},
 			scrollTrigger: {
