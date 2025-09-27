@@ -1,5 +1,5 @@
 import NextDynamic from 'next/dynamic'
-import landingBg from '@/public/landing-bg.webp'
+import landingBg from '@/public/landing-bg.avif'
 import Image from 'next/image'
 import stacksLogo from '@/public/stacks-logo.svg'
 import infosysLogo from '@/public/infosys-logo.svg'

@@ -167,7 +167,6 @@ const LandingPageFeatures = () => {
 					{active && (
 						<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
 							<source src="/resume-generation.webm" type="video/webm"/>
-							<source src="/resume-generation.mp4" type="video/mp4"/>
 						</video>
 					)}
 				</Card>
@@ -182,7 +181,6 @@ const LandingPageFeatures = () => {
 					{active && (
 						<video autoPlay muted loop playsInline preload="none" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
 							<source src="/logo-carousel.webm" type="video/webm"/>
-							<source src="/logo-carousel.mp4" type="video/mp4"/>
 						</video>
 					)}
 				</Card>
@@ -220,7 +218,7 @@ const LandingPageFeatures = () => {
 						playsInline
 						preload="auto"
 						className="w-full absolute -bottom-28 left-0">
-						<source src="/resume-cards.mp4" type="video/mp4"/>
+						<source src="/resume-cards.webm" type="video/webm"/>
 					</video>
 				</Card>
 
@@ -239,7 +237,6 @@ const LandingPageFeatures = () => {
 						{active && (
 							<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="h-full">
 								<source src="/tweak-resume.webm" type="video/webm"/>
-								<source src="/tweak-resume.mp4" type="video/mp4"/>
 							</video>
 						)}
 					</div>
