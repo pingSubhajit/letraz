@@ -13,13 +13,14 @@ import {AnimatePresence, motion} from 'motion/react'
 import {toast} from 'sonner'
 import {discordHandle} from '@/config'
 import {useAnalytics} from '@/lib/analytics'
-import posthog from 'posthog-js'
 
 const formSchema = z.object({
 	email: z.string().email({message: 'Please enter a valid email address'})
 })
 
-const Waitlist = ({className, referrer}: {className?: string, referrer: string | undefined}) => {
+type WaitlistMode = 'old' | 'new'
+
+const Waitlist = ({className, referrer, mode = 'new'}: {className?: string, referrer: string | undefined, mode?: WaitlistMode}) => {
 	const [signedUp, setSignedUp] = useState(false)
 	const {track} = useAnalytics()
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -69,7 +70,10 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 											<FormControl>
 												<Input
 													placeholder="Enter your email" {...field}
-													className="bg-neutral-50 peer w-full lg:w-96 rounded-l-full py-3 lg:py-4 h-auto"
+													className={cn(
+														'bg-neutral-50 peer w-full lg:w-96 rounded-l-full py-3 lg:py-4 h-auto',
+														mode === 'new' && 'pl-6'
+													)}
 												/>
 											</FormControl>
 										</FormItem>
@@ -85,7 +89,10 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 								</Button>
 							</form>
 						</Form>
-						<p className="mt-4 text-xs text-primary/60">
+						<p className={cn(
+							'mt-4 text-xs text-primary/60',
+							mode === 'new' && 'text-center mt-2'
+						)}>
 							Your email will not be shared with any third parties.
 						</p>
 					</motion.div>
@@ -96,7 +103,10 @@ const Waitlist = ({className, referrer}: {className?: string, referrer: string |
 						animate={{opacity: 1}}
 					>
 						Thanks for signing up! Join our <a href={discordHandle} target="_blank"
-							className="text-flame-500 font-medium hover:underline focus-visible:underline">
+							className={cn(
+								'text-flame-500 font-medium hover:underline focus-visible:underline',
+								mode === 'new' && 'text-center'
+							)}>
 							Discord
 						</a> to stay connected.
 					</motion.div>

@@ -37,11 +37,11 @@ interface AlgoliaResumeHit {
 const initializeSearchClient = () => {
   const appId = process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID
   const apiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_ONLY_API_KEY
-  
+
   if (!appId || !apiKey) {
     return null
   }
-  
+
   try {
     return algoliasearch(appId, apiKey)
   } catch (error) {
@@ -59,7 +59,7 @@ const IS = InstantSearch as unknown as ComponentType<InstantSearchProps>
 
 const SearchController = ({query}: {query: string}) => {
   const {refine} = useSearchBox({queryHook: (q, r) => r(q)})
-  
+
   useEffect(() => {
     refine(query)
   }, [query, refine])
@@ -161,7 +161,7 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
   // Smart scroll to first match
   useLayoutEffect(() => {
     if (hasScrolledRef.current || !searchQuery) return
-    
+
     const grid = document.querySelector('[data-resume-grid]')
     const firstLink = grid?.querySelector('a[href^="/app/craft/resumes/"]') as HTMLAnchorElement | null
     if (firstLink) {
@@ -211,8 +211,8 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
         <div className="col-span-full text-center py-12">
           <p className="text-neutral-500 text-lg">No resumes found</p>
           <p className="text-neutral-400 text-sm mt-2">
-            {searchQuery.trim() 
-              ? 'Try searching with different keywords' 
+            {searchQuery.trim()
+              ? 'Try searching with different keywords'
               : 'Start by creating your first resume'}
           </p>
         </div>
@@ -245,8 +245,8 @@ const ResumeSearch = ({userId, searchQuery}: ResumeSearchProps) => {
   }
 
   return (
-    <IS 
-      searchClient={searchClient} 
+    <IS
+      searchClient={searchClient}
       indexName={indexName}
       future={{
         preserveSharedStateOnUnmount: true

@@ -39,6 +39,7 @@ const TableOfContents = ({content = ''}: TableOfContentsProps) => {
 				const title = (heading.textContent || '').trim()
 
 				if (title) {
+					// Respect existing IDs; only generate when absent
 					const existing = (heading as HTMLElement).id?.trim()
 					let finalId: string
 
