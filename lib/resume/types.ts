@@ -155,7 +155,7 @@ export const ResumeListItemSchema = z.discriminatedUnion('base', [
 			responsibilities: true,
 			benefits: true,
 			status: true
-		})
+		}).nullable().optional()
 	}),
 	ResumeListItemCommonFields.extend({
 		base: z.literal(false),
