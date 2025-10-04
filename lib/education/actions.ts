@@ -16,7 +16,9 @@ export const addEducationToDB = async (
 	resumeId: string = 'base'
 ): Promise<Education> => {
 	try {
+		console.log(educationValues)
 		const params = EducationMutationSchema.parse(educationValues)
+		console.log(params)
 		const data = await api.post<Education>(`/resume/${resumeId}/education/`, params)
 		return EducationSchema.parse(data)
 	} catch (error) {
@@ -34,8 +36,8 @@ export const getEducationsFromDB = async (
 	resumeId: string = 'base'
 ): Promise<Education[] > => {
 	try {
-		const data = await api.get<Education[]>(`/resume/${resumeId}/education/`)
-		return z.array(EducationSchema).parse(data)
+		const data = await api.get<{educations: Education[]}>(`/resume/${resumeId}/education/`)
+		return z.array(EducationSchema).parse(data.educations)
 	} catch (error) {
 		return handleErrors(error, 'fetch educations')
 	}

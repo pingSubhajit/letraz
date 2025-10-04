@@ -85,7 +85,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 		resolver: zodResolver(ExperienceMutationSchema),
 		defaultValues: {
 			company_name: '',
-			country: userCountry,
+			country_code: userCountry,
 			job_title: '',
 			city: '',
 			employment_type: employmentTypes[0].value,
@@ -108,7 +108,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 	// Update form country when userCountry changes
 	useEffect(() => {
 		if (userCountry) {
-			form.setValue('country', userCountry)
+			form.setValue('country_code', userCountry)
 		}
 	}, [userCountry, form])
 
@@ -212,7 +212,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 						<FormField
 							disabled={isPending}
 							control={form.control}
-							name="country"
+							name="country_code"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect

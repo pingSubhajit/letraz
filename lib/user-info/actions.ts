@@ -2,7 +2,7 @@
 
 import {UserInfo, UserInfoMutation, UserInfoMutationSchema, UserInfoSchema} from '@/lib/user-info/types'
 import {api} from '@/lib/config/api-client'
-import {apiDateToDate, dateToApiFormat} from '@/lib/utils'
+import {apiDateToDate} from '@/lib/utils'
 
 /**
  * Adds or updates user information in the database
@@ -14,14 +14,15 @@ export const addOrUpdateUserInfoToDB = async (
 	options?: { headers?: Record<string, string> }
 ): Promise<UserInfo> => {
 	const params = UserInfoMutationSchema.parse(userInfoValues)
+	console.log(params.dob)
 
 	// Transform date for API compatibility (preserve local timezone)
 	const apiParams = {
 		...params,
-		dob: dateToApiFormat(params.dob)
+		dob: params.dob
 	}
 
-	const response = await api.patch<UserInfo>('/user/', apiParams, options)
+	const response = await api.put<UserInfo>('/identity/me/', apiParams, options)
 
 	// Transform string dates back to Date objects for schema validation
 	const transformedResponse = {
@@ -37,7 +38,7 @@ export const addOrUpdateUserInfoToDB = async (
  * @returns {Promise<UserInfo>} - The retrieved user information
  */
 export const getPersonalInfoFromDB = async (): Promise<UserInfo> => {
-	const response = await api.get<UserInfo>('/user/')
+	const response = await api.get<UserInfo>('/identity/me')
 
 	// Transform string dates back to Date objects for schema validation
 	const transformedResponse = {

@@ -34,8 +34,8 @@ export const getExperiencesFromDB = async (
 	resumeId: string = 'base'
 ): Promise<Experience[]> => {
 	try {
-		const data = await api.get<Experience[]>(`/resume/${resumeId}/experience/`)
-		return z.array(ExperienceSchema).parse(data)
+		const data = await api.get<{experiences: Experience[]}>(`/resume/${resumeId}/experience/`)
+		return z.array(ExperienceSchema).parse(data.experiences)
 	} catch (error) {
 		return handleErrors(error, 'fetch experiences')
 	}

@@ -25,8 +25,8 @@ import {ACCEPTED_MIME_TYPES, isAcceptedByName} from '@/lib/resume/accept'
  */
 export const getResumeFromDB = async (resumeId?: string | 'base'): Promise<Resume> => {
 	try {
-		const data = await api.get<Resume>(`/resume/${resumeId ?? 'base'}/`)
-		return ResumeSchema.parse(data)
+		const data = await api.get<{resume: Resume}>(`/resume/${resumeId ?? 'base'}/`)
+		return ResumeSchema.parse(data.resume)
 	} catch (error) {
 		return handleErrors(error, 'fetch resume')
 	}

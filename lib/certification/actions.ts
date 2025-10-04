@@ -1,10 +1,15 @@
 'use server'
 
 import {z} from 'zod'
-import {Certification, CertificationMutation, CertificationMutationSchema, CertificationSchema} from '@/lib/certification/types'
+import {
+	Certification,
+	CertificationMutation,
+	CertificationMutationSchema,
+	CertificationSchema
+} from '@/lib/certification/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib//misc/error-handler'
-import {apiDateToDate, dateToApiFormat} from '@/lib/utils'
+import {dateToApiFormat} from '@/lib/utils'
 
 /**
  * Adds new certification information to the database.
@@ -45,10 +50,8 @@ export const getCertificationsFromDB = async (
 	const apiUrl = `/resume/${resumeId}/certification/`
 
 	try {
-		const data = await api.get<Certification[]>(apiUrl)
-
-		const parsedData = z.array(CertificationSchema).parse(data)
-		return parsedData
+		const data = await api.get<{certifications: Certification[]}>(apiUrl)
+		return z.array(CertificationSchema).parse(data.certifications)
 	} catch (error) {
 		return handleErrors(error, 'fetch certifications')
 	}

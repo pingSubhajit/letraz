@@ -1,6 +1,13 @@
 'use server'
 
-import {GlobalSkill, GlobalSkillSchema, ResumeSkill, ResumeSkillSchema, SkillMutation, NewSkill} from '@/lib/skill/types'
+import {
+	GlobalSkill,
+	GlobalSkillSchema,
+	NewSkill,
+	ResumeSkill,
+	ResumeSkillSchema,
+	SkillMutation
+} from '@/lib/skill/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 
@@ -11,12 +18,8 @@ import {handleErrors} from '@/lib/misc/error-handler'
  */
 export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
 	try {
-		const data = await api.get<GlobalSkill[]>('/skill/')
-
-		// Parse each skill
-		const parsedSkills = data.map(skill => GlobalSkillSchema.parse(skill))
-
-		return parsedSkills
+		const data = await api.get<{skills: GlobalSkill[]}>('/skills/')
+		return data.skills.map(skill => GlobalSkillSchema.parse(skill))
 	} catch (error) {
 		return handleErrors(error, 'fetch global skills')
 	}
@@ -30,8 +33,8 @@ export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
  */
 export const fetchResumeSkills = async (resumeId: string = 'base'): Promise<ResumeSkill[]> => {
 	try {
-		const data = await api.get<ResumeSkill[]>(`/resume/${resumeId}/skill/`)
-		return data.map(skill => ResumeSkillSchema.parse(skill))
+		const data = await api.get<{proficiencies: ResumeSkill[]}>(`/resume/${resumeId}/skill/`)
+		return data.proficiencies.map(skill => ResumeSkillSchema.parse(skill))
 	} catch (error) {
 		return handleErrors(error, 'fetch resume skills')
 	}

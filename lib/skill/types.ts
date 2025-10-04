@@ -21,7 +21,7 @@ export const GlobalSkillSchema = z.object({
 	category: z.string().max(50).nullable().describe('The category of the skill. (optional)'),
 	name: z.string().max(250).describe('The name of the skill.'),
 	preferred: z.boolean().describe('Whether this is the preferred name for the skill.'),
-	alias: z.array(SkillAliasSchema).describe('Alternative names for the skill.'),
+	alias: z.array(SkillAliasSchema).optional().describe('Alternative names for the skill.'),
 	created_at: z.string().readonly().describe('The date and time the skill was created.'),
 	updated_at: z.string().readonly().describe('The date and time the skill was last updated.')
 })
@@ -29,29 +29,29 @@ export const GlobalSkillSchema = z.object({
 /*
  * Schema for skill level
  */
-export const SkillLevelEnum = z.enum(['BEG', 'INT', 'ADV', 'EXP'])
+export const SkillLevelEnum = z.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert'])
 
 export const skillLevels = [
 	{
-		value: 'BEG',
+		value: 'Beginner',
 		label: 'Beginner',
 		color: '#6366f1',
 		description: 'Basic understanding and limited practical experience'
 	},
 	{
-		value: 'INT',
+		value: 'Intermediate',
 		label: 'Intermediate',
 		color: '#8b5cf6',
 		description: 'Good working knowledge and some professional experience'
 	},
 	{
-		value: 'ADV',
+		value: 'Advanced',
 		label: 'Advanced',
 		color: '#ec4899',
 		description: 'Thorough understanding and significant practical experience'
 	},
 	{
-		value: 'EXP',
+		value: 'Expert',
 		label: 'Expert',
 		color: '#f43f5e',
 		description: 'Comprehensive expertise and ability to train others'
@@ -64,7 +64,7 @@ export const skillLevels = [
 export const ResumeSkillSchema = z.object({
 	id: z.string().uuid().describe('The unique identifier for the resume skill entry.').readonly(),
 	skill: GlobalSkillSchema.describe('The skill details.'),
-	resume_section: z.string().uuid().describe('The resume section the skill belongs to.'),
+	resume_section: z.string().uuid().optional().describe('The resume section the skill belongs to.'),
 	level: SkillLevelEnum.nullable().describe('The proficiency level of the skill.')
 })
 

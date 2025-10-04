@@ -20,9 +20,8 @@ import {handleErrors} from '@/lib/misc/error-handler'
  */
 export const getProjectsFromDB = async (resumeId: string = 'base'): Promise<Project[]> => {
 	try {
-		const data = await api.get<any[]>(`/resume/${resumeId}/project/`)
-
-		return z.array(ProjectSchema).parse(data)
+		const data = await api.get<{projects: Project[]}>(`/resume/${resumeId}/project/`)
+		return z.array(ProjectSchema).parse(data.projects)
 	} catch (error) {
 		return handleErrors(error, 'fetch projects')
 	}
