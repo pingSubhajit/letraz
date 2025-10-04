@@ -19,10 +19,7 @@ export const UserInfoSchema = z.object({
 		.min(10, {message: 'That phone number doesn\'t look right'}).describe('The phone number of the user. Must be at least 10 characters long.')
 		.max(25, {message: 'That phone number doesn\'t look right'}).describe('The phone number of the user. Must be at most 25 characters long.')
 		.nullable().optional().describe('The phone number of the user. Nullable and optional.'),
-	dob: z.preprocess(
-		(val) => (val === null || val === undefined || val === '' ? null : new Date(val as string)),
-		z.date().nullable().optional()
-	).describe('The date of birth of the user. Nullable and optional.'),
+	dob: z.date().nullable().optional().describe('The date of birth of the user. Nullable and optional.'),
 	nationality: z.string().nullable().optional().describe('The nationality of the user. Nullable and optional.'),
 	address: z.string().nullable().optional().describe('The address of the user. Nullable and optional.'),
 	city: z.string().nullable().optional().describe('The city of the user. Nullable and optional.'),

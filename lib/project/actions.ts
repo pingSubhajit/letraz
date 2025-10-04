@@ -11,6 +11,7 @@ import {
 } from '@/lib/project/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
+import {stripNullFields} from '@/lib/utils'
 
 /**
  * Gets all projects from the database for a given resume
@@ -34,7 +35,7 @@ export const getProjectsFromDB = async (resumeId: string = 'base'): Promise<Proj
  */
 export const getGlobalSkills = async (): Promise<GlobalSkill[]> => {
 	try {
-		const data = await api.get('/skills/')
+		const data = await api.get('/skill/')
 		return z.array(GlobalSkillSchema).parse(data)
 	} catch (error) {
 		return handleErrors(error, 'fetch global skills')
@@ -50,7 +51,8 @@ export const getGlobalSkills = async (): Promise<GlobalSkill[]> => {
  */
 export const addProjectToDB = async (projectValues: ProjectMutation, resumeId: string = 'base'): Promise<Project> => {
 	try {
-		const params = ProjectMutationSchema.parse(projectValues)
+		const parsed = ProjectMutationSchema.parse(projectValues)
+		const params = stripNullFields(parsed)
 		const data = await api.post<Project>(`/resume/${resumeId}/project/`, params)
 		return ProjectSchema.parse(data)
 	} catch (error) {
@@ -72,11 +74,9 @@ export const updateProjectInDB = async (
 	resumeId: string = 'base'
 ): Promise<Project> => {
 	try {
-		const params = ProjectMutationSchema.partial().parse(projectValues)
-		const data = await api.patch<Project>(
-			`/resume/${resumeId}/project/${projectId}/`,
-			params
-		)
+		const parsed = ProjectMutationSchema.partial().parse(projectValues)
+		const params = stripNullFields(parsed)
+		const data = await api.patch<Project>(`/resume/${resumeId}/project/${projectId}/`, params)
 		return ProjectSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'update project')

@@ -6,8 +6,8 @@ import {z} from 'zod'
  */
 export const EducationSchema = z.object({
 	id: z.string().uuid().describe('The unique identifier for the education entry.').readonly(),
-	user: z.string().optional().describe('The user who the education entry belongs to.'),
-	resume_section: z.string().uuid().optional().describe('The resume section the education entry belongs to.'),
+	user: z.string().describe('The user who the education entry belongs to.'),
+	resume_section: z.string().uuid().describe('The resume section the education entry belongs to.'),
 	institution_name: z.string().max(250).describe('The name of the institution the user studied at.'),
 	field_of_study: z.string().max(250).describe('The field of study the user studied.'),
 	degree: z.string().max(250).nullable().optional().describe('The degree the user obtained. (optional)'),
@@ -41,7 +41,7 @@ export const EducationMutationSchema = EducationSchema.omit({
 	created_at: true,
 	updated_at: true
 }).extend({
-	country_code: z.string().regex(/^[A-Z]{3}$/),
+	country: z.string().regex(/^[A-Z]{3}$/),
 	started_from_month: z.string().nullish(),
 	started_from_year: z.string().nullish(),
 	finished_at_month: z.string().nullish(),

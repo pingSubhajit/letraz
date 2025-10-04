@@ -92,7 +92,7 @@ const EducationForm = ({
 		resolver: zodResolver(EducationMutationSchema),
 		defaultValues: {
 			institution_name: '',
-			country_code: userCountry,
+			country: userCountry,
 			field_of_study: '',
 			degree: '',
 			started_from_month: undefined,
@@ -114,7 +114,7 @@ const EducationForm = ({
 	// Update form country when userCountry changes
 	useEffect(() => {
 		if (userCountry) {
-			form.setValue('country_code', userCountry)
+			form.setValue('country', userCountry)
 		}
 	}, [userCountry, form])
 
@@ -226,7 +226,7 @@ const EducationForm = ({
 						<FormField
 							disabled={isPending}
 							control={form.control}
-							name="country_code"
+							name="country"
 							render={({field}) => (
 								<FormItem className="w-full">
 									<OnboardingFormSelect

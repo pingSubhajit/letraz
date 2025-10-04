@@ -18,7 +18,7 @@ import {handleErrors} from '@/lib/misc/error-handler'
  */
 export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
 	try {
-		const data = await api.get<{skills: GlobalSkill[]}>('/skills/')
+		const data = await api.get<{skills: GlobalSkill[]}>('/skill/')
 		return data.skills.map(skill => GlobalSkillSchema.parse(skill))
 	} catch (error) {
 		return handleErrors(error, 'fetch global skills')
@@ -33,8 +33,8 @@ export const fetchGlobalSkills = async (): Promise<GlobalSkill[]> => {
  */
 export const fetchResumeSkills = async (resumeId: string = 'base'): Promise<ResumeSkill[]> => {
 	try {
-		const data = await api.get<{proficiencies: ResumeSkill[]}>(`/resume/${resumeId}/skill/`)
-		return data.proficiencies.map(skill => ResumeSkillSchema.parse(skill))
+		const data = await api.get<{skills: ResumeSkill[]}>(`/resume/${resumeId}/skill/`)
+		return data.skills.map(skill => ResumeSkillSchema.parse(skill))
 	} catch (error) {
 		return handleErrors(error, 'fetch resume skills')
 	}

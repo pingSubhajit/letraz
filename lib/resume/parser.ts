@@ -92,18 +92,7 @@ const normalizeDescriptionToTiptapHTML = (input: string | null | undefined): str
 	return html
 }
 
-// Schema for AI parsing - accepts strings for dates (AI can't return Date objects in JSON)
-const AIUserInfoMutationSchema = UserInfoMutationSchema.omit({dob: true}).extend({
-	dob: z.string().nullable().optional().describe('Date of birth in YYYY-MM-DD format')
-})
-
-// Enhanced schema for AI responses that includes both user profile data and resume sections
-const EnhancedResumeMutationSchemaForAI = z.object({
-	userProfile: AIUserInfoMutationSchema.partial(),
-	sections: ResumeMutationSchema.shape.sections
-})
-
-// Enhanced schema that includes both user profile data and resume sections (with proper Date types)
+// Enhanced schema that includes both user profile data and resume sections
 const EnhancedResumeMutationSchema = z.object({
 	userProfile: UserInfoMutationSchema.partial(),
 	sections: ResumeMutationSchema.shape.sections
@@ -164,11 +153,11 @@ export const parseResume = async (
 		throw new Error('Uploaded resume is an empty file')
 	}
 
-	// For proprietary format, use AI-compatible schema (dates as strings), then transform
-	const schema = format === 'proprietary' ? EnhancedResumeMutationSchemaForAI : GenericResumeSchema
+	// For proprietary format, output exactly our internal ResumeMutation schema + user profile
+	const schema = format === 'proprietary' ? EnhancedResumeMutationSchema : GenericResumeSchema
 
 	// Choose model based on target format for clarity and maintainability
-	const modelId = format === 'proprietary' ? 'gemini-2.5-flash' : 'gemini-2.5-flash'
+	const modelId = format === 'proprietary' ? 'gemini-2.5-flash-lite' : 'gemini-2.5-flash'
 
 	const currentYear = new Date().getFullYear()
 	const prompt = format === 'proprietary'
@@ -180,10 +169,10 @@ CRITICAL INSTRUCTIONS FOR USER PROFILE EXTRACTION:
 3. ALWAYS extract location information (address, city, postal code, country) from the contact section
 4. Look for LinkedIn/portfolio websites in the contact section
 5. Extract any professional summary or objective statement as profile_text
-6. If you find a date of birth, return it as an ISO date string in YYYY-MM-DD format
+6. If you find a date of birth, format it as an ISO date string (YYYY-MM-DD)
 7. Extract nationality if mentioned anywhere in the resume
 8. Do NOT leave userProfile fields empty if the information exists in the resume
-9. If no profile_text is found in the resume, generate a concise professional profile text that would work well as a LinkedIn summary or resume objective. Focus on their expertise, experience level, and key accomplishments. Return only the profile text, no additional formatting or explanation.
+9. If not profile_text is found in the resume gGenerate a concise professional profile text that would work well as a LinkedIn summary or resume objective. Focus on their expertise, experience level, and key accomplishments. Return only the profile text, no additional formatting or explanation.
 
 Example userProfile extraction:
 If resume shows "John Smith, john.smith@email.com, (555) 123-4567, 123 Main St, New York, NY 10001"
@@ -203,15 +192,13 @@ Rules:
 - MANDATORY: Extract personal contact information from resume header/contact section
 - Use null for unknown optional values where allowed; otherwise use empty string for required strings when unknown.
 - For userProfile.dob, if a date of birth is found, format it as an ISO date string (YYYY-MM-DD).
-- For userProfile.country, provide the ISO3 country code string (like "USA", "IND").
-- For all month fields (started_from_month, finished_at_month) in Education/Experience sections: return as NUMBER type from 1 to 12 (not string). Do not use month names like "Jul".
-- For all year fields (started_from_year, finished_at_year) in Education/Experience sections: return as NUMBER type like 2021 (not string "2021").
-- For Project sections only: return month/year fields as STRING type (e.g., "1", "2021"), not numbers.
+- For userProfile.country, provide the ISO# code (like "USA", "IND").
+- Months MUST be numeric strings from "1" to "12" (do not use names like "Jul").
+- Years MUST be 4-digit numeric strings like "2021".
 - Certification issue_date MUST be a date-only string in the exact format YYYY-MM-DD (e.g., "2024-03-01").
-- For Education sections: country_code must be a 3-letter uppercase ISO3 code (e.g., "USA", "IND").
-- For Experience sections: country_code must be a 3-letter uppercase ISO3 code (e.g., "USA", "IND").
-- employment_type must be one of: 'Full Time', 'Part Time', 'Contract', 'Internship', 'Freelance', 'Self Employed', 'Volunteer', 'Trainee'.
-- level must be one of: 'Beginner', 'Intermediate', 'Advanced', 'Expert', or omit the field entirely.
+- Use ISO3 country codes (e.g., USA, IND) when inferring countries.
+- employment_type must be one of: flt, prt, con, int, fre, sel, vol, tra.
+- level must be one of: BEG, INT, ADV, EXP, or null.
 - The current calendar year is ${currentYear}. Do NOT output any future years. If you encounter a year greater than ${currentYear} in the source resume:
   - For that date field, set the associated month and year fields to null, and
   - Set the "current" flag to true for that section when available (Education, Experience, Project).
@@ -265,24 +252,14 @@ Return ONLY the JSON object, nothing else.`
 					]
 				}
 			],
-			temperature: 0, // More deterministic, faster
-			output: 'object'
+			// Add performance optimizations
+			temperature: 0 // More deterministic, faster
 		})
 
 		// Normalize any date-time strings to date-only for certification issue_date
 		if (format === 'proprietary') {
-			const payload = result.object as z.infer<typeof EnhancedResumeMutationSchemaForAI>
-
-			// Transform userProfile.dob from ISO string to Date object
-			const transformedPayload: EnhancedResumeMutation = {
-				...payload,
-				userProfile: {
-					...payload.userProfile,
-					dob: payload.userProfile?.dob ? new Date(payload.userProfile.dob) : undefined
-				}
-			}
-
-			for (const section of transformedPayload.sections) {
+			const payload = result.object as z.infer<typeof EnhancedResumeMutationSchema>
+			for (const section of payload.sections) {
 				if (section.type === 'Certification') {
 					section.data.issue_date = normalizeCertificationDate(section.data.issue_date)
 				}
@@ -337,16 +314,11 @@ Return ONLY the JSON object, nothing else.`
 					}
 				}
 			}
-			return transformedPayload
+			return payload
 		}
 
-		return result.object as GenericParsedResume | EnhancedResumeMutation
+		return result.object
 	} catch (error) {
-		// Log detailed error information for debugging
-		console.error('Resume parsing error:', error)
-		if (error && typeof error === 'object' && 'cause' in error) {
-			console.error('Error cause:', error.cause)
-		}
 		throw new Error(`Failed to parse resume: ${(error as Error).message}`)
 	}
 }

@@ -29,29 +29,29 @@ export const GlobalSkillSchema = z.object({
 /*
  * Schema for skill level
  */
-export const SkillLevelEnum = z.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert'])
+export const SkillLevelEnum = z.enum(['BEG', 'INT', 'ADV', 'EXP'])
 
 export const skillLevels = [
 	{
-		value: 'Beginner',
+		value: 'BEG',
 		label: 'Beginner',
 		color: '#6366f1',
 		description: 'Basic understanding and limited practical experience'
 	},
 	{
-		value: 'Intermediate',
+		value: 'INT',
 		label: 'Intermediate',
 		color: '#8b5cf6',
 		description: 'Good working knowledge and some professional experience'
 	},
 	{
-		value: 'Advanced',
+		value: 'ADV',
 		label: 'Advanced',
 		color: '#ec4899',
 		description: 'Thorough understanding and significant practical experience'
 	},
 	{
-		value: 'Expert',
+		value: 'EXP',
 		label: 'Expert',
 		color: '#f43f5e',
 		description: 'Comprehensive expertise and ability to train others'
@@ -64,7 +64,7 @@ export const skillLevels = [
 export const ResumeSkillSchema = z.object({
 	id: z.string().uuid().describe('The unique identifier for the resume skill entry.').readonly(),
 	skill: GlobalSkillSchema.describe('The skill details.'),
-	resume_section: z.string().uuid().optional().describe('The resume section the skill belongs to.'),
+	resume_section: z.string().uuid().describe('The resume section the skill belongs to.'),
 	level: SkillLevelEnum.nullable().describe('The proficiency level of the skill.')
 })
 

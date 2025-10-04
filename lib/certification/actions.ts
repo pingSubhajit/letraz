@@ -9,7 +9,7 @@ import {
 } from '@/lib/certification/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib//misc/error-handler'
-import {dateToApiFormat} from '@/lib/utils'
+import {dateToApiFormat, stripNullFields} from '@/lib/utils'
 
 /**
  * Adds new certification information to the database.
@@ -25,10 +25,12 @@ export const addCertificationToDB = async (
 		const params = CertificationMutationSchema.parse(certificationValues)
 
 		// Transform date for API compatibility
-		const apiParams = {
+		const transformed = {
 			...params,
 			issue_date: params.issue_date ? dateToApiFormat(params.issue_date as Date) : undefined
 		}
+
+		const apiParams = stripNullFields(transformed)
 
 		const data = await api.post<Certification>(`/resume/${resumeId}/certification/`, apiParams)
 
@@ -72,10 +74,12 @@ export const updateCertificationInDB = async (
 ): Promise<Certification> => {
 	try {
 		// Transform date for API compatibility if present
-		const apiParams = certificationValues.issue_date ? {
+		const transformed = certificationValues.issue_date ? {
 			...certificationValues,
 			issue_date: dateToApiFormat(certificationValues.issue_date as Date)
 		} : certificationValues
+
+		const apiParams = stripNullFields(transformed)
 
 		const data = await api.patch<Certification>(`/resume/${resumeId}/certification/${certificationId}/`, apiParams)
 

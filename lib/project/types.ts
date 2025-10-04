@@ -16,7 +16,7 @@ export const ProjectSchema = z.object({
 	finished_at_month: z.number().int().min(1).max(12).nullable().describe('Month when the project was completed (1-12).'),
 	finished_at_year: z.number().int().min(1900).max(2100).nullable().describe('Year when the project was completed (YYYY).'),
 	current: z.boolean().nullable().describe('Indicates if this is a current/ongoing project.'),
-	user: z.string().optional().describe('The user who owns this project').readonly(),
+	user: z.string().describe('The user who owns this project').readonly(),
 	created_at: z.string().describe('Timestamp when the project was first created.').readonly(),
 	updated_at: z.string().describe('Timestamp when the project was last updated.').readonly(),
 	skills_used: z.array(z.object({
@@ -35,7 +35,7 @@ export const ProjectSchema = z.object({
 		updated_at: z.string().describe('The date and time the skill entry was last updated.').readonly(),
 		created_at: z.string().describe('The date and time the skill entry was created.').readonly()
 	})).describe('Skills used in this project'),
-	resume_section: z.string().uuid().optional().describe('The unique identifier for the resume section entry.').readonly()
+	resume_section: z.string().uuid().describe('The unique identifier for the resume section entry.').readonly()
 })
 
 /**

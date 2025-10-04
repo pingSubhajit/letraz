@@ -16,6 +16,7 @@ import {EnhancedResumeMutation, type GenericParsedResume, parseResume} from '@/l
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 import {ACCEPTED_MIME_TYPES, isAcceptedByName} from '@/lib/resume/accept'
+import {stripNullFields} from '@/lib/utils'
 
 /**
  * Retrieves a single resume object from the database by its ID
@@ -25,8 +26,8 @@ import {ACCEPTED_MIME_TYPES, isAcceptedByName} from '@/lib/resume/accept'
  */
 export const getResumeFromDB = async (resumeId?: string | 'base'): Promise<Resume> => {
 	try {
-		const data = await api.get<{resume: Resume}>(`/resume/${resumeId ?? 'base'}/`)
-		return ResumeSchema.parse(data.resume)
+		const data = await api.get<Resume>(`/resume/${resumeId ?? 'base'}/`)
+		return ResumeSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'fetch resume')
 	}
@@ -38,7 +39,7 @@ export const getResumeFromDB = async (resumeId?: string | 'base'): Promise<Resum
  */
 export const listResumesForUser = async (): Promise<ResumeListItem[]> => {
 	try {
-		const data = await api.get<unknown[]>('/resume/')
+		const {resumes: data} = await api.get<{resumes: ResumeListItem[]}>('/resume/')
 		return (data || []).map(item => ResumeListItemSchema.parse(item))
 	} catch (error) {
 		return handleErrors(error, 'list resumes')
@@ -119,6 +120,7 @@ export const replaceResume = async (
 ): Promise<Resume> => {
 	try {
 		const parsed = ResumeMutationSchema.parse(payload)
+		const apiParams = stripNullFields(parsed)
 		const data = await api.put<Resume>(`/resume/${resumeId ?? 'base'}/`, parsed, options)
 		return ResumeSchema.parse(data)
 	} catch (error) {
