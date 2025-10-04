@@ -38,7 +38,7 @@ export const addOrUpdateUserInfoToDB = async (
  * @returns {Promise<UserInfo>} - The retrieved user information
  */
 export const getPersonalInfoFromDB = async (): Promise<UserInfo> => {
-	const response = await api.get<UserInfo>('/user')
+	const response = await api.get<UserInfo>('/user/')
 
 	// Transform string dates back to Date objects for schema validation
 	const transformedResponse = {
