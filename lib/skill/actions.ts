@@ -68,7 +68,7 @@ export const addSkillToResume = async (
 				skillDetails = await api.get<GlobalSkill>(`/skill/${skillData.skill_id}/`)
 			} catch {
 				// Fallback: fetch all global skills and find the matching one
-				const allSkills = await api.get<GlobalSkill[]>('/skill/')
+				const allSkills = await fetchGlobalSkills()
 				skillDetails = allSkills.find(s => s.id === skillData.skill_id) || null
 			}
 			if (skillDetails) {
@@ -128,7 +128,7 @@ export const updateResumeSkill = async (
 					skillDetails = await api.get<GlobalSkill>(`/skill/${skillData.skill_id}/`)
 				} catch {
 					// Fallback: fetch all global skills and find the matching one
-					const allSkills = await api.get<GlobalSkill[]>('/skill/')
+					const allSkills = await fetchGlobalSkills()
 					skillDetails = allSkills.find(s => s.id === skillData.skill_id) || null
 				}
 				if (skillDetails) {
@@ -193,8 +193,8 @@ export const createGlobalSkill = async (skillData: NewSkill): Promise<GlobalSkil
  */
 export const fetchSkillCategories = async (resumeId: string = 'base'): Promise<string[]> => {
 	try {
-		const data = await api.get<string[]>(`/resume/${resumeId}/skill/categories/`)
-		return data
+		const data = await api.get<{categories: string[]}>(`/resume/${resumeId}/skill/categories/`)
+		return data.categories
 	} catch (error) {
 		return handleErrors(error, 'fetch skill categories')
 	}
