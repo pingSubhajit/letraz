@@ -75,5 +75,3 @@ const AccountDeletedEmail = () => (
 )
 
 export default AccountDeletedEmail
-
-

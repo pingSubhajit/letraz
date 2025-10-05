@@ -192,11 +192,11 @@ Rules:
 - MANDATORY: Extract personal contact information from resume header/contact section
 - Use null for unknown optional values where allowed; otherwise use empty string for required strings when unknown.
 - For userProfile.dob, if a date of birth is found, format it as an ISO date string (YYYY-MM-DD).
-- For userProfile.country, provide the ISO# code (like "USA", "IND").
+- For userProfile.country, provide the ISO3 code (like "USA", "IND").
 - Months MUST be numeric strings from "1" to "12" (do not use names like "Jul").
 - Years MUST be 4-digit numeric strings like "2021".
 - Certification issue_date MUST be a date-only string in the exact format YYYY-MM-DD (e.g., "2024-03-01").
-- Use ISO3 country codes (e.g., USA, IND) when inferring countries.
+- Use ISO3 country codes (e.g., USA, IND) when inferring countries. Do not use country names or country codes with other characters. Do not include countries that you do not recognize.
 - employment_type must be one of: flt, prt, con, int, fre, sel, vol, tra.
 - level must be one of: BEG, INT, ADV, EXP, or null.
 - The current calendar year is ${currentYear}. Do NOT output any future years. If you encounter a year greater than ${currentYear} in the source resume:
@@ -319,6 +319,7 @@ Return ONLY the JSON object, nothing else.`
 
 		return result.object
 	} catch (error) {
+		console.log(error)
 		throw new Error(`Failed to parse resume: ${(error as Error).message}`)
 	}
 }
