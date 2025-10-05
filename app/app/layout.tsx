@@ -6,8 +6,6 @@ import {cookies} from 'next/headers'
 import {auth, clerkClient} from '@clerk/nextjs/server'
 import {executeRizeBackfill} from '@/lib/rize/actions'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
 	title: {
 		default: 'Letraz — App',
