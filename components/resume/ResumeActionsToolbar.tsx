@@ -33,61 +33,31 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
     const {track} = useAnalytics()
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
-		// Open a stub window immediately to preserve user gesture
-		const win = window.open('', '_blank', 'noopener,noreferrer')
-
 		try {
 			track('resume_export_clicked', {resume_id: resumeId, format})
-			const response = await exportResume(resumeId)
 
+			// Fetch export URLs from API
+			const response = await exportResume(resumeId)
 			const downloadUrl = format === 'pdf' ? response.pdf_url : response.latex_url
 
-			// Validate the URL exists
-			if (!downloadUrl || typeof downloadUrl !== 'string' || downloadUrl.trim() === '') {
-				if (win) win.close()
+			// Validate response
+			if (!downloadUrl?.trim()) {
 				toast.error('No download URL received from server')
 				return
 			}
 
-			// Properly construct/validate the URL
-			let fullUrl: string
-			try {
-				// Use URL constructor to handle absolute, protocol-relative, and relative URLs
-				fullUrl = new URL(downloadUrl, window.location.origin).toString()
-			} catch (urlError) {
-				// Fallback for protocol-relative URLs or other edge cases
-				try {
-					fullUrl = new URL(downloadUrl, 'https:').toString()
-				} catch (fallbackError) {
-					if (win) win.close()
-					toast.error('Invalid download URL received')
-					return
-				}
-			}
+			// Construct full URL with protocol if needed
+			const fullUrl = downloadUrl.toLowerCase().startsWith('http')
+				? downloadUrl
+				: `https://${downloadUrl}`
 
-			if (win) {
-				try {
-					win.opener = null
-					win.location.replace(fullUrl)
-				} catch {
-					// Fallback if blocked
-					window.open(fullUrl, '_blank', 'noopener=yes,noreferrer=yes')
-				}
-			} else {
-				window.open(fullUrl, '_blank', 'noopener=yes,noreferrer=yes')
-			}
+			// Open PDF in new tab
+			window.open(fullUrl, '_blank', 'noopener,noreferrer')
+
 			track('resume_export_succeeded', {resume_id: resumeId, format})
 		} catch (error) {
-			// Close the blank tab if we opened one and failed
-			if (win) {
-				try {
-					win.close()
-				} catch {
-					// Ignore if we can't close it
-				}
-			}
-			// Error handling is already done in the mutation
 			track('resume_export_failed', {resume_id: resumeId, format})
+			// Error toast already handled by mutation
 		}
 	}
 
