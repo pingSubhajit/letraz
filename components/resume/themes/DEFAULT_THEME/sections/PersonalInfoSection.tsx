@@ -6,8 +6,6 @@ import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoCont
 import {cn} from '@/lib/utils'
 
 const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
-
-	console.log(data)
 	return (
 		<div
 			className={cn(
@@ -45,23 +43,23 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 							)
 						}
 
-					if (data.contact.phone) {
-						contactItems.push(
-							<span key="phone">
-								<FontAwesomeIcon icon={faPhoneFlip} /> {data.contact.phone}
-							</span>
-						)
-					}
+						if (data.contact.phone) {
+							contactItems.push(
+								<span key="phone">
+									<FontAwesomeIcon icon={faPhoneFlip} /> {data.contact.phone}
+								</span>
+							)
+						}
 
-					if (data.dateOfBirth.hasDate) {
-						contactItems.push(
-							<span key="dob">
-								<FontAwesomeIcon icon={faCalendarDay} /> {data.dateOfBirth.formatted}
-							</span>
-						)
-					}
+						if (data.dateOfBirth.hasDate) {
+							contactItems.push(
+								<span key="dob">
+									<FontAwesomeIcon icon={faCalendarDay} /> {data.dateOfBirth.formatted}
+								</span>
+							)
+						}
 
-					return contactItems.map((item, index) => (
+						return contactItems.map((item, index) => (
 							<span key={index}>
 								{item}
 								{index < contactItems.length - 1 && <span className="info-separator">|</span>}
