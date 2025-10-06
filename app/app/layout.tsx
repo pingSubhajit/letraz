@@ -14,46 +14,53 @@ export const metadata: Metadata = {
 	description: 'Your Letraz application workspace to craft and manage tailored resumes.'
 }
 
-const AppLayout = async ({children}: {children: ReactNode}) => {
-	const {userId, getToken} = await auth()
-	if (userId) {
-		const cookieStore = await cookies()
-		const rizeCookie = cookieStore.get('rize_ctx')
-		if (rizeCookie) {
-			try {
-				const {integrate, userId: rizeUserId} = JSON.parse(rizeCookie.value || '{}') as {integrate?: string, userId?: string}
-				if (integrate === 'rize' && rizeUserId) {
-					const client = await clerkClient()
-					const user = await client.users.getUser(userId)
-					const pm = (user.privateMetadata as any) || {}
+const initiateRizeBackfill = async () => {
+	try {
+		const {userId, getToken} = await auth()
+		if (userId) {
+			const cookieStore = await cookies()
+			const rizeCookie = cookieStore.get('rize_ctx')
+			if (rizeCookie) {
+				try {
+					const {integrate, userId: rizeUserId} = JSON.parse(rizeCookie.value || '{}') as {integrate?: string, userId?: string}
+					if (integrate === 'rize' && rizeUserId) {
+						const client = await clerkClient()
+						const user = await client.users.getUser(userId)
+						const pm = (user.privateMetadata as any) || {}
 
-					const hasBackfill = typeof pm.rizeBackfill?.status === 'string'
-					const isComplete = pm.rizeBackfill?.status === 'complete'
-					const needsUserIdUpdate = pm.rizeUserId !== rizeUserId
-					let justSetPending = false
+						const hasBackfill = typeof pm.rizeBackfill?.status === 'string'
+						const isComplete = pm.rizeBackfill?.status === 'complete'
+						const needsUserIdUpdate = pm.rizeUserId !== rizeUserId
+						let justSetPending = false
 
-					// Ensure metadata is set to pending synchronously and rizeUserId stored (first-time or user change)
-					if (!hasBackfill || needsUserIdUpdate) {
-						await client.users.updateUser(userId, {
-							privateMetadata: {
-								...pm,
-								rizeUserId,
-								rizeBackfill: {status: 'pending', startedAt: new Date().toISOString()}
-							}
-						})
-						justSetPending = true
+						// Ensure metadata is set to pending synchronously and rizeUserId stored (first-time or user change)
+						if (!hasBackfill || needsUserIdUpdate) {
+							await client.users.updateUser(userId, {
+								privateMetadata: {
+									...pm,
+									rizeUserId,
+									rizeBackfill: {status: 'pending', startedAt: new Date().toISOString()}
+								}
+							})
+							justSetPending = true
+						}
+
+						// Only schedule if not complete AND we just transitioned to pending in this request
+						if (!isComplete && justSetPending) {
+							const token = await getToken({template: 'LONGER_VALIDITY'})
+							const authHeaders = token ? {Authorization: `Bearer ${token}`} : undefined
+							await executeRizeBackfill(userId, rizeUserId, authHeaders)
+						}
 					}
-
-					// Only schedule if not complete AND we just transitioned to pending in this request
-					if (!isComplete && justSetPending) {
-						const token = await getToken({template: 'LONGER_VALIDITY'})
-						const authHeaders = token ? {Authorization: `Bearer ${token}`} : undefined
-						await executeRizeBackfill(userId, rizeUserId, authHeaders)
-					}
-				}
-			} catch {}
+				} catch {}
+			}
 		}
-	}
+	} catch {}
+}
+
+const AppLayout = async ({children}: {children: ReactNode}) => {
+	await initiateRizeBackfill()
+
 	return (
 		<SidebarProvider>
 			<AppLayoutContainer>

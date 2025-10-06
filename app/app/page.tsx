@@ -3,7 +3,6 @@ import NewResumeInput from '@/components/NewResumeInput'
 import {Suspense} from 'react'
 import OnboardingWelcome from '@/components/onboarding/OnboardingWelcome'
 import DashboardResumes from '@/components/dashboard/DashboardResumes'
-import {auth} from '@clerk/nextjs/server'
 import LetrazBrainImage from '@/public/brain.webp'
 import Image from 'next/image'
 
@@ -12,9 +11,7 @@ export const metadata: Metadata = {
 	description: 'Start crafting tailored resumes, manage drafts, and track your progress.'
 }
 
-const AppHome = async () => {
-	const {userId} = await auth()
-
+const AppHome = () => {
 	return (
 		<div className="p-8 relative">
 			<Image
@@ -37,11 +34,11 @@ const AppHome = async () => {
 			{/* Top row with centered Input box and Base Resume */}
 			<div className="flex justify-center gap-8 mb-20">
 				<NewResumeInput className="rounded-lg h-96 w-72" />
-				<DashboardResumes userId={userId || undefined} showBaseOnly />
+				<DashboardResumes showBaseOnly />
 			</div>
 
 			{/* Search and Resume Grid Container */}
-			<DashboardResumes userId={userId || undefined} showSearchOnly />
+			<DashboardResumes showSearchOnly />
 		</div>
 	)
 }

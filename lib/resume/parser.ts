@@ -164,7 +164,7 @@ export const parseResume = async (
 		? `You are a strict JSON generator that extracts BOTH personal profile information AND resume sections. Return ONLY JSON matching the schema, no prose.
 
 CRITICAL INSTRUCTIONS FOR USER PROFILE EXTRACTION:
-1. ALWAYS extract the person's name from the resume header - split into first_name and last_name
+1. ALWAYS extract the person's name from the resume header - split into first_name and last_name, reformat the name to use proper caching (first-letter-capital)
 2. ALWAYS look for contact information (email, phone number) typically found at the top of the resume
 3. ALWAYS extract location information (address, city, postal code, country) from the contact section
 4. Look for LinkedIn/portfolio websites in the contact section
@@ -192,13 +192,14 @@ Rules:
 - MANDATORY: Extract personal contact information from resume header/contact section
 - Use null for unknown optional values where allowed; otherwise use empty string for required strings when unknown.
 - For userProfile.dob, if a date of birth is found, format it as an ISO date string (YYYY-MM-DD).
-- For userProfile.country, provide the ISO# code (like "USA", "IND").
+- For userProfile.country, provide the ISO3 code (like "USA", "IND").
 - Months MUST be numeric strings from "1" to "12" (do not use names like "Jul").
 - Years MUST be 4-digit numeric strings like "2021".
 - Certification issue_date MUST be a date-only string in the exact format YYYY-MM-DD (e.g., "2024-03-01").
-- Use ISO3 country codes (e.g., USA, IND) when inferring countries.
+- Use ISO3 country codes (e.g., USA, IND) when inferring countries. Do not use country names or country codes with other characters. Do not include countries that you do not recognize.
 - employment_type must be one of: flt, prt, con, int, fre, sel, vol, tra.
 - level must be one of: BEG, INT, ADV, EXP, or null.
+- for any url that you extract, it should be a valid, complete and absolute url. If such url doesn't exist and can't be confidently created from the information available, don't include the field
 - The current calendar year is ${currentYear}. Do NOT output any future years. If you encounter a year greater than ${currentYear} in the source resume:
   - For that date field, set the associated month and year fields to null, and
   - Set the "current" flag to true for that section when available (Education, Experience, Project).

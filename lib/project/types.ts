@@ -31,7 +31,7 @@ export const ProjectSchema = z.object({
 			preferred: z.boolean().optional().describe('Whether this is a preferred alias'),
 			created_at: z.string().describe('The date and time the alias entry was created.').readonly(),
 			updated_at: z.string().describe('The date and time the alias entry was last updated.').readonly()
-		})).describe('Alternative names for the skill'),
+		})).optional().describe('Alternative names for the skill'),
 		updated_at: z.string().describe('The date and time the skill entry was last updated.').readonly(),
 		created_at: z.string().describe('The date and time the skill entry was created.').readonly()
 	})).describe('Skills used in this project'),

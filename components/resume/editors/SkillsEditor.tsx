@@ -238,9 +238,9 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	// Filter global skills based on search query and exclude already added skills
 	const filteredSkills = globalSkills
 		.filter(skill => (skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             skill.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             skill.alias.some(alias => alias.name.toLowerCase().includes(searchQuery.toLowerCase()))) &&
-            !resumeSkills.some(rs => rs.skill.id === skill.id))
+            skill.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            skill.alias?.some(alias => alias.name.toLowerCase().includes(searchQuery.toLowerCase()))) &&
+           !resumeSkills.some(rs => rs.skill.id === skill.id))
 		.sort((a, b) => {
 			// Sort by exact match first, then by preferred status
 			const aNameMatch = a.name.toLowerCase() === searchQuery.toLowerCase()
@@ -414,10 +414,6 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 															// For existing skills, populate the category
 															form.setValue('category', category || '')
 														}
-														/*
-														 * Don't update category when skillId is empty (user is typing/clearing)
-														 * This preserves the existing category when editing
-														 */
 													}}
 												/>
 												<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
@@ -440,12 +436,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 												disabled={isSubmitting || isLoadingCategories}
 												showLabel
 												defaultValue={field.value || ''}
-												onCategorySelect={(category) => {
-												/*
-												 * CategoryAutocomplete already updates the form value
-												 * This callback can be used for additional logic if needed
-												 */
-												}}
+												onCategorySelect={(category) => {}}
 											/>
 										)}
 									/>

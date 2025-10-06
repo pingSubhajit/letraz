@@ -69,7 +69,7 @@ export const ResumeSchema = z.object({
 	id: z.string().describe('The unique identifier for the resume.'),
 	base: z.boolean().describe('Indicates if this is the base resume.'),
 	user: UserInfoSchema.describe('The user information associated with the resume.'),
-	job: JobSchema.describe('The job information associated with the resume.'),
+	job: JobSchema.nullable().describe('The job information associated with the resume.'),
 	status: z.string().nullable().optional().describe('Processing status at the root of resume.'),
 	thumbnail: ThumbnailUrlSchema.nullable().optional().describe('Thumbnail image URL for the resume preview.'),
 	sections: z.array(ResumeSectionSchema).describe('The sections included in the resume, such as education and experience.')
@@ -155,7 +155,7 @@ export const ResumeListItemSchema = z.discriminatedUnion('base', [
 			responsibilities: true,
 			benefits: true,
 			status: true
-		})
+		}).nullable().optional()
 	}),
 	ResumeListItemCommonFields.extend({
 		base: z.literal(false),

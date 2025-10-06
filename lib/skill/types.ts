@@ -21,7 +21,7 @@ export const GlobalSkillSchema = z.object({
 	category: z.string().max(50).nullable().describe('The category of the skill. (optional)'),
 	name: z.string().max(250).describe('The name of the skill.'),
 	preferred: z.boolean().describe('Whether this is the preferred name for the skill.'),
-	alias: z.array(SkillAliasSchema).describe('Alternative names for the skill.'),
+	alias: z.array(SkillAliasSchema).optional().describe('Alternative names for the skill.'),
 	created_at: z.string().readonly().describe('The date and time the skill was created.'),
 	updated_at: z.string().readonly().describe('The date and time the skill was last updated.')
 })

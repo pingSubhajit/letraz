@@ -87,7 +87,7 @@ const WaitlistWelcomeEmail = () => (
 					<Section className="space-y-0.5">
 						<Text className="m-0">Best regards,</Text>
 						<Text className="m-0">The Letraz Team</Text>
-						<Link href="https://letraz.app">Website</Link>
+						<Link className="text-flame-500" href="https://letraz.app">Website</Link>
 					</Section>
 				</Container>
 			</Body>

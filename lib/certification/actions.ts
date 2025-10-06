@@ -1,10 +1,15 @@
 'use server'
 
 import {z} from 'zod'
-import {Certification, CertificationMutation, CertificationMutationSchema, CertificationSchema} from '@/lib/certification/types'
+import {
+	Certification,
+	CertificationMutation,
+	CertificationMutationSchema,
+	CertificationSchema
+} from '@/lib/certification/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib//misc/error-handler'
-import {apiDateToDate, dateToApiFormat} from '@/lib/utils'
+import {dateToApiFormat, stripNullFields} from '@/lib/utils'
 
 /**
  * Adds new certification information to the database.
@@ -20,10 +25,12 @@ export const addCertificationToDB = async (
 		const params = CertificationMutationSchema.parse(certificationValues)
 
 		// Transform date for API compatibility
-		const apiParams = {
+		const transformed = {
 			...params,
 			issue_date: params.issue_date ? dateToApiFormat(params.issue_date as Date) : undefined
 		}
+
+		const apiParams = stripNullFields(transformed)
 
 		const data = await api.post<Certification>(`/resume/${resumeId}/certification/`, apiParams)
 
@@ -45,10 +52,8 @@ export const getCertificationsFromDB = async (
 	const apiUrl = `/resume/${resumeId}/certification/`
 
 	try {
-		const data = await api.get<Certification[]>(apiUrl)
-
-		const parsedData = z.array(CertificationSchema).parse(data)
-		return parsedData
+		const data = await api.get<{certifications: Certification[]}>(apiUrl)
+		return z.array(CertificationSchema).parse(data.certifications)
 	} catch (error) {
 		return handleErrors(error, 'fetch certifications')
 	}
@@ -69,10 +74,12 @@ export const updateCertificationInDB = async (
 ): Promise<Certification> => {
 	try {
 		// Transform date for API compatibility if present
-		const apiParams = certificationValues.issue_date ? {
+		const transformed = certificationValues.issue_date ? {
 			...certificationValues,
 			issue_date: dateToApiFormat(certificationValues.issue_date as Date)
 		} : certificationValues
+
+		const apiParams = stripNullFields(transformed)
 
 		const data = await api.patch<Certification>(`/resume/${resumeId}/certification/${certificationId}/`, apiParams)
 

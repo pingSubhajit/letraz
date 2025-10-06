@@ -4,6 +4,7 @@ import {z} from 'zod'
 import {Education, EducationMutation, EducationMutationSchema, EducationSchema} from '@/lib/education/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib//misc/error-handler'
+import {stripNullFields} from '@/lib/utils'
 
 /**
  * Adds new education information to the database.
@@ -16,7 +17,8 @@ export const addEducationToDB = async (
 	resumeId: string = 'base'
 ): Promise<Education> => {
 	try {
-		const params = EducationMutationSchema.parse(educationValues)
+		const parsed = EducationMutationSchema.parse(educationValues)
+		const params = stripNullFields(parsed)
 		const data = await api.post<Education>(`/resume/${resumeId}/education/`, params)
 		return EducationSchema.parse(data)
 	} catch (error) {
@@ -34,8 +36,8 @@ export const getEducationsFromDB = async (
 	resumeId: string = 'base'
 ): Promise<Education[] > => {
 	try {
-		const data = await api.get<Education[]>(`/resume/${resumeId}/education/`)
-		return z.array(EducationSchema).parse(data)
+		const data = await api.get<{educations: Education[]}>(`/resume/${resumeId}/education/`)
+		return z.array(EducationSchema).parse(data.educations)
 	} catch (error) {
 		return handleErrors(error, 'fetch educations')
 	}
@@ -55,7 +57,9 @@ export const updateEducationInDB = async (
 	resumeId: string = 'base'
 ): Promise<Education> => {
 	try {
-		const data = await api.patch<Education>(`/resume/${resumeId}/education/${educationId}/`, educationValues)
+		const parsed = EducationMutationSchema.parse(educationValues)
+		const params = stripNullFields(parsed)
+		const data = await api.patch<Education>(`/resume/${resumeId}/education/${educationId}/`, params)
 		return EducationSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'update education')

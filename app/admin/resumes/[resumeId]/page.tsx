@@ -9,7 +9,7 @@ type PageProps = {
 }
 
 const fetchResumeData = async (resumeId: string): Promise<Resume> => {
-	const backendUrl = `${process.env.API_URL}/admin/resumes/${resumeId}`
+	const backendUrl = `${process.env.API_URL}/admin/resume/${resumeId}`
 
 	const response = await fetch(backendUrl, {
 		method: 'GET',

@@ -7,36 +7,36 @@ const isOnboardingRoute = createRouteMatcher(['/app/onboarding(.*)'])
 const isApiRoute = createRouteMatcher(['/api(.*)'])
 const isAuthRoute = createRouteMatcher(['/signin(.*)', '/signup(.*)'])
 const isPublicApiRoute = createRouteMatcher([
-    '/api/rize/status'
+	'/api/rize/status'
 ])
 
 const setRizeCtxCookie = (
-    res: NextResponse,
-    url: URL,
-    integrate: string | null,
-    authMethod: string | null,
-    rizeUserId: string | null
+	res: NextResponse,
+	url: URL,
+	integrate: string | null,
+	authMethod: string | null,
+	rizeUserId: string | null
 ) => {
-    try {
-        const value = JSON.stringify({integrate, authMethod, userId: rizeUserId})
-        const secure = url.protocol === 'https:'
-        res.cookies.set('rize_ctx', value, {
-            httpOnly: true,
-            sameSite: 'lax',
-            secure,
-            path: '/',
-            maxAge: 60 * 2
-        })
-    } catch {}
+	try {
+		const value = JSON.stringify({integrate, authMethod, userId: rizeUserId})
+		const secure = url.protocol === 'https:'
+		res.cookies.set('rize_ctx', value, {
+			httpOnly: true,
+			sameSite: 'lax',
+			secure,
+			path: '/',
+			maxAge: 60 * 2
+		})
+	} catch {}
 }
 
 export default clerkMiddleware(async (auth, req) => {
 	// Auth header protection for all API routes using SELF_SECRET_KEY
-    if (isApiRoute(req)) {
-        // Allowlist public, user-session-based API routes
-        if (isPublicApiRoute(req)) {
-            return NextResponse.next()
-        }
+	if (isApiRoute(req)) {
+		// Allowlist public, user-session-based API routes
+		if (isPublicApiRoute(req)) {
+			return NextResponse.next()
+		}
 
 		const providedToken = req.headers.get('x-authentication')
 		const secretKey = process.env.SELF_SECRET_KEY
