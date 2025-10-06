@@ -2,7 +2,7 @@
 
 import {createContext, ReactNode, useContext, useState} from 'react'
 
-type CurrentPageType = 'NOTIFICATION' | 'SETTINGS' | null
+type CurrentPageType = 'NOTIFICATION' | 'USER_SUPPORT' | null
 
 // Context for sharing sidebar state
 const SidebarContext = createContext<{
@@ -11,7 +11,7 @@ const SidebarContext = createContext<{
 	setIsExpanded:(expanded: boolean) => void
 	setCurrentPage:(currentPage: CurrentPageType) => void
 	openNotification: () => void
-	openSettings: () => void
+	openUserSupport: () => void
 	collapseSidebar: () => void
 		}>({
 			isExpanded: false,
@@ -19,7 +19,7 @@ const SidebarContext = createContext<{
 			setIsExpanded: () => {},
 			setCurrentPage: () => {},
 			openNotification: () => {},
-			openSettings: () => {},
+			openUserSupport: () => {},
 			collapseSidebar: () => {}
 		})
 
@@ -34,9 +34,9 @@ export const SidebarProvider = ({children}: {children: ReactNode}) => {
 		setCurrentPage('NOTIFICATION')
 	}
 
-	const openSettings = () => {
+	const openUserSupport = () => {
 		setIsExpanded(true)
-		setCurrentPage('SETTINGS')
+		setCurrentPage('USER_SUPPORT')
 	}
 
 	const collapseSidebar = () => {
@@ -51,7 +51,7 @@ export const SidebarProvider = ({children}: {children: ReactNode}) => {
 			currentPage,
 			setCurrentPage,
 			openNotification,
-			openSettings,
+			openUserSupport,
 			collapseSidebar
 		}}>
 			{children}

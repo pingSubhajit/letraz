@@ -5,6 +5,7 @@ import {usePathname} from 'next/navigation'
 import {ReactNode} from 'react'
 import {useSidebar} from '@/components/providers/SidebarProvider'
 import NotificationFeed from '@/components/notifications/NotificationFeed'
+import UserSupportPanel from '@/components/UserSupportPanel'
 
 const AppSidebarContainer = ({children, className}: {
 	children: ReactNode,
@@ -66,6 +67,7 @@ const AppSidebarContainer = ({children, className}: {
 						}}
 					>
 						{currentPage === 'NOTIFICATION' && <NotificationFeed />}
+						{currentPage === 'USER_SUPPORT' && <UserSupportPanel />}
 					</motion.div>}
 				</AnimatePresence>
 			</motion.div>
