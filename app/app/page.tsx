@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 	description: 'Start crafting tailored resumes, manage drafts, and track your progress.'
 }
 
-const AppHome = async () => {
+const AppHome = () => {
 	return (
 		<div className="p-8 relative">
 			<Image
