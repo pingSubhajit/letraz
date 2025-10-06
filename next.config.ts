@@ -8,29 +8,29 @@ const nextConfig: NextConfig = {
 	experimental: {
 		reactCompiler: true
 	},
-    headers: async () => [
-        {
-            source: '/:all*',
-            headers: [
-                {
-                    key: 'Cache-Control',
-                    value: 'public, max-age=0, s-maxage=3600'
-                }
-            ]
-        },
-        {
-            source: '/_next/static/:all*',
-            headers: [
-                { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
-            ]
-        },
-        {
-            source: '/:path*\\.(webp|jpg|jpeg|png|svg|gif|mp4|webm|woff2)$',
-            headers: [
-                { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
-            ]
-        }
-    ],
+	headers: async () => [
+		{
+			source: '/:all*',
+			headers: [
+				{
+					key: 'Cache-Control',
+					value: 'public, max-age=0, s-maxage=3600'
+				}
+			]
+		},
+		{
+			source: '/_next/static/:all*',
+			headers: [
+				{key: 'Cache-Control', value: 'public, max-age=31536000, immutable'}
+			]
+		},
+		{
+			source: '/:path*\\.(webp|jpg|jpeg|png|svg|gif|mp4|webm|woff2)$',
+			headers: [
+				{key: 'Cache-Control', value: 'public, max-age=31536000, immutable'}
+			]
+		}
+	],
 	images: {
 		remotePatterns: [
 			{

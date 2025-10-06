@@ -16,11 +16,10 @@ export const metadata: Metadata = {
 
 const initiateRizeBackfill = async () => {
 	try {
-		const {userId, getToken} = await auth()
-		if (userId) {
-			const cookieStore = await cookies()
-			const rizeCookie = cookieStore.get('rize_ctx')
-			if (rizeCookie) {
+		const rizeCookie = (await cookies()).get('rize_ctx')
+		if (rizeCookie) {
+			const {userId, getToken} = await auth()
+			if (userId) {
 				try {
 					const {integrate, userId: rizeUserId} = JSON.parse(rizeCookie.value || '{}') as {integrate?: string, userId?: string}
 					if (integrate === 'rize' && rizeUserId) {

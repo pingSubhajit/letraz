@@ -58,7 +58,7 @@ export default clerkMiddleware(async (auth, req) => {
 	const shouldSetRizeCtx = isSignup && integrate === 'rize' && !!rizeUserId
 
 	// Continue with Clerk protection for application routes
-	const {userId} = await auth()
+	const {userId, sessionClaims} = await auth()
 
 	// If user is on home page and already authenticated, redirect to app
 	if (req.nextUrl.pathname === '/' && userId) {
@@ -75,26 +75,19 @@ export default clerkMiddleware(async (auth, req) => {
 	if (isProtectedRoute(req)) {
 		await auth.protect()
 
-		// Check onboarding state for authenticated users
+		// Check onboarding state for authenticated users using session claims
 		if (userId) {
-			try {
-				const {clerkClient} = await import('@clerk/nextjs/server')
-				const client = await clerkClient()
-				const user = await client.users.getUser(userId)
-				const metadata = user.publicMetadata as OnboardingMetadata
+			const metadata = (sessionClaims?.publicMetadata || {}) as OnboardingMetadata
 
-				// If user is on onboarding page but has completed onboarding, redirect to main app
-				if (isOnboardingRoute(req) && metadata.onboardingComplete) {
-					return NextResponse.redirect(new URL('/app', req.url))
-				}
+			// If user is on onboarding page but has completed onboarding, redirect to main app
+			if (isOnboardingRoute(req) && metadata.onboardingComplete) {
+				return NextResponse.redirect(new URL('/app', req.url))
+			}
 
-				// If user is not on onboarding page but hasn't completed onboarding, redirect to current step
-				if (!isOnboardingRoute(req) && !metadata.onboardingComplete) {
-					const currentStep = metadata.currentOnboardingStep || 'welcome'
-					return NextResponse.redirect(new URL(`/app/onboarding?step=${currentStep}`, req.url))
-				}
-			} catch (error) {
-				// If metadata fetch fails, allow normal flow
+			// If user is not on onboarding page but hasn't completed onboarding, redirect to current step
+			if (!isOnboardingRoute(req) && !metadata.onboardingComplete) {
+				const currentStep = metadata.currentOnboardingStep || 'welcome'
+				return NextResponse.redirect(new URL(`/app/onboarding?step=${currentStep}`, req.url))
 			}
 		}
 	}
