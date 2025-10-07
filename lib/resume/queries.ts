@@ -1,8 +1,8 @@
 import {queryOptions, useQuery} from '@tanstack/react-query'
 import {BASE_RESUME_KEYS, RESUMES_KEYS} from '@/lib/resume/key'
-import {getResumeFromDB, listResumesForUser} from '@/lib/resume/actions'
-import {ResumeListItem} from '@/lib/resume/types'
+import {getResumeFromDB, getResumeMinimal, listResumesForUser} from '@/lib/resume/actions'
 import type {Resume} from '@/lib/resume/types'
+import {ResumeListItem, ResumeMinimal} from '@/lib/resume/types'
 
 export const baseResumeQueryOptions = queryOptions({
 	queryKey: BASE_RESUME_KEYS,
@@ -36,3 +36,10 @@ export const resumeByIdQueryOptions = (resumeId: string) => queryOptions<Resume>
 })
 
 export const useResumeById = (resumeId: string) => useQuery(resumeByIdQueryOptions(resumeId))
+
+export const resumeMinimalQueryOptions = (resumeId: string) => queryOptions<ResumeMinimal>({
+	queryKey: ['resume', resumeId, 'minimal'],
+	queryFn: () => getResumeMinimal(resumeId)
+})
+
+export const useResumeMinimal = (resumeId: string) => useQuery(resumeMinimalQueryOptions(resumeId))

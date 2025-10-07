@@ -1,8 +1,8 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
-import {getResumeFromDB, rearrangeResumeSections} from '@/lib/resume/actions'
+import {getResumeFromDB, getResumeMinimal, rearrangeResumeSections} from '@/lib/resume/actions'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
-import {Resume} from '@/lib/resume/types'
+import {Resume, ResumeMinimal} from '@/lib/resume/types'
 
 // Mock dependencies
 vi.mock('@/lib/config/api-client')
@@ -213,6 +213,113 @@ describe('Resume Actions', () => {
 			expect(result.job.requirements).toBeNull()
 			expect(result.job.responsibilities).toBeNull()
 			expect(result.job.benefits).toBeNull()
+		})
+	})
+
+	describe('getResumeMinimal', () => {
+		const mockResumeMinimal: ResumeMinimal = {
+			id: 'resume_123',
+			base: false,
+			status: 'Success',
+			job_title: 'Senior Software Engineer',
+			company_name: 'Tech Corp',
+			created_at: new Date('2024-01-01T00:00:00Z'),
+			updated_at: new Date('2024-01-15T12:30:00Z')
+		}
+
+		it('should fetch minimal resume metadata by ID', async () => {
+			mockApi.get.mockResolvedValue(mockResumeMinimal)
+
+			const result = await getResumeMinimal('resume_123')
+
+			expect(mockApi.get).toHaveBeenCalledWith('/resume/resume_123/minimal')
+			expect(result).toEqual(mockResumeMinimal)
+		})
+
+		it('should validate response data with schema', async () => {
+			mockApi.get.mockResolvedValue(mockResumeMinimal)
+
+			const result = await getResumeMinimal('resume_123')
+
+			expect(result).toMatchObject({
+				id: expect.any(String),
+				base: expect.any(Boolean),
+				status: expect.any(String),
+				job_title: expect.any(String),
+				company_name: expect.any(String),
+				created_at: expect.any(Date),
+				updated_at: expect.any(Date)
+			})
+		})
+
+		it('should handle API errors', async () => {
+			const error = new Error('API Error')
+			mockApi.get.mockRejectedValue(error)
+			vi.mocked(handleErrors).mockImplementation(() => {
+				throw new Error('Failed to fetch resume minimal metadata: API Error')
+			})
+
+			await expect(getResumeMinimal('resume_123')).rejects.toThrow('Failed to fetch resume minimal metadata: API Error')
+			expect(mockHandleErrors).toHaveBeenCalledWith(error, 'fetch resume minimal metadata')
+		})
+
+		it('should handle base resume', async () => {
+			const baseResumeMinimal: ResumeMinimal = {
+				...mockResumeMinimal,
+				base: true,
+				job_title: null,
+				company_name: null
+			}
+			mockApi.get.mockResolvedValue(baseResumeMinimal)
+
+			const result = await getResumeMinimal('base')
+
+			expect(mockApi.get).toHaveBeenCalledWith('/resume/base/minimal')
+			expect(result.base).toBe(true)
+			expect(result.job_title).toBeNull()
+			expect(result.company_name).toBeNull()
+		})
+
+		it('should handle null status', async () => {
+			const resumeWithNullStatus: ResumeMinimal = {
+				...mockResumeMinimal,
+				status: null
+			}
+			mockApi.get.mockResolvedValue(resumeWithNullStatus)
+
+			const result = await getResumeMinimal('resume_123')
+
+			expect(result.status).toBeNull()
+		})
+
+		it('should handle resume without linked job', async () => {
+			const resumeWithoutJob: ResumeMinimal = {
+				...mockResumeMinimal,
+				job_title: null,
+				company_name: null
+			}
+			mockApi.get.mockResolvedValue(resumeWithoutJob)
+
+			const result = await getResumeMinimal('resume_123')
+
+			expect(result.job_title).toBeNull()
+			expect(result.company_name).toBeNull()
+		})
+
+		it('should parse date strings to Date objects', async () => {
+			const resumeWithStringDates = {
+				...mockResumeMinimal,
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-15T12:30:00Z'
+			}
+			mockApi.get.mockResolvedValue(resumeWithStringDates)
+
+			const result = await getResumeMinimal('resume_123')
+
+			expect(result.created_at).toBeInstanceOf(Date)
+			expect(result.updated_at).toBeInstanceOf(Date)
+			expect(result.created_at.toISOString()).toBe('2024-01-01T00:00:00.000Z')
+			expect(result.updated_at.toISOString()).toBe('2024-01-15T12:30:00.000Z')
 		})
 	})
 

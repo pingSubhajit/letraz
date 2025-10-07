@@ -6,6 +6,8 @@ import {
 	Resume,
 	ResumeListItem,
 	ResumeListItemSchema,
+	ResumeMinimal,
+	ResumeMinimalSchema,
 	ResumeMutation,
 	ResumeMutationSchema,
 	ResumeSchema,
@@ -43,6 +45,21 @@ export const listResumesForUser = async (): Promise<ResumeListItem[]> => {
 		return (data || []).map(item => ResumeListItemSchema.parse(item))
 	} catch (error) {
 		return handleErrors(error, 'list resumes')
+	}
+}
+
+/**
+ * Retrieves minimal metadata for a single resume by its ID
+ * @param {string} resumeId - The ID of the resume to retrieve minimal metadata for
+ * @returns {Promise<ResumeMinimal>} - The minimal resume metadata object
+ * @throws {Error} If authentication or API request fails.
+ */
+export const getResumeMinimal = async (resumeId: string): Promise<ResumeMinimal> => {
+	try {
+		const data = await api.get<ResumeMinimal>(`/resume/${resumeId}/minimal`)
+		return ResumeMinimalSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'fetch resume minimal metadata')
 	}
 }
 

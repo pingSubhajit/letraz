@@ -168,3 +168,19 @@ export const ResumeListItemSchema = z.discriminatedUnion('base', [
 ])
 
 export type ResumeListItem = z.infer<typeof ResumeListItemSchema>
+
+/**
+ * Minimal resume metadata schema for lightweight resume fetching
+ * Used for fetching minimal metadata without heavy nested data
+ */
+export const ResumeMinimalSchema = z.object({
+	id: z.string().describe('Resume ID'),
+	base: z.boolean().describe('Whether this is a base/template resume'),
+	status: z.string().nullable().describe('Resume status'),
+	job_title: z.string().nullable().describe('Job title from linked job (null if no job linked)'),
+	company_name: z.string().nullable().describe('Company name from linked job (null if no job linked)'),
+	created_at: z.coerce.date().describe('Resume created timestamp'),
+	updated_at: z.coerce.date().describe('Resume last updated timestamp')
+})
+
+export type ResumeMinimal = z.infer<typeof ResumeMinimalSchema>

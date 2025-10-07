@@ -41,6 +41,31 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 		}
 	}, [status, track, resume])
 
+	// Update document title dynamically based on status changes
+	useEffect(() => {
+		if (!resume) return
+
+		if (resume.base) {
+			document.title = 'Base Resume - Letraz'
+			return
+		}
+
+		if (status === 'failed') {
+			document.title = 'Resume Processing Failed - Letraz'
+			return
+		}
+
+		if (status === 'processing') {
+			document.title = 'Crafting Resume - Letraz'
+			return
+		}
+
+		if (status === 'success' && resume.job?.title && resume.job.company_name) {
+			document.title = `${resume.job.title} at ${resume.job.company_name} - Letraz`
+			return
+		}
+	}, [resume, status])
+
 
 	// Initial load or transient errors: show neutral placeholders without the processing overlay
 	if (!resume && (isLoading || isError)) {
