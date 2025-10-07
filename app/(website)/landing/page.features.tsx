@@ -148,7 +148,7 @@ const LandingPageFeatures = () => {
 
 					{active && (
 						<video autoPlay muted loop playsInline preload="none" poster="/brain.webp" className="absolute -bottom-32 w-full scale-[200%]">
-							<source src="/brain-pulse.webm" type="video/webm"/>
+							<source src="/brain-pulse.webm" type="video/webm; codecs=vp9"/>
 						</video>
 					)}
 				</Card>
@@ -166,7 +166,8 @@ const LandingPageFeatures = () => {
 
 					{active && (
 						<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
-							<source src="/resume-generation.webm" type="video/webm"/>
+							<source src="/resume-generation.av1.webm" type="video/webm; codecs=av01"/>
+							<source src="/resume-generation.webm" type="video/webm; codecs=vp9"/>
 						</video>
 					)}
 				</Card>
@@ -180,7 +181,8 @@ const LandingPageFeatures = () => {
 					</p>
 					{active && (
 						<video autoPlay muted loop playsInline preload="none" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
-							<source src="/logo-carousel.webm" type="video/webm"/>
+							<source src="/logo-carousel.av1.webm" type="video/webm; codecs=av01"/>
+							<source src="/logo-carousel.webm" type="video/webm; codecs=vp9"/>
 						</video>
 					)}
 				</Card>
@@ -218,7 +220,8 @@ const LandingPageFeatures = () => {
 						playsInline
 						preload="auto"
 						className="w-full absolute -bottom-28 left-0">
-						<source src="/resume-cards.webm" type="video/webm"/>
+						<source src="/resume-cards.av1.webm" type="video/webm; codecs=av01"/>
+						<source src="/resume-cards.webm" type="video/webm; codecs=vp9"/>
 					</video>
 				</Card>
 
@@ -236,7 +239,8 @@ const LandingPageFeatures = () => {
 					<div className="bg-white aspect-square w-[45%] rounded-2xl overflow-hidden">
 						{active && (
 							<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="h-full">
-								<source src="/tweak-resume.webm" type="video/webm"/>
+								<source src="/tweak-resume.av1.webm" type="video/webm; codecs=av01"/>
+								<source src="/tweak-resume.webm" type="video/webm; codecs=vp9"/>
 							</video>
 						)}
 					</div>
