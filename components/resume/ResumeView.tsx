@@ -10,6 +10,7 @@ import ResumeViewerSkeleton from '@/components/skeletons/ResumeViewerSkeleton'
 import ResumeEditorSkeleton from '@/components/skeletons/ResumeEditorSkeleton'
 import ErrorView from '@/components/utilities/ErrorView'
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
+import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
@@ -21,6 +22,7 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 	const resumeRef = useRef<HTMLDivElement>(null)
 
 	const {data: resume, isLoading, isError} = useBaseResume()
+	const showReveal = useRevealOnReady(Boolean(resume && !isLoading && !isError))
 
 	return (
 		<ResumeHighlightProvider>
@@ -48,7 +50,7 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 							)}
 							{resume && (
 								<motion.div {...DEFAULT_FADE_ANIMATION} key="content">
-									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" showToolbar={showToolbar} />
+									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" showToolbar={showToolbar} showAnimation={showReveal} />
 								</motion.div>
 							)}
 						</AnimatePresence>

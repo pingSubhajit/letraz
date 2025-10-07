@@ -8,6 +8,8 @@ import ResumeAiLoading from '@/components/utilities/ResumeAiLoading'
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
 import {useEffect, useRef} from 'react'
 import {useAnalytics} from '@/lib/analytics'
+import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
+import useDidTransition from '@/components/resume/hooks/useDidTransition'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
@@ -20,6 +22,10 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const status = (resume?.status || '').toLowerCase()
 	// Show the processing overlay ONLY when backend reports processing.
 	const processing = status === 'processing'
+
+	// Reveal animation only when transitioning from processing -> success
+	const transitionedToSuccess = useDidTransition(status, 'processing', 'success')
+	const showReveal = useRevealOnReady(Boolean(transitionedToSuccess && resume))
 
 	// Track transitions once
 	useEffect(() => {
@@ -84,7 +90,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 		<ResumeHighlightProvider>
 			<div className="flex h-screen w-full" role="main">
 				<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
-					<ResumeViewer resume={resume} className="max-h-screen" showToolbar />
+					<ResumeViewer resume={resume} className="max-h-screen" showToolbar showAnimation={showReveal} />
 				</div>
 				<div className="size-full">
 					<ResumeEditor className="size-full bg-neutral-50 p-12" />
