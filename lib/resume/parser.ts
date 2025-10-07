@@ -237,14 +237,11 @@ Return ONLY the JSON object, nothing else.`
 		const result = await generateObject({
 			model: google(modelId),
 			schema,
+			system: prompt,
 			messages: [
 				{
 					role: 'user',
 					content: [
-						{
-							type: 'text',
-							text: prompt
-						},
 						{
 							type: 'file',
 							data: arrayBuffer,
@@ -320,7 +317,6 @@ Return ONLY the JSON object, nothing else.`
 
 		return result.object
 	} catch (error) {
-		console.log(error)
 		throw new Error(`Failed to parse resume: ${(error as Error).message}`)
 	}
 }
