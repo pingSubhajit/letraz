@@ -17,6 +17,7 @@ import * as Sentry from '@sentry/nextjs'
 import {useQuery} from '@tanstack/react-query'
 import {userInfoQueryOptions} from '@/lib/user-info/queries'
 import {updateOnboardingStep} from '@/lib/onboarding/actions'
+import {useAuth} from '@clerk/nextjs'
 
 
 /**
@@ -28,11 +29,14 @@ import {updateOnboardingStep} from '@/lib/onboarding/actions'
  */
 const PersonalDetailsForm = ({className, toggleParseResume}: { className?: string, toggleParseResume?: () => void }): JSX.Element => {
 	const router = useTransitionRouter()
+	const {getToken} = useAuth()
 
 	const {mutateAsync, isPending} = useUpdateUserInfoMutation({
 		onSuccess: async () => {
 			// Update onboarding progress
 			await updateOnboardingStep('personal-details')
+			// Force session token refresh so claims are up-to-date
+			try {await getToken({skipCache: true})} catch {}
 			router.push('/app/onboarding?step=education')
 		},
 		onError: (error) => {

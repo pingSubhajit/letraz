@@ -24,6 +24,7 @@ import {useQueryClient} from '@tanstack/react-query'
 import {experienceQueryOptions} from '@/lib/experience/queries'
 import {useAddUserExperienceMutation} from '@/lib/experience/mutations'
 import {updateOnboardingStep} from '@/lib/onboarding/actions'
+import {useAuth} from '@clerk/nextjs'
 
 // Define the props for the ExperienceForm component
 type ExperienceFormProps = {
@@ -41,6 +42,7 @@ type ExperienceFormProps = {
  */
 const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 	const router = useTransitionRouter()
+	const {getToken} = useAuth()
 
 	const queryClient = useQueryClient()
 	const [formKey, setFormKey] = useState(0)
@@ -171,6 +173,8 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 
 			// Update onboarding progress
 			await updateOnboardingStep('experience')
+			// Force session token refresh so claims reflect latest step
+			try {await getToken({skipCache: true})} catch {}
 			router.push('/app/onboarding?step=resume')
 		} catch (error) {
 			toast.error('Failed to update experience, please try again')

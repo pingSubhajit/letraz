@@ -25,6 +25,7 @@ import {useQueryClient} from '@tanstack/react-query'
 import {educationOptions} from '@/lib/education/queries'
 import {useAddEducationMutation} from '@/lib/education/mutations'
 import {updateOnboardingStep} from '@/lib/onboarding/actions'
+import {useAuth} from '@clerk/nextjs'
 
 // Define the props for the EducationForm component
 type EducationFormProps = {
@@ -44,6 +45,7 @@ const EducationForm = ({
 	className
 }: EducationFormProps): JSX.Element => {
 	const router = useTransitionRouter()
+	const {getToken} = useAuth()
 
 	const queryClient = useQueryClient()
 	const [formKey, setFormKey] = useState(0)
@@ -177,6 +179,8 @@ const EducationForm = ({
 
 			// Update onboarding progress
 			await updateOnboardingStep('education')
+			// Force session token refresh so claims reflect latest step
+			try {await getToken({skipCache: true})} catch {}
 			router.push('/app/onboarding?step=experience')
 		} catch (error) {
 			toast.error('Failed to update education, please try again')

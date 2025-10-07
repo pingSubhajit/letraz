@@ -8,10 +8,12 @@ import {Button} from '@/components/ui/button'
 import {ArrowRight} from 'lucide-react'
 import {completeOnboarding} from '@/lib/onboarding/actions'
 import {useAnalytics} from '@/lib/analytics'
+import {useAuth} from '@clerk/nextjs'
 
 const OnboardingCompletionButton = () => {
 	const router = useTransitionRouter()
 	const searchParams = useSearchParams()
+	const {getToken} = useAuth()
 	// Verify we're actually in the onboarding flow (final resume step)
 	const isOnboarding = searchParams.get('step') === 'resume'
 	const [isVisible, setIsVisible] = useState(false)
@@ -35,6 +37,8 @@ const OnboardingCompletionButton = () => {
 			track('onboarding_completed')
 			// Mark onboarding as complete and update step to 'resume'
 			await completeOnboarding()
+			// Force-refresh session token so claims reflect latest onboarding status
+			try { await getToken({skipCache: true}) } catch {}
 			// Use router.replace to prevent back navigation to onboarding
 			router.replace('/app?from=onboarding')
 		} catch (error) {
