@@ -120,7 +120,7 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 							name="email"
 							render={({field}) => (
 								<FormItem>
-									<OnboardingFormInput placeholder="email address" {...field} />
+									<OnboardingFormInput placeholder="email address" {...field} disabled={true} />
 									<FormLabel className="transition">Email</FormLabel>
 									<FormMessage />
 								</FormItem>
