@@ -1,7 +1,7 @@
 'use client'
 
 import {ReactNode, useEffect} from 'react'
-import {useAuth} from '@clerk/nextjs'
+import {useUser} from '@clerk/nextjs'
 import {KnockFeedProvider, KnockProvider as KnockSDKProvider, useKnockFeed} from '@knocklabs/react'
 
 // Component to handle initial notification loading and real-time setup
@@ -27,15 +27,16 @@ const NotificationInitializer = () => {
 }
 
 export const KnockProvider = ({children}: {children: ReactNode}) => {
-	const auth = useAuth()
+	const {user, isLoaded} = useUser()
 
-	// Return children early if auth is not available or not loaded
-	if (!auth || !auth.isLoaded) {
+	// Return children early if user is not loaded
+	if (!isLoaded) {
 		return <>{children}</>
 	}
 
-	// Don't initialize Knock if user is not authenticated
-	if (!auth.userId) {
+	// Don't initialize Knock if user is not authenticated or doesn't have an email
+	const userEmail = user?.emailAddresses?.[0]?.emailAddress
+	if (!user || !userEmail) {
 		return <>{children}</>
 	}
 
@@ -48,7 +49,7 @@ export const KnockProvider = ({children}: {children: ReactNode}) => {
 	}
 
 	return (
-		<KnockSDKProvider apiKey={apiKey} userId={auth.userId}>
+		<KnockSDKProvider apiKey={apiKey} user={{id: userEmail}}>
 			<KnockFeedProvider feedId={feedChannelId} colorMode="light">
 				<NotificationInitializer />
 				{children}
