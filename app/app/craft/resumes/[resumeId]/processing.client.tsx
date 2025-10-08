@@ -6,7 +6,7 @@ import ResumeEditor from '@/components/resume/ResumeEditor'
 import dynamic from 'next/dynamic'
 import ResumeAiLoading from '@/components/utilities/ResumeAiLoading'
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
-import {useEffect, useRef} from 'react'
+import {useEffect} from 'react'
 import {useAnalytics} from '@/lib/analytics'
 import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
 import useDidTransition from '@/components/resume/hooks/useDidTransition'
@@ -18,7 +18,6 @@ const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {data: resume, isLoading, isError} = useResumeById(resumeId)
 	const {track} = useAnalytics()
-	const didTrackRef = useRef(false)
 	const isMobile = useIsMobile(1024)
 
 	// Normalize status for consistent checks
@@ -30,19 +29,16 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const transitionedToSuccess = useDidTransition(status, 'processing', 'success')
 	const showReveal = useRevealOnReady(Boolean(transitionedToSuccess && resume))
 
-	// Track transitions once
+	// Track resume_opened - re-fires when status changes
 	useEffect(() => {
-		if (didTrackRef.current) return
-		if (status === 'failed') {
-			track('tailor_resume_failed', {})
-			didTrackRef.current = true
-			return
-		}
-		if (status === 'success') {
-			track('tailor_resume_ready', {resume_id: resume!.id, thumbnail: Boolean(resume!.thumbnail)})
-			didTrackRef.current = true
-		}
-	}, [status, track, resume])
+		if (!resume) return
+
+		track('resume_opened', {
+			resume_id: resume.id,
+			base: Boolean(resume.base),
+			status: status
+		})
+	}, [resume?.id, status, resume?.base, track])
 
 	// Update document title dynamically based on status changes
 	useEffect(() => {
