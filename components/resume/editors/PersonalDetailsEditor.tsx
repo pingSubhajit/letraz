@@ -269,7 +269,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 										name="email"
 										label="Email"
 										placeholder="e.g. john.smith@email.com"
-										disabled={isSubmitting}
+										disabled={true}
 									/>
 
 									<TextFormField
