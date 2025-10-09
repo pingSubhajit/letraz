@@ -90,13 +90,13 @@ const SortableItem: React.FC<SortableItemProps> = ({
 			)}
 		>
 			{/* Drag Handle - positioned relative to content */}
-			<div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+			<div className="absolute h-full -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 				<Button
 					variant="outline"
 					size="sm"
 					{...attributes}
 					{...listeners}
-					className="h-7 w-7 p-0 bg-white shadow-sm hover:bg-neutral-50 border-neutral-200 cursor-grab active:cursor-grabbing"
+					className="h-full w-7 p-0 bg-white shadow-sm hover:bg-neutral-50 border-neutral-200 cursor-grab active:cursor-grabbing"
 					aria-label="Drag to reorder"
 				>
 					<GripVertical className="h-3 w-3" />
