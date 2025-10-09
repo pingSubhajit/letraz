@@ -112,7 +112,7 @@ const fetchApi = async <T>(
 	// Check if response has content before parsing
 	const contentType = response.headers.get('content-type')
 	const contentLength = response.headers.get('content-length')
-	
+
 	// If no content-type or content-length is 0, return empty object
 	if (!contentType?.includes('application/json') || contentLength === '0') {
 		return {} as T
@@ -121,7 +121,7 @@ const fetchApi = async <T>(
 	// Check if body is empty by cloning and reading as text first
 	const clonedResponse = response.clone()
 	const text = await clonedResponse.text()
-	
+
 	if (!text || text.trim() === '') {
 		return {} as T
 	}

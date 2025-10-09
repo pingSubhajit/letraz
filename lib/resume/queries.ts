@@ -12,12 +12,15 @@ export const baseResumeQueryOptions = queryOptions({
 
 export const useBaseResume = () => useQuery(baseResumeQueryOptions)
 
-export const resumesListQueryOptions = queryOptions<ResumeListItem[]>({
-	queryKey: RESUMES_KEYS,
-	queryFn: () => listResumesForUser()
+export const resumesListQueryOptions = (excludeBase?: boolean) => queryOptions<ResumeListItem[]>({
+	queryKey: excludeBase ? [...RESUMES_KEYS, 'excludeBase'] : RESUMES_KEYS,
+	queryFn: async () => {
+		const resumes = await listResumesForUser()
+		return excludeBase ? resumes.filter(resume => !resume.base) : resumes
+	}
 })
 
-export const useResumes = () => useQuery(resumesListQueryOptions)
+export const useResumes = (excludeBase?: boolean) => useQuery(resumesListQueryOptions(excludeBase))
 
 export const resumeByIdQueryOptions = (resumeId: string) => queryOptions<Resume>({
 	queryKey: ['resume', resumeId],
