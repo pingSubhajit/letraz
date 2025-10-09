@@ -2,7 +2,8 @@ import type {Metadata} from 'next'
 import NewResumeInput from '@/components/NewResumeInput'
 import {Suspense} from 'react'
 import OnboardingWelcome from '@/components/onboarding/OnboardingWelcome'
-import DashboardResumes from '@/components/dashboard/DashboardResumes'
+import BaseResumeCard from '@/components/dashboard/BaseResumeCard'
+import DashboardResumesGrid from '@/components/dashboard/DashboardResumesGrid'
 import LetrazBrainImage from '@/public/brain.webp'
 import Image from 'next/image'
 
@@ -34,11 +35,11 @@ const AppHome = () => {
 			{/* Top row with centered Input box and Base Resume */}
 			<div className="flex justify-center gap-8 mb-20">
 				<NewResumeInput className="rounded-lg h-96 w-72" />
-				<DashboardResumes showBaseOnly />
+				<BaseResumeCard className="w-72" />
 			</div>
 
 			{/* Search and Resume Grid Container */}
-			<DashboardResumes showSearchOnly />
+			<DashboardResumesGrid />
 		</div>
 	)
 }
