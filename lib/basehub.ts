@@ -16,7 +16,9 @@ export interface DocPage {
 export const getDocumentationPages = async (): Promise<DocPage[]> => {
 	try {
 		const data = await basehub({
-			token: process.env.BASEHUB_TOKEN
+			token: process.env.BASEHUB_TOKEN,
+			cache: 'force-cache', // Cache indefinitely for static generation
+			next: {revalidate: 3600} // Revalidate every hour
 		}).query({
 			documentationPages: {
 				items: {
@@ -87,7 +89,9 @@ export const getDocumentationPage = async (slug: string): Promise<DocPage | null
 	try {
 		// First try to find in top-level pages
 		const data = await basehub({
-			token: process.env.BASEHUB_TOKEN
+			token: process.env.BASEHUB_TOKEN,
+			cache: 'force-cache', // Cache indefinitely for static generation
+			next: {revalidate: 3600} // Revalidate every hour
 		}).query({
 			documentationPages: {
 				__args: {
@@ -327,7 +331,9 @@ export const getBlogPosts = async (options?: {
 
 		const data = await basehub({
 			token: process.env.BASEHUB_TOKEN,
-			draft: false // Explicitly use published content during build
+			draft: false, // Explicitly use published content during build
+			cache: 'force-cache', // Cache indefinitely for static generation
+			next: { revalidate: 3600 } // Revalidate every hour
 		}).query({
 			blogPosts: {
 				__args: queryArgs,
@@ -418,7 +424,9 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 	try {
 		const data = await basehub({
 			token: process.env.BASEHUB_TOKEN,
-			draft: false // Explicitly use published content
+			draft: false, // Explicitly use published content
+			cache: 'force-cache', // Cache indefinitely for static generation
+			next: { revalidate: 3600 } // Revalidate every hour
 		}).query({
 			blogPosts: {
 				__args: {
