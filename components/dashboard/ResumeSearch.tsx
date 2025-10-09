@@ -90,15 +90,6 @@ const useDeletedResumeIds = () => {
 						if (mutation.state.status === 'pending') {
 							// Add to deleted set when deletion starts
 							setDeletedIds(prev => new Set(prev).add(resumeId))
-						} else if (mutation.state.status === 'success') {
-							// Keep in set for a bit longer to handle Algolia sync delay
-							setTimeout(() => {
-								setDeletedIds(prev => {
-									const newSet = new Set(prev)
-									newSet.delete(resumeId)
-									return newSet
-								})
-							}, 5000) // Keep filtered for 5 seconds after success
 						} else if (mutation.state.status === 'error') {
 							// Remove from set if deletion failed
 							setDeletedIds(prev => {
