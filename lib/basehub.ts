@@ -333,7 +333,7 @@ export const getBlogPosts = async (options?: {
 			token: process.env.BASEHUB_TOKEN,
 			draft: false, // Explicitly use published content during build
 			cache: 'force-cache', // Cache indefinitely for static generation
-			next: { revalidate: 3600 } // Revalidate every hour
+			next: {revalidate: 3600} // Revalidate every hour
 		}).query({
 			blogPosts: {
 				__args: queryArgs,
@@ -426,7 +426,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 			token: process.env.BASEHUB_TOKEN,
 			draft: false, // Explicitly use published content
 			cache: 'force-cache', // Cache indefinitely for static generation
-			next: { revalidate: 3600 } // Revalidate every hour
+			next: {revalidate: 3600} // Revalidate every hour
 		}).query({
 			blogPosts: {
 				__args: {
