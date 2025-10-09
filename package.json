@@ -7,8 +7,8 @@
     "email": "email dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
@@ -125,6 +125,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@hookform/devtools": "^4.3.3",
     "@stylistic/eslint-plugin-js": "^2.9.0",
     "@tailwindcss/typography": "^0.5.15",
