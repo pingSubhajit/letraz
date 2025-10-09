@@ -8,6 +8,7 @@ import {useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react'
 import {normalizeThumbnailUrl, ResumeListItem} from '@/lib/resume/types'
 import ResumeCard from '@/components/dashboard/ResumeCard'
 import {resultsBucket, useAnalytics} from '@/lib/analytics'
+import {useQueryClient} from '@tanstack/react-query'
 
 // Algolia Hit type based on the schema
 interface AlgoliaResumeHit {
@@ -67,6 +68,56 @@ const SearchController = ({query}: {query: string}) => {
 	return null
 }
 
+/**
+ * Hook to track recently deleted resume IDs from mutation state
+ * This provides optimistic UI updates while waiting for Algolia to sync
+ */
+const useDeletedResumeIds = () => {
+	const queryClient = useQueryClient()
+	const mutationCache = queryClient.getMutationCache()
+	const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+
+	useEffect(() => {
+		// Subscribe to mutation cache updates
+		const unsubscribe = mutationCache.subscribe((event) => {
+			if (event?.type === 'updated' || event?.type === 'added') {
+				const mutation = event.mutation
+				// Check if this is a delete-resume mutation
+				if (mutation.options.mutationKey?.[0] === 'delete-resume') {
+					const resumeId = mutation.state.variables as string | undefined
+					
+					if (resumeId) {
+						if (mutation.state.status === 'pending') {
+							// Add to deleted set when deletion starts
+							setDeletedIds(prev => new Set(prev).add(resumeId))
+						} else if (mutation.state.status === 'success') {
+							// Keep in set for a bit longer to handle Algolia sync delay
+							setTimeout(() => {
+								setDeletedIds(prev => {
+									const newSet = new Set(prev)
+									newSet.delete(resumeId)
+									return newSet
+								})
+							}, 5000) // Keep filtered for 5 seconds after success
+						} else if (mutation.state.status === 'error') {
+							// Remove from set if deletion failed
+							setDeletedIds(prev => {
+								const newSet = new Set(prev)
+								newSet.delete(resumeId)
+								return newSet
+							})
+						}
+					}
+				}
+			}
+		})
+
+		return () => unsubscribe()
+	}, [mutationCache])
+
+	return deletedIds
+}
+
 // Component to render Algolia search results
 const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQuery: string}) => {
 	const {status} = useInstantSearch({catchError: true})
@@ -75,6 +126,7 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 	const [hasInitialized, setHasInitialized] = useState(false)
 	const hasScrolledRef = useRef(false)
 	const {track} = useAnalytics()
+	const deletedResumeIds = useDeletedResumeIds()
 
 	// Convert Algolia hits to ResumeListItem format and filter
 	const filtered = useMemo(() => {
@@ -147,8 +199,11 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 			return true
 		})
 
+		// Filter out recently deleted resumes (optimistic UI while waiting for Algolia sync)
+		filtered = filtered.filter((r) => !deletedResumeIds.has(r.id))
+
 		return filtered
-	}, [items, excludeBase])
+	}, [items, excludeBase, deletedResumeIds])
 
 	// Cache results and track analytics
 	useEffect(() => {
