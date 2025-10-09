@@ -38,10 +38,6 @@ export const metadata: Metadata = {
 		canonical: defaultUrl
 	},
 	generator: 'Next.js',
-	icons: [
-		{rel: 'apple-touch-icon', url: 'logo.png'},
-		{rel: 'icon', url: 'logo.png'}
-	],
 	authors: [{name: 'Subhajit Kundu', url: portfolio}]
 }
 
