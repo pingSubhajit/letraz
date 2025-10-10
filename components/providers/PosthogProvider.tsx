@@ -80,8 +80,10 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 
 		// If user is authenticated, identify user in PostHog
 		if (userId && user) {
+			const userEmail = user.emailAddresses[0]?.emailAddress
 			const userProperties = {
-				email: user.emailAddresses[0]?.emailAddress,
+				email: userEmail,
+				userId: userId, // Store Clerk user ID as a property for reference
 				username: user.username || user.fullName || 'Unknown User',
 				fullName: user.fullName,
 				firstName: user.firstName,
@@ -103,8 +105,13 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 				)
 			}
 
-			// Identify user in PostHog with Clerk user ID as the distinct ID
-			posthog.identify(userId, userProperties)
+			/*
+			 * Identify user in PostHog with email address as the distinct ID
+			 * Only identify if we have an email address
+			 */
+			if (userEmail) {
+				posthog.identify(userEmail, userProperties)
+			}
 
 			// Set additional properties for group analysis
 			posthog.group('user_segment', 'authenticated')
