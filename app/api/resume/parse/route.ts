@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
 		const formatParam = url.searchParams.get('format') as 'proprietary' | 'generic' | null
 		const format: 'proprietary' | 'generic' = formatParam === 'generic' ? 'generic' : 'proprietary'
 
-		// "middleware.ts" already ensures authentication via x-authentication header.
+		// "proxy.ts" already ensures authentication via x-authentication header.
 
 		const formData = await req.formData()
 		const file = formData.get('file')

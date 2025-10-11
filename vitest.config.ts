@@ -110,7 +110,7 @@ export default defineConfig({
 				'app/favicon.ico',
 
 				// Infrastructure files
-				'middleware.ts',
+				'proxy.ts',
 				'instrumentation.ts',
 				'next.config.ts',
 				'tailwind.config.ts',

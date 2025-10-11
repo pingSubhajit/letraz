@@ -8,14 +8,14 @@
 import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
-	dsn: process.env.SENTRY_DSN,
+	dsn: 'https://f34e959d40c5b570d470ffa889ca0217@o1422927.ingest.us.sentry.io/4508663726473216',
 
-	// Adjust sampling rates based on environment
-	tracesSampleRate: process.env.VERCEL_ENV === 'production' ? 0.1 : 1.0,
+	// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+	tracesSampleRate: 1,
+
+	// Enable logs to be sent to Sentry
+	enableLogs: true,
 
 	// Setting this option to true will print useful information to the console while you're setting up Sentry.
-	debug: process.env.VERCEL_ENV !== 'production',
-
-	// Add environment tag
-	environment: process.env.VERCEL_ENV
+	debug: false
 })
