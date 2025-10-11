@@ -37,7 +37,7 @@ const RichTextFormField = ({
 							onChange={field.onChange}
 							className={cn('mt-3', disabled && 'opacity-60 pointer-events-none')}
 							placeholder={placeholder}
-							editorContentClassName={cn('h-[200px] overflow-y-auto', editorClassName)}
+							editorContentClassName={cn('h-[150px] sm:h-[200px] overflow-y-auto', editorClassName)}
 						/>
 					</FormControl>
 					<FormMessage className="text-xs" />

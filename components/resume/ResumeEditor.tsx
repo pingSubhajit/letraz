@@ -9,19 +9,33 @@ import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {motion} from 'motion/react'
 import ProjectEditor from '@/components/resume/editors/ProjectEditor'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import {useAnalytics} from '@/lib/analytics'
 
-const ResumeEditor = ({className}: {className?: string}) => {
-	const [activeTab, setActiveTab] = useState<number>(0) // Default to Profile (index 0)
+interface ResumeEditorProps {
+	className?: string
+	activeTabIndex?: number
+	isMobile?: boolean
+}
+
+const ResumeEditor = ({className, activeTabIndex, isMobile = false}: ResumeEditorProps) => {
+	const [activeTab, setActiveTab] = useState<number>(activeTabIndex ?? 0) // Default to Profile (index 0)
 	const [activeTabId, setActiveTabId] = useState<string>('profile') // For traditional tabs
     const {track} = useAnalytics()
 
 	// Feature flag to switch between new and old tab designs
 	const useNewTabDesign = process.env.NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED === 'true'
+
+	// Update active tab when prop changes (for mobile)
+	useEffect(() => {
+		if (activeTabIndex !== undefined) {
+			console.log('[ResumeEditor] Updating activeTab from prop:', activeTabIndex)
+			setActiveTab(activeTabIndex)
+		}
+	}, [activeTabIndex])
 
 	const tabs = [
 		{title: 'Profile', icon: User, id: 'profile'},
@@ -43,19 +57,39 @@ const ResumeEditor = ({className}: {className?: string}) => {
 
 	// Render editor content based on current tab
 	const renderEditorContent = () => {
-		const tabIndex = useNewTabDesign ? activeTab : tabs.findIndex(tab => tab.id === activeTabId)
+		// For mobile, always use activeTab which is synced with activeTabIndex prop
+		// For desktop, use the appropriate tab index based on design flag
+		const tabIndex = isMobile ? activeTab : (useNewTabDesign ? activeTab : tabs.findIndex(tab => tab.id === activeTabId))
 
+		console.log('[ResumeEditor] Rendering content for tab:', tabIndex, 'isMobile:', isMobile, 'activeTab:', activeTab)
+
+		// Use tabIndex in the key to force re-render when tab changes
 		switch (tabIndex) {
-		case 0: return <motion.div key="profile" {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor isTabSwitch={true} /></motion.div>
-		case 1: return <motion.div key="education" {...DEFAULT_SLIDE_ANIMATION}><EducationEditor isTabSwitch={true} /></motion.div>
-		case 2: return <motion.div key="experience" {...DEFAULT_SLIDE_ANIMATION}><ExperienceEditor isTabSwitch={true} /></motion.div>
-		case 3: return <motion.div key="skill" {...DEFAULT_SLIDE_ANIMATION}><SkillsEditor isTabSwitch={true} /></motion.div>
-		case 4: return <motion.div key="certification" {...DEFAULT_SLIDE_ANIMATION}><CertificationEditor isTabSwitch={true} /></motion.div>
-		case 5: return <motion.div key="project" {...DEFAULT_SLIDE_ANIMATION}><ProjectEditor isTabSwitch={true} /></motion.div>
-		default: return <motion.div key="profile" {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor isTabSwitch={true} /></motion.div>
+		case 0: return <motion.div key={`profile-${tabIndex}`} {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor isTabSwitch={true} /></motion.div>
+		case 1: return <motion.div key={`education-${tabIndex}`} {...DEFAULT_SLIDE_ANIMATION}><EducationEditor isTabSwitch={true} /></motion.div>
+		case 2: return <motion.div key={`experience-${tabIndex}`} {...DEFAULT_SLIDE_ANIMATION}><ExperienceEditor isTabSwitch={true} /></motion.div>
+		case 3: return <motion.div key={`skill-${tabIndex}`} {...DEFAULT_SLIDE_ANIMATION}><SkillsEditor isTabSwitch={true} /></motion.div>
+		case 4: return <motion.div key={`certification-${tabIndex}`} {...DEFAULT_SLIDE_ANIMATION}><CertificationEditor isTabSwitch={true} /></motion.div>
+		case 5: return <motion.div key={`project-${tabIndex}`} {...DEFAULT_SLIDE_ANIMATION}><ProjectEditor isTabSwitch={true} /></motion.div>
+		default: return <motion.div key={`profile-${tabIndex}`} {...DEFAULT_SLIDE_ANIMATION}><PersonalDetailsEditor isTabSwitch={true} /></motion.div>
 		}
 	}
 
+	// Mobile: Just render content without tabs (tabs are in MobileSectionTabs)
+	if (isMobile) {
+		return (
+			<div
+				className={cn('p-3 h-full overflow-y-auto overscroll-contain', className)}
+				style={{
+					WebkitOverflowScrolling: 'touch'
+				}}
+			>
+				{renderEditorContent()}
+			</div>
+		)
+	}
+
+	// Desktop: Render with tabs
 	return (
 		<div className={cn('p-6', className)}>
 			{useNewTabDesign ? (

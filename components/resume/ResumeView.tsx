@@ -11,6 +11,8 @@ import ResumeEditorSkeleton from '@/components/skeletons/ResumeEditorSkeleton'
 import ErrorView from '@/components/utilities/ErrorView'
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
 import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
+import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
+import ResumeViewMobile from '@/components/resume/mobile/ResumeViewMobile'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
@@ -20,10 +22,52 @@ interface ResumeViewProps {
 
 const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 	const resumeRef = useRef<HTMLDivElement>(null)
+	const isMobile = useIsMobile()
 
 	const {data: resume, isLoading, isError} = useBaseResume()
 	const showReveal = useRevealOnReady(Boolean(resume && !isLoading && !isError))
 
+
+	// Mobile layout
+	if (isMobile) {
+		console.log('[ResumeView] Rendering MOBILE layout')
+		return (
+			<ResumeHighlightProvider>
+				<ResumeViewMobile>
+					<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+						{isLoading && !resume && (
+							<motion.div {...DEFAULT_FADE_ANIMATION} key="skeleton">
+								<ResumeViewerSkeleton className="max-h-screen" />
+							</motion.div>
+						)}
+						{isError && (
+							<motion.div {...DEFAULT_FADE_ANIMATION} key="error">
+								<ErrorView
+									title="Unable to load resume"
+									description="There was an error loading your resume preview. Please try refreshing the page."
+									buttonText="Refresh"
+									className="scale-75"
+								/>
+							</motion.div>
+						)}
+						{resume && (
+							<motion.div {...DEFAULT_FADE_ANIMATION} key="content">
+								<ResumeViewer
+									resumeRef={resumeRef}
+									resume={resume}
+									className="max-h-screen"
+									showToolbar={false}
+									showAnimation={showReveal}
+								/>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</ResumeViewMobile>
+			</ResumeHighlightProvider>
+		)
+	}
+
+	// Desktop layout
 	return (
 		<ResumeHighlightProvider>
 			<div className="flex h-screen" role="main">

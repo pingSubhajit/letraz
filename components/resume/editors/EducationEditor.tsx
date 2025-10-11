@@ -144,16 +144,16 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 			id={education.id}
 			deletingId={deletingId}
 		>
-			<h3 className="font-medium">
+			<h3 className="text-sm sm:text-base font-medium">
 				{education.degree} {education.degree && education.field_of_study && 'in'} {education.field_of_study}
 			</h3>
-			<p className="text-sm text-muted-foreground">
+			<p className="text-xs sm:text-sm text-muted-foreground">
 				{[
 					education.institution_name,
 					education.country?.name
 				].filter(Boolean).join(', ')}
 			</p>
-			<p className="text-sm">
+			<p className="text-xs sm:text-sm">
 				{education.started_from_month && months.find(m => m.value === education.started_from_month?.toString())?.label} {education.started_from_year} - {' '}
 				{education.current ? 'Present' : (
 					<>
@@ -236,23 +236,22 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	if (view === 'form') {
 		return (
 			<ScrollMask
-				className={cn('space-y-6', className)}
-				style={{height: 'calc(100vh - 162px)'}}
+				className={cn('space-y-6 h-auto sm:h-[calc(100vh-162px)] max-h-[calc(100vh-200px)] sm:max-h-none', className)}
 				data-lenis-prevent
 			>
-				<div className="space-y-6 px-1">
+				<div className="space-y-4 sm:space-y-6 px-1">
 					<EditorHeader
 						title={editingIndex !== null ? 'Update Education' : 'Add New Education'}
 						description={editingIndex !== null
 							? 'Ensure that the details are correct and reflect your educational background'
 							: 'Having 2 or more educational details can increase the chance of your résumé getting selected upto 15%'
 						}
-						className="mb-10"
+						className="mb-6 sm:mb-10"
 					/>
 
 					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-							<div className="grid grid-cols-2 gap-4">
+						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 sm:gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 								<TextFormField
 									form={form}
 									name="institution_name"
@@ -267,7 +266,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 								/>
 							</div>
 
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 								<TextFormField
 									form={form}
 									name="degree"
@@ -314,11 +313,10 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 
 	return (
 		<ScrollMask
-			className={cn('flex flex-col', className)}
-			style={{height: 'calc(100vh - 162px)'}}
+			className={cn('flex flex-col h-auto sm:h-[calc(100vh-162px)] max-h-[calc(100vh-200px)] sm:max-h-none', className)}
 			data-lenis-prevent
 		>
-			<div className="space-y-6 px-1">
+			<div className="space-y-4 sm:space-y-6 px-1">
 				<EditorHeader
 					title="Education"
 					showAddButton={isMounted && !isLoading}

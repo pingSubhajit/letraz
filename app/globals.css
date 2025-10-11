@@ -85,6 +85,15 @@ body {
   @apply h-[297mm] aspect-[210/297];
 }
 
+/* Mobile PDF override - scale to fit container width */
+@media (max-width: 768px) {
+  .size-a4.resume {
+    @apply !h-auto !w-full;
+    min-height: auto !important;
+    aspect-ratio: 210/297 !important;
+  }
+}
+
 .resume {
   * {
     @apply font-serif
@@ -200,6 +209,16 @@ body {
 /* Hide scrollbar for WebKit browsers */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Hide scrollbar for all browsers (utility class) */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
 }
 
 /* Animated flowing gradient ONLY on border */

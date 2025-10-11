@@ -27,7 +27,7 @@ const ItemCard = ({
 	const isThisItemDeleting = isDeleting && deletingId === id
 
 	return (
-		<div className={`flex items-start justify-between p-4 rounded-lg border bg-card ${className}`}>
+		<div className={`flex items-start justify-between p-3 sm:p-4 rounded-lg border bg-card ${className}`}>
 			<div className="space-y-1">
 				{children}
 			</div>

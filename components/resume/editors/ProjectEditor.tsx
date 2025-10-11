@@ -323,7 +323,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 							onSubmit={form.handleSubmit(onSubmit)}
 							className="flex flex-col gap-4"
 						>
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<TextFormField
 									form={form}
 									name="name"
@@ -340,7 +340,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 								/>
 							</div>
 
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<TextFormField
 									form={form}
 									name="role"
@@ -348,7 +348,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 									placeholder="e.g. Frontend Developer"
 									disabled={isSubmitting}
 								/>
-								<div className="grid grid-cols-2 gap-4">
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<TextFormField
 										form={form}
 										name="github_url"
@@ -701,7 +701,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 										deletingId={deletingId}
 									>
 										<div className="flex items-center gap-2">
-											<h3 className="font-medium">{project.name}</h3>
+											<h3 className="text-sm sm:text-base font-medium">{project.name}</h3>
 											<div className="flex items-center gap-1.5">
 												{project.github_url && (
 													<button
@@ -729,10 +729,10 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 												)}
 											</div>
 										</div>
-										<p className="text-sm text-muted-foreground">
+										<p className="text-xs sm:text-sm text-muted-foreground">
 											{[project.role, project.category].filter(Boolean).join(' | ')}
 										</p>
-										<p className="text-sm">
+										<p className="text-xs sm:text-sm">
 											{project.started_from_month &&
                                             months.find(
                                             	(m) => m.value === project.started_from_month?.toString(),
