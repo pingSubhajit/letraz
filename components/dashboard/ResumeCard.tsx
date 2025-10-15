@@ -16,7 +16,7 @@ type ResumeCardProps = {
 }
 
 const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
-	const isProcessing = !resume.base && resume.status === 'Processing'
+	const isProcessing = !resume?.base && resume.status === 'Processing'
 	const {track} = useAnalytics()
 	const [showActions, setShowActions] = useState(false)
 	const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
