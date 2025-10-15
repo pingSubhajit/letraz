@@ -10,7 +10,7 @@ import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {z} from 'zod'
 import {months} from '@/constants'
-import {ExternalLink, Github, Plus, Trash2} from 'lucide-react'
+import {ArrowUpRightIcon, ExternalLink, Github, Lightbulb, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
@@ -37,6 +37,7 @@ import {Badge} from '@/components/ui/badge'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
@@ -774,14 +775,40 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 									</ItemCard>
 								))
 							) : (
-								<Button
-									onClick={handleAddNew}
-									className="w-full"
-									variant="outline"
-								>
-									<Plus className="h-4 w-4 mr-2" />
-									Add New Project
-								</Button>
+								<Empty>
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<Lightbulb />
+										</EmptyMedia>
+										<EmptyTitle>No projects yet</EmptyTitle>
+										<EmptyDescription>
+											You haven&apos;t added any projects yet. Get started by creating your first project.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<div className="flex flex-col gap-2">
+											<Button
+												onClick={handleAddNew}
+												size="sm"
+												variant="outline"
+											>
+												<Plus className="h-4 w-4 mr-2" />
+												Add New Project
+											</Button>
+
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<a href="#">
+													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+												</a>
+											</Button>
+										</div>
+									</EmptyContent>
+								</Empty>
 							)}
 						</motion.div>
 					)}

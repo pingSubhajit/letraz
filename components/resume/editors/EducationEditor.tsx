@@ -8,7 +8,7 @@ import {Form} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {months} from '@/constants'
-import {Plus} from 'lucide-react'
+import {ArrowUpRightIcon, GraduationCap, Plus} from 'lucide-react'
 import EducationEditorSkeleton from '@/components/skeletons/EducationEditorSkeleton'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {AnimatePresence, motion} from 'motion/react'
@@ -38,6 +38,7 @@ import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty";
 
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
@@ -356,14 +357,41 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 									{localEducations.map((education, index) => renderEducationItem(education, index))}
 								</div>
 							) : (
-								<Button
-									onClick={handleAddNew}
-									className="w-full"
-									variant="outline"
-								>
-									<Plus className="h-4 w-4 mr-2" />
-									Add New Education
-								</Button>
+								<Empty>
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<GraduationCap />
+										</EmptyMedia>
+										<EmptyTitle>No educations yet</EmptyTitle>
+										<EmptyDescription>
+											You haven&apos;t created any educations yet. Get started by creating
+											your first education.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<div className="flex flex-col gap-2">
+											<Button
+												onClick={handleAddNew}
+												size="sm"
+												variant="outline"
+											>
+												<Plus className="h-4 w-4 mr-2" />
+												Add New Education
+											</Button>
+
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<a href="#">
+													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+												</a>
+											</Button>
+										</div>
+									</EmptyContent>
+								</Empty>
 							)}
 						</motion.div>
 					)}

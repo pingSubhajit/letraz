@@ -6,7 +6,7 @@ import {Button} from '@/components/ui/button'
 import {Form, FormField, FormItem} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {ChevronDown, Loader2, Pencil, Plus, Trash2} from 'lucide-react'
+import {ArrowUpRightIcon, ChevronDown, Loader2, NotebookPen, Pencil, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
@@ -39,6 +39,7 @@ import {
 } from '@/components/animations/DefaultFade'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 
 type ViewState = 'list' | 'form'
 
@@ -592,16 +593,40 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 									))}
 								</div>
 							) : (
-								<div className="text-center py-8 px-4 border border-dashed rounded-lg bg-neutral-50">
-									<div className="mb-3 text-muted-foreground">No skills added yet</div>
-									<Button
-										onClick={handleAddNew}
-										className="bg-flame-500 hover:bg-flame-600 text-white"
-									>
-										<Plus className="h-4 w-4 mr-2" />
-										Add Your First Skill
-									</Button>
-								</div>
+								<Empty>
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<NotebookPen />
+										</EmptyMedia>
+										<EmptyTitle>No skills yet</EmptyTitle>
+										<EmptyDescription>
+											You haven&apos;t added any skills yet. Get started by creating your first skill.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<div className="flex flex-col gap-2">
+											<Button
+												onClick={handleAddNew}
+												size="sm"
+												variant="outline"
+											>
+												<Plus className="h-4 w-4 mr-2" />
+												Add New Skill
+											</Button>
+
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<a href="#">
+													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+												</a>
+											</Button>
+										</div>
+									</EmptyContent>
+								</Empty>
 							)}
 						</motion.div>
 					)}
