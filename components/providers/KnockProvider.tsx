@@ -31,13 +31,13 @@ export const KnockProvider = ({children}: {children: ReactNode}) => {
 
 	// Return children early if user is not loaded
 	if (!isLoaded) {
-		return null
+		return <>{children}</>
 	}
 
 	// Don't initialize Knock if user is not authenticated or doesn't have an email
 	const userEmail = user?.emailAddresses?.[0]?.emailAddress
 	if (!user || !userEmail) {
-		return null
+		return <>{children}</>
 	}
 
 	const apiKey = process.env.NEXT_PUBLIC_KNOCK_PUBLIC_API_KEY
@@ -45,7 +45,7 @@ export const KnockProvider = ({children}: {children: ReactNode}) => {
 
 	// Don't initialize if environment variables are missing
 	if (!apiKey || !feedChannelId) {
-		return null
+		return <>{children}</>
 	}
 
 	return (
