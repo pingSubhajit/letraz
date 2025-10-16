@@ -27,54 +27,54 @@ const AppSidebarContainer = ({children, className}: {
 	const targetWidth = isExpanded ? expandedWidth : collapsedWidth
 
 	return (
-		<KnockProvider>
-			<motion.aside
-				className="shadow-xl z-20 hidden lg:block"
-				initial={shouldAnimate ? {width: '0px'} : {width: collapsedWidth}}
-				animate={{width: targetWidth}}
+		<motion.aside
+			className="shadow-xl z-20 hidden lg:block"
+			initial={shouldAnimate ? {width: '0px'} : {width: collapsedWidth}}
+			animate={{width: targetWidth}}
+			transition={{
+				ease: 'circInOut',
+				duration: 0.3
+			}}
+		>
+			<motion.div
+				initial={shouldAnimate ? {x: '-80px', width: collapsedWidth} : {width: collapsedWidth}}
+				animate={{x: 0, width: targetWidth}}
 				transition={{
 					ease: 'circInOut',
 					duration: 0.3
 				}}
+				className="h-full bg-primary-foreground/90 relative"
 			>
-				<motion.div
-					initial={shouldAnimate ? {x: '-80px', width: collapsedWidth} : {width: collapsedWidth}}
-					animate={{x: 0, width: targetWidth}}
-					transition={{
-						ease: 'circInOut',
-						duration: 0.3
-					}}
-					className="h-full bg-primary-foreground/90 relative"
-				>
-					<AnimatePresence>
-						{!isExpanded && <motion.div
-							className={className}
-							initial={{scale: 0.95, opacity: 0}}
-							animate={{scale: 1, opacity: 1}}
-							exit={{scale: 0.95, opacity: 0}}
-						>
-							{children}
-						</motion.div>}
-					</AnimatePresence>
+				<AnimatePresence>
+					{!isExpanded && <motion.div
+						className={className}
+						initial={{scale: 0.95, opacity: 0}}
+						animate={{scale: 1, opacity: 1}}
+						exit={{scale: 0.95, opacity: 0}}
+					>
+						{children}
+					</motion.div>}
+				</AnimatePresence>
 
-					<AnimatePresence>
-						{isExpanded && <motion.div
-							className="h-full w-[400px] flex flex-col items-center justify-between absolute z-20 inset-0"
-							initial={{x: -400}}
-							animate={{x: 0}}
-							exit={{x: -400}}
-							transition={{
-								ease: 'circInOut',
-								duration: 0.3
-							}}
-						>
-							{currentPage === 'NOTIFICATION' && <NotificationFeed />}
-							{currentPage === 'USER_SUPPORT' && <UserSupportPanel />}
-						</motion.div>}
-					</AnimatePresence>
-				</motion.div>
-			</motion.aside>
-		</KnockProvider>
+				<AnimatePresence>
+					{isExpanded && <motion.div
+						className="h-full w-[400px] flex flex-col items-center justify-between absolute z-20 inset-0"
+						initial={{x: -400}}
+						animate={{x: 0}}
+						exit={{x: -400}}
+						transition={{
+							ease: 'circInOut',
+							duration: 0.3
+						}}
+					>
+						{currentPage === 'NOTIFICATION' && <KnockProvider>
+							<NotificationFeed />
+						</KnockProvider>}
+						{currentPage === 'USER_SUPPORT' && <UserSupportPanel />}
+					</motion.div>}
+				</AnimatePresence>
+			</motion.div>
+		</motion.aside>
 	)
 }
 
