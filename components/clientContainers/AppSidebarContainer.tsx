@@ -6,6 +6,7 @@ import {ReactNode} from 'react'
 import {useSidebar} from '@/components/providers/SidebarProvider'
 import NotificationFeed from '@/components/notifications/NotificationFeed'
 import UserSupportPanel from '@/components/UserSupportPanel'
+import {KnockProvider} from '@/components/providers/KnockProvider'
 
 const AppSidebarContainer = ({children, className}: {
 	children: ReactNode,
@@ -66,7 +67,9 @@ const AppSidebarContainer = ({children, className}: {
 							duration: 0.3
 						}}
 					>
-						{currentPage === 'NOTIFICATION' && <NotificationFeed />}
+						{currentPage === 'NOTIFICATION' && <KnockProvider>
+							<NotificationFeed />
+						</KnockProvider>}
 						{currentPage === 'USER_SUPPORT' && <UserSupportPanel />}
 					</motion.div>}
 				</AnimatePresence>

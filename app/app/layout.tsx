@@ -5,7 +5,6 @@ import AppLayoutContainer from '@/components/clientContainers/AppLayoutContainer
 import {cookies} from 'next/headers'
 import {auth, clerkClient} from '@clerk/nextjs/server'
 import {executeRizeBackfill} from '@/lib/rize/actions'
-import {KnockProvider} from '@/components/providers/KnockProvider'
 
 export const metadata: Metadata = {
 	title: {
@@ -62,13 +61,11 @@ const AppLayout = async ({children}: {children: ReactNode}) => {
 	await initiateRizeBackfill()
 
 	return (
-		<KnockProvider>
-			<SidebarProvider>
-				<AppLayoutContainer>
-					{children}
-				</AppLayoutContainer>
-			</SidebarProvider>
-		</KnockProvider>
+		<SidebarProvider>
+			<AppLayoutContainer>
+				{children}
+			</AppLayoutContainer>
+		</SidebarProvider>
 	)
 }
 
