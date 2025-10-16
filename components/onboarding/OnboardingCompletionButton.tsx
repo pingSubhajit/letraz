@@ -39,9 +39,10 @@ const OnboardingCompletionButton = () => {
 			await completeOnboarding()
 			// Force-refresh session token so claims reflect latest onboarding status
 			try { await getToken({skipCache: true}) } catch {}
-		} catch {}
-		finally {
 			// Use router.replace to prevent back navigation to onboarding
+			router.replace('/app?from=onboarding')
+		} catch (error) {
+			// Still navigate even if metadata update fails
 			router.replace('/app?from=onboarding')
 		}
 	}
