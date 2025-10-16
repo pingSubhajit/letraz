@@ -10,7 +10,7 @@ export const runtime = 'nodejs'
  * Body (JSON): { url: string }
  *
  * Header:
- *   - x-authentication: SELF_SECRET_KEY (validated by proxy.ts)
+ *   - x-authentication: SELF_SECRET_KEY (validated by middleware.ts)
  */
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
 	try {
