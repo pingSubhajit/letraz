@@ -89,7 +89,7 @@ body {
   }
 
   /* Mobile-specific reset to ensure no padding */
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     main, body, html {
       padding-left: 0 !important;
       margin-left: 0 !important;
@@ -102,7 +102,7 @@ body {
 }
 
 /* Mobile PDF - let transform scale handle sizing */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .size-a4.resume {
     /* Remove all overrides - transform scale handles everything */
     margin: 0;
