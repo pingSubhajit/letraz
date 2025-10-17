@@ -16,12 +16,12 @@ const AppLayoutContainer = ({children}: {children: ReactNode}) => {
 			<AppSidebar />
 
 			{/* SIDEBAR GRADIENT SHADOWS - Only visible on desktop */}
-			<div className="hidden md:block h-[674px] w-[118px] absolute bg-rose-500 rounded-[50%] -z-10 -top-48 blur-[150px] -left-64" />
-			<div className="hidden md:block h-[669px] w-[228px] absolute bg-flame-500 rounded-[50%] -z-10 top-[25%] blur-[150px] -left-80" />
-			<div className="hidden md:block h-[709px] w-[176px] absolute bg-amber-300 rounded-[50%] -z-10 -bottom-36 blur-[150px] -left-72" />
+			<div className="hidden lg:block h-[674px] w-[118px] absolute bg-rose-500 rounded-[50%] -z-10 -top-48 blur-[150px] -left-64" />
+			<div className="hidden lg:block h-[669px] w-[228px] absolute bg-flame-500 rounded-[50%] -z-10 top-[25%] blur-[150px] -left-80" />
+			<div className="hidden lg:block h-[709px] w-[176px] absolute bg-amber-300 rounded-[50%] -z-10 -bottom-36 blur-[150px] -left-72" />
 
 			{/* MAIN CONTENT */}
-			<motion.div className="flex-shrink-0 w-full md:w-[calc(100vw-80px)] h-screen md:h-screen pt-14 md:pt-0">
+			<motion.div className="flex-shrink-0 w-full lg:w-[calc(100vw-80px)] h-screen lg:h-screen pt-14 lg:pt-0">
 				<SmoothScrollProvider className="overflow-y-auto overflow-x-hidden h-full w-full">
 					<main>
 						{children}

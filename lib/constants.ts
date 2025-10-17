@@ -450,8 +450,8 @@ export const MOBILE_LAYOUT = {
 	TOP_PADDING: 16,
 	/** Bottom padding in pixels to accommodate bottom sheet */
 	BOTTOM_PADDING: 140,
-	/** Mobile breakpoint in pixels (matches useIsMobile default) */
-	BREAKPOINT: 768
+	/** Mobile breakpoint in pixels (matches lg breakpoint - 1024px) */
+	BREAKPOINT: 1024
 } as const
 
 /**

@@ -49,7 +49,8 @@ const MobileSectionTabs = ({
 		<div
 			ref={scrollContainerRef}
 			className={cn(
-				'flex gap-1 overflow-x-auto px-3 pb-2 ',
+				'flex gap-1 overflow-x-auto px-3 pb-2',
+			'min-[494px]:justify-center',
 				'scrollbar-hide snap-x snap-mandatory',
 				className
 			)}

@@ -22,7 +22,7 @@ interface ResumeViewProps {
 
 const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 	const resumeRef = useRef<HTMLDivElement>(null)
-	const isMobile = useIsMobile()
+	const isMobile = useIsMobile(1024)
 
 	const {data: resume, isLoading, isError} = useBaseResume()
 	const showReveal = useRevealOnReady(Boolean(resume && !isLoading && !isError))

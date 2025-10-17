@@ -78,32 +78,35 @@ const MobileBottomSheet = ({
 				/>
 			)}
 
-			{/* Bottom Sheet */}
-			<motion.div
-				ref={sheetRef}
-				drag="y"
-				dragConstraints={{top: 0, bottom: 0}}
-				dragElastic={0.2}
-				onDragEnd={handleDragEnd}
-				animate={isExpanded ? 'expanded' : 'collapsed'}
-				variants={sheetVariants}
-				className={cn(
-					'fixed bottom-0 left-0 right-0 z-50',
-					'bg-neutral-50 rounded-t-3xl shadow-2xl border-t-4 border-flame-500',
-					'flex flex-col overflow-hidden',
-					className
-				)}
-			>
-				{/* Drag handle */}
-				<div className="flex justify-center items-center py-4 cursor-grab active:cursor-grabbing bg-neutral-50">
-					<div className="w-16 h-1.5 bg-neutral-400 rounded-full" />
-				</div>
+			{/* Transparent positioning container */}
+			<div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden flex justify-center">
+				{/* Bottom Sheet */}
+				<motion.div
+					ref={sheetRef}
+					drag="y"
+					dragConstraints={{top: 0, bottom: 0}}
+					dragElastic={0.2}
+					onDragEnd={handleDragEnd}
+					animate={isExpanded ? 'expanded' : 'collapsed'}
+					variants={sheetVariants}
+					className={cn(
+						'w-full sm:w-fit sm:max-w-2xl',
+						'bg-neutral-50 rounded-t-3xl shadow-2xl border-t-4 border-flame-500',
+						'flex flex-col overflow-hidden',
+						className
+					)}
+				>
+					{/* Drag handle */}
+					<div className="flex justify-center items-center py-4 cursor-grab active:cursor-grabbing bg-neutral-50">
+						<div className="w-16 h-1.5 bg-neutral-400 rounded-full" />
+					</div>
 
-				{/* Content */}
-				<div className="flex-1 overflow-hidden">
-					{children}
-				</div>
-			</motion.div>
+					{/* Content */}
+					<div className="flex-1">
+						{children}
+					</div>
+				</motion.div>
+			</div>
 		</>
 	)
 }

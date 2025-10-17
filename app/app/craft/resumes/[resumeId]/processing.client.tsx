@@ -19,7 +19,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {data: resume, isLoading, isError} = useResumeById(resumeId)
 	const {track} = useAnalytics()
 	const didTrackRef = useRef(false)
-	const isMobile = useIsMobile()
+	const isMobile = useIsMobile(1024)
 
 	// Normalize status for consistent checks
 	const status = (resume?.status || '').toLowerCase()

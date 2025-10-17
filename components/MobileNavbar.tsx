@@ -11,7 +11,7 @@ const MobileNavbar = () => {
 	const auth = useAuth()
 
 	return (
-		<nav className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200 shadow-sm">
+		<nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200 shadow-sm">
 			<div className="h-14 px-4 flex items-center justify-between">
 				{/* Logo on the left */}
 				<Link href="/app" className="flex items-center">

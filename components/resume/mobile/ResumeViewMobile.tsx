@@ -73,7 +73,7 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 
 		window.addEventListener('resize', handleResize)
 		return () => window.removeEventListener('resize', handleResize)
-	}, [])
+	}, [calculateScaleValue])
 
 	/**
 	 * Handle tab navigation with auto-expand behavior
@@ -125,25 +125,23 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 				isExpanded={isExpanded}
 				onExpandChange={setIsExpanded}
 			>
-				<div className="flex flex-col h-full ">
-					{/* Mobile Section Tabs - Always visible */}
-					<MobileSectionTabs
-						tabs={tabs}
-						activeTab={activeTab}
-						onTabChange={handleTabChange}
-					/>
+				{/* Mobile Section Tabs - Always visible, horizontally scrollable */}
+				<MobileSectionTabs
+					tabs={tabs}
+					activeTab={activeTab}
+					onTabChange={handleTabChange}
+				/>
 
-					{/* Editor Content - Only show when expanded */}
-					{isExpanded && (
-						<div className="flex-1 overflow-hidden">
-							<ResumeEditor
-								className="h-full"
-								activeTabIndex={activeTab}
-								isMobile={true}
-							/>
-						</div>
-					)}
-				</div>
+				{/* Editor Content - Scrollable vertically when expanded */}
+				{isExpanded && (
+					<div className="flex-1 overflow-y-auto">
+						<ResumeEditor
+							className="h-full"
+							activeTabIndex={activeTab}
+							isMobile={true}
+						/>
+					</div>
+				)}
 			</MobileBottomSheet>
 		</>
 	)
