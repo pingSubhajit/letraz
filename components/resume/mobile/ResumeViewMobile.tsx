@@ -23,15 +23,26 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [activeTab, setActiveTab] = useState(0)
 
-	// Helper function to calculate scale
+	// Helper function to calculate scale based on both width AND height constraints
 	const calculateScaleValue = () => {
 		if (typeof window === 'undefined') return 0.5 // Default for SSR
-		const viewportWidth = window.innerWidth
-		const padding = 0 // Increased padding for safety margins
-		const availableWidth = viewportWidth - padding
+
 		const basePdfWidth = 793 // Actual PDF width with size-a4 class
-		// Scale to 78% of available width to ensure it fits
-		return (availableWidth / basePdfWidth) * 0.95
+		const basePdfHeight = 1122 // Actual PDF height (A4: 297mm)
+
+		// Calculate scale based on viewport width
+		const viewportWidth = window.innerWidth
+		const scaleByWidth = (viewportWidth / basePdfWidth) * 0.95
+
+		// Calculate scale based on viewport height
+		const viewportHeight = window.innerHeight
+		const topPadding = 16 // py-4 in pixels
+		const bottomPadding = 140 // pb-[140px] in pixels
+		const availableHeight = viewportHeight - topPadding - bottomPadding
+		const scaleByHeight = (availableHeight / basePdfHeight) * 1.0
+
+		// Use the SMALLER scale to ensure PDF fits within both dimensions
+		return Math.min(scaleByWidth, scaleByHeight)
 	}
 
 	// Initialize scale with actual value to prevent hydration mismatch
@@ -64,31 +75,28 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 	const scaledHeight = 1122 * scale  // Actual PDF height (297mm)
 
 	return (
-		<div className="relative h-screen w-full overflow-hidden">
-			{/* PDF Viewer - Dynamically scaled container */}
-			<div className="absolute inset-0 overflow-y-auto">
-				{/* Centered container */}
-				<div className="w-full flex justify-center py-4 pb-[140px]">
-					{/* Wrapper with exact scaled dimensions */}
+		<>
+			{/* PDF Viewer - Dynamically scaled container with scroll */}
+			<div className="relative h-screen w-full overflow-y-auto overflow-x-hidden py-4 pb-[140px] z-10">
+				{/* Centered container with scaled dimensions */}
+				<div
+					className="relative mx-auto"
+					style={{
+						width: `${scaledWidth}px`,
+						height: `${scaledHeight}px`
+					}}
+				>
+					{/* Scaled PDF */}
 					<div
-						className="relative"
+						className="absolute top-0 left-0"
 						style={{
-							width: `${scaledWidth}px`,
-							height: `${scaledHeight}px`
+							width: '793px',  // Actual PDF width with size-a4
+							height: '1122px', // Actual PDF height (297mm)
+							transform: `scale(${scale})`,
+							transformOrigin: 'top left'
 						}}
 					>
-						{/* Scaled PDF - positioned to fill wrapper */}
-						<div
-							className="absolute top-0 left-0"
-							style={{
-								width: '793px',  // Actual PDF width with size-a4
-								height: '1122px', // Actual PDF height (297mm)
-								transform: `scale(${scale})`,
-								transformOrigin: 'top left'
-							}}
-						>
-							{children}
-						</div>
+						{children}
 					</div>
 				</div>
 			</div>
@@ -118,7 +126,7 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 					)}
 				</div>
 			</MobileBottomSheet>
-		</div>
+		</>
 	)
 }
 
