@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import ResumeEditor from '@/components/resume/ResumeEditor'
 import MobileBottomSheet from './MobileBottomSheet'
 import MobileSectionTabs from './MobileSectionTabs'
@@ -23,6 +23,33 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [activeTab, setActiveTab] = useState(0)
 
+	// Helper function to calculate scale
+	const calculateScaleValue = () => {
+		if (typeof window === 'undefined') return 0.5 // Default for SSR
+		const viewportWidth = window.innerWidth
+		const padding = 0 // Increased padding for safety margins
+		const availableWidth = viewportWidth - padding
+		const basePdfWidth = 793 // Actual PDF width with size-a4 class
+		// Scale to 78% of available width to ensure it fits
+		return (availableWidth / basePdfWidth) * 0.95
+	}
+
+	// Initialize scale with actual value to prevent hydration mismatch
+	const [scale, setScale] = useState(() => calculateScaleValue())
+
+	// Calculate dynamic scale based on viewport width
+	useEffect(() => {
+		const handleResize = () => {
+			setScale(calculateScaleValue())
+		}
+
+		// Set initial scale on mount
+		handleResize()
+
+		window.addEventListener('resize', handleResize)
+		return () => window.removeEventListener('resize', handleResize)
+	}, [])
+
 	const handleTabChange = (index: number) => {
 		console.log('[ResumeViewMobile] Tab changed to:', index)
 		setActiveTab(index)
@@ -30,16 +57,36 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 		if (!isExpanded) {
 			setIsExpanded(true)
 		}
-	}
+	}	
+
+	// Calculate actual scaled dimensions
+	const scaledWidth = 793 * scale  // Actual PDF width with size-a4
+	const scaledHeight = 1122 * scale  // Actual PDF height (297mm)
 
 	return (
 		<div className="relative h-screen w-full overflow-hidden">
-			{/* PDF Viewer - Fixed dimensions to prevent content shifting */}
-			<div className="absolute inset-0 overflow-auto bg-neutral-100 pb-40 ">
-				<div className="w-full flex justify-center px-2 py-4">
-					{/* Fixed container with A4 dimensions in pixels (595x842px) */}
-					<div className="relative" style={{ width: '895px', transform: 'scale(0.8)', transformOrigin: 'top center' }}>
-						<div className="shadow-none border-0">
+			{/* PDF Viewer - Dynamically scaled container */}
+			<div className="absolute inset-0 overflow-y-auto">
+				{/* Centered container */}
+				<div className="w-full flex justify-center py-4 pb-[140px]">
+					{/* Wrapper with exact scaled dimensions */}
+					<div
+						className="relative"
+						style={{
+							width: `${scaledWidth}px`,
+							height: `${scaledHeight}px`
+						}}
+					>
+						{/* Scaled PDF - positioned to fill wrapper */}
+						<div
+							className="absolute top-0 left-0"
+							style={{
+								width: '793px',  // Actual PDF width with size-a4
+								height: '1122px', // Actual PDF height (297mm)
+								transform: `scale(${scale})`,
+								transformOrigin: 'top left'
+							}}
+						>
 							{children}
 						</div>
 					</div>

@@ -72,12 +72,28 @@ body {
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
+  }
+  html, body {
+    @apply p-0 m-0;
+    overflow-x: hidden;
   }
   body {
     @apply bg-background text-foreground;
   }
+  main {
+    @apply p-0 m-0 w-full;
+  }
   img {
     display: initial;
+  }
+
+  /* Mobile-specific reset to ensure no padding */
+  @media (max-width: 768px) {
+    main, body, html {
+      padding-left: 0 !important;
+      margin-left: 0 !important;
+    }
   }
 }
 
@@ -85,12 +101,11 @@ body {
   @apply h-[297mm] aspect-[210/297];
 }
 
-/* Mobile PDF override - scale to fit container width */
+/* Mobile PDF - let transform scale handle sizing */
 @media (max-width: 768px) {
   .size-a4.resume {
-    @apply !h-auto !w-full;
-    min-height: auto !important;
-    aspect-ratio: 210/297 !important;
+    /* Remove all overrides - transform scale handles everything */
+    margin: 0;
   }
 }
 

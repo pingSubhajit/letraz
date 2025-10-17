@@ -476,3 +476,11 @@
   color: #444;
   font-family: "Charter", "Times New Roman", Times, serif;
 }
+
+/* Mobile overrides - reduce padding and remove max-width constraint */
+@media (max-width: 768px) {
+  .default-theme-container {
+    max-width: 100% !important;
+    padding: 24px 16px !important;
+  }
+}
