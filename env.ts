@@ -49,11 +49,6 @@ const envSchema = z.object({
 		message: 'Resend API key must start with "re_"'
 	}),
 
-	// Required Anthropic API key, must start with "sk-ant-api03-"
-	ANTHROPIC_API_KEY: z.string().startsWith('sk-ant-api03-', {
-		message: 'Anthropic API key must start with "sk-ant-api03-"'
-	}),
-
 	// Required Ghost CMS API key
 	GHOST_API_KEY: z.string({
 		message: 'Ghost API key must be a string'
