@@ -1,13 +1,15 @@
 'use client'
 
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useCallback, useMemo} from 'react'
 import ResumeEditor from '@/components/resume/ResumeEditor'
 import MobileBottomSheet from './MobileBottomSheet'
 import MobileSectionTabs from './MobileSectionTabs'
 import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
+import {PDF_DIMENSIONS, MOBILE_LAYOUT, SCALE_FACTORS} from '@/lib/constants'
 
 interface ResumeViewMobileProps {
-	children: React.ReactNode // PDF Viewer content
+	/** PDF viewer content to display */
+	children: React.ReactNode
 }
 
 const tabs = [
@@ -19,31 +21,43 @@ const tabs = [
 	{title: 'Projects', icon: FolderKanban, id: 'projects'}
 ]
 
+/**
+ * Mobile resume view component with responsive PDF scaling and bottom sheet editor
+ *
+ * Features:
+ * - Dual-constraint PDF scaling (width AND height aware)
+ * - Dynamic viewport-based sizing
+ * - Bottom sheet with tabbed section editor
+ * - Auto-expand on tab change
+ *
+ * @param children - PDF viewer content to display
+ * @returns Mobile layout with scaled PDF and bottom sheet editor
+ */
 const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [activeTab, setActiveTab] = useState(0)
 
-	// Helper function to calculate scale based on both width AND height constraints
-	const calculateScaleValue = () => {
+	/**
+	 * Calculate optimal PDF scale based on both viewport width AND height constraints
+	 * Uses the smaller of the two scales to ensure the PDF fits within both dimensions
+	 *
+	 * @returns Scale factor between 0 and 1
+	 */
+	const calculateScaleValue = useCallback(() => {
 		if (typeof window === 'undefined') return 0.5 // Default for SSR
-
-		const basePdfWidth = 793 // Actual PDF width with size-a4 class
-		const basePdfHeight = 1122 // Actual PDF height (A4: 297mm)
 
 		// Calculate scale based on viewport width
 		const viewportWidth = window.innerWidth
-		const scaleByWidth = (viewportWidth / basePdfWidth) * 0.95
+		const scaleByWidth = (viewportWidth / PDF_DIMENSIONS.WIDTH) * SCALE_FACTORS.WIDTH_MULTIPLIER
 
 		// Calculate scale based on viewport height
 		const viewportHeight = window.innerHeight
-		const topPadding = 16 // py-4 in pixels
-		const bottomPadding = 140 // pb-[140px] in pixels
-		const availableHeight = viewportHeight - topPadding - bottomPadding
-		const scaleByHeight = (availableHeight / basePdfHeight) * 1.0
+		const availableHeight = viewportHeight - MOBILE_LAYOUT.TOP_PADDING - MOBILE_LAYOUT.BOTTOM_PADDING
+		const scaleByHeight = (availableHeight / PDF_DIMENSIONS.HEIGHT) * SCALE_FACTORS.HEIGHT_MULTIPLIER
 
 		// Use the SMALLER scale to ensure PDF fits within both dimensions
 		return Math.min(scaleByWidth, scaleByHeight)
-	}
+	}, [])
 
 	// Initialize scale with actual value to prevent hydration mismatch
 	const [scale, setScale] = useState(() => calculateScaleValue())
@@ -61,18 +75,23 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 		return () => window.removeEventListener('resize', handleResize)
 	}, [])
 
-	const handleTabChange = (index: number) => {
-		console.log('[ResumeViewMobile] Tab changed to:', index)
+	/**
+	 * Handle tab navigation with auto-expand behavior
+	 * Automatically expands the bottom sheet when user changes tabs
+	 */
+	const handleTabChange = useCallback((index: number) => {
 		setActiveTab(index)
 		// Auto-expand when changing tabs
 		if (!isExpanded) {
 			setIsExpanded(true)
 		}
-	}	
+	}, [isExpanded])
 
-	// Calculate actual scaled dimensions
-	const scaledWidth = 793 * scale  // Actual PDF width with size-a4
-	const scaledHeight = 1122 * scale  // Actual PDF height (297mm)
+	// Memoize scaled dimensions to avoid recalculation on every render
+	const scaledDimensions = useMemo(() => ({
+		width: PDF_DIMENSIONS.WIDTH * scale,
+		height: PDF_DIMENSIONS.HEIGHT * scale
+	}), [scale])
 
 	return (
 		<>
@@ -82,16 +101,16 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 				<div
 					className="relative mx-auto"
 					style={{
-						width: `${scaledWidth}px`,
-						height: `${scaledHeight}px`
+						width: `${scaledDimensions.width}px`,
+						height: `${scaledDimensions.height}px`
 					}}
 				>
 					{/* Scaled PDF */}
 					<div
 						className="absolute top-0 left-0"
 						style={{
-							width: '793px',  // Actual PDF width with size-a4
-							height: '1122px', // Actual PDF height (297mm)
+							width: `${PDF_DIMENSIONS.WIDTH}px`,
+							height: `${PDF_DIMENSIONS.HEIGHT}px`,
 							transform: `scale(${scale})`,
 							transformOrigin: 'top left'
 						}}

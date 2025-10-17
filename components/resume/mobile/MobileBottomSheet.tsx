@@ -3,6 +3,7 @@
 import {ReactNode, useRef} from 'react'
 import {motion, PanInfo, useAnimation} from 'motion/react'
 import {cn} from '@/lib/utils'
+import {BOTTOM_SHEET} from '@/lib/constants'
 
 interface MobileBottomSheetProps {
 	isExpanded: boolean
@@ -11,8 +12,8 @@ interface MobileBottomSheetProps {
 	className?: string
 }
 
-const COLLAPSED_HEIGHT = 130
-const EXPANDED_HEIGHT_VH = 85
+// Re-export for convenience
+const {COLLAPSED_HEIGHT, EXPANDED_HEIGHT_VH} = BOTTOM_SHEET
 
 const MobileBottomSheet = ({
 	isExpanded,
@@ -20,7 +21,6 @@ const MobileBottomSheet = ({
 	children,
 	className
 }: MobileBottomSheetProps) => {
-	console.log('[MobileBottomSheet] Rendering, isExpanded:', isExpanded)
 	const controls = useAnimation()
 	const sheetRef = useRef<HTMLDivElement>(null)
 

@@ -139,7 +139,6 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 
 	// Mobile layout - Use ResumeViewMobile wrapper
 	if (isMobile) {
-		console.log('[ProcessingView] Rendering MOBILE layout')
 		return (
 			<ResumeHighlightProvider>
 				<ResumeViewMobile>
@@ -155,7 +154,6 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	}
 
 	// Desktop layout - Original side-by-side layout
-	console.log('[ProcessingView] Rendering DESKTOP layout')
 	return (
 		<ResumeHighlightProvider>
 			<div className="flex h-screen w-full" role="main">

@@ -32,7 +32,6 @@ const ResumeEditor = ({className, activeTabIndex, isMobile = false}: ResumeEdito
 	// Update active tab when prop changes (for mobile)
 	useEffect(() => {
 		if (activeTabIndex !== undefined) {
-			console.log('[ResumeEditor] Updating activeTab from prop:', activeTabIndex)
 			setActiveTab(activeTabIndex)
 		}
 	}, [activeTabIndex])
@@ -60,8 +59,6 @@ const ResumeEditor = ({className, activeTabIndex, isMobile = false}: ResumeEdito
 		// For mobile, always use activeTab which is synced with activeTabIndex prop
 		// For desktop, use the appropriate tab index based on design flag
 		const tabIndex = isMobile ? activeTab : (useNewTabDesign ? activeTab : tabs.findIndex(tab => tab.id === activeTabId))
-
-		console.log('[ResumeEditor] Rendering content for tab:', tabIndex, 'isMobile:', isMobile, 'activeTab:', activeTab)
 
 		// Use tabIndex in the key to force re-render when tab changes
 		switch (tabIndex) {

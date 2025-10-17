@@ -426,3 +426,52 @@ export const countries = [
 		flag: 'https://flagsapi.com/US/flat/64.png'
 	}
 ] as const
+
+// Resume Mobile View Constants
+/**
+ * PDF A4 dimensions in pixels at 96 DPI
+ * Used for calculating proper scaling and aspect ratios
+ */
+export const PDF_DIMENSIONS = {
+	/** A4 width in pixels (210mm at 96 DPI) */
+	WIDTH: 793,
+	/** A4 height in pixels (297mm at 96 DPI) */
+	HEIGHT: 1122,
+	/** A4 aspect ratio (210/297) */
+	ASPECT_RATIO: 210 / 297
+} as const
+
+/**
+ * Mobile layout spacing constants
+ * Controls padding and breakpoints for responsive behavior
+ */
+export const MOBILE_LAYOUT = {
+	/** Top padding in pixels (py-4 = 1rem = 16px) */
+	TOP_PADDING: 16,
+	/** Bottom padding in pixels to accommodate bottom sheet */
+	BOTTOM_PADDING: 140,
+	/** Mobile breakpoint in pixels (matches useIsMobile default) */
+	BREAKPOINT: 768
+} as const
+
+/**
+ * PDF scaling factors for responsive rendering
+ * Controls how PDF scales to fit different viewport sizes
+ */
+export const SCALE_FACTORS = {
+	/** Width scaling multiplier (95% to ensure horizontal fit) */
+	WIDTH_MULTIPLIER: 0.95,
+	/** Height scaling multiplier (100% for full vertical usage) */
+	HEIGHT_MULTIPLIER: 1.0
+} as const
+
+/**
+ * Bottom sheet height configuration
+ * Used for the mobile editor bottom sheet component
+ */
+export const BOTTOM_SHEET = {
+	/** Collapsed state height in pixels */
+	COLLAPSED_HEIGHT: 130,
+	/** Expanded state height in viewport height units */
+	EXPANDED_HEIGHT_VH: 85
+} as const

@@ -30,7 +30,6 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 
 	// Mobile layout
 	if (isMobile) {
-		console.log('[ResumeView] Rendering MOBILE layout')
 		return (
 			<ResumeHighlightProvider>
 				<ResumeViewMobile>
