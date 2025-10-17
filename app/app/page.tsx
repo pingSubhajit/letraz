@@ -14,11 +14,11 @@ export const metadata: Metadata = {
 
 const AppHome = () => {
 	return (
-		<div className="p-8 relative">
+		<div className="p-6 lg:p-8 relative overflow-x-hidden">
 			<Image
 				src={LetrazBrainImage}
 				alt="" aria-hidden
-				className="absolute left-1/2 -translate-x-1/2 -top-[900px] blur-xl -z-20"
+				className="absolute left-1/2 -translate-x-1/2 -top-[600px] sm:-top-[800px] lg:-top-[900px] blur-xl -z-20"
 			/>
 
 			<Suspense fallback={null}>
@@ -27,15 +27,15 @@ const AppHome = () => {
 
 
 			{/* MAIN HEADER SECTION */}
-			<div className="mt-32 flex flex-col justify-center items-center mb-20">
-				<h1 className="text-4xl mb-6 font-medium">Put in a job URL to get started</h1>
-				<p className="max-w-2xl text-center opacity-60">Paste in a job posting URL or the full-page content in the input below. We'll do all the heavy lifting and create the perfect resume for you.</p>
+			<div className="mt-20 sm:mt-28 lg:mt-32 flex flex-col justify-center items-center mb-16 lg:mb-20">
+				<h1 className="text-3xl lg:text-4xl mb-4 lg:mb-6 font-medium">Put in a job URL to get started</h1>
+				<p className="max-w-2xl text-center opacity-60 text-sm lg:text-base px-4 lg:px-0">Paste in a job posting URL or the full-page content in the input below. We'll do all the heavy lifting and create the perfect resume for you.</p>
 			</div>
 
 			{/* Top row with centered Input box and Base Resume */}
-			<div className="flex justify-center gap-8 mb-20">
-				<NewResumeInput className="rounded-lg h-96 w-72" />
-				<BaseResumeCard className="w-72" />
+			<div className="flex flex-col lg:flex-row justify-center items-center gap-6 lg:gap-8 mb-16 lg:mb-20">
+				<NewResumeInput className="rounded-lg h-80 md:h-96 w-full max-w-sm lg:w-72" />
+				<BaseResumeCard className="w-full max-w-sm lg:w-72" />
 			</div>
 
 			{/* Search and Resume Grid Container */}
