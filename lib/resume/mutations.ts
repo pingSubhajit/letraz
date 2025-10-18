@@ -41,11 +41,11 @@ export const useTailorResumeMutation = (
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationFn: (payload) => tailorResumeInDB(payload),
-		onSuccess: (data, variables, context) => {
+		onSuccess: (data, variables, context, ...rest) => {
 			// Invalidate the resumes list to show the new resume
 			queryClient.invalidateQueries({queryKey: RESUMES_KEYS})
 			// Call the user's onSuccess if provided
-			options?.onSuccess?.(data, variables, context)
+			options?.onSuccess?.(data, variables, context, ...rest)
 		},
 		onError: options?.onError,
 		onMutate: options?.onMutate,

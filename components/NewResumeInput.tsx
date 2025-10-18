@@ -17,7 +17,6 @@ import {toast} from 'sonner'
 import useDOMMounted from '@/hooks/useDOMMounted'
 import {useTailorResumeMutation} from '@/lib/resume/mutations'
 import {bucket, useAnalytics} from '@/lib/analytics'
-import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
 
 const urlSchema = z.string().url()
 
@@ -34,7 +33,6 @@ const formSchema = z.object({
 const NewResumeInput = ({className}: {className?: string}) => {
 	const mounted = useDOMMounted()
 	const {track} = useAnalytics()
-	const isMobile = useIsMobile(1024)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -128,7 +126,7 @@ const NewResumeInput = ({className}: {className?: string}) => {
 					</Button>
 				)}
 
-				{mounted && !isMobile && createPortal(
+				{mounted && createPortal(
 					NewResumeInputOverlay({inputFocused}),
 					document?.body
 				)}
