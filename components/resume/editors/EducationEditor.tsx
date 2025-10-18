@@ -237,7 +237,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 	if (view === 'form') {
 		return (
 			<ScrollMask
-				className={cn('space-y-6 h-auto sm:h-[calc(100vh-162px)] max-h-[calc(100vh-200px)] sm:max-h-none', className)}
+				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 				data-lenis-prevent
 			>
 				<div className="space-y-4 sm:space-y-6 px-1">
@@ -314,7 +314,7 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 
 	return (
 		<ScrollMask
-			className={cn('flex flex-col h-auto sm:h-[calc(100vh-162px)] max-h-[calc(100vh-200px)] sm:max-h-none', className)}
+			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 			data-lenis-prevent
 		>
 			<div className="space-y-4 sm:space-y-6 px-1">

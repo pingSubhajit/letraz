@@ -187,7 +187,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 		<div ref={scrollRef} className={cn('space-y-6', className)}>
 			{view === 'form' ? (
 				<ScrollMask
-					className="space-y-6 h-auto sm:h-[calc(100vh-162px)] max-h-[calc(100vh-200px)] sm:max-h-none"
+					className="space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none"
 					data-lenis-prevent
 				>
 					<div className="space-y-6 px-1">
@@ -359,7 +359,10 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 					</div>
 				</ScrollMask>
 			) : (
-				<>
+				<ScrollMask
+					className="space-y-6 h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none"
+					data-lenis-prevent
+				>
 					<EditorHeader
 						title="Personal Information"
 						showAddButton={isMounted && !isLoading}
@@ -520,7 +523,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							</motion.div>
 						)}
 					</AnimatePresence>
-				</>
+				</ScrollMask>
 			)}
 		</div>
 	)
