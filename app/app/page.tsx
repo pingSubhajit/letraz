@@ -18,7 +18,7 @@ const AppHome = () => {
 			<Image
 				src={LetrazBrainImage}
 				alt="" aria-hidden
-				className="absolute left-1/2 -translate-x-1/2 -top-[600px] sm:-top-[800px] lg:-top-[900px] blur-xl -z-20"
+				className="absolute left-1/2 -translate-x-1/2 -top-[300px] sm:-top-[500px] md:-top-[700px] lg:-top-[900px] blur-xl -z-20"
 			/>
 
 			<Suspense fallback={null}>
@@ -28,7 +28,7 @@ const AppHome = () => {
 
 			{/* MAIN HEADER SECTION */}
 			<div className="mt-20 sm:mt-28 lg:mt-32 flex flex-col justify-center items-center mb-16 lg:mb-20">
-				<h1 className="text-3xl lg:text-4xl mb-4 lg:mb-6 font-medium">Put in a job URL to get started</h1>
+				<h1 className="text-2xl sm:text-3xl lg:text-4xl mb-4 lg:mb-6 font-medium">Put in a job URL to get started</h1>
 				<p className="max-w-2xl text-center opacity-60 text-sm lg:text-base px-4 lg:px-0">Paste in a job posting URL or the full-page content in the input below. We'll do all the heavy lifting and create the perfect resume for you.</p>
 			</div>
 

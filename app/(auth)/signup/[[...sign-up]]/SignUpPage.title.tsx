@@ -19,17 +19,17 @@ const SignUpPageTitle = ({isVerification = false, isRizeFlow = false}: SignUpPag
 			className="w-full"
 		>
 			{isRizeFlow && (
-				<div className="mb-6 flex justify-start items-center gap-2">
-					<Image src={letrazLogo} alt="Letraz Logo" className="h-10 w-min" />
-					<span className="text-4xl ml-2">+</span>
-					<Image src={rizeLogo} alt="Rize Logo" className="h-12 w-min" />
+				<div className="mb-4 lg:mb-6 flex justify-start items-center gap-2">
+					<Image src={letrazLogo} alt="Letraz Logo" className="h-8 lg:h-10 w-min" />
+					<span className="text-2xl lg:text-4xl ml-2">+</span>
+					<Image src={rizeLogo} alt="Rize Logo" className="h-10 lg:h-12 w-min" />
 				</div>
 			)}
 
-			<h1 className="text-4xl font-bold text-neutral-900 mb-2">
+			<h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold text-neutral-900 mb-2">
 				{isVerification ? 'Check your email' : 'Create your account'}
 			</h1>
-			<p className="text-lg text-neutral-600">
+			<p className="text-base lg:text-lg text-neutral-600">
 				{isVerification
 					? 'We\'ve sent a verification code to your email address. Enter it below to complete your account setup.'
 					: !isRizeFlow
