@@ -13,11 +13,11 @@ const PersonalDetails = async () => {
 		<HydrationBoundary state={dehydratedState}>
 			<div className="w-full h-full flex flex-col">
 				{/* HEADING TEXT */}
-				<div className="mt-72">
+				<div className="mt-16 sm:mt-32 lg:mt-72 px-4 max-w-6xl mx-auto">
 					<TextAnimate
-						text="Let’s get to know you better"
-						type="calmInUp"
-						className="text-5xl leading-snug flex justify-center" />
+						text="Let's get to know you better"
+						type="rollIn"
+						className="text-4xl sm:text-5xl lg:text-7xl leading-relaxed flex flex-wrap justify-center text-center pb-2" />
 				</div>
 
 				<OnboardingFlowControl />
