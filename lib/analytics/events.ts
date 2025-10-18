@@ -1,3 +1,20 @@
+/**
+ * Analytics Events Type Definitions
+ *
+ * Events tracked on FRONTEND (client-side):
+ * - User intent/interaction: resume_export_clicked, tailor_resume_submitted, resume_import_submitted
+ * - Navigation: resume_opened, resume_search
+ * - Auth: signup_started, signup_completed (Clerk is client-side)
+ * - Onboarding UI: onboarding_step_viewed, onboarding_step_completed, onboarding_completed
+ * - Editor UI: editor_tab_selected, section_reordered
+ * - Resume import: resume_import_completed, resume_import_failed (parsing happens client-side)
+ *
+ * Events tracked on BACKEND (server-side):
+ * - Export operations: resume_export_succeeded, resume_export_failed
+ * - Data mutations: resume_saved, resume_deleted
+ * - Resume tailoring: tailor_resume_created, tailor_resume_ready, tailor_resume_failed
+ * - Waitlist: waitlist_submitted
+ */
 export type AnalyticsEvents =
 	| { name: 'marketing_landing_view', properties?: { referrer_domain?: string, utm_source?: string, utm_medium?: string, utm_campaign?: string } }
 	| { name: 'waitlist_submitted', properties?: { referrer?: string } }

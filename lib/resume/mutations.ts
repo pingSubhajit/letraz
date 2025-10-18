@@ -89,7 +89,6 @@ type ReplaceResumeParams = {
 
 export const useReplaceResumeMutation = () => {
 	const queryClient = useQueryClient()
-	const {track} = useAnalytics()
 	return useMutation<Resume, Error, ReplaceResumeParams>({
 		mutationFn: async ({payload, resumeId = 'base'}) => replaceResume(payload, resumeId),
 		onSuccess: (resume) => {
@@ -101,10 +100,6 @@ export const useReplaceResumeMutation = () => {
 			}
 			// Invalidate the resumes list to reflect any changes
 			queryClient.invalidateQueries({queryKey: RESUMES_KEYS})
-			try {
-				const sections_count = Array.isArray(resume.sections) ? resume.sections.length : undefined
-				track('resume_saved', {resume_id: resume.id, sections_count})
-			} catch {}
 		},
 		onError: () => {
 			toast.error('Failed to replace resume')

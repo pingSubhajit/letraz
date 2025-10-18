@@ -41,9 +41,7 @@ export const useResumeExportHandler = () => {
 			const response = await exportResume(resumeId)
 			const downloadUrl = response.pdf_url
 			openDownloadInNewTab(downloadUrl)
-			track('resume_export_succeeded', {resume_id: resumeId, format: 'pdf'})
 		} catch (error) {
-			track('resume_export_failed', {resume_id: resumeId, format: 'pdf'})
 			throw error
 		}
 	}, [exportResume, track])
@@ -54,9 +52,7 @@ export const useResumeExportHandler = () => {
 			const response = await exportResume(resumeId)
 			const downloadUrl = response.latex_url
 			openDownloadInNewTab(downloadUrl)
-			track('resume_export_succeeded', {resume_id: resumeId, format: 'tex'})
 		} catch (error) {
-			track('resume_export_failed', {resume_id: resumeId, format: 'tex'})
 			throw error
 		}
 	}, [exportResume, track])
@@ -66,13 +62,11 @@ export const useResumeExportHandler = () => {
 
 export const useResumeDeleteHandler = () => {
 	const {mutateAsync: deleteResume, isPending: isDeleting} = useDeleteResumeMutation()
-	const {track} = useAnalytics()
 
 	const deleteResumeById = useCallback(async (resumeId: string, onSuccess?: () => void) => {
 		await deleteResume(resumeId)
-		try {track('resume_deleted', {resume_id: resumeId})} catch {}
 		if (onSuccess) onSuccess()
-	}, [deleteResume, track])
+	}, [deleteResume])
 
 	return {deleteResumeById, isDeleting}
 }
