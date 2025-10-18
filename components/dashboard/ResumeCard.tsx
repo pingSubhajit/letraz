@@ -48,7 +48,8 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 				onClick={() => track('resume_opened', {resume_id: resume.id, base: Boolean(resume.base), status: resume.status})}
 			>
 				<div className={cn(
-					'h-96 w-full rounded-lg transition group-hover:shadow-2xl focus-within:shadow-2xl overflow-hidden border bg-white flex flex-col',
+					'h-[450px] sm:h-[480px] lg:h-96 w-full rounded-lg transition group-hover:shadow-2xl focus-within:shadow-2xl overflow-hidden border bg-white flex flex-col',
+					!resume.base && 'max-w-sm md:max-w-none',
 					resume.base && 'border-2 border-flame-400',
 					isProcessing && 'border-2 border-transparent',
 					className
@@ -70,7 +71,7 @@ const ResumeCard = ({resume, className, searchQuery = ''}: ResumeCardProps) => {
 										? 'Base resume preview'
 										: `${resume.job?.title ?? 'Role'}${resume.job?.company_name ? ` at ${resume.job.company_name}` : ''}`
 								}
-								className="h-full w-full object-cover object-top"
+								className="h-full w-full object-contain lg:object-cover object-top"
 								onError={(e) => {(e.currentTarget as HTMLImageElement).style.display = 'none'}}
 							/>
 						) : (

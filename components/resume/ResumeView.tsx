@@ -32,7 +32,7 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 	if (isMobile) {
 		return (
 			<ResumeHighlightProvider>
-				<ResumeViewMobile>
+				<ResumeViewMobile resume={resume} showToolbar={showToolbar}>
 					<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
 						{isLoading && !resume && (
 							<motion.div {...DEFAULT_FADE_ANIMATION} key="skeleton">

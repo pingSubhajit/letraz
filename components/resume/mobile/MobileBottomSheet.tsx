@@ -10,6 +10,7 @@ interface MobileBottomSheetProps {
 	onExpandChange: (expanded: boolean) => void
 	children: ReactNode
 	className?: string
+	toolbarSlot?: ReactNode
 }
 
 // Re-export for convenience
@@ -19,7 +20,8 @@ const MobileBottomSheet = ({
 	isExpanded,
 	onExpandChange,
 	children,
-	className
+	className,
+	toolbarSlot
 }: MobileBottomSheetProps) => {
 	const controls = useAnimation()
 	const sheetRef = useRef<HTMLDivElement>(null)
@@ -80,32 +82,42 @@ const MobileBottomSheet = ({
 
 			{/* Transparent positioning container */}
 			<div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden flex justify-center">
-				{/* Bottom Sheet */}
-				<motion.div
-					ref={sheetRef}
-					drag="y"
-					dragConstraints={{top: 0, bottom: 0}}
-					dragElastic={0.2}
-					onDragEnd={handleDragEnd}
-					animate={isExpanded ? 'expanded' : 'collapsed'}
-					variants={sheetVariants}
-					className={cn(
-						'w-full sm:w-fit sm:max-w-2xl',
-						'bg-neutral-50 rounded-t-3xl shadow-2xl border-t-4 border-flame-500',
-						'flex flex-col overflow-hidden',
-						className
+				{/* Container for both toolbar and sheet */}
+				<div className="relative w-full sm:w-fit sm:max-w-2xl">
+					{/* Toolbar positioned above sheet */}
+					{toolbarSlot && (
+						<div className="absolute -top-[60px] right-4 z-10">
+							{toolbarSlot}
+						</div>
 					)}
-				>
-					{/* Drag handle */}
-					<div className="flex justify-center items-center py-4 cursor-grab active:cursor-grabbing bg-neutral-50">
-						<div className="w-16 h-1.5 bg-neutral-400 rounded-full" />
-					</div>
 
-					{/* Content */}
-					<div className="flex-1">
-						{children}
-					</div>
-				</motion.div>
+					{/* Bottom Sheet */}
+					<motion.div
+						ref={sheetRef}
+						drag="y"
+						dragConstraints={{top: 0, bottom: 0}}
+						dragElastic={0.2}
+						onDragEnd={handleDragEnd}
+						animate={isExpanded ? 'expanded' : 'collapsed'}
+						variants={sheetVariants}
+						className={cn(
+							'w-full',
+							'bg-neutral-50 rounded-t-3xl shadow-2xl border-t-4 border-flame-500',
+							'flex flex-col overflow-hidden',
+							className
+						)}
+					>
+						{/* Drag handle */}
+						<div className="flex justify-center items-center py-4 cursor-grab active:cursor-grabbing bg-neutral-50">
+							<div className="w-16 h-1.5 bg-neutral-400 rounded-full" />
+						</div>
+
+						{/* Content */}
+						<div className="flex-1">
+							{children}
+						</div>
+					</motion.div>
+				</div>
 			</div>
 		</>
 	)

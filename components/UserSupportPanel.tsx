@@ -115,10 +115,7 @@ const UserSupportPanel = ({hideHeader = false}: UserSupportPanelProps = {}) => {
 								id="message"
 								placeholder="Tell us what's on your mind... Whether it's a bug, feature idea, question, or general feedback, we're all ears!"
 								disabled={isSubmitting}
-								className="w-full resize-none"
-								style={{
-									minHeight: '400px'
-								}}
+								className="w-full resize-none min-h-[300px] lg:min-h-[400px]"
 								{...register('message', {
 									required: 'Please enter your message',
 									validate: (value) => value.trim().length > 0 || 'Message cannot be empty'

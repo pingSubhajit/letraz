@@ -23,7 +23,7 @@ const DashboardSearchContainer = ({userId}: DashboardSearchContainerProps) => {
 	return (
 		<>
 			{/* Search bar with margins */}
-			<div className="mb-8 lg:mb-10 px-6 lg:px-8">
+			<div className="mb-8 lg:mb-10 px-0 lg:px-8">
 				<DashboardSearchInput
 					value={searchQuery}
 					onChange={setSearchQuery}
@@ -32,7 +32,7 @@ const DashboardSearchContainer = ({userId}: DashboardSearchContainerProps) => {
 			</div>
 
 			{/* Searchable Resume grid with Algolia */}
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 lg:gap-8 px-6 lg:px-8" data-resume-grid>
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 lg:gap-8 px-0 lg:px-8 justify-items-center md:justify-items-stretch" data-resume-grid>
 				<ResumeSearch
 					userId={userId}
 					searchQuery={debouncedSearchQuery}

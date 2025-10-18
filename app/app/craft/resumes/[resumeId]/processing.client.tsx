@@ -137,7 +137,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	if (isMobile) {
 		return (
 			<ResumeHighlightProvider>
-				<ResumeViewMobile>
+				<ResumeViewMobile resume={resume} showToolbar={true}>
 					<ResumeViewer
 						resume={resume}
 						className="shadow-none"

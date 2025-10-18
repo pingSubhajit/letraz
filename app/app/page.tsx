@@ -18,7 +18,7 @@ const AppHome = () => {
 			<Image
 				src={LetrazBrainImage}
 				alt="" aria-hidden
-				className="absolute left-1/2 -translate-x-1/2 -top-[300px] sm:-top-[500px] md:-top-[700px] lg:-top-[900px] blur-xl -z-20"
+				className="absolute left-1/2 -translate-x-1/2 -top-[220px] sm:-top-[350px] md:-top-[450px] lg:-top-[700px] xl:-top-[900px] blur-xl -z-20"
 			/>
 
 			<Suspense fallback={null}>

@@ -4,12 +4,18 @@ import {useState, useEffect, useCallback, useMemo} from 'react'
 import ResumeEditor from '@/components/resume/ResumeEditor'
 import MobileBottomSheet from './MobileBottomSheet'
 import MobileSectionTabs from './MobileSectionTabs'
+import ResumeActionsToolbar from '@/components/resume/ResumeActionsToolbar'
 import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
 import {PDF_DIMENSIONS, MOBILE_LAYOUT, SCALE_FACTORS} from '@/lib/constants'
+import {Resume} from '@/lib/resume/types'
 
 interface ResumeViewMobileProps {
 	/** PDF viewer content to display */
 	children: React.ReactNode
+	/** Resume data for toolbar actions */
+	resume?: Resume
+	/** Whether to show the actions toolbar */
+	showToolbar?: boolean
 }
 
 const tabs = [
@@ -33,7 +39,7 @@ const tabs = [
  * @param children - PDF viewer content to display
  * @returns Mobile layout with scaled PDF and bottom sheet editor
  */
-const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
+const ResumeViewMobile = ({children, resume, showToolbar = false}: ResumeViewMobileProps) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [activeTab, setActiveTab] = useState(0)
 
@@ -124,6 +130,16 @@ const ResumeViewMobile = ({children}: ResumeViewMobileProps) => {
 			<MobileBottomSheet
 				isExpanded={isExpanded}
 				onExpandChange={setIsExpanded}
+				toolbarSlot={
+					showToolbar && resume ? (
+						<ResumeActionsToolbar
+							resumeId={resume.id}
+							isBaseResume={resume.base}
+							job={resume.job}
+							isBottomSheetExpanded={isExpanded}
+						/>
+					) : undefined
+				}
 			>
 				{/* Mobile Section Tabs - Always visible, horizontally scrollable */}
 				<MobileSectionTabs
