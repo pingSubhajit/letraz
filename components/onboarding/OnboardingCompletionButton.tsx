@@ -18,7 +18,7 @@ const OnboardingCompletionButton = () => {
 	const isOnboarding = searchParams.get('step') === 'resume'
 	const [isVisible, setIsVisible] = useState(false)
 	const [isHovered, setIsHovered] = useState(false)
-    const {track} = useAnalytics()
+	const {track} = useAnalytics()
 
 	useEffect(() => {
 		// Only show button if we're confirmed to be in onboarding flow
