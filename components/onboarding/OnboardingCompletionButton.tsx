@@ -9,7 +9,7 @@ import {ArrowRight} from 'lucide-react'
 import {completeOnboarding} from '@/lib/onboarding/actions'
 import {useAnalytics} from '@/lib/analytics'
 import {useAuth} from '@clerk/nextjs'
-import { cn } from '@/lib/utils'
+import {cn} from '@/lib/utils'
 import {useBaseResumeContextOptional} from '@/components/onboarding/BaseResumeProvider'
 
 const OnboardingCompletionButton = () => {

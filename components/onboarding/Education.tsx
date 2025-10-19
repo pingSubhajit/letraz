@@ -6,14 +6,14 @@ import {JSX, useState} from 'react'
 import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {months} from '@/constants'
-import {X, ChevronLeft, ChevronRight} from 'lucide-react'
+import {ChevronLeft, ChevronRight, X} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {toast} from 'sonner'
 import {ScrollArea} from '@/components/ui/scroll-area'
 import {educationOptions, useCurrentEducations} from '@/lib/education/queries'
 import {useQueryClient} from '@tanstack/react-query'
 import {useDeleteEducationMutation} from '@/lib/education/mutations'
-import {sanitizeHtml, cn} from '@/lib/utils'
+import {cn, sanitizeHtml} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Link, useTransitionRouter} from 'next-view-transitions'
 import {updateOnboardingStep} from '@/lib/onboarding/actions'
@@ -125,10 +125,10 @@ const Education = (): JSX.Element => {
 			{/* MOBILE VIEWS */}
 			<div className="lg:hidden flex-1 overflow-hidden">
 				{activeTab === 'form' && (
-				<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
-					<EducationForm />
-				</div>
-			)}
+					<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
+						<EducationForm />
+					</div>
+				)}
 				{activeTab === 'list' && (
 					<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
 						<ul ref={parent} className="mt-4 flex flex-col gap-4 relative z-10">

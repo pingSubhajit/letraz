@@ -6,13 +6,13 @@ import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import ExperienceForm from '@/components/onboarding/ExperienceForm'
 import {months} from '@/constants'
-import {X, ChevronLeft, ChevronRight} from 'lucide-react'
+import {ChevronLeft, ChevronRight, X} from 'lucide-react'
 import {toast} from 'sonner'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
 import {useDeleteExperienceMutation} from '@/lib/experience/mutations'
 import {useQueryClient} from '@tanstack/react-query'
-import {sanitizeHtml, cn} from '@/lib/utils'
+import {cn, sanitizeHtml} from '@/lib/utils'
 import {ScrollArea} from '@/components/ui/scroll-area'
 import {Button} from '@/components/ui/button'
 import {Link, useTransitionRouter} from 'next-view-transitions'
@@ -123,10 +123,10 @@ const Experience = (): JSX.Element => {
 			{/* MOBILE VIEWS */}
 			<div className="lg:hidden flex-1 overflow-hidden">
 				{activeTab === 'form' && (
-				<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
-					<ExperienceForm />
-				</div>
-			)}
+					<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
+						<ExperienceForm />
+					</div>
+				)}
 				{activeTab === 'list' && (
 					<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
 						<ul ref={parent} className="mt-4 flex flex-col gap-4">
