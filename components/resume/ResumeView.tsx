@@ -54,7 +54,7 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 								<ResumeViewer
 									resumeRef={resumeRef}
 									resume={resume}
-									className="max-h-screen"
+									className="shadow-none"
 									showToolbar={false}
 									showAnimation={showReveal}
 								/>

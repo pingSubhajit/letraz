@@ -8,6 +8,7 @@ import ResumeActionsToolbar from '@/components/resume/ResumeActionsToolbar'
 import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
 import {PDF_DIMENSIONS, MOBILE_LAYOUT, SCALE_FACTORS} from '@/lib/constants'
 import {Resume} from '@/lib/resume/types'
+import {useBaseResumeContextOptional} from '@/components/onboarding/BaseResumeProvider'
 
 interface ResumeViewMobileProps {
 	/** PDF viewer content to display */
@@ -42,6 +43,7 @@ const tabs = [
 const ResumeViewMobile = ({children, resume, showToolbar = false}: ResumeViewMobileProps) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [activeTab, setActiveTab] = useState(0)
+	const baseResumeContext = useBaseResumeContextOptional()
 
 	/**
 	 * Calculate optimal PDF scale based on both viewport width AND height constraints
@@ -80,6 +82,13 @@ const ResumeViewMobile = ({children, resume, showToolbar = false}: ResumeViewMob
 		window.addEventListener('resize', handleResize)
 		return () => window.removeEventListener('resize', handleResize)
 	}, [calculateScaleValue])
+
+	// Sync bottom sheet expanded state with context (for onboarding flow)
+	useEffect(() => {
+		if (baseResumeContext) {
+			baseResumeContext.setIsBottomSheetExpanded(isExpanded)
+		}
+	}, [isExpanded, baseResumeContext])
 
 	/**
 	 * Handle tab navigation with auto-expand behavior

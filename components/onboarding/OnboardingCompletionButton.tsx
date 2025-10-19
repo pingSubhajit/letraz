@@ -9,6 +9,8 @@ import {ArrowRight} from 'lucide-react'
 import {completeOnboarding} from '@/lib/onboarding/actions'
 import {useAnalytics} from '@/lib/analytics'
 import {useAuth} from '@clerk/nextjs'
+import { cn } from '@/lib/utils'
+import {useBaseResumeContextOptional} from '@/components/onboarding/BaseResumeProvider'
 
 const OnboardingCompletionButton = () => {
 	const router = useTransitionRouter()
@@ -19,6 +21,8 @@ const OnboardingCompletionButton = () => {
 	const [isVisible, setIsVisible] = useState(false)
 	const [isHovered, setIsHovered] = useState(false)
 	const {track} = useAnalytics()
+	const baseResumeContext = useBaseResumeContextOptional()
+	const isBottomSheetExpanded = baseResumeContext?.isBottomSheetExpanded ?? false
 
 	useEffect(() => {
 		// Only show button if we're confirmed to be in onboarding flow
@@ -67,27 +71,38 @@ const OnboardingCompletionButton = () => {
 
 					<motion.div
 						initial={{opacity: 0, y: 100, x: '-50%'}}
-						animate={{opacity: 1, y: 0, x: '-50%'}}
+						animate={{
+							opacity: isBottomSheetExpanded ? 0 : 1,
+							y: 0,
+							x: '-50%'
+						}}
 						exit={{opacity: 0, y: 100, x: '-50%'}}
 						transition={{
 							ease: 'easeOut'
 						}}
-						className="fixed bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-neutral-200 flex flex-col sm:flex-row items-center justify-center rounded-full py-3 sm:py-2 pr-3 sm:pr-2 pl-4 sm:pl-6 gap-2 sm:gap-4 shadow-lg max-w-[90vw] sm:max-w-none"
+						className={cn(
+							'bg-neutral-200 flex flex-col sm:flex-row items-center justify-center rounded-full shadow-lg',
+							'py-0 sm:py-2 pr-0 sm:pr-2 pl-0 sm:pl-6 gap-1 sm:gap-4',
+							'max-w-[85vw] sm:max-w-none',
+							'fixed bottom-[150px] lg:bottom-6 left-1/2 -translate-x-1/2 z-50',
+							'lg:!opacity-100',
+							isBottomSheetExpanded && 'pointer-events-none lg:pointer-events-auto'
+						)}
 						onMouseEnter={() => setIsHovered(true)}
 						onMouseLeave={() => setIsHovered(false)}
 					>
-						<div className="text-xs sm:text-sm text-center sm:text-left">
+						<div className="hidden sm:inline text-xs md:text-sm text-center sm:text-left">
 							<p>Go on to</p>
 							<p className="font-semibold">the Dashboard</p>
 						</div>
 						<Button
 							onClick={handleGoToDashboard}
 							size="lg"
-							className="rounded-full h-12 sm:h-14 text-sm sm:text-base px-4 sm:px-6"
+							className="rounded-full h-10 sm:h-14 text-xs md:text-base px-3 md:px-6"
 						>
 							<span className="hidden sm:inline">Finish & Start Building</span>
 							<span className="sm:hidden">Finish</span>
-							<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+							<ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" />
 						</Button>
 					</motion.div>
 				</>

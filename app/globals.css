@@ -97,10 +97,6 @@ body {
   }
 }
 
-.size-a4 {
-  @apply h-[297mm] aspect-[210/297];
-}
-
 /* Mobile PDF - let transform scale handle sizing */
 @media (max-width: 1024px) {
   .size-a4.resume {
