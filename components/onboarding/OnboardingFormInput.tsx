@@ -20,7 +20,7 @@ const OnboardingFormInput = ({className, type, ...props}: InputProps) => {
 		<div className={cn('relative mb-2', className)}>
 			<FormControl>
 				<Input
-					className="text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2"
+					className="text-xl sm:text-2xl lg:text-3xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2"
 					type={type}
 					{...props}
 					onFocus={() => setFieldState('focus')}
@@ -56,7 +56,7 @@ const OnboardingFormTextArea = ({className, ...props}: TextareaProps) => {
 		<div className="relative mb-2">
 			<FormControl>
 				<Textarea
-					className={cn('font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg', className)}
+					className={cn('font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-base sm:text-lg', className)}
 					{...props}
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
@@ -98,14 +98,14 @@ const OnboardingFormSelect = ({className, value, onChange, options, ...props}: O
 	return (
 		<Select onValueChange={onChange} value={value}>
 			<FormControl>
-				<SelectTrigger className={cn('text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground mb-2', className)}>
+				<SelectTrigger className={cn('text-lg sm:text-xl font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 text-muted-foreground mb-2', className)}>
 					<SelectValue {...props} />
 				</SelectTrigger>
 			</FormControl>
 			<SelectContent>
 				{options.map(option => (
-					<SelectItem key={option.value} value={option.value}>
-						{option.image && <Image src={option.image} width={64} height={64} alt={`The image associated with the option ${option.label}`} className="mr-2 w-6" />}
+					<SelectItem key={option.value} value={option.value} className="text-sm sm:text-base">
+						{option.image && <Image src={option.image} width={64} height={64} alt={`The image associated with the option ${option.label}`} className="mr-2 w-5 sm:w-6" />}
 						{option.label}
 					</SelectItem>
 				))}
@@ -134,7 +134,7 @@ const OnboardingRichTextInput: FC<OnboardingRichTextInputProps> = ({
 		<div className={cn('relative mb-2', className)}>
 			<FormControl>
 				<div
-					className="font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-lg"
+					className="font-bold italic px-0 py-2 h-auto border-0 ring-0 border-b-2 resize-none text-base sm:text-lg"
 					onFocus={() => setFieldState('focus')}
 					onBlur={() => setFieldState('idle')}
 					onMouseEnter={() => {
@@ -146,14 +146,14 @@ const OnboardingRichTextInput: FC<OnboardingRichTextInputProps> = ({
 				>
 					<RichTextEditor
 						throttleDelay={2000}
-						className={cn('h-full min-h-56 w-full rounded-xl')}
-						editorContentClassName="overflow-auto h-full [&_.ProseMirror]:min-h-[200px]"
+						className={cn('h-full min-h-48 sm:min-h-56 w-full rounded-xl')}
+						editorContentClassName="overflow-auto h-full [&_.ProseMirror]:min-h-[180px] sm:[&_.ProseMirror]:min-h-[200px]"
 						output="html"
 						value={value as Content}
 						onChange={onChange}
 						placeholder={placeholder}
 						editable={true}
-						editorClassName="focus:outline-none h-full"
+						editorClassName="focus:outline-none h-full text-sm sm:text-base"
 					/>
 				</div>
 			</FormControl>

@@ -15,9 +15,9 @@ const BrainAnimation = ({className, onboardingStep, ref}: Props) => {
 	return (
 		<AnimatePresence>
 			{onboardingStep !== 'resume' && <motion.video
-				autoPlay muted loop
+				autoPlay muted loop playsInline
 				ref={ref}
-				className={cn('aspect-video absolute -z-10 w-full h-full scale-150', className)}
+				className={cn('aspect-video absolute -z-10 w-full h-full scale-110 sm:scale-100 lg:scale-150', className)}
 				initial={{scale: 0}} animate={{
 					scale: onboardingStep === OnboardingStep.WELCOME || onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? 1 : 1.2,
 					top: onboardingStep === OnboardingStep.WELCOME || onboardingStep === OnboardingStep.EDUCATION || onboardingStep === OnboardingStep.EXPERIENCE ? '0' : '-50%',
@@ -27,6 +27,9 @@ const BrainAnimation = ({className, onboardingStep, ref}: Props) => {
 					type: 'spring',
 					duration: 1,
 					ease: 'easeInOut'
+				}}
+				style={{
+					objectFit: 'cover'
 				}}
 			>
 				<source src="/letraz-brain.webm" type="video/webm"/>
