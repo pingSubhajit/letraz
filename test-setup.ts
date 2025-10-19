@@ -321,7 +321,7 @@ export const mockApiSuccess = (data: any, status = 200) => {
 // Helper to mock API errors
 export const mockApiError = (status = 500, message = 'Internal Server Error') => {
 	;(global.fetch as any).mockResolvedValueOnce(createMockResponse(
-		{error: {message}}, 
+		{error: {message}},
 		status
 	))
 }

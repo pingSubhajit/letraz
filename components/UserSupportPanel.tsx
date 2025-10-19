@@ -8,9 +8,10 @@ import {Textarea} from '@/components/ui/textarea'
 import {ChevronLeft, Send} from 'lucide-react'
 import {useState} from 'react'
 import {motion} from 'motion/react'
-import DEFAULT_FADE_ANIMATION from "@/components/animations/DefaultFade";
-import {toast} from "sonner";
+import DEFAULT_FADE_ANIMATION from '@/components/animations/DefaultFade'
+import {toast} from 'sonner'
 import {useForm} from 'react-hook-form'
+import {useSubmitFeedbackMutation} from '@/lib/feedback/mutations'
 
 type FeedbackFormData = {
 	subject?: string
@@ -24,7 +25,7 @@ const UserSupportPanel = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: {errors, isSubmitting, isValid},
+		formState: {errors, isValid},
 		reset
 	} = useForm<FeedbackFormData>({
 		defaultValues: {
@@ -33,28 +34,31 @@ const UserSupportPanel = () => {
 		}
 	})
 
-	const onSubmit = async (data: FeedbackFormData) => {
-		try {
-			// TODO: Implement API call to submit feedback
-			// await fetch('/api/feedback', {
-			//   method: 'POST',
-			//   headers: { 'Content-Type': 'application/json' },
-			//   body: JSON.stringify(data)
-			// })
-			
-			// Simulate API call
-			await new Promise(resolve => setTimeout(resolve, 1000))
-			
-			setIsSubmitted(true)
-			reset()
+	const {mutate: submitFeedbackMutation, isPending} = useSubmitFeedbackMutation({
+		onSuccess: (response) => {
+			if (response.success) {
+				setIsSubmitted(true)
+				reset()
+				toast.success('Feedback sent successfully!')
 
-			// Reset success message after 3 seconds
-			setTimeout(() => {
-				setIsSubmitted(false)
-			}, 3000)
-		} catch (error) {
-			toast.error('Could not send feedback. Try again?')
+				// Reset success message after 3 seconds
+				setTimeout(() => {
+					setIsSubmitted(false)
+				}, 3000)
+			} else {
+				toast.error(response.message || 'Could not send feedback. Try again?')
+			}
+		},
+		onError: (error) => {
+			toast.error(error.message || 'Could not send feedback. Try again?')
 		}
+	})
+
+	const onSubmit = (data: FeedbackFormData) => {
+		submitFeedbackMutation({
+			subject: data.subject,
+			message: data.message
+		})
 	}
 
 	return (
@@ -82,7 +86,7 @@ const UserSupportPanel = () => {
 					<div className="mb-8">
 						<h2 className="text-lg font-semibold mb-2">We'd love to hear from you</h2>
 						<p className="text-muted-foreground text-sm opacity-80">
-							Share your feedback, report bugs, request features, or ask questions. 
+							Share your feedback, report bugs, request features, or ask questions.
 							We're here to help make your beta experience better.
 						</p>
 					</div>
@@ -94,7 +98,7 @@ const UserSupportPanel = () => {
 							<Input
 								id="subject"
 								placeholder="Brief summary of your feedback"
-								disabled={isSubmitting}
+								disabled={isPending}
 								className="w-full"
 								{...register('subject')}
 							/>
@@ -107,7 +111,7 @@ const UserSupportPanel = () => {
 							<Textarea
 								id="message"
 								placeholder="Tell us what's on your mind... Whether it's a bug, feature idea, question, or general feedback, we're all ears!"
-								disabled={isSubmitting}
+								disabled={isPending}
 								className="w-full resize-none"
 								style={{
 									minHeight: '400px'
@@ -128,10 +132,10 @@ const UserSupportPanel = () => {
 						<div className="flex justify-end">
 							<Button
 								type="submit"
-								disabled={!isValid || isSubmitting}
+								disabled={!isValid || isPending}
 								className="w-full"
 							>
-								{isSubmitting ? (
+								{isPending ? (
 									<>
 										<span className="animate-pulse">Sending...</span>
 									</>

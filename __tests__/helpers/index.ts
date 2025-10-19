@@ -1,18 +1,20 @@
-// Main export file for all test utilities and helpers
-// This allows for clean imports like: import { render, createMockUser, apiMocks } from '__tests__/helpers'
+/*
+ * Main export file for all test utilities and helpers
+ * This allows for clean imports like: import { render, createMockUser, apiMocks } from '__tests__/helpers'
+ */
 
 // Re-export all utilities from test-utils
 export * from './test-utils'
 
 // Re-export specific utilities for convenience
-export { 
+export {
   // Render utilities
   render,
   renderWithProviders,
   renderWithoutProviders,
   renderWithQueryClient,
   createTestQueryClient,
-  
+
   // Testing Library utilities
   screen,
   waitFor,
@@ -45,7 +47,7 @@ export {
 } from './mock-factories'
 
 // Re-export API mocks
-export { apiMocks } from './api-mocks'
+export {apiMocks} from './api-mocks'
 
 // Re-export test helpers
 export {

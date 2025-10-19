@@ -40,7 +40,7 @@ import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import ScrollMask from '@/components/ui/scroll-mask'
-import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 
 type ViewState = 'list' | 'form'
 

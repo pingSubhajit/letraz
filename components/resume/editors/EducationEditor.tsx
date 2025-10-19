@@ -38,7 +38,7 @@ import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import ScrollMask from '@/components/ui/scroll-mask'
-import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty";
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
