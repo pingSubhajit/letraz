@@ -20,7 +20,7 @@ type SignUpSearchParams = {
 }
 
 const SignUpPage = async (
-    props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 ) => {
 	const cookieStore = await cookies()
 	const searchParamsObj = await props.searchParams as SignUpSearchParams

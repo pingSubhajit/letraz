@@ -30,10 +30,10 @@ const SignUpContent = ({preselectedProvider, isRizeFlow = false}: { preselectedP
 							<div className="flex-grow h-px bg-neutral-300"></div>
 						</div>
 
-					{/* OAuth Providers */}
+						{/* OAuth Providers */}
 						<div className="flex flex-col gap-4 w-full">
-						<GoogleAuthButton className="w-full" highlighted={preselectedProvider === 'google'} />
-						<GithubAuthButton className="w-full" highlighted={preselectedProvider === 'github'} />
+							<GoogleAuthButton className="w-full" highlighted={preselectedProvider === 'google'} />
+							<GithubAuthButton className="w-full" highlighted={preselectedProvider === 'github'} />
 						</div>
 					</>
 				)}

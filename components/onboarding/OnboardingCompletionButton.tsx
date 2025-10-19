@@ -38,7 +38,7 @@ const OnboardingCompletionButton = () => {
 			// Mark onboarding as complete and update step to 'resume'
 			await completeOnboarding()
 			// Force-refresh session token so claims reflect latest onboarding status
-			try { await getToken({skipCache: true}) } catch {}
+			try {await getToken({skipCache: true})} catch {}
 			// Use router.replace to prevent back navigation to onboarding
 			router.replace('/app?from=onboarding')
 		} catch (error) {

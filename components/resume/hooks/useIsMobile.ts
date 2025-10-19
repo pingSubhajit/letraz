@@ -8,8 +8,10 @@ import {useEffect, useState} from 'react'
  * @returns boolean indicating if the viewport is mobile size
  */
 export const useIsMobile = (breakpoint: number = 768): boolean => {
-	// Initialize with actual value if window is available (client-side)
-	// This prevents hydration mismatch and flash of wrong layout
+	/*
+	 * Initialize with actual value if window is available (client-side)
+	 * This prevents hydration mismatch and flash of wrong layout
+	 */
 	const [isMobile, setIsMobile] = useState(() => {
 		if (typeof window !== 'undefined') {
 			const mobile = window.innerWidth < breakpoint

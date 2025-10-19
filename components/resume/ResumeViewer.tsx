@@ -19,21 +19,21 @@ const ResumeViewer = ({resume, resumeRef, className, showAnimation = false, show
 	return (
 		<>
 			<div className={cn('size-a4 resume relative overflow-y-hidden', className)}>
-			{showAnimation && <ResumeRevealOverlay />}
+				{showAnimation && <ResumeRevealOverlay />}
 
-			<DefaultTheme
-				resumeRef={resumeRef}
-				sections={resume.sections || []}
-				personalInfoData={resume.user}
-				resumeId={resume.id}
-				aria-label="Resume preview"
-				data-prefers-reduced-motion={
-					typeof window !== 'undefined'
-					&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
-				}
-			/>
-		</div>
-		{showToolbar && <ResumeActionsToolbar resumeId={resume.id} isBaseResume={resume.base} job={resume.job} />}
+				<DefaultTheme
+					resumeRef={resumeRef}
+					sections={resume.sections || []}
+					personalInfoData={resume.user}
+					resumeId={resume.id}
+					aria-label="Resume preview"
+					data-prefers-reduced-motion={
+						typeof window !== 'undefined'
+						&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
+					}
+				/>
+			</div>
+			{showToolbar && <ResumeActionsToolbar resumeId={resume.id} isBaseResume={resume.base} job={resume.job} />}
 		</>
 	)
 }

@@ -8,8 +8,8 @@ import {Textarea} from '@/components/ui/textarea'
 import {ChevronLeft, Send} from 'lucide-react'
 import {useState} from 'react'
 import {motion} from 'motion/react'
-import DEFAULT_FADE_ANIMATION from "@/components/animations/DefaultFade";
-import {toast} from "sonner";
+import DEFAULT_FADE_ANIMATION from '@/components/animations/DefaultFade'
+import {toast} from 'sonner'
 import {useForm} from 'react-hook-form'
 
 type FeedbackFormData = {
@@ -40,16 +40,18 @@ const UserSupportPanel = ({hideHeader = false}: UserSupportPanelProps = {}) => {
 
 	const onSubmit = async (data: FeedbackFormData) => {
 		try {
-			// TODO: Implement API call to submit feedback
-			// await fetch('/api/feedback', {
-			//   method: 'POST',
-			//   headers: { 'Content-Type': 'application/json' },
-			//   body: JSON.stringify(data)
-			// })
-			
+			/*
+			 * TODO: Implement API call to submit feedback
+			 * await fetch('/api/feedback', {
+			 *   method: 'POST',
+			 *   headers: { 'Content-Type': 'application/json' },
+			 *   body: JSON.stringify(data)
+			 * })
+			 */
+
 			// Simulate API call
 			await new Promise(resolve => setTimeout(resolve, 1000))
-			
+
 			setIsSubmitted(true)
 			reset()
 
@@ -89,7 +91,7 @@ const UserSupportPanel = ({hideHeader = false}: UserSupportPanelProps = {}) => {
 					<div className="mb-8">
 						<h2 className="text-lg font-semibold mb-2">We'd love to hear from you</h2>
 						<p className="text-muted-foreground text-sm opacity-80">
-							Share your feedback, report bugs, request features, or ask questions. 
+							Share your feedback, report bugs, request features, or ask questions.
 							We're here to help make your beta experience better.
 						</p>
 					</div>

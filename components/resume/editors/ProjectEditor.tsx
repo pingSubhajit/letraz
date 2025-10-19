@@ -37,7 +37,7 @@ import {Badge} from '@/components/ui/badge'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
-import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'

@@ -9,7 +9,7 @@ import SkillsEditor from '@/components/resume/editors/SkillsEditor'
 import {ExpandableTabs} from '@/components/ui/expandable-tabs'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Briefcase, FolderKanban, GraduationCap, Medal, User, Wrench} from 'lucide-react'
-import {useState, useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import {motion} from 'motion/react'
 import ProjectEditor from '@/components/resume/editors/ProjectEditor'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
@@ -24,7 +24,7 @@ interface ResumeEditorProps {
 const ResumeEditor = ({className, activeTabIndex, isMobile = false}: ResumeEditorProps) => {
 	const [activeTab, setActiveTab] = useState<number>(activeTabIndex ?? 0) // Default to Profile (index 0)
 	const [activeTabId, setActiveTabId] = useState<string>('profile') // For traditional tabs
-    const {track} = useAnalytics()
+	const {track} = useAnalytics()
 
 	// Feature flag to switch between new and old tab designs
 	const useNewTabDesign = process.env.NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED === 'true'
@@ -56,8 +56,10 @@ const ResumeEditor = ({className, activeTabIndex, isMobile = false}: ResumeEdito
 
 	// Render editor content based on current tab
 	const renderEditorContent = () => {
-		// For mobile, always use activeTab which is synced with activeTabIndex prop
-		// For desktop, use the appropriate tab index based on design flag
+		/*
+		 * For mobile, always use activeTab which is synced with activeTabIndex prop
+		 * For desktop, use the appropriate tab index based on design flag
+		 */
 		const tabIndex = isMobile ? activeTab : (useNewTabDesign ? activeTab : tabs.findIndex(tab => tab.id === activeTabId))
 
 		// Use tabIndex in the key to force re-render when tab changes

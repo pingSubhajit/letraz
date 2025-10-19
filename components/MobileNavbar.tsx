@@ -19,7 +19,7 @@ const MobileNavbar = () => {
 						src={logo}
 						alt="Letraz logo"
 						className="h-8 w-auto"
-						style={{ height: '16px', width: 'auto' }}
+						style={{height: '16px', width: 'auto'}}
 						priority
 					/>
 				</Link>
@@ -38,7 +38,7 @@ const MobileNavbar = () => {
 						<UserButton
 							appearance={{
 								elements: {
-									avatarBox: "h-8 w-8"
+									avatarBox: 'h-8 w-8'
 								}
 							}}
 						/>

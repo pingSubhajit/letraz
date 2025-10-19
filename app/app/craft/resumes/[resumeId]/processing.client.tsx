@@ -73,7 +73,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 			return (
 				<ResumeHighlightProvider>
 					<ResumeViewMobile>
-						<div className="bg-neutral-50 w-full animate-pulse shadow-none" style={{ aspectRatio: '210/297' }} />
+						<div className="bg-neutral-50 w-full animate-pulse shadow-none" style={{aspectRatio: '210/297'}} />
 					</ResumeViewMobile>
 				</ResumeHighlightProvider>
 			)
@@ -97,7 +97,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 			return (
 				<ResumeHighlightProvider>
 					<ResumeViewMobile>
-						<div className="bg-neutral-50 w-full relative shadow-none" style={{ aspectRatio: '210/297' }}>
+						<div className="bg-neutral-50 w-full relative shadow-none" style={{aspectRatio: '210/297'}}>
 							<ResumeAiLoading />
 						</div>
 					</ResumeViewMobile>

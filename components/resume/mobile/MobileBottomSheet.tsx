@@ -33,13 +33,9 @@ const MobileBottomSheet = ({
 		// If dragging down with significant velocity or offset, collapse
 		if (velocity > 500 || offset > 100) {
 			onExpandChange(false)
-		}
-		// If dragging up with significant velocity or offset, expand
-		else if (velocity < -500 || offset < -100) {
+		} else if (velocity < -500 || offset < -100) { // If dragging up with significant velocity or offset, expand
 			onExpandChange(true)
-		}
-		// Otherwise, stay in current state
-		else {
+		} else { // Otherwise, stay in current state
 			controls.start({
 				y: isExpanded ? 0 : window.innerHeight * (1 - EXPANDED_HEIGHT_VH / 100) - COLLAPSED_HEIGHT
 			})

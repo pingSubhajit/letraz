@@ -46,7 +46,6 @@ const initializeSearchClient = () => {
 	try {
 		return algoliasearch(appId, apiKey)
 	} catch (error) {
-		console.error('[Algolia] Failed to initialize client:', error)
 		return null
 	}
 }
@@ -85,7 +84,7 @@ const useDeletedResumeIds = () => {
 				// Check if this is a delete-resume mutation
 				if (mutation.options.mutationKey?.[0] === 'delete-resume') {
 					const resumeId = mutation.state.variables as string | undefined
-					
+
 					if (resumeId) {
 						if (mutation.state.status === 'pending') {
 							// Add to deleted set when deletion starts
@@ -174,18 +173,22 @@ const AlgoliaHits = ({excludeBase, searchQuery}: {excludeBase?: boolean; searchQ
 
 			// For non-base resumes, check job status (if available)
 			const jobStatus = r.job?.status
-			// Only filter out if job.status explicitly exists and is not 'Success'
-			// If job.status is undefined/null, we allow it through (for indexes without this field)
+			/*
+			 * Only filter out if job.status explicitly exists and is not 'Success'
+			 * If job.status is undefined/null, we allow it through (for indexes without this field)
+			 */
 			if (jobStatus && jobStatus !== 'Success') return false
 
 			// Check resume status
 			const resumeStatus = r.status
-			// If resume status is available, it should be Success or Processing
-			// If not available, allow it through
+			/*
+			 * If resume status is available, it should be Success or Processing
+			 * If not available, allow it through
+			 */
 			if (resumeStatus) {
 				return resumeStatus === 'Success' || resumeStatus === 'Processing'
 			}
-			
+
 			// If no status fields, show the resume (for indexes without status tracking)
 			return true
 		})

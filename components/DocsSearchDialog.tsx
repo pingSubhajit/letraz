@@ -29,10 +29,7 @@ interface DocsSearchDialogProps {
 }
 
 // Export a ref-based version for imperative usage
-export const DocsSearchDialogRef = React.forwardRef<
-	{openDialog:() => void},
-	DocsSearchDialogProps
->((props, ref) => {
+export const DocsSearchDialogRef = React.forwardRef<{openDialog:() => void}, DocsSearchDialogProps>((props, ref) => {
 	const [open, setOpen] = useState(false)
 	const [query, setQuery] = useState('')
 	const [searchResults, setSearchResults] = useState<SearchResult[]>([])

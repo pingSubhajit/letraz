@@ -4,7 +4,7 @@ import Image from 'next/image'
 import stacksLogo from '@/public/stacks-logo.svg'
 import infosysLogo from '@/public/infosys-logo.svg'
 import rizeLogo from '@/public/rize-logo-dark.svg'
-import HeroHeader from './page.heroHeader'
+import HeroHeader from '@/app/(website)/landing/page.heroHeader'
 
 const HeroVideoSequence = NextDynamic(() => import('@/app/(website)/landing/page.canvas'))
 const LandingPageFeatures = NextDynamic(() => import('@/app/(website)/landing/page.features'))
@@ -35,7 +35,7 @@ const LandingPage = () => {
 					className="h-[75vh] w-[75vw] absolute top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
 				/>
 
-                <HeroHeader />
+				<HeroHeader />
 			</div>
 
 			<div className="pb-20 bg-[#0F0202]">

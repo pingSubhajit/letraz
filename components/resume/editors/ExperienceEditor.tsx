@@ -40,7 +40,7 @@ import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import ScrollMask from '@/components/ui/scroll-mask'
-import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from "@/components/ui/empty"
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 
 type ViewState = 'list' | 'form'
 
@@ -398,40 +398,40 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 									{localExperiences.map((experience, index) => renderExperienceItem(experience, index))}
 								</div>
 							) : (
-							<Empty>
-								<EmptyHeader>
-									<EmptyMedia variant="icon">
-										<Briefcase />
-									</EmptyMedia>
-									<EmptyTitle>No experiences yet</EmptyTitle>
-									<EmptyDescription>
-										You haven&apos;t added any work experiences yet. Get started by creating
-										your first experience.
-									</EmptyDescription>
-								</EmptyHeader>
-								<EmptyContent>
-									<div className="flex flex-col gap-2">
-										<Button
-											onClick={handleAddNew}
-											size="sm"
-											variant="outline"
-										>
-											<Plus className="h-4 w-4 mr-2" />
-											Add New Experience
-										</Button>
+								<Empty>
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<Briefcase />
+										</EmptyMedia>
+										<EmptyTitle>No experiences yet</EmptyTitle>
+										<EmptyDescription>
+											You haven&apos;t added any work experiences yet. Get started by creating
+											your first experience.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<div className="flex flex-col gap-2">
+											<Button
+												onClick={handleAddNew}
+												size="sm"
+												variant="outline"
+											>
+												<Plus className="h-4 w-4 mr-2" />
+												Add New Experience
+											</Button>
 
-										<Button
-											variant="link"
-											asChild
-											className="text-muted-foreground"
-											size="sm"
-										>
-											<a href="#">
-												Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
-											</a>
-										</Button>
-									</div>
-								</EmptyContent>
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<a href="#">
+													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+												</a>
+											</Button>
+										</div>
+									</EmptyContent>
 							</Empty>
 							)}
 						</motion.div>

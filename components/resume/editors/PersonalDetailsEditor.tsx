@@ -49,10 +49,10 @@ const toFormValuesFromUser = (user: any) => ({
 
 // Helper to maintain consistent country object shape in caches
 const shapeCountry = (old: any, countryCode: string | null | undefined) => countryCode == null ? null : {
-		code: countryCode,
-		// Reuse previous name or fallback to code
-		name: (typeof old?.country === 'object' && old?.country?.name) || countryCode
-	}
+	code: countryCode,
+	// Reuse previous name or fallback to code
+	name: (typeof old?.country === 'object' && old?.country?.name) || countryCode
+}
 
 const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 	title: '',

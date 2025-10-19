@@ -127,54 +127,54 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 
 								{/* Content */}
 								<div className="px-4 sm:px-6 space-y-6 sm:space-y-8 py-4 sm:py-6">
-					{/* Job Title and Company */}
-					<div className="space-y-4">
-						<div className="flex items-start justify-between gap-4">
-							<div className="space-y-2 flex-1">
-								<h2 className="text-xl sm:text-2xl font-bold text-neutral-900">
-									{job.title}
-								</h2>
-								<div className="flex flex-col gap-2 sm:flex-row sm:gap-6 text-sm">
-									<span className="flex items-center gap-2 text-neutral-700">
-										<div className="p-1 bg-neutral-100 rounded">
-											<Building2 className="h-3.5 w-3.5 text-neutral-600" />
-										</div>
-										<span className="font-medium">{job.company_name}</span>
-									</span>
-									{job.location && (
-										<span className="flex items-center gap-2 text-neutral-700">
-											<div className="p-1 bg-neutral-100 rounded">
-												<MapPin className="h-3.5 w-3.5 text-neutral-600" />
+									{/* Job Title and Company */}
+									<div className="space-y-4">
+										<div className="flex items-start justify-between gap-4">
+											<div className="space-y-2 flex-1">
+												<h2 className="text-xl sm:text-2xl font-bold text-neutral-900">
+													{job.title}
+												</h2>
+												<div className="flex flex-col gap-2 sm:flex-row sm:gap-6 text-sm">
+													<span className="flex items-center gap-2 text-neutral-700">
+														<div className="p-1 bg-neutral-100 rounded">
+															<Building2 className="h-3.5 w-3.5 text-neutral-600" />
+														</div>
+														<span className="font-medium">{job.company_name}</span>
+													</span>
+													{job.location && (
+														<span className="flex items-center gap-2 text-neutral-700">
+															<div className="p-1 bg-neutral-100 rounded">
+																<MapPin className="h-3.5 w-3.5 text-neutral-600" />
+															</div>
+															<span>{job.location}</span>
+														</span>
+													)}
+												</div>
 											</div>
-											<span>{job.location}</span>
-										</span>
-									)}
-								</div>
-							</div>
-							{job.status && (
-								<Badge variant="secondary" className="shrink-0">
-									{job.status}
-								</Badge>
-							)}
-						</div>
+											{job.status && (
+												<Badge variant="secondary" className="shrink-0">
+													{job.status}
+												</Badge>
+											)}
+										</div>
 
-						{/* Job URL */}
-						{job.job_url && (
-							<Button
-								variant="outline"
-								size="sm"
-								className="w-fit"
-								asChild
-							>
-								<a href={job.job_url} target="_blank" rel="noopener noreferrer">
-									<Link className="h-4 w-4 mr-2" />
-									View Original Posting
-								</a>
-							</Button>
-						)}
-					</div>
+										{/* Job URL */}
+										{job.job_url && (
+											<Button
+												variant="outline"
+												size="sm"
+												className="w-fit"
+												asChild
+											>
+												<a href={job.job_url} target="_blank" rel="noopener noreferrer">
+													<Link className="h-4 w-4 mr-2" />
+													View Original Posting
+												</a>
+											</Button>
+										)}
+									</div>
 
-					<div className="relative my-8">
+									<div className="relative my-8">
 						<div className="absolute inset-0 flex items-center">
 							<div className="w-full border-t border-neutral-200"></div>
 						</div>
@@ -183,33 +183,33 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 						</div>
 					</div>
 
-					{/* Job Description */}
-					{renderSection(
-						'Description',
-						job.description,
-						<FileText className="h-4 w-4 text-flame-600" />
-					)}
+									{/* Job Description */}
+									{renderSection(
+										'Description',
+										job.description,
+										<FileText className="h-4 w-4 text-flame-600" />
+									)}
 
-					{/* Requirements */}
-					{renderSection(
-						'Requirements',
-						job.requirements,
-						<Target className="h-4 w-4 text-flame-600" />
-					)}
+									{/* Requirements */}
+									{renderSection(
+										'Requirements',
+										job.requirements,
+										<Target className="h-4 w-4 text-flame-600" />
+									)}
 
-					{/* Responsibilities */}
-					{renderSection(
-						'Responsibilities',
-						job.responsibilities,
-						<Briefcase className="h-4 w-4 text-flame-600" />
-					)}
+									{/* Responsibilities */}
+									{renderSection(
+										'Responsibilities',
+										job.responsibilities,
+										<Briefcase className="h-4 w-4 text-flame-600" />
+									)}
 
-					{/* Benefits */}
-					{renderSection(
-						'Benefits',
-						job.benefits,
-						<Gift className="h-4 w-4 text-flame-600" />
-					)}
+									{/* Benefits */}
+									{renderSection(
+										'Benefits',
+										job.benefits,
+										<Gift className="h-4 w-4 text-flame-600" />
+									)}
 								</div>
 
 								{/* Footer */}

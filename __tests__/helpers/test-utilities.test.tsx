@@ -288,10 +288,6 @@ describe('Test Utilities', () => {
 		it('should mock console methods', () => {
 			const consoleMock = testHelpers.mock.mockConsole()
 
-			console.log('test message')
-			console.warn('test warning')
-			console.error('test error')
-
 			expect(consoleMock.mockLog).toHaveBeenCalledWith('test message')
 			expect(consoleMock.mockWarn).toHaveBeenCalledWith('test warning')
 			expect(consoleMock.mockError).toHaveBeenCalledWith('test error')
