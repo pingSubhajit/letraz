@@ -465,8 +465,7 @@ const ExperienceForm = ({className}: ExperienceFormProps): JSX.Element => {
 								onClick={form.handleSubmit(submitWithRedirect)}
 								disabled={form.formState.isSubmitting}
 							>
-								<span className="hidden min-[520px]:inline">Create my base résumé</span>
-								<span className="min-[520px]:hidden">Next</span>
+								<span className="min-[520px]:inline">Create my base résumé</span>
 								{form.formState.isSubmitting
 									? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 ml-1 animate-spin"/>
 									: <ChevronRight className="w-3 h-3 sm:w-5 sm:h-5 ml-1"/>

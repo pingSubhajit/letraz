@@ -6,13 +6,18 @@ import {motion} from 'motion/react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import ExperienceForm from '@/components/onboarding/ExperienceForm'
 import {months} from '@/constants'
-import {X} from 'lucide-react'
+import {X, ChevronLeft, ChevronRight} from 'lucide-react'
 import {toast} from 'sonner'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {experienceQueryOptions, useCurrentExperiences} from '@/lib/experience/queries'
 import {useDeleteExperienceMutation} from '@/lib/experience/mutations'
 import {useQueryClient} from '@tanstack/react-query'
 import {sanitizeHtml, cn} from '@/lib/utils'
+import {ScrollArea} from '@/components/ui/scroll-area'
+import {Button} from '@/components/ui/button'
+import {Link, useTransitionRouter} from 'next-view-transitions'
+import {updateOnboardingStep} from '@/lib/onboarding/actions'
+import {useAuth} from '@clerk/nextjs'
 
 /**
  * Experience component to display and manage user's experience details.
@@ -23,6 +28,8 @@ import {sanitizeHtml, cn} from '@/lib/utils'
  */
 const Experience = (): JSX.Element => {
 	const [activeTab, setActiveTab] = useState<'form' | 'list'>('form')
+	const router = useTransitionRouter()
+	const {getToken} = useAuth()
 	const queryClient = useQueryClient()
 
 
@@ -56,8 +63,18 @@ const Experience = (): JSX.Element => {
 		await mutateAsync({id: experienceId})
 	}
 
+	const handleNext = async () => {
+		try {
+			await updateOnboardingStep('experience')
+			try {await getToken({skipCache: true})} catch {}
+			router.push('/app/onboarding?step=resume')
+		} catch (error) {
+			toast.error('Failed to proceed. Please try again.')
+		}
+	}
+
 	return (
-		<div className="w-full h-full flex flex-col justify-start pl-4 sm:pl-8 lg:pl-16 mb-20 sm:mb-32 lg:mb-40 pt-12 sm:pt-14 lg:pt-16 pr-4 sm:pr-8 md:pr-8 lg:pr-0">
+		<div className="w-full h-full flex flex-col justify-start pl-4 sm:pl-8 lg:pl-16 pt-12 sm:pt-14 lg:pt-16 pr-4 sm:pr-8 md:pr-8 lg:pr-0">
 			{/* HEADING TEXT */}
 			<div>
 				<TextAnimate
@@ -98,16 +115,20 @@ const Experience = (): JSX.Element => {
 				</button>
 			</div>
 
-			{/* FORM - Desktop only */}
-			<div className="hidden lg:block">
+			<ScrollArea className="hidden lg:block">
+				{/* FORM - Desktop only */}
 				<ExperienceForm />
-			</div>
+			</ScrollArea>
 
 			{/* MOBILE VIEWS */}
 			<div className="lg:hidden flex-1 overflow-hidden">
-				{activeTab === 'form' && <ExperienceForm />}
+				{activeTab === 'form' && (
+				<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
+					<ExperienceForm />
+				</div>
+			)}
 				{activeTab === 'list' && (
-					<div className="h-full overflow-y-auto hide-scrollbar" data-lenis-prevent>
+					<div className="h-full overflow-y-auto hide-scrollbar pb-20 sm:pb-32 lg:pb-40" data-lenis-prevent>
 						<ul ref={parent} className="mt-4 flex flex-col gap-4">
 							{currentExperiences?.map(
 								(experience) => (
@@ -157,6 +178,35 @@ const Experience = (): JSX.Element => {
 				)}
 			</div>
 
+			{/* Navigation buttons for Review tab - Mobile only */}
+			{activeTab === 'list' && (
+				<div className="lg:hidden w-full px-2 sm:px-4 md:px-8 flex flex-wrap items-center justify-between gap-2 sm:gap-3 fixed left-0 z-10 bottom-6 sm:bottom-12">
+					<Link href={'/app/onboarding?step=education'} className="order-1">
+						<Button
+							className="transition rounded-full shadow-lg hover:shadow-xl px-3 sm:px-5 lg:px-6 text-xs sm:text-sm"
+							variant="secondary"
+							type="button"
+							size="sm"
+						>
+							<ChevronLeft className="w-3 h-3 sm:w-5 sm:h-5 mr-1" />
+							<span className="hidden min-[520px]:inline">Education</span>
+							<span className="min-[520px]:hidden">Back</span>
+						</Button>
+					</Link>
+
+					<Button
+						onClick={handleNext}
+						className="transition rounded-full shadow-lg px-2 sm:px-4 lg:px-6 hover:shadow-xl text-xs sm:text-sm order-2"
+						variant="secondary"
+						type="button"
+						size="sm"
+					>
+						<span className="min-[520px]:inline">Create my base résumé</span>
+						<ChevronRight className="w-3 h-3 sm:w-5 sm:h-5 ml-1" />
+					</Button>
+				</div>
+			)}
+
 			{/* EXPERIENCES - Desktop only */}
 			<motion.div
 				initial={{opacity: 0, y: '-30%'}}
@@ -165,7 +215,7 @@ const Experience = (): JSX.Element => {
 					type: 'tween',
 					ease: 'easeInOut'
 				}}
-				className="hidden lg:block absolute h-[400px] sm:h-[550px] lg:h-[700px] w-[30%] xl:w-[40%] right-16 top-1/2 -translate-y-1/2"
+				className="hidden lg:block absolute h-[400px] sm:h-[550px] lg:h-[700px] w-[30%] xl:w-[40%] right-16 top-[65%] -translate-y-1/2"
 			>
 				<div className="h-full w-full overflow-y-auto hide-scrollbar" data-lenis-prevent>
 					<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">

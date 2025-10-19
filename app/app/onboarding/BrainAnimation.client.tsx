@@ -56,7 +56,7 @@ const BrainAnimation = ({className, onboardingStep, ref}: Props) => {
 			} else if (isSm) {
 				// sm (640-767px): Centered 
 				return {
-					scale: 0.9,
+					scale: 1.0,
 					top: '0',
 					right: '0'
 				}
