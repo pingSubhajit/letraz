@@ -188,7 +188,7 @@ const EducationForm = ({
 	}
 
 	return (
-		<div className={cn('max-w-2xl flex flex-col w-full', className)}>
+		<div className={cn('max-w-lg xl:max-w-xl 2xl:max-w-2xl flex flex-col w-full', className)}>
 			{/* Informational message about the benefits of adding educational details */}
 			<motion.div
 				className="text-base sm:text-lg lg:text-xl mt-6 sm:mt-8 max-w-xl"

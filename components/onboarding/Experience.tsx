@@ -126,11 +126,11 @@ const Experience = (): JSX.Element => {
 											message="Are you sure you want to delete this experience?"
 											onYes={() => handleDeleteExperience(experience.id)}
 										/>
-										<p className="truncate font-medium text-xl">
+										<p className="truncate font-medium text-lg lg:text-lg xl:text-xl">
 											{experience.job_title && experience.job_title + ' '}
 											{experience.job_title && 'in'} {experience.company_name}
 										</p>
-										<p className="mt-1 text-sm">
+										<p className="mt-1 text-xs lg:text-xs xl:text-sm">
 											{experience.started_from_month && experience.started_from_year && 'From '}
 											{experience.started_from_month && months.find(month => parseInt(month.value) === experience.started_from_month)?.label} {experience.started_from_year}
 
@@ -165,7 +165,7 @@ const Experience = (): JSX.Element => {
 					type: 'tween',
 					ease: 'easeInOut'
 				}}
-				className="hidden lg:block absolute h-[400px] sm:h-[550px] lg:h-[700px] w-[40%] right-16 top-1/2 -translate-y-1/2"
+				className="hidden lg:block absolute h-[400px] sm:h-[550px] lg:h-[700px] w-[30%] xl:w-[40%] right-16 top-1/2 -translate-y-1/2"
 			>
 				<div className="h-full w-full overflow-y-auto hide-scrollbar" data-lenis-prevent>
 					<ul ref={parent} className="mt-8 max-w-lg mx-auto flex flex-col gap-4">
@@ -186,11 +186,11 @@ const Experience = (): JSX.Element => {
 										message="Are you sure you want to delete this experience?"
 										onYes={() => handleDeleteExperience(experience.id)}
 									/>
-									<p className="truncate font-medium text-xl">
+									<p className="truncate font-medium text-lg lg:text-lg xl:text-xl">
 										{experience.job_title && experience.job_title + ' '}
 										{experience.job_title && 'in'} {experience.company_name}
 									</p>
-									<p className="mt-1 text-sm">
+									<p className="mt-1 text-xs lg:text-xs xl:text-sm">
 										{experience.started_from_month && experience.started_from_year && 'From '}
 										{experience.started_from_month && months.find(month => parseInt(month.value) === experience.started_from_month)?.label} {experience.started_from_year}
 
