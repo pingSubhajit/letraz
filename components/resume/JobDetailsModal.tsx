@@ -175,13 +175,13 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 									</div>
 
 									<div className="relative my-8">
-						<div className="absolute inset-0 flex items-center">
-							<div className="w-full border-t border-neutral-200"></div>
-						</div>
-						<div className="relative flex justify-center">
-							<span className="px-4 bg-white text-sm text-neutral-500">Details</span>
-						</div>
-					</div>
+										<div className="absolute inset-0 flex items-center">
+											<div className="w-full border-t border-neutral-200"></div>
+										</div>
+										<div className="relative flex justify-center">
+											<span className="px-4 bg-white text-sm text-neutral-500">Details</span>
+										</div>
+									</div>
 
 									{/* Job Description */}
 									{renderSection(

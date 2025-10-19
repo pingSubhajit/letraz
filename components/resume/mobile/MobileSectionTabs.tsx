@@ -3,7 +3,7 @@
 import {motion} from 'motion/react'
 import {LucideIcon} from 'lucide-react'
 import {cn} from '@/lib/utils'
-import {useRef, useEffect} from 'react'
+import {useEffect, useRef} from 'react'
 
 interface Tab {
 	title: string
@@ -50,7 +50,7 @@ const MobileSectionTabs = ({
 			ref={scrollContainerRef}
 			className={cn(
 				'flex gap-1 overflow-x-auto px-3 pb-2',
-			'min-[494px]:justify-center',
+				'min-[494px]:justify-center',
 				'scrollbar-hide snap-x snap-mandatory',
 				className
 			)}

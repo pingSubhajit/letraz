@@ -393,7 +393,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 							key="content"
 							{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
 						>
-						{localExperiences.length > 0 ? (
+							{localExperiences.length > 0 ? (
 								<div className="space-y-4" ref={parent}>
 									{localExperiences.map((experience, index) => renderExperienceItem(experience, index))}
 								</div>
@@ -432,7 +432,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 											</Button>
 										</div>
 									</EmptyContent>
-							</Empty>
+								</Empty>
 							)}
 						</motion.div>
 					)}
