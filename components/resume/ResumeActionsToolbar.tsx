@@ -54,18 +54,14 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, i
 
 			// Open PDF in new tab
 			window.open(fullUrl, '_blank', 'noopener,noreferrer')
-
-			track('resume_export_succeeded', {resume_id: resumeId, format})
-		} catch (error) {
-			track('resume_export_failed', {resume_id: resumeId, format})
-			// Error toast already handled by mutation
+		} catch {
+			toast.error('Failed to download resume, please try again.')
 		}
 	}
 
 	const handleDelete = async () => {
 		try {
 			await deleteResume(resumeId)
-			track('resume_deleted', {resume_id: resumeId})
 			// Navigate to dashboard after successful deletion
 			router.push('/app')
 		} catch (error) {

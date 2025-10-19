@@ -66,9 +66,6 @@ const NewResumeInput = ({className}: {className?: string}) => {
 
 			const resumeId = response?.id
 			if (!resumeId) throw new Error('No resume id returned')
-
-			track('tailor_resume_created', {resume_id: resumeId})
-
 			router.replace(`/app/craft/resumes/${resumeId}`)
 		} catch (error: any) {
 			toast.error(error.message || 'Could not understand the job')
