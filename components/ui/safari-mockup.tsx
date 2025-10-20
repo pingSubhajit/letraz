@@ -8,7 +8,7 @@ const SafariMockup = forwardRef<HTMLDivElement, {children?: ReactNode, className
 		<div
 			ref={ref}
 			className={cn(
-				'w-full min-w-[700px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-muted shadow-md overflow-hidden flex flex-col',
+				'w-full lg:min-w-[700px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-muted shadow-md overflow-hidden flex flex-col',
 				className
 			)}
 		>
