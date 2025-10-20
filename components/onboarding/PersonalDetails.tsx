@@ -17,7 +17,7 @@ const PersonalDetails = async () => {
 					<TextAnimate
 						text="Let's get to know you better"
 						type="rollIn"
-						className="text-4xl sm:text-5xl lg:text-7xl leading-relaxed flex flex-wrap justify-center text-center pb-2" />
+						className="text-4xl sm:text-5xl leading-relaxed flex flex-wrap justify-center text-center pb-2" />
 				</div>
 
 				<OnboardingFlowControl />

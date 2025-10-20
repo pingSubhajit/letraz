@@ -82,12 +82,12 @@ const Education = (): JSX.Element => {
 				<TextAnimate
 					text="Tell us more"
 					type="calmInUp"
-					className="text-4xl sm:text-5xl lg:text-7xl leading-relaxed"
+					className="text-4xl sm:text-5xl leading-relaxed md:leading-snug"
 				/>
 				<TextAnimate
 					text="about your education"
 					type="calmInUp"
-					className="text-4xl sm:text-5xl lg:text-7xl leading-relaxed pb-2"
+					className="text-4xl sm:text-5xl leading-relaxed md:leading-snug pb-2"
 				/>
 			</div>
 

@@ -101,7 +101,7 @@ const OnboardingCompletionButton = () => {
 							className="rounded-full h-10 sm:h-14 text-xs md:text-base px-3 md:px-6"
 						>
 							<span className="hidden sm:inline">Finish & Start Building</span>
-							<span className="sm:hidden">Finish</span>
+							<span className="sm:hidden">Finish Onboarding</span>
 							<ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" />
 						</Button>
 					</motion.div>

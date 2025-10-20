@@ -80,12 +80,12 @@ const Experience = (): JSX.Element => {
 				<TextAnimate
 					text="What about"
 					type="calmInUp"
-					className="text-4xl sm:text-5xl lg:text-7xl leading-relaxed"
+					className="text-4xl sm:text-5xl leading-relaxed md:leading-snug"
 				/>
 				<TextAnimate
 					text="your past experiences"
 					type="calmInUp"
-					className="text-4xl sm:text-5xl lg:text-7xl leading-relaxed pb-2"
+					className="text-4xl sm:text-5xl leading-relaxed md:leading-snug pb-2"
 				/>
 			</div>
 
