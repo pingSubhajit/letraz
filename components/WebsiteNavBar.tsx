@@ -105,7 +105,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 			{/* Mobile Navigation */}
 			{mounted && (
 				<>
-					<div className="lg:hidden flex items-center h-full mt-6 w-full justify-between bg-white shadow rounded-full pr-2 pl-6 py-1.5 z-50 relative">
+					<div className="lg:hidden flex items-center h-full mt-6 w-full justify-between bg-transparent shadow-none rounded-full pr-2 pl-6 py-1.5 z-50 relative">
 						<div onClick={() => setIsOpen(false)}>
 							<LandingPageLogo className="mb-1" />
 						</div>
