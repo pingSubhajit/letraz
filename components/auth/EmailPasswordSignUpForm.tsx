@@ -1,6 +1,6 @@
 'use client'
 
-import {useMemo, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {useSignUp} from '@clerk/nextjs'
 import {useRouter} from 'next/navigation'
 import {useForm} from 'react-hook-form'
@@ -29,6 +29,8 @@ zxcvbnOptions.setOptions({
 		...enDictionary
 	}
 })
+
+const RESEND_COOLDOWN_SECONDS = 30
 
 const signUpSchema = z.object({
 	firstName: z
@@ -70,6 +72,8 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 	const [verificationPending, setVerificationPending] = useState(false)
 	const [verificationCode, setVerificationCode] = useState('')
 	const [isVerifying, setIsVerifying] = useState(false)
+	const [isResending, setIsResending] = useState(false)
+	const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0)
 	const {track} = useAnalytics()
 
 	const form = useForm<SignUpFormData>({
@@ -119,9 +123,9 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 		const zxScore = zx.score // 0..4
 		const level =
 			zxScore === 0 ? 'weak' :
-			zxScore === 1 ? 'fair' :
-			zxScore === 2 ? 'good' :
-			zxScore === 3 ? 'strong' : 'veryStrong'
+				zxScore === 1 ? 'fair' :
+					zxScore === 2 ? 'good' :
+						zxScore === 3 ? 'strong' : 'veryStrong'
 
 		return {zxScore, level, requirements, requirementsScore}
 	}, [password])
@@ -148,6 +152,7 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 				await signUp.prepareEmailAddressVerification({strategy: 'email_code'})
 				setVerificationPending(true)
 				setError(null)
+				setResendCooldownSeconds(RESEND_COOLDOWN_SECONDS)
 				onVerificationStateChange?.(true)
 			}
 		} catch (err: any) {
@@ -160,6 +165,36 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 			}
 		} finally {
 			setIsLoading(false)
+		}
+	}
+
+	// Countdown for resend cooldown
+	useEffect(() => {
+		if (!verificationPending) return
+		if (resendCooldownSeconds <= 0) return
+		const timer = setTimeout(() => {
+			setResendCooldownSeconds(prev => (prev > 0 ? prev - 1 : 0))
+		}, 1000)
+		return () => clearTimeout(timer)
+	}, [verificationPending, resendCooldownSeconds])
+
+	const handleResendVerification = async () => {
+		if (!signUp) return
+		if (resendCooldownSeconds > 0 || isResending) return
+		setIsResending(true)
+		setError(null)
+		try {
+			await signUp.prepareEmailAddressVerification({strategy: 'email_code'})
+			setResendCooldownSeconds(RESEND_COOLDOWN_SECONDS)
+		} catch (err: any) {
+			if (err.errors && err.errors.length > 0) {
+				const clerkError = err.errors[0]
+				setError(clerkError.message || 'Failed to resend verification email. Please try again.')
+			} else {
+				setError('Failed to resend verification email. Please try again.')
+			}
+		} finally {
+			setIsResending(false)
 		}
 	}
 
@@ -234,6 +269,26 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 							{error}
 						</motion.div>
 					)}
+
+					{/* Resend section */}
+					<div className="text-center space-y-2">
+						<p className="text-sm text-neutral-600">
+							Didn't receive the code? {resendCooldownSeconds > 0 ? <span>You can resend in {resendCooldownSeconds}s</span> : <Button
+								onClick={handleResendVerification}
+								disabled={isVerifying || isResending}
+								className="text-sm text-flame-500 p-0 h-min"
+								variant="link"
+							>
+								{isResending ? (
+									<>
+										Resending...
+									</>
+								) : (
+									'Resend'
+								)}
+							</Button>}
+						</p>
+					</div>
 
 					<Button
 						onClick={handleVerification}
