@@ -35,7 +35,7 @@ const LandingPage = () => {
 					className="h-[75vh] w-[75vw] absolute top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
 				/>
 
-                <HeroHeader />
+				<HeroHeader />
 			</div>
 
 			<div className="pb-20 bg-[#0F0202]">

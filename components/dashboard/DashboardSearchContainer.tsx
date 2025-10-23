@@ -13,7 +13,7 @@ interface DashboardSearchContainerProps {
 const DashboardSearchContainer = ({userId}: DashboardSearchContainerProps) => {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300)
-    const {track} = useAnalytics()
+	const {track} = useAnalytics()
 
 	useEffect(() => {
 		if (!debouncedSearchQuery) return

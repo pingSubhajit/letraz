@@ -18,7 +18,7 @@ import {useAnalytics} from '@/lib/analytics'
 const ResumeEditor = ({className}: {className?: string}) => {
 	const [activeTab, setActiveTab] = useState<number>(0) // Default to Profile (index 0)
 	const [activeTabId, setActiveTabId] = useState<string>('profile') // For traditional tabs
-    const {track} = useAnalytics()
+	const {track} = useAnalytics()
 
 	// Feature flag to switch between new and old tab designs
 	const useNewTabDesign = process.env.NEXT_PUBLIC_RESUME_EDITOR_TABS_NEW_DESIGN_ENABLED === 'true'
