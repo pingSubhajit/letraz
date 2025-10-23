@@ -127,89 +127,89 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 
 								{/* Content */}
 								<div className="px-6 space-y-8 py-6">
-					{/* Job Title and Company */}
-					<div className="space-y-4">
-						<div className="flex items-start justify-between gap-4">
-							<div className="space-y-2 flex-1">
-								<h2 className="text-2xl font-bold text-neutral-900">
-									{job.title}
-								</h2>
-								<div className="flex items-center gap-6 text-sm">
-									<span className="flex items-center gap-2 text-neutral-700">
-										<div className="p-1 bg-neutral-100 rounded">
-											<Building2 className="h-3.5 w-3.5 text-neutral-600" />
-										</div>
-										<span className="font-medium">{job.company_name}</span>
-									</span>
-									{job.location && (
-										<span className="flex items-center gap-2 text-neutral-700">
-											<div className="p-1 bg-neutral-100 rounded">
-												<MapPin className="h-3.5 w-3.5 text-neutral-600" />
+									{/* Job Title and Company */}
+									<div className="space-y-4">
+										<div className="flex items-start justify-between gap-4">
+											<div className="space-y-2 flex-1">
+												<h2 className="text-2xl font-bold text-neutral-900">
+													{job.title}
+												</h2>
+												<div className="flex items-center gap-6 text-sm">
+													<span className="flex items-center gap-2 text-neutral-700">
+														<div className="p-1 bg-neutral-100 rounded">
+															<Building2 className="h-3.5 w-3.5 text-neutral-600" />
+														</div>
+														<span className="font-medium">{job.company_name}</span>
+													</span>
+													{job.location && (
+														<span className="flex items-center gap-2 text-neutral-700">
+															<div className="p-1 bg-neutral-100 rounded">
+																<MapPin className="h-3.5 w-3.5 text-neutral-600" />
+															</div>
+															<span>{job.location}</span>
+														</span>
+													)}
+												</div>
 											</div>
-											<span>{job.location}</span>
-										</span>
+											{job.status && (
+												<Badge variant="secondary" className="shrink-0">
+													{job.status}
+												</Badge>
+											)}
+										</div>
+
+										{/* Job URL */}
+										{job.job_url && (
+											<Button
+												variant="outline"
+												size="sm"
+												className="w-fit"
+												asChild
+											>
+												<a href={job.job_url} target="_blank" rel="noopener noreferrer">
+													<Link className="h-4 w-4 mr-2" />
+													View Original Posting
+												</a>
+											</Button>
+										)}
+									</div>
+
+									<div className="relative my-8">
+										<div className="absolute inset-0 flex items-center">
+											<div className="w-full border-t border-neutral-200"></div>
+										</div>
+										<div className="relative flex justify-center">
+											<span className="px-4 bg-white text-sm text-neutral-500">Details</span>
+										</div>
+									</div>
+
+									{/* Job Description */}
+									{renderSection(
+										'Description',
+										job.description,
+										<FileText className="h-4 w-4 text-flame-600" />
 									)}
-								</div>
-							</div>
-							{job.status && (
-								<Badge variant="secondary" className="shrink-0">
-									{job.status}
-								</Badge>
-							)}
-						</div>
 
-						{/* Job URL */}
-						{job.job_url && (
-							<Button
-								variant="outline"
-								size="sm"
-								className="w-fit"
-								asChild
-							>
-								<a href={job.job_url} target="_blank" rel="noopener noreferrer">
-									<Link className="h-4 w-4 mr-2" />
-									View Original Posting
-								</a>
-							</Button>
-						)}
-					</div>
+									{/* Requirements */}
+									{renderSection(
+										'Requirements',
+										job.requirements,
+										<Target className="h-4 w-4 text-flame-600" />
+									)}
 
-					<div className="relative my-8">
-						<div className="absolute inset-0 flex items-center">
-							<div className="w-full border-t border-neutral-200"></div>
-						</div>
-						<div className="relative flex justify-center">
-							<span className="px-4 bg-white text-sm text-neutral-500">Details</span>
-						</div>
-					</div>
+									{/* Responsibilities */}
+									{renderSection(
+										'Responsibilities',
+										job.responsibilities,
+										<Briefcase className="h-4 w-4 text-flame-600" />
+									)}
 
-					{/* Job Description */}
-					{renderSection(
-						'Description',
-						job.description,
-						<FileText className="h-4 w-4 text-flame-600" />
-					)}
-
-					{/* Requirements */}
-					{renderSection(
-						'Requirements',
-						job.requirements,
-						<Target className="h-4 w-4 text-flame-600" />
-					)}
-
-					{/* Responsibilities */}
-					{renderSection(
-						'Responsibilities',
-						job.responsibilities,
-						<Briefcase className="h-4 w-4 text-flame-600" />
-					)}
-
-					{/* Benefits */}
-					{renderSection(
-						'Benefits',
-						job.benefits,
-						<Gift className="h-4 w-4 text-flame-600" />
-					)}
+									{/* Benefits */}
+									{renderSection(
+										'Benefits',
+										job.benefits,
+										<Gift className="h-4 w-4 text-flame-600" />
+									)}
 								</div>
 
 								{/* WebsiteFooter */}

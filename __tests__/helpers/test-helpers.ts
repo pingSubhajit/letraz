@@ -7,67 +7,67 @@ import userEvent from '@testing-library/user-event'
 // User interaction helpers
 export const userInteraction = {
 	// Click helpers
-	async clickButton(name: string | RegExp): Promise<void> {
+	clickButton: async (name: string | RegExp): Promise<void> => {
 		const button = screen.getByRole('button', {name})
 		await userEvent.click(button)
 	},
 
-	async clickLink(name: string | RegExp): Promise<void> {
+	clickLink: async (name: string | RegExp): Promise<void> => {
 		const link = screen.getByRole('link', {name})
 		await userEvent.click(link)
 	},
 
 	// Form interaction helpers
-	async fillInput(labelText: string | RegExp, value: string): Promise<void> {
+	fillInput: async (labelText: string | RegExp, value: string): Promise<void> => {
 		const input = screen.getByLabelText(labelText)
 		await userEvent.clear(input)
 		await userEvent.type(input, value)
 	},
 
-	async fillTextarea(labelText: string | RegExp, value: string): Promise<void> {
+	fillTextarea: async (labelText: string | RegExp, value: string): Promise<void> => {
 		const textarea = screen.getByLabelText(labelText)
 		await userEvent.clear(textarea)
 		await userEvent.type(textarea, value)
 	},
 
-	async selectOption(labelText: string | RegExp, optionText: string): Promise<void> {
+	selectOption: async (labelText: string | RegExp, optionText: string): Promise<void> => {
 		const select = screen.getByLabelText(labelText)
 		await userEvent.selectOptions(select, optionText)
 	},
 
-	async checkCheckbox(labelText: string | RegExp): Promise<void> {
+	checkCheckbox: async (labelText: string | RegExp): Promise<void> => {
 		const checkbox = screen.getByLabelText(labelText)
 		await userEvent.click(checkbox)
 	},
 
-	async uploadFile(labelText: string | RegExp, file: File): Promise<void> {
+	uploadFile: async (labelText: string | RegExp, file: File): Promise<void> => {
 		const input = screen.getByLabelText(labelText) as HTMLInputElement
 		await userEvent.upload(input, file)
 	},
 
 	// Keyboard interaction helpers
-	async pressKey(key: string): Promise<void> {
+	pressKey: async (key: string): Promise<void> => {
 		await userEvent.keyboard(`{${key}}`)
 	},
 
-	async pressEnter(): Promise<void> {
+	pressEnter: async (): Promise<void> => {
 		await userEvent.keyboard('{Enter}')
 	},
 
-	async pressEscape(): Promise<void> {
+	pressEscape: async (): Promise<void> => {
 		await userEvent.keyboard('{Escape}')
 	},
 
-	async pressTab(): Promise<void> {
+	pressTab: async (): Promise<void> => {
 		await userEvent.keyboard('{Tab}')
 	},
 
 	// Hover helpers
-	async hoverElement(element: HTMLElement): Promise<void> {
+	hoverElement: async (element: HTMLElement): Promise<void> => {
 		await userEvent.hover(element)
 	},
 
-	async unhoverElement(element: HTMLElement): Promise<void> {
+	unhoverElement: async (element: HTMLElement): Promise<void> => {
 		await userEvent.unhover(element)
 	}
 }
@@ -75,63 +75,63 @@ export const userInteraction = {
 // Assertion helpers
 export const assertions = {
 	// Element visibility assertions
-	expectElementToBeVisible(element: HTMLElement): void {
+	expectElementToBeVisible: (element: HTMLElement): void => {
 		expect(element).toBeInTheDocument()
 		expect(element).toBeVisible()
 	},
 
-	expectElementToBeHidden(element: HTMLElement): void {
+	expectElementToBeHidden: (element: HTMLElement): void => {
 		expect(element).toBeInTheDocument()
 		expect(element).not.toBeVisible()
 	},
 
 	// Form assertions
-	expectInputToHaveValue(labelText: string | RegExp, value: string): void {
+	expectInputToHaveValue: (labelText: string | RegExp, value: string): void => {
 		const input = screen.getByLabelText(labelText)
 		expect(input).toHaveValue(value)
 	},
 
-	expectCheckboxToBeChecked(labelText: string | RegExp): void {
+	expectCheckboxToBeChecked: (labelText: string | RegExp): void => {
 		const checkbox = screen.getByLabelText(labelText)
 		expect(checkbox).toBeChecked()
 	},
 
-	expectCheckboxToBeUnchecked(labelText: string | RegExp): void {
+	expectCheckboxToBeUnchecked: (labelText: string | RegExp): void => {
 		const checkbox = screen.getByLabelText(labelText)
 		expect(checkbox).not.toBeChecked()
 	},
 
 	// Button state assertions
-	expectButtonToBeEnabled(name: string | RegExp): void {
+	expectButtonToBeEnabled: (name: string | RegExp): void => {
 		const button = screen.getByRole('button', {name})
 		expect(button).toBeEnabled()
 	},
 
-	expectButtonToBeDisabled(name: string | RegExp): void {
+	expectButtonToBeDisabled: (name: string | RegExp): void => {
 		const button = screen.getByRole('button', {name})
 		expect(button).toBeDisabled()
 	},
 
 	// Loading state assertions
-	expectLoadingToBeVisible(): void {
+	expectLoadingToBeVisible: (): void => {
 		expect(screen.getByText(/loading/i)).toBeInTheDocument()
 	},
 
-	expectLoadingToBeHidden(): void {
+	expectLoadingToBeHidden: (): void => {
 		expect(screen.queryByText(/loading/i)).not.toBeInTheDocument()
 	},
 
 	// Error message assertions
-	expectErrorMessage(message: string | RegExp): void {
+	expectErrorMessage: (message: string | RegExp): void => {
 		expect(screen.getByText(message)).toBeInTheDocument()
 	},
 
-	expectNoErrorMessage(): void {
+	expectNoErrorMessage: (): void => {
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 	},
 
 	// Success message assertions
-	expectSuccessMessage(message: string | RegExp): void {
+	expectSuccessMessage: (message: string | RegExp): void => {
 		expect(screen.getByText(message)).toBeInTheDocument()
 	}
 }
@@ -139,36 +139,36 @@ export const assertions = {
 // Async testing helpers
 export const asyncHelpers = {
 	// Wait for element to appear
-	async waitForElementToAppear(text: string | RegExp): Promise<HTMLElement> {
+	waitForElementToAppear: async (text: string | RegExp): Promise<HTMLElement> => {
 		return await waitFor(() => screen.getByText(text))
 	},
 
 	// Wait for element to disappear
-	async waitForElementToDisappear(text: string | RegExp): Promise<void> {
+	waitForElementToDisappear: async (text: string | RegExp): Promise<void> => {
 		await waitFor(() => {
 			expect(screen.queryByText(text)).not.toBeInTheDocument()
 		})
 	},
 
 	// Wait for loading to finish
-	async waitForLoadingToFinish(): Promise<void> {
+	waitForLoadingToFinish: async (): Promise<void> => {
 		await waitFor(() => {
 			expect(screen.queryByText(/loading/i)).not.toBeInTheDocument()
 		})
 	},
 
 	// Wait for API call to complete
-	async waitForApiCall(mockFn: MockedFunction<any>, times = 1): Promise<void> {
+	waitForApiCall: async (mockFn: MockedFunction<any>, times = 1): Promise<void> => {
 		await waitFor(() => {
 			expect(mockFn).toHaveBeenCalledTimes(times)
 		})
 	},
 
 	// Wait with custom timeout
-	async waitForCondition(
+	waitForCondition: async (
 		condition: () => void | Promise<void>,
 		timeout = 5000
-	): Promise<void> {
+	): Promise<void> => {
 		await waitFor(condition, {timeout})
 	}
 }
@@ -176,7 +176,7 @@ export const asyncHelpers = {
 // Form testing helpers
 export const formHelpers = {
 	// Fill out a complete form
-	async fillForm(formData: Record<string, any>): Promise<void> {
+	fillForm: async (formData: Record<string, any>): Promise<void> => {
 		for (const [field, value] of Object.entries(formData)) {
 			if (typeof value === 'string') {
 				await userInteraction.fillInput(new RegExp(field, 'i'), value)
@@ -187,28 +187,30 @@ export const formHelpers = {
 	},
 
 	// Submit a form
-	async submitForm(submitButtonText = /submit/i): Promise<void> {
+	submitForm: async (submitButtonText = /submit/i): Promise<void> => {
 		await userInteraction.clickButton(submitButtonText)
 	},
 
 	// Fill and submit form
-	async fillAndSubmitForm(
+	fillAndSubmitForm: async (
 		formData: Record<string, any>,
 		submitButtonText = /submit/i
-	): Promise<void> {
+	): Promise<void> => {
+		// @ts-ignore
 		await this.fillForm(formData)
+		// @ts-ignore
 		await this.submitForm(submitButtonText)
 	},
 
 	// Validate form errors
-	expectFormErrors(errors: string[]): void {
+	expectFormErrors: (errors: string[]): void => {
 		errors.forEach(error => {
 			expect(screen.getByText(error)).toBeInTheDocument()
 		})
 	},
 
 	// Validate no form errors
-	expectNoFormErrors(): void {
+	expectNoFormErrors: (): void => {
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 	}
 }
@@ -216,12 +218,12 @@ export const formHelpers = {
 // Component testing helpers
 export const componentHelpers = {
 	// Test component rendering
-	expectComponentToRender(testId: string): void {
+	expectComponentToRender: (testId: string): void => {
 		expect(screen.getByTestId(testId)).toBeInTheDocument()
 	},
 
 	// Test component props
-	expectComponentToHaveProps(element: HTMLElement, props: Record<string, any>): void {
+	expectComponentToHaveProps: (element: HTMLElement, props: Record<string, any>): void => {
 		Object.entries(props).forEach(([prop, value]) => {
 			if (prop === 'className') {
 				expect(element).toHaveClass(value)
@@ -234,12 +236,12 @@ export const componentHelpers = {
 	},
 
 	// Test component children
-	expectComponentToHaveChildren(parent: HTMLElement, childCount: number): void {
+	expectComponentToHaveChildren: (parent: HTMLElement, childCount: number): void => {
 		expect(parent.children).toHaveLength(childCount)
 	},
 
 	// Test component accessibility
-	expectComponentToBeAccessible(element: HTMLElement): void {
+	expectComponentToBeAccessible: (element: HTMLElement): void => {
 		// Basic accessibility checks
 		if (element.tagName === 'BUTTON') {
 			expect(element).toHaveAttribute('type')

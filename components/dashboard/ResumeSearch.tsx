@@ -46,7 +46,6 @@ const initializeSearchClient = () => {
 	try {
 		return algoliasearch(appId, apiKey)
 	} catch (error) {
-		console.error('[Algolia] Failed to initialize client:', error)
 		return null
 	}
 }
