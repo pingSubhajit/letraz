@@ -50,17 +50,19 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 				const cached = imagesCacheRef.current.get(index)
 				if (cached && cached.complete) {
 					const {width: clientWidth, height: clientHeight} = canvasSizeRef.current
-					context.clearRect(0, 0, clientWidth, clientHeight)
+					context.fillStyle = '#ffffff'
+					context.fillRect(0, 0, clientWidth, clientHeight)
 					const imgAspect = cached.width / cached.height || 1
 					const canvasAspect = clientWidth / clientHeight || 1
 					let drawWidth = clientWidth
 					let drawHeight = clientHeight
+					// Use 'contain' behavior - fit entire image within canvas
 					if (imgAspect > canvasAspect) {
-						drawHeight = clientHeight
-						drawWidth = drawHeight * imgAspect
-					} else {
 						drawWidth = clientWidth
 						drawHeight = drawWidth / imgAspect
+					} else {
+						drawHeight = clientHeight
+						drawWidth = drawHeight * imgAspect
 					}
 					const dx = (clientWidth - drawWidth) / 2
 					const dy = (clientHeight - drawHeight) / 2
@@ -104,7 +106,22 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 			if (!tryInitialDraw()) setTimeout(() => {tryInitialDraw()}, 50)
 
 			const scrubAmount = 0.5
-			const scrollLength = Math.max(window.innerHeight * 4, 2000)
+			// Adjust scroll length based on screen size to match container height
+			const isLargeScreen = window.innerWidth >= 1024
+			const isMediumScreen = window.innerWidth >= 640
+
+			// Calculate scroll length to match exactly with the parent container height
+			// The canvas is absolutely positioned, so we need to account for its starting position
+			const canvasTopOffset = isLargeScreen ? 500 : isMediumScreen ? 400 : 330
+			const containerHeight = isLargeScreen ? 530 : isMediumScreen ? 400 : 300
+
+			// Scroll length should be: (containerHeight * vh - canvasTopOffset - viewport height)
+			// This ensures the pin duration matches exactly with when the canvas should release
+			const scrollLength = Math.max(
+				(containerHeight * window.innerHeight / 100) - canvasTopOffset - window.innerHeight,
+				isLargeScreen ? 2000 : isMediumScreen ? 1500 : 1000
+			)
+
 			const topOffsetPx = 120
 			const scheduleDraw = (idx: number) => {
 				pendingIndexRef.current = idx
@@ -133,7 +150,8 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 					pin: mockupRef.current || true,
 					pinSpacing: true,
 					scrub: scrubAmount,
-					anticipatePin: 1
+					anticipatePin: 1,
+					invalidateOnRefresh: true
 				}
 			})
 
