@@ -55,15 +55,15 @@ const LandingPage = () => {
 			{/*	</video>*/}
 			{/* </div>*/}
 
-			<div>
+			<div className="mt-8 sm:mt-12 lg:mt-0">
 				<LandingPageProcess />
 			</div>
 
-			<div className="mt-32 max-w-7xl mx-auto">
+			<div className="mt-6 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
 				<LandingPageFeatures />
 			</div>
 
-			<div className="mt-32 max-w-7xl mx-auto">
+			<div className="mt-12 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
 				<LandingPageFaq />
 			</div>
 		</main>

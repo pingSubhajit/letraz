@@ -11,9 +11,9 @@ const WebsiteLayout = ({children}: {children: ReactNode}) => {
 
 			{children}
 
-			{/* <div className="mt-[500px] mx-auto">
+			<div className="mt-16 sm:mt-20 lg:mt-[500px]">
 				<WebsiteFooter />
-			</div> */}
+			</div>
 
 			<SpeedInsights />
 			<AcquisitionTracker />

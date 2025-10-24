@@ -70,7 +70,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 							>
 								<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
 									<p className={cn(
-										'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-3xl flex items-center gap-4',
+										'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-2xl flex items-center gap-3 pl-4',
 										currentSegment && currentSegment === link.segment && 'opacity-100'
 									)}>
 										<span className="w-2 h-2 rounded-full bg-flame-500" />
