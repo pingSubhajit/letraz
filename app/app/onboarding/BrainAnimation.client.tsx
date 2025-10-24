@@ -47,14 +47,14 @@ const BrainAnimation = ({className, onboardingStep, ref}: Props) => {
 		// EDUCATION & EXPERIENCE PAGES
 		if (isEducationOrExperience) {
 			if (isMobile) {
-				// Mobile (<640px): Centered 
+				// Mobile (<640px): Centered
 				return {
 					scale: 1.0,
 					top: '0',
 					right: '0'
 				}
 			} else if (isSm) {
-				// sm (640-767px): Centered 
+				// sm (640-767px): Centered
 				return {
 					scale: 1.0,
 					top: '0',
