@@ -147,17 +147,17 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 			id={experience.id}
 			deletingId={deletingId}
 		>
-			<h3 className="font-medium">
+			<h3 className="text-sm sm:text-base font-medium">
 				{experience.job_title} {experience.job_title && experience.company_name && 'at'} {experience.company_name}
 			</h3>
-			<p className="text-sm text-muted-foreground">
+			<p className="text-xs sm:text-sm text-muted-foreground">
 				{[
 					employmentTypes.find(type => type.value === experience.employment_type)?.label,
 					experience.city,
 					experience.country?.name
 				].filter(Boolean).join(', ')}
 			</p>
-			<p className="text-sm">
+			<p className="text-xs sm:text-sm">
 				{experience.started_from_month && months.find(m => m.value === experience.started_from_month?.toString())?.label} {experience.started_from_year} - {' '}
 				{experience.current ? 'Present' : (
 					<>
@@ -253,23 +253,22 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 	if (view === 'form') {
 		return (
 			<ScrollMask
-				className={cn('space-y-6', className)}
-				style={{height: 'calc(100vh - 162px)'}}
+				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 				data-lenis-prevent
 			>
-				<div className="space-y-6 px-1">
+				<div className="space-y-4 sm:space-y-6 px-1">
 					<EditorHeader
 						title={editingIndex !== null ? 'Update Experience' : 'Add New Experience'}
 						description={editingIndex !== null
 							? 'Ensure that the details are correct and reflect your professional background'
 							: 'Adding detailed work experience helps employers understand your qualifications and achievements'
 						}
-						className="mb-10"
+						className="mb-6 sm:mb-10"
 					/>
 
 					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-							<div className="grid grid-cols-2 gap-4">
+						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 sm:gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 								<TextFormField
 									form={form}
 									name="job_title"
@@ -286,7 +285,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 								/>
 							</div>
 
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 								<FormField
 									control={form.control}
 									name="employment_type"
@@ -356,11 +355,10 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 
 	return (
 		<ScrollMask
-			className={cn('flex flex-col', className)}
-			style={{height: 'calc(100vh - 162px)'}}
+			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 			data-lenis-prevent
 		>
-			<div className="space-y-6 px-1">
+			<div className="space-y-4 sm:space-y-6 px-1">
 				<EditorHeader
 					title="Experience"
 					showAddButton={isMounted && !isLoading}

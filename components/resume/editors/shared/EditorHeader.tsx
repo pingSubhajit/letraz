@@ -31,11 +31,11 @@ const EditorHeader = ({
 	const [headerParent] = useAutoAnimate()
 
 	return (
-		<div ref={headerParent} className={cn('mb-6 flex items-center justify-between', className)}>
+		<div ref={headerParent} className={cn('mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3', className)}>
 			<div className="flex flex-col gap-1">
-				<h2 className="text-lg font-medium min-w-[16rem]">{title}</h2>
+				<h2 className="text-base sm:text-lg font-medium">{title}</h2>
 				{description && (
-					<p className="text-sm max-w-lg opacity-80">{description}</p>
+					<p className="text-xs sm:text-sm max-w-lg opacity-80">{description}</p>
 				)}
 			</div>
 
@@ -45,6 +45,7 @@ const EditorHeader = ({
 					variant="outline"
 					size="sm"
 					disabled={isDisabled}
+					className="w-full sm:w-auto"
 				>
 					<Plus className="h-4 w-4 mr-2" />
 					{addButtonText}

@@ -68,9 +68,9 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 	}
 
 	return (
-		<div className={cn('max-w-4xl mx-auto flex flex-col items-center', className)}>
+		<div className={cn('max-w-4xl mx-auto flex flex-col items-center px-4', className)}>
 			<motion.div
-				className="text-xl text-center mt-8 max-w-xl"
+				className="text-base sm:text-lg lg:text-xl text-center mt-6 sm:mt-8 max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>We need a few details about you to craft the perfect resume for you</p>
@@ -79,17 +79,17 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className="mt-20 space-y-8"
+					className="mt-12 sm:mt-16 lg:mt-20 space-y-6 sm:space-y-8 w-full"
 				>
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between" >
+						className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 justify-between" >
 						<FormField
 							disabled={isPending}
 							control={form.control}
 							name="first_name"
 							render={({field}) => (
-								<FormItem>
+								<FormItem className="w-full">
 									<OnboardingFormInput placeholder="first name" {...field} autoFocus />
 									<FormLabel className="transition">First name</FormLabel>
 									<FormMessage />
@@ -102,7 +102,7 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 							control={form.control}
 							name="last_name"
 							render={({field}) => (
-								<FormItem>
+								<FormItem className="w-full">
 									<OnboardingFormInput placeholder="last name" {...field} value={field.value || ''} />
 									<FormLabel className="transition">Last name</FormLabel>
 									<FormMessage />
@@ -113,13 +113,13 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between" >
+						className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 justify-between" >
 						<FormField
 							disabled={isPending}
 							control={form.control}
 							name="email"
 							render={({field}) => (
-								<FormItem>
+								<FormItem className="w-full">
 									<OnboardingFormInput placeholder="email address" {...field} disabled={true} />
 									<FormLabel className="transition">Email</FormLabel>
 									<FormMessage />
@@ -132,7 +132,7 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 							control={form.control}
 							name="phone"
 							render={({field}) => (
-								<FormItem>
+								<FormItem className="w-full">
 									<OnboardingFormInput placeholder="phone no." {...field} value={field.value || ''} />
 									<FormLabel className="transition">Phone (optional)</FormLabel>
 									<FormMessage />
@@ -142,7 +142,7 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 					</motion.div>
 
 					{typeof toggleParseResume === 'function' && <motion.div
-						className="mt-12 flex flex-col justify-center items-center" key="MANUAL_DETAILS_CTA"
+						className="mt-8 sm:mt-10 lg:mt-12 flex flex-col justify-center items-center" key="MANUAL_DETAILS_CTA"
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 					>
 						<Button onClick={toggleParseResume} variant="outline" size="lg">Upload a resume instead</Button>
@@ -150,24 +150,24 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 					</motion.div>}
 
 					<div
-						className="w-[calc(100%-4.7rem)] flex items-center justify-between fixed left-[4.7rem] z-10 bottom-16 px-16"
+						className="w-full px-4 sm:px-8 lg:px-16 sm:w-[calc(100%-4.7rem)] flex items-center justify-between gap-3 fixed left-0 sm:left-[4.7rem] z-10 bottom-8 sm:bottom-12 lg:bottom-16"
 					>
 						{/* PREVIOUS STEP BUTTON */}
 						<Link href={'/app/onboarding?step=about'}>
 							<Button
 								disabled={isPending}
-								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
+								className="transition rounded-full shadow-lg hover:shadow-xl px-4 sm:px-5 lg:px-6"
 								variant="secondary"
 								type="button"
 							>
-								<ChevronLeft className="w-5 h-5 mr-1" />
+								<ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1" />
 								Overview
 							</Button>
 						</Link>
 
 						{/* NEXT STEP BUTTON */}
 						<Button
-							className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
+							className="transition rounded-full shadow-lg px-4 sm:px-5 lg:px-6 hover:shadow-xl"
 							variant="secondary"
 							type="submit"
 							disabled={isPending || form.formState.isSubmitting || !form.formState.isValid}
@@ -175,7 +175,7 @@ const PersonalDetailsForm = ({className, toggleParseResume}: { className?: strin
 							Looks good
 							{form.formState.isSubmitting
 								? <Loader2 className="w-4 h-4 ml-1 animate-spin" />
-								: <ChevronRight className="w-5 h-5 ml-1" />
+								: <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1" />
 							}
 						</Button>
 					</div>

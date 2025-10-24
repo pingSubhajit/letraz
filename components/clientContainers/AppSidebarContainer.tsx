@@ -27,7 +27,7 @@ const AppSidebarContainer = ({children, className}: {
 
 	return (
 		<motion.aside
-			className="shadow-xl z-20"
+			className="shadow-xl z-20 hidden lg:block"
 			initial={shouldAnimate ? {width: '0px'} : {width: collapsedWidth}}
 			animate={{width: targetWidth}}
 			transition={{

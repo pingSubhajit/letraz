@@ -17,9 +17,11 @@ import {useRouter} from 'next/navigation'
 
 interface NotificationFeedProps {
 	onNotificationClick?: () => void
+	/** Hide header (for mobile bottom sheet which has its own header) */
+	hideHeader?: boolean
 }
 
-const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
+const NotificationFeed = ({onNotificationClick, hideHeader = false}: NotificationFeedProps) => {
 	const {collapseSidebar, isExpanded} = useSidebar()
 	const [parent] = useAutoAnimate()
 
@@ -142,39 +144,41 @@ const NotificationFeed = ({onNotificationClick}: NotificationFeedProps) => {
 
 	return (
 		<div className="h-full w-full flex flex-col bg-background">
-			{/* Header */}
-			<div className="flex items-center justify-between py-4 px-6 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-				<div className="flex items-center">
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={collapseSidebar}
-					>
-						<ChevronLeft
-							className="h-4 w-4"
-						/>
-					</Button>
-					<div className="flex items-center gap-2">
-						<h3 className="font-semibold text-lg">Notifications</h3>
-						{metadata?.unread_count > 0 && (
-							<div className="bg-flame-500 text-primary-foreground text-xs font-medium px-1.5 py-0.5 rounded-full">
-								{metadata.unread_count}
-							</div>
-						)}
+			{/* Header - Desktop only (mobile uses MobilePanelSheet header) */}
+			{!hideHeader && (
+				<div className="flex items-center justify-between py-4 px-6 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+					<div className="flex items-center">
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={collapseSidebar}
+						>
+							<ChevronLeft
+								className="h-4 w-4"
+							/>
+						</Button>
+						<div className="flex items-center gap-2">
+							<h3 className="font-semibold text-lg">Notifications</h3>
+							{metadata?.unread_count > 0 && (
+								<div className="bg-flame-500 text-primary-foreground text-xs font-medium px-1.5 py-0.5 rounded-full">
+									{metadata.unread_count}
+								</div>
+							)}
+						</div>
 					</div>
+					{metadata?.unread_count > 0 && (
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={handleMarkAllAsRead}
+							className="text-xs h-8 px-3 hover:bg-accent/50"
+						>
+							<CheckCheck className="h-3 w-3 mr-1" />
+							Mark all read
+						</Button>
+					)}
 				</div>
-				{metadata?.unread_count > 0 && (
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={handleMarkAllAsRead}
-						className="text-xs h-8 px-3 hover:bg-accent/50"
-					>
-						<CheckCheck className="h-3 w-3 mr-1" />
-						Mark all read
-					</Button>
-				)}
-			</div>
+			)}
 
 			{/* Loading State */}
 			{loading && (

@@ -204,16 +204,16 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 	}, [isParsing, parsed])
 
 	return (
-		<div className={cn('max-w-4xl mx-auto flex flex-col items-center mt-8', className)}>
+		<div className={cn('max-w-4xl mx-auto flex flex-col items-center mt-6 sm:mt-8 px-4', className)}>
 			<motion.div
-				className="text-xl text-center max-w-xl"
+				className="text-base sm:text-lg lg:text-xl text-center max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>We need a few details about you to craft the perfect resume for you</p>
 
-				<div className="mt-10">
+				<div className="mt-6 sm:mt-8 lg:mt-10">
 					<div className={cn(
-						'h-64 w-full bg-neutral-100 p-2 rounded-3xl relative',
+						'h-48 sm:h-56 lg:h-64 w-full bg-neutral-100 p-2 rounded-3xl relative',
 						isParsing && 'loading-gradient-color lg-flame'
 					)}
 					>
@@ -245,25 +245,25 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 								disabled={isParsing}
 							/>
 							<AnimatePresence mode="wait">
-								{!isDragging && !isParsing && <motion.div key="DEFAULT_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none">
-									<div className="border-4 opacity-60 p-4 rounded-3xl w-min mx-auto">
-										<FileCheck className="w-10 h-10" />
+								{!isDragging && !isParsing && <motion.div key="DEFAULT_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none px-2">
+									<div className="border-4 opacity-60 p-3 sm:p-4 rounded-3xl w-min mx-auto">
+										<FileCheck className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10" />
 									</div>
 
-									<p className="mt-4">Do you already have an existing resume?</p>
-									<p className="text-sm mt-2 opacity-60">Upload it and we will magically understand key information about you and you won't have to enter the details manually</p>
+									<p className="mt-3 sm:mt-4 text-sm sm:text-base">Do you already have an existing resume?</p>
+									<p className="text-xs sm:text-sm mt-2 opacity-60">Upload it and we will magically understand key information about you and you won't have to enter the details manually</p>
 								</motion.div>}
 
 								{isDragging && !isParsing && <motion.div key="DRAGGING_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none">
-									<p className="mt-4">Yes, let go</p>
+									<p className="mt-3 sm:mt-4 text-sm sm:text-base">Yes, let go</p>
 								</motion.div>}
 
 								{isParsing && !isDragging && (
-									<motion.div key="PARSING_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none" role="status" aria-live="polite">
+									<motion.div key="PARSING_STATE" {...DEFAULT_SLIDE_ANIMATION} className="pointer-events-none px-2" role="status" aria-live="polite">
 										<StaggeredText
 											text={PARSING_MESSAGES[parsingMessageIndex]}
 											show={showParsingText}
-											className="text-base md:text-lg text-center"
+											className="text-sm sm:text-base lg:text-lg text-center"
 										/>
 									</motion.div>
 								)}
@@ -280,13 +280,13 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 									exit={{opacity: 0, scale: 0.95}}
 									transition={{type: 'spring', duration: 0.5, bounce: 0.35}}
 								>
-									<div className="w-full rounded-3xl ring-fade-orange overflow-hidden flex flex-col items-center justify-center px-6 py-12">
-										<p className="font-medium text-orange-500 text-xl">Wow! That worked! 🎉</p>
-										<p className="mt-2 text-sm w-80  opacity-75">We've understood a lot about you from your resume. See you on the other side</p>
+									<div className="w-full rounded-3xl ring-fade-orange overflow-hidden flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
+										<p className="font-medium text-orange-500 text-lg sm:text-xl">Wow! That worked! 🎉</p>
+										<p className="mt-2 text-xs sm:text-sm max-w-xs opacity-75 text-center">We've understood a lot about you from your resume. See you on the other side</p>
 									</div>
 
-									<div className="w-3/4 bg-neutral-100 mx-auto rounded-b-3xl p-4 border-x-2 border-b-2 border-neutral-300">
-										<p className="text-sm">You don't need to enter your details manually anymore. On the next step we'll show you your base resume</p>
+									<div className="w-11/12 sm:w-3/4 bg-neutral-100 mx-auto rounded-b-3xl p-3 sm:p-4 border-x-2 border-b-2 border-neutral-300">
+										<p className="text-xs sm:text-sm text-center">You don't need to enter your details manually anymore. On the next step we'll show you your base resume</p>
 									</div>
 								</motion.div>
 							)}
@@ -294,14 +294,14 @@ const ParseResume = ({className, toggleParseResume}: { className?: string, toggl
 					</div>
 
 					<AnimatePresence mode="wait">
-						{!parsed && <motion.div {...DEFAULT_FADE_ANIMATION} className="mt-12" key="MANUAL_DETAILS_CTA">
+						{!parsed && <motion.div {...DEFAULT_FADE_ANIMATION} className="mt-8 sm:mt-10 lg:mt-12" key="MANUAL_DETAILS_CTA">
 							<Button onClick={toggleParseResume} variant="outline" size="lg" key="MANUAL_DETAILS_CTA_BUTTON">Enter the details manually</Button>
-							<p className="text-xs mt-2 opacity-50 w-80 mx-auto text-center" key="MANUAL_DETAILS_CTA_TEXT">We would ask for your educations and experiences on the next steps</p>
+							<p className="text-xs mt-2 opacity-50 max-w-xs sm:max-w-sm mx-auto text-center" key="MANUAL_DETAILS_CTA_TEXT">We would ask for your educations and experiences on the next steps</p>
 						</motion.div>}
 
-						{parsed && <motion.div {...DEFAULT_FADE_ANIMATION} className="mt-12" key="RESUME_PARSED_CTA">
+						{parsed && <motion.div {...DEFAULT_FADE_ANIMATION} className="mt-8 sm:mt-10 lg:mt-12" key="RESUME_PARSED_CTA">
 							<Button onClick={() => router.push('/app/onboarding?step=resume')} size="lg">Let's get your base resume</Button>
-							<p className="text-xs mt-2 opacity-50 w-80 mx-auto text-center">Your base resume is ready, click to get started</p>
+							<p className="text-xs mt-2 opacity-50 max-w-xs sm:max-w-sm mx-auto text-center">Your base resume is ready, click to get started</p>
 						</motion.div>}
 					</AnimatePresence>
 				</div>

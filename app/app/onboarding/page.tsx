@@ -70,7 +70,7 @@ const OnboardingPage = async (
 	// Render the appropriate component based on the current onboarding step
 	return (
 		<HydrationBoundary state={dehydratedState}>
-			<div className="h-full min-h-dvh w-full relative">
+			<div className="h-dvh max-h-dvh w-full relative overflow-hidden">
 				<BrainAnimation onboardingStep={step} />
 				<OnboardingStepTracker step={step} />
 

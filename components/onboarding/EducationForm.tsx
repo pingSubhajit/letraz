@@ -188,10 +188,10 @@ const EducationForm = ({
 	}
 
 	return (
-		<div className={cn('max-w-2xl flex flex-col', className)}>
+		<div className={cn('max-w-lg xl:max-w-xl 2xl:max-w-2xl flex flex-col w-full', className)}>
 			{/* Informational message about the benefits of adding educational details */}
 			<motion.div
-				className="text-xl mt-8 max-w-xl"
+				className="text-base sm:text-lg lg:text-xl mt-6 sm:mt-8 max-w-xl"
 				initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.2, duration: 0.7}}
 			>
 				<p>
@@ -201,19 +201,19 @@ const EducationForm = ({
 			</motion.div>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-12 space-y-8">
+				<form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 sm:mt-10 lg:mt-12 space-y-6 sm:space-y-8">
 					{/* Form fields for institution name and country */}
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between w-full"
+						className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 justify-between w-full"
 					>
 						<FormField
 							disabled={isPending}
 							control={form.control}
 							name="institution_name"
 							render={({field}) => (
-								<FormItem className="w-[95%]">
+								<FormItem className="w-full">
 									<OnboardingFormInput
 										placeholder="institution"
 										{...field}
@@ -257,14 +257,14 @@ const EducationForm = ({
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="flex items-center gap-8 justify-between"
+						className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 justify-between"
 					>
 						<FormField
 							disabled={isPending}
 							control={form.control}
 							name="field_of_study"
 							render={({field}) => (
-								<FormItem className="w-[95%]">
+								<FormItem className="w-full">
 									<OnboardingFormInput placeholder="field" {...field} />
 									<FormLabel className="transition">Field of study</FormLabel>
 									<FormMessage />
@@ -277,7 +277,7 @@ const EducationForm = ({
 							control={form.control}
 							name="degree"
 							render={({field}) => (
-								<FormItem>
+								<FormItem className="w-full">
 									<OnboardingFormInput placeholder="degree" {...field} value={field.value || ''} />
 									<FormLabel className="transition">Degree earned</FormLabel>
 									<FormMessage />
@@ -290,7 +290,7 @@ const EducationForm = ({
 					<motion.div
 						initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
 						transition={{delay: 0.4, duration: 0.7}}
-						className="grid grid-cols-4 gap-8"
+						className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8"
 					>
 						{/* Form field for start month */}
 						<FormField
@@ -440,48 +440,53 @@ const EducationForm = ({
 
 					{/* Navigation buttons */}
 					<div
-						className="w-[calc(100%-4.7rem)] flex items-center justify-between fixed left-[4.7rem] z-10 bottom-16 px-16"
+						className="w-full px-2 sm:px-4 md:px-8 lg:px-16 lg:w-[calc(100%-4.7rem)] flex flex-wrap items-center justify-between gap-2 sm:gap-3 fixed left-0 lg:left-[4.7rem] z-10 bottom-6 sm:bottom-12 lg:bottom-16"
 					>
 						{/* Button to navigate to the previous step */}
-						<Link href={'/app/onboarding?step=personal-details'}>
+						<Link href={'/app/onboarding?step=personal-details'} className="order-1">
 							<Button
 								disabled={isPending}
-
-								className="transition rounded-full shadow-lg hover:shadow-xl px-6"
+								className="transition rounded-full shadow-lg hover:shadow-xl px-3 sm:px-5 lg:px-6 text-xs sm:text-sm"
 								variant="secondary"
 								type="button"
+								size="sm"
 							>
-								<ChevronLeft className="w-5 h-5 mr-1" />
-								Personal details
+								<ChevronLeft className="w-3 h-3 sm:w-5 sm:h-5 mr-1" />
+								<span className="hidden min-[520px]:inline">Personal details</span>
+								<span className="min-[520px]:hidden">Back</span>
 							</Button>
 						</Link>
 
 						{/* Buttons to add another education or proceed to the next step */}
-						<div className=" flex items-center gap-4">
+						<div className="flex items-center gap-2 order-2">
 							<Button
-								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
+								className="transition rounded-full shadow-lg px-2 sm:px-4 lg:px-6 hover:shadow-xl text-xs sm:text-sm"
 								variant="secondary"
 								type="submit"
+								size="sm"
 								disabled={isPending || form.formState.isSubmitting || !form.formState.isDirty}
 							>
-								Add another
+								<span className="hidden min-[520px]:inline">Add another</span>
+								<span className="min-[520px]:hidden">Add</span>
 								{form.formState.isSubmitting
-									? <Loader2 className="w-4 h-4 ml-1 animate-spin"/>
-									: <ChevronRight className="w-5 h-5 ml-1"/>
+									? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 ml-1 animate-spin"/>
+									: <ChevronRight className="w-3 h-3 sm:w-5 sm:h-5 ml-1"/>
 								}
 							</Button>
 
 							<Button
-								className="transition rounded-full shadow-lg px-6 hover:shadow-xl"
+								className="transition rounded-full shadow-lg px-2 sm:px-4 lg:px-6 hover:shadow-xl text-xs sm:text-sm"
 								variant="secondary"
 								type="button"
+								size="sm"
 								onClick={form.handleSubmit(submitWithRedirect)}
 								disabled={form.formState.isSubmitting}
 							>
-								What's next
+								<span className="hidden min-[520px]:inline">What's next</span>
+								<span className="min-[520px]:hidden">Next</span>
 								{form.formState.isSubmitting
-									? <Loader2 className="w-4 h-4 ml-1 animate-spin" />
-									: <ChevronRight className="w-5 h-5 ml-1" />
+									? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 ml-1 animate-spin" />
+									: <ChevronRight className="w-3 h-3 sm:w-5 sm:h-5 ml-1" />
 								}
 							</Button>
 						</div>

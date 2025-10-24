@@ -24,7 +24,7 @@ export const userInteraction = {
 		await userEvent.type(input, value)
 	},
 
-	fillTextarea: async (labelText: string | RegExp, value: string): Promise<void> => {
+	fillTextarea: async(labelText: string | RegExp, value: string): Promise<void> => {
 		const textarea = screen.getByLabelText(labelText)
 		await userEvent.clear(textarea)
 		await userEvent.type(textarea, value)
@@ -196,10 +196,8 @@ export const formHelpers = {
 		formData: Record<string, any>,
 		submitButtonText = /submit/i
 	): Promise<void> => {
-		// @ts-ignore
-		await this.fillForm(formData)
-		// @ts-ignore
-		await this.submitForm(submitButtonText)
+		await formHelpers.fillForm(formData)
+		await formHelpers.submitForm(submitButtonText)
 	},
 
 	// Validate form errors

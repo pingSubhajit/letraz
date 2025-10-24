@@ -373,8 +373,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	if (view === 'form') {
 		return (
 			<ScrollMask
-				className={cn('space-y-6', className)}
-				style={{height: 'calc(100vh - 162px)'}}
+				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 				data-lenis-prevent
 			>
 				<div className="space-y-6 px-1">
@@ -482,8 +481,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	return (
 		<ScrollMask
-			className={cn('flex flex-col', className)}
-			style={{height: 'calc(100vh - 162px)'}}
+			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 			data-lenis-prevent
 		>
 			<div className="space-y-6 px-1">

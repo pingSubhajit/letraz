@@ -13,7 +13,7 @@ const SignUpContent = ({preselectedProvider, isRizeFlow = false}: { preselectedP
 		<>
 			<SignUpPageTitle isVerification={isVerificationMode} isRizeFlow={isRizeFlow} />
 
-			<div className="flex flex-col justify-center items-center mt-8 gap-6 w-full">
+			<div className="flex flex-col justify-center items-center mt-6 lg:mt-8 gap-4 lg:gap-6 w-full">
 				{/* Email/Password Sign Up Form */}
 				<EmailPasswordSignUpForm
 					className="w-full"
@@ -30,10 +30,10 @@ const SignUpContent = ({preselectedProvider, isRizeFlow = false}: { preselectedP
 							<div className="flex-grow h-px bg-neutral-300"></div>
 						</div>
 
-					{/* OAuth Providers */}
+						{/* OAuth Providers */}
 						<div className="flex flex-col gap-4 w-full">
-						<GoogleAuthButton className="w-full" highlighted={preselectedProvider === 'google'} />
-						<GithubAuthButton className="w-full" highlighted={preselectedProvider === 'github'} />
+							<GoogleAuthButton className="w-full" highlighted={preselectedProvider === 'google'} />
+							<GithubAuthButton className="w-full" highlighted={preselectedProvider === 'github'} />
 						</div>
 					</>
 				)}

@@ -29,7 +29,7 @@ const ResumeViewer = ({resume, resumeRef, className, showAnimation = false, show
 					aria-label="Resume preview"
 					data-prefers-reduced-motion={
 						typeof window !== 'undefined'
-					&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
+						&& window.matchMedia('(prefers-reduced-motion: reduce)').matches
 					}
 				/>
 			</div>

@@ -29,18 +29,18 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 		if (!content) return null
 
 		return (
-			<div className="space-y-4 group">
-				<div className="flex items-center gap-3">
-					<div className="p-2 bg-flame-50 rounded-lg group-hover:bg-flame-100 transition-colors">
+			<div className="space-y-3 sm:space-y-4 group">
+				<div className="flex items-center gap-2 sm:gap-3">
+					<div className="p-1.5 sm:p-2 bg-flame-50 rounded-lg group-hover:bg-flame-100 transition-colors">
 						{icon}
 					</div>
-					<h3 className="text-lg font-semibold text-neutral-900">{title}</h3>
+					<h3 className="text-base sm:text-lg font-semibold text-neutral-900">{title}</h3>
 				</div>
-				<div className="pl-14 space-y-2">
+				<div className="pl-8 sm:pl-14 space-y-2">
 					{content.split('\n').filter(line => line.trim()).map((line, index) => (
-						<div key={index} className="text-neutral-600 leading-relaxed">
+						<div key={index} className="text-sm sm:text-base text-neutral-600 leading-relaxed">
 							{line.trim().startsWith('•') || line.trim().startsWith('-') ? (
-								<div className="flex gap-3">
+								<div className="flex gap-2 sm:gap-3">
 									<span className="text-flame-400 mt-1.5 text-xs">▸</span>
 									<span className="flex-1">{line.replace(/^[•-]\s*/, '')}</span>
 								</div>
@@ -94,7 +94,7 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 
 					{/* Modal */}
 					<motion.div
-						className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+						className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none px-4"
 					>
 						<motion.div
 							initial={getInitialPosition()}
@@ -106,7 +106,7 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 								stiffness: 300,
 								duration: 0.4
 							}}
-							className="max-w-3xl w-full max-h-[90vh] bg-white rounded-2xl shadow-2xl pointer-events-auto overflow-hidden"
+							className="w-[calc(100vw-2rem)] sm:w-[calc(100vw-4rem)] md:max-w-3xl max-h-[90vh] bg-white rounded-2xl shadow-2xl pointer-events-auto overflow-hidden"
 							onMouseDown={(e) => {e.stopPropagation()}}
 						>
 							{/* Custom Dialog Content */}
@@ -114,27 +114,27 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 								{/* Close Button */}
 								<button
 									onClick={(e) => {e.preventDefault(); e.stopPropagation(); onClose()}}
-									className="absolute right-4 top-4 rounded-full bg-neutral-100 p-2 opacity-70 hover:opacity-100 hover:bg-neutral-200 transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 z-10"
+									className="absolute right-2 top-2 sm:right-4 sm:top-4 rounded-full bg-neutral-100 p-2 opacity-70 hover:opacity-100 hover:bg-neutral-200 transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 z-10"
 								>
 									<X className="h-4 w-4" />
 									<span className="sr-only">Close</span>
 								</button>
 
 								{/* Header */}
-								<div className="px-6 py-4 border-b">
-									<h2 className="text-2xl font-bold text-neutral-900">Job Details</h2>
+								<div className="px-4 sm:px-6 py-4 border-b">
+									<h2 className="text-xl sm:text-2xl font-bold text-neutral-900">Job Details</h2>
 								</div>
 
 								{/* Content */}
-								<div className="px-6 space-y-8 py-6">
+								<div className="px-4 sm:px-6 space-y-6 sm:space-y-8 py-4 sm:py-6">
 									{/* Job Title and Company */}
 									<div className="space-y-4">
 										<div className="flex items-start justify-between gap-4">
 											<div className="space-y-2 flex-1">
-												<h2 className="text-2xl font-bold text-neutral-900">
+												<h2 className="text-xl sm:text-2xl font-bold text-neutral-900">
 													{job.title}
 												</h2>
-												<div className="flex items-center gap-6 text-sm">
+												<div className="flex flex-col gap-2 sm:flex-row sm:gap-6 text-sm">
 													<span className="flex items-center gap-2 text-neutral-700">
 														<div className="p-1 bg-neutral-100 rounded">
 															<Building2 className="h-3.5 w-3.5 text-neutral-600" />
@@ -212,8 +212,8 @@ const JobDetailsModal = ({isOpen, onClose, job, buttonRect}: JobDetailsModalProp
 									)}
 								</div>
 
-								{/* WebsiteFooter */}
-								<div className="flex justify-end px-6 py-4 border-t">
+								{/* Footer */}
+								<div className="flex justify-end px-4 sm:px-6 py-4 border-t">
 									<Button variant="outline" onClick={onClose}>
 										Close
 									</Button>

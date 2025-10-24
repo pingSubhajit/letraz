@@ -187,10 +187,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 		<div ref={scrollRef} className={cn('space-y-6', className)}>
 			{view === 'form' ? (
 				<ScrollMask
-					className="space-y-6"
-					style={{
-						height: 'calc(100vh - 162px)'
-					}}
+					className="space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none"
 					data-lenis-prevent
 				>
 					<div className="space-y-6 px-1">
@@ -199,16 +196,16 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							description="Ensure that the details are correct and reflect your previous personal information"
 						/>
 
-						<div className="rounded-xl p-6 mb-6 shadow-md bg-neutral-100">
-							<div className="flex items-start gap-4">
+						<div className="rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-md bg-neutral-100">
+							<div className="flex items-start gap-3 sm:gap-4">
 								<div className="flex-shrink-0">
-									<div className="w-10 h-10 bg-flame-500 rounded-lg flex items-center justify-center">
-										<FileText className="h-5 w-5 text-white" />
+									<div className="w-8 h-8 sm:w-10 sm:h-10 bg-flame-500 rounded-lg flex items-center justify-center">
+										<FileText className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
 									</div>
 								</div>
 								<div className="flex-1">
-									<h3 className="text-base font-semibold text-flame-950 leading-none mb-1">Global Information</h3>
-									<p className="text-sm text-flame-900 leading-relaxed">
+									<h3 className="text-sm sm:text-base font-semibold text-flame-950 leading-none mb-1">Global Information</h3>
+									<p className="text-xs sm:text-sm text-flame-900 leading-relaxed">
 										Changes made to your personal information will be applied across all of your resumes.
 										This ensures your details stay consistent throughout your profile.
 									</p>
@@ -221,7 +218,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 								onSubmit={form.handleSubmit(onSubmit)}
 								className="flex flex-col gap-4"
 							>
-								<div className="grid grid-cols-3 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 									<FormField
 										control={form.control}
 										name="title"
@@ -234,7 +231,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 													disabled={isSubmitting}
 												>
 													<FormControl>
-														<SelectTrigger className="h-12">
+														<SelectTrigger className="h-10 sm:h-12">
 															<SelectValue placeholder="e.g., Mr., Mrs., Dr." />
 														</SelectTrigger>
 													</FormControl>
@@ -263,7 +260,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 										disabled={isSubmitting}
 									/>
 								</div>
-								<div className="grid grid-cols-3 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 									<TextFormField
 										form={form}
 										name="email"
@@ -310,7 +307,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 									disabled={isSubmitting}
 								/>
 
-								<div className="grid grid-cols-3 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 									<TextFormField
 										form={form}
 										name="city"
@@ -362,7 +359,10 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 					</div>
 				</ScrollMask>
 			) : (
-				<>
+				<ScrollMask
+					className="space-y-6 h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none"
+					data-lenis-prevent
+				>
 					<EditorHeader
 						title="Personal Information"
 						showAddButton={isMounted && !isLoading}
@@ -401,7 +401,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 										onEdit={handleUpdate}
 										id={userInfo.id}
 									>
-										<div className="space-y-6 p-4">
+										<div className="space-y-4 sm:space-y-6 p-2 sm:p-4">
 											{/* Header Section */}
 											<div className="flex items-center space-x-3">
 												<div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full overflow-hidden">
@@ -420,16 +420,16 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 													)}
 												</div>
 												<div>
-													<h3 className="text-lg font-semibold text-foreground">
+													<h3 className="text-base sm:text-lg font-semibold text-foreground">
 														{userInfo?.title && `${userInfo.title} `}
 														{userInfo.first_name} {userInfo.last_name}
 													</h3>
-													<p className="text-sm text-muted-foreground">Personal Information</p>
+													<p className="text-xs sm:text-sm text-muted-foreground">Personal Information</p>
 												</div>
 											</div>
 
 											{/* Contact Information */}
-											<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div className="grid grid-cols-1 gap-4">
 												{/* Email */}
 												<div className="flex items-center space-x-3">
 													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
@@ -523,7 +523,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							</motion.div>
 						)}
 					</AnimatePresence>
-				</>
+				</ScrollMask>
 			)}
 		</div>
 	)

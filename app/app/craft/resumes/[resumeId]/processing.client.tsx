@@ -10,12 +10,15 @@ import {useEffect} from 'react'
 import {useAnalytics} from '@/lib/analytics'
 import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
 import useDidTransition from '@/components/resume/hooks/useDidTransition'
+import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
+import ResumeViewMobile from '@/components/resume/mobile/ResumeViewMobile'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {data: resume, isLoading, isError} = useResumeById(resumeId)
 	const {track} = useAnalytics()
+	const isMobile = useIsMobile(1024)
 
 	// Normalize status for consistent checks
 	const status = (resume?.status || '').toLowerCase()
@@ -65,6 +68,17 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 
 	// Initial load or transient errors: show neutral placeholders without the processing overlay
 	if (!resume && (isLoading || isError)) {
+		// Mobile loading state
+		if (isMobile) {
+			return (
+				<ResumeHighlightProvider>
+					<ResumeViewMobile>
+						<div className="bg-neutral-50 w-full animate-pulse shadow-none" style={{aspectRatio: '210/297'}} />
+					</ResumeViewMobile>
+				</ResumeHighlightProvider>
+			)
+		}
+		// Desktop loading state
 		return (
 			<ResumeHighlightProvider>
 				<div className="flex h-screen w-full" role="main">
@@ -78,6 +92,19 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	}
 
 	if (processing) {
+		// Mobile processing state
+		if (isMobile) {
+			return (
+				<ResumeHighlightProvider>
+					<ResumeViewMobile>
+						<div className="bg-neutral-50 w-full relative shadow-none" style={{aspectRatio: '210/297'}}>
+							<ResumeAiLoading />
+						</div>
+					</ResumeViewMobile>
+				</ResumeHighlightProvider>
+			)
+		}
+		// Desktop processing state
 		return (
 			<ResumeHighlightProvider>
 				<div className="flex h-screen w-full" role="main">
@@ -106,7 +133,23 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 
 	if (!resume) return null
 
+	// Mobile layout - Use ResumeViewMobile wrapper
+	if (isMobile) {
+		return (
+			<ResumeHighlightProvider>
+				<ResumeViewMobile resume={resume} showToolbar={true}>
+					<ResumeViewer
+						resume={resume}
+						className="shadow-none"
+						showToolbar={false}
+						showAnimation={showReveal}
+					/>
+				</ResumeViewMobile>
+			</ResumeHighlightProvider>
+		)
+	}
 
+	// Desktop layout - Original side-by-side layout
 	return (
 		<ResumeHighlightProvider>
 			<div className="flex h-screen w-full" role="main">

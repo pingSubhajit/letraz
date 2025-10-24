@@ -20,9 +20,10 @@ interface ResumeActionsToolbarProps {
 	className?: string
 	isBaseResume?: boolean
 	job?: Job | null
+	isBottomSheetExpanded?: boolean
 }
 
-const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: ResumeActionsToolbarProps) => {
+const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, isBottomSheetExpanded = false}: ResumeActionsToolbarProps) => {
 	const {mutateAsync: exportResume, isPending: isExporting} = useExportResumeMutation()
 	const {mutateAsync: deleteResume, isPending: isDeleting} = useDeleteResumeMutation()
 	const {data: resume} = useResumeById(resumeId)
@@ -143,7 +144,9 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 			<TooltipProvider>
 				<div
 					className={cn(
-						'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50',
+						'lg:fixed lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:z-[60]',
+						'transition-opacity duration-300',
+						isBottomSheetExpanded && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto',
 						className
 					)}
 				>
@@ -158,9 +161,12 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 		<TooltipProvider>
 			<div
 				className={cn(
-					'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[#e5e5e5] rounded-full shadow-lg px-1 py-1',
+					'flex items-center gap-2 bg-[#e5e5e5] rounded-tl-[36px] rounded-bl-[36px] rounded-tr-[12px] rounded-br-[12px] md:rounded-full shadow-lg px-1 py-1',
 					'border border-neutral-200',
+					'transition-opacity duration-300',
 					'max-w-[calc(100vw-2rem)] md:max-w-none',
+					'lg:fixed lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:z-[60]',
+					isBottomSheetExpanded && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto',
 					className
 				)}
 			>
