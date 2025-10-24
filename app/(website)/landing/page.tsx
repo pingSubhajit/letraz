@@ -32,14 +32,14 @@ const LandingPage = () => {
 
 				{/* Canvas sequence */}
 				<HeroVideoSequence
-					className="h-[30vh] mt-32 sm:mt-0 w-[95vw] sm:w-[90vw] sm:h-[46vh] md:w-[85vw] md:h-[50vh] lg:h-[85vh] lg:w-[70vw] absolute top-[330px] sm:top-[400px] lg:top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
+					className="mt-32 sm:mt-0 w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[75vw] aspect-[5.3/3.4] max-h-[40vh] sm:max-h-[55vh] lg:max-h-[75vh] xl:max-h-[80vh] 3xl:max-h-[85vh] absolute top-[330px] sm:top-[400px] lg:top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
 				/>
 
                 <HeroHeader />
 			</div>
 
-			<div className="pb-12 sm:pb-16 lg:pb-20 bg-[#0F0202]">
-				<p className="text-center text-neutral-50 sm:pt-12 text-sm sm:text-base px-4">Trusted by people in</p>
+			<div className="-mt-[15vh] sm:-mt-[10vh] lg:-mt-0 pb-12 sm:pb-16 lg:pb-20 bg-[#0F0202]">
+				<p className="text-center text-neutral-50 pt-8 sm:pt-12 text-sm sm:text-base px-4">Trusted by people in</p>
 
 				<div className="mt-4 sm:mt-6 flex justify-center items-center gap-4 sm:gap-6 lg:gap-8 mx-auto px-4">
 					<Image src={stacksLogo} alt="Stacks logo" className="w-16 sm:w-20 lg:w-28" />
