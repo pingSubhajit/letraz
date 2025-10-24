@@ -116,15 +116,15 @@ const LandingPageFeatures = () => {
 	return (
 		<section ref={sectionRef} className="w-full px-4">
 			{/* Bento Grid Container */}
-			<div
-				className="grid gap-4 w-full max-w-7xl mx-auto min-h-[800px] lg:min-h-[900px]"
+			<div className="flex flex-col lg:grid gap-4 w-full max-w-7xl mx-auto lg:min-h-[900px] [&>*]:lg:[grid-column:initial] [&>*]:lg:[grid-row:initial]"
 				style={{
 					gridTemplateColumns: 'repeat(12, 1fr)',
 					gridTemplateRows: 'repeat(8, auto)'
 				}}
 			>
+				{/* Card 1 - QR Code */}
 				<Card
-					className="bg-neutral-100 border-none rounded-2xl flex flex-col items-center justify-end px-8 py-4 overflow-hidden relative"
+					className="hidden lg:flex bg-neutral-100 border-none rounded-2xl flex-col items-center justify-end px-8 py-16 lg:py-4 overflow-hidden relative"
 					style={{gridArea: '7 / 10 / 9 / 13'}}
 				>
 					<Image
@@ -137,13 +137,14 @@ const LandingPageFeatures = () => {
 					</p>
 				</Card>
 
+				{/* Card 2 - AI Insights */}
 				<Card
-					className="bg-neutral-100 border-none rounded-2xl flex flex-col justify-between items-center p-8 pb-0 relative overflow-hidden"
+					className="hidden lg:flex bg-neutral-100 border-none rounded-2xl flex-col justify-between items-center p-8 pb-32 lg:pb-0 relative overflow-hidden"
 					style={{gridArea: '4 / 10 / 7 / 13'}}
 				>
 					<div className="text-center">
-						<h3 className="text-2xl font-medium">Baked-in AI insights</h3>
-						<p className="mt-4 text-sm">We suggest you opportunities of improvement, and optimize your resume with built-in AI functionality</p>
+						<h3 className="text-xl sm:text-2xl font-medium">Baked-in AI insights</h3>
+						<p className="mt-4 text-xs sm:text-sm">We suggest you opportunities of improvement, and optimize your resume with built-in AI functionality</p>
 					</div>
 
 					{active && (
@@ -153,63 +154,74 @@ const LandingPageFeatures = () => {
 					)}
 				</Card>
 
+				{/* Card 3 - PDF & LaTeX */}
 				<Card
-					className="rounded-2xl overflow-hidden border-none
-					bg-[#F4F0E7] relative"
+					className="rounded-2xl overflow-hidden border-none bg-[#F4F0E7] relative min-h-[550px] lg:min-h-0 pt-8 pb-4 lg:pt-0 lg:pb-0 order-5 lg:order-none flex flex-col justify-between items-center lg:block"
 					style={{gridArea: '4 / 6 / 9 / 10'}}
 				>
 					<FlickeringGrid className="opacity-40" />
 
-					<div className="text-center absolute left-1/2 -translate-x-1/2 top-8 w-[85%]">
-						<h3 className="text-2xl font-semibold">Download PDF & LaTeX version, edit easily</h3>
+					<div className="text-center relative w-[85%] mx-auto mb-6 lg:mb-0 lg:absolute lg:top-8 lg:left-1/2 lg:-translate-x-1/2">
+						<h3 className="text-xl sm:text-2xl font-semibold">Download PDF & LaTeX version, edit easily</h3>
 					</div>
 
 					{active && (
-						<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="w-[85%] absolute left-1/2 -translate-x-1/2 -bottom-16 shadow-2xl rounded-2xl">
+						<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="w-[85%] mx-auto mt-6 shadow-2xl rounded-2xl lg:mt-0 lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:-bottom-16">
 							<source src="/resume-generation.av1.webm" type="video/webm; codecs=av01"/>
 							<source src="/resume-generation.webm" type="video/webm; codecs=vp9"/>
 						</video>
 					)}
 				</Card>
 
+				{/* Card 4 - Job Portals */}
 				<Card
-					className="bg-neutral-100 rounded-2xl p-8 relative overflow-hidden border-none"
+					className="bg-neutral-100 rounded-2xl p-8 pb-12 lg:pb-8 relative overflow-hidden border-none order-4 lg:order-none"
 					style={{gridArea: '6 / 1 / 9 / 6'}}
 				>
 					<p className="text-2xl font-semibold text-center relative z-10 leading-normal max-w-[80%] mx-auto">
 						Connects with every single job portal you apply for jobs in
 					</p>
 					{active && (
-						<video autoPlay muted loop playsInline preload="none" poster="/logo_mono.png" className="w-full absolute left-0 -bottom-16">
+						<video
+							autoPlay
+							muted
+							loop
+							playsInline
+							preload="none"
+							poster="/logo_mono.png"
+							className="w-full mt-4 sm:mt-6 lg:mt-0 lg:absolute lg:left-0 lg:-bottom-16"
+						>
 							<source src="/logo-carousel.av1.webm" type="video/webm; codecs=av01"/>
 							<source src="/logo-carousel.webm" type="video/webm; codecs=vp9"/>
 						</video>
 					)}
 				</Card>
 
+				{/* Card 5 - Rize Bio */}
 				<Card
-					className="bg-[#FFF4C2] border-none rounded-2xl flex justify-between items-center p-8 pb-0 relative overflow-hidden gap-4"
+					className="bg-[#FFF4C2] border-none rounded-2xl flex flex-col lg:flex-row justify-between items-center p-8 pb-4 lg:pb-0 relative overflow-hidden gap-6 lg:gap-4 order-3 lg:order-none"
 					style={{gridArea: '4 / 1 / 6 / 6'}}
 					onMouseEnter={() => setIsRizeCardHovered(true)}
 					onMouseLeave={() => setIsRizeCardHovered(false)}
 				>
-					<div className="w-[55%]">
-						<h3 className="text-3xl font-medium">Share your bio</h3>
-						<p className="mt-4">With Rize, create and share your bio, your portfolio, with just one link, always updated</p>
+					<div className="w-full lg:w-[55%]">
+						<h3 className="text-2xl sm:text-3xl font-medium">Share your bio</h3>
+						<p className="mt-4 text-sm sm:text-base">With Rize, create and share your bio, your portfolio, with just one link, always updated</p>
 					</div>
 
-					<div className="w-[45%] h-full">
+					<div className="w-full lg:w-[45%] h-56 lg:h-full">
 						<RizeAsset isHovered={isRizeCardHovered} />
 					</div>
 				</Card>
 
+				{/* Card 6 - Apply with Confidence */}
 				<Card
-					className="bg-[#F54A22] rounded-2xl relative overflow-hidden p-8 border-none"
+					className="bg-[#F54A22] rounded-2xl relative overflow-hidden p-8 pb-32 lg:pb-8 border-none order-1 lg:order-none"
 					style={{gridArea: '1 / 1 / 4 / 6'}}
 				>
 					<div className="z-10 relative text-neutral-50 text-center">
-						<h3 className="text-3xl font-medium">Apply with confidence</h3>
-						<p className="mt-4 opacity-90 max-w-[80%] mx-auto leading-snug">
+						<h3 className="text-2xl sm:text-3xl font-medium">Apply with confidence</h3>
+						<p className="mt-4 opacity-90 max-w-[80%] mx-auto leading-snug text-sm sm:text-base">
 							Put out the best possible version of your resume for that hiring manager to judge you on
 						</p>
 					</div>
@@ -225,18 +237,19 @@ const LandingPageFeatures = () => {
 					</video>
 				</Card>
 
+				{/* Card 7 - Edit and Tweak */}
 				<Card
 					className="rounded-2xl border-none
 					bg-[radial-gradient(circle,rgba(245,245,245,1)_0%,rgba(229,229,229,1)_100%)]
-					flex justify-between items-center gap-8 p-8"
+					flex flex-col lg:flex-row justify-between items-center gap-6 lg:gap-8 p-8 order-2 lg:order-none"
 					style={{gridArea: '1 / 6 / 4 / 13'}}
 				>
-					<div className="w-[55%]">
-						<h3 className="text-3xl font-medium">Edit and tweak easily</h3>
-						<p className="mt-4">Make changes to your resume with our state of the art editor, making your life easily all the way</p>
+					<div className="w-full lg:w-[55%]">
+						<h3 className="text-2xl sm:text-3xl font-medium">Edit and tweak easily</h3>
+						<p className="mt-4 text-sm sm:text-base">Make changes to your resume with our state of the art editor, making your life easily all the way</p>
 					</div>
 
-					<div className="bg-white aspect-square w-[45%] rounded-2xl overflow-hidden">
+					<div className="bg-white aspect-square w-full lg:w-[45%] rounded-2xl overflow-hidden">
 						{active && (
 							<video autoPlay muted loop playsInline preload="none" poster="/letraz.png" className="h-full">
 								<source src="/tweak-resume.av1.webm" type="video/webm; codecs=av01"/>

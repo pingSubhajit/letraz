@@ -4,6 +4,9 @@ import {cn} from '@/lib/utils'
 import {AnimatePresence, motion} from 'motion/react'
 import {useEffect, useRef, useState} from 'react'
 import {supportEmail} from '@/config'
+import {ChevronDown} from 'lucide-react'
+
+const MotionChevronDown = motion(ChevronDown)
 
 const faqItems = [
 	{
@@ -34,6 +37,7 @@ const LandingPageFaq = ({
 	className?: string;
 }) => {
 	const [activeIndex, setActiveIndex] = useState<number | null>(1)
+	const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false)
 
 	// Measure container width and gap to compute a fixed text width for the expanded state
 	const containerRef = useRef<HTMLDivElement | null>(null)
@@ -41,6 +45,25 @@ const LandingPageFaq = ({
 	const [columnGap, setColumnGap] = useState(0)
 
 	useEffect(() => {
+		if (typeof window === 'undefined') return
+		const mq = window.matchMedia('(min-width: 1024px)')
+		const setMatches = (value: boolean) => setIsLargeScreen(value)
+		setMatches(mq.matches)
+		const listener = (event: MediaQueryListEvent) => setMatches(event.matches)
+		if (typeof mq.addEventListener === 'function') {
+			mq.addEventListener('change', listener)
+			return () => mq.removeEventListener('change', listener)
+		}
+		mq.addListener(listener)
+		return () => mq.removeListener(listener)
+	}, [])
+
+	useEffect(() => {
+		if (!isLargeScreen) {
+			setContainerWidth(0)
+			setColumnGap(0)
+			return
+		}
 		if (!containerRef.current) return
 		const element = containerRef.current
 		const updateMeasurements = () => {
@@ -54,7 +77,13 @@ const LandingPageFaq = ({
 		const ro = new ResizeObserver(() => updateMeasurements())
 		ro.observe(element)
 		return () => ro.disconnect()
-	}, [])
+	}, [isLargeScreen])
+
+	useEffect(() => {
+		if (isLargeScreen && activeIndex === null) {
+			setActiveIndex(0)
+		}
+	}, [isLargeScreen, activeIndex])
 
 	// Keep grow factors in one place so UI and measurement stay in sync
 	const collapsedGrow = 1.5
@@ -71,99 +100,159 @@ const LandingPageFaq = ({
 	const collapsedCardWidth = totalGrow > 0 ? (usableWidth * collapsedGrow) / totalGrow : 0
 	const fixedCollapsedTextWidth = Math.max(0, collapsedCardWidth - paddingPx * 2)
 
+	const handleActivate = (index: number) => {
+		if (isLargeScreen) {
+			setActiveIndex(index)
+			return
+		}
+		setActiveIndex((current) => current === index ? null : index)
+	}
+
 	return (
-		<section className="w-full space-y-16">
-			<div className="space-y-4">
-				<h2 className="text-5xl flex flex-col leading-tight font-medium">
+		<section className="w-full space-y-12 sm:space-y-16 px-4 sm:px-6 lg:px-0 antialiased">
+			<div className="space-y-3 sm:space-y-4">
+				<h2 className="text-4xl sm:text-5xl flex flex-col leading-tight font-medium">
 					<span>Frequently</span>
 					<span>asked <span className="text-flame-500">questions</span></span>
 				</h2>
 
-				<p className="max-w-xl">
+				<p className="max-w-xl text-sm sm:text-base text-neutral-600 leading-relaxed sm:leading-7">
 					These are the answers to the most common question we are asked. If you still have some other question, feel free to reach us out
 					at <a href={`mailto:${supportEmail}`} className="text-flame-500 font-medium">{supportEmail}</a>
 				</p>
 			</div>
 
-			<motion.div
-				initial={{opacity: 0, translateY: 20}}
-				animate={{opacity: 1, translateY: 0}}
-				transition={{
-					duration: 0.3,
-					delay: 0.5
-				}}
-				className={cn('relative w-full', className)}
-			>
+			{isLargeScreen ? (
 				<motion.div
-					initial={{opacity: 0}}
-					animate={{opacity: 1}}
-					transition={{duration: 0.3}}
-					className="w-full"
+					initial={{opacity: 0, translateY: 20}}
+					animate={{opacity: 1, translateY: 0}}
+					transition={{
+						duration: 0.3,
+						delay: 0.5
+					}}
+					className={cn('relative w-full', className)}
 				>
-					<div ref={containerRef} className="flex w-full items-stretch gap-1">
-						{faqItems.map((item, index) => {
-							const isActive = activeIndex === index
-							return (
-								<motion.div
-									key={index}
-									className={cn(
-										'relative basis-0 cursor-pointer overflow-hidden rounded-3xl bg-neutral-200 p-4 transition-colors duration-300 ease-in-out',
-										isActive && 'bg-flame-500'
-									)}
-									initial={{height: '24rem', flexGrow: collapsedGrow}}
-									animate={{
-										flexGrow: isActive ? expandedGrow : collapsedGrow,
-										height: '24rem'
-									}}
-									transition={{duration: 0.3, ease: 'easeInOut'}}
-									onClick={() => setActiveIndex(index)}
-									onHoverStart={() => setActiveIndex(index)}
-									role="button"
+					<motion.div
+						initial={{opacity: 0}}
+						animate={{opacity: 1}}
+						transition={{duration: 0.3}}
+						className="w-full"
+					>
+						<div ref={containerRef} className="flex w-full items-stretch gap-1">
+							{faqItems.map((item, index) => {
+								const isActive = activeIndex === index
+								return (
+									<motion.div
+										key={index}
+										className={cn(
+											'relative basis-0 cursor-pointer overflow-hidden rounded-3xl bg-neutral-200 p-4 transition-colors duration-300 ease-in-out',
+											isActive && 'bg-flame-500'
+										)}
+										initial={{height: '24rem', flexGrow: collapsedGrow}}
+										animate={{
+											flexGrow: isActive ? expandedGrow : collapsedGrow,
+											height: '24rem'
+										}}
+										transition={{duration: 0.3, ease: 'easeInOut'}}
+										onClick={() => handleActivate(index)}
+										onHoverStart={() => handleActivate(index)}
+										role="button"
+										aria-expanded={isActive}
+									>
+										{/* Inactive Question */}
+										<AnimatePresence>
+											{!isActive && <motion.h3
+												initial={{y: -16, opacity: 1}}
+												animate={{y: 0, opacity: 1}}
+												exit={{y: -16, opacity: 0}}
+												transition={{duration: 0.2, ease: 'easeInOut'}}
+												className="absolute bottom-8 left-4 text-xl text-neutral-800/90"
+												style={fixedCollapsedTextWidth ? {width: fixedCollapsedTextWidth} : undefined}
+											>
+												{item.question}
+											</motion.h3>}
+										</AnimatePresence>
+
+										{/* Answer */}
+										<AnimatePresence>
+											{isActive && (
+												<motion.div
+													initial={{opacity: 0, y: 10}}
+													animate={{opacity: 1, y: 0}}
+													exit={{opacity: 0, y: 10}}
+													transition={{duration: 0.25}}
+													className="absolute inset-0 flex h-full w-full flex-col justify-end p-8 space-y-4"
+												>
+													<h3
+														className="text-neutral-50/90 text-2xl"
+														style={fixedTextWidth ? {width: fixedTextWidth} : undefined}
+													>
+														{item.question}
+													</h3>
+
+													<p className="text-neutral-50/70 text-xl" style={fixedTextWidth ? {width: fixedTextWidth - 16} : undefined}>
+														{item.answer}
+													</p>
+												</motion.div>
+											)}
+										</AnimatePresence>
+									</motion.div>
+								)
+							})}
+						</div>
+					</motion.div>
+				</motion.div>
+			) : (
+				<div className={cn('flex w-full flex-col gap-3 sm:gap-4', className)}>
+					{faqItems.map((item, index) => {
+						const isActive = activeIndex === index
+						return (
+							<motion.div
+								key={item.question}
+								initial={{opacity: 0, translateY: 12}}
+								animate={{opacity: 1, translateY: 0}}
+								transition={{duration: 0.2, delay: index * 0.04}}
+								className={cn(
+									'rounded-2xl overflow-hidden transition-colors border border-flame-500/40',
+									isActive ? 'bg-flame-500 text-white' : 'bg-white text-neutral-600'
+								)}
+							>
+								<button
+									type="button"
+									className="w-full flex items-center justify-between gap-3 sm:gap-4 px-4 py-4 sm:px-6 sm:py-5 text-left"
+									onClick={() => handleActivate(index)}
 									aria-expanded={isActive}
 								>
-									{/* Inactive Question */}
-									<AnimatePresence>
-										{!isActive && <motion.h3
-											initial={{y: -16, opacity: 1}}
-											animate={{y: 0, opacity: 1}}
-											exit={{y: -16, opacity: 0}}
-											transition={{duration: 0.2, ease: 'easeInOut'}}
-											className="absolute bottom-8 left-4 text-xl text-neutral-800/90"
-											style={fixedCollapsedTextWidth ? {width: fixedCollapsedTextWidth} : undefined}
-										>
-											{item.question}
-										</motion.h3>}
-									</AnimatePresence>
-
-									{/* Answer */}
-									<AnimatePresence>
-										{isActive && (
-											<motion.div
-												initial={{opacity: 0, y: 10}}
-												animate={{opacity: 1, y: 0}}
-												exit={{opacity: 0, y: 10}}
-												transition={{duration: 0.25}}
-												className="absolute inset-0 flex h-full w-full flex-col justify-end p-8 space-y-4"
-											>
-												<h3
-													className="text-neutral-50/90 text-2xl"
-													style={fixedTextWidth ? {width: fixedTextWidth} : undefined}
-												>
-													{item.question}
-												</h3>
-
-												<p className="text-neutral-50/70 text-xl" style={fixedTextWidth ? {width: fixedTextWidth - 16} : undefined}>
-													{item.answer}
-												</p>
-											</motion.div>
+									<span className="text-sm sm:text-base font-semibold sm:font-semibold">{item.question}</span>
+									<MotionChevronDown
+										initial={false}
+										animate={{rotate: isActive ? 180 : 0}}
+										transition={{duration: 0.2}}
+										className={cn(
+											'h-5 w-5 shrink-0 transition-colors',
+											isActive ? 'text-white' : 'text-flame-500'
 										)}
-									</AnimatePresence>
-								</motion.div>
-							)
-						})}
-					</div>
-				</motion.div>
-			</motion.div>
+									/>
+								</button>
+								<AnimatePresence initial={false}>
+									{isActive && (
+										<motion.div
+											key="content"
+											initial={{height: 0, opacity: 0}}
+											animate={{height: 'auto', opacity: 1}}
+											exit={{height: 0, opacity: 0}}
+											transition={{duration: 0.2}}
+											className="px-4 pb-4 sm:px-6 sm:pb-5 text-xs sm:text-sm font-medium text-white tracking-tight antialiased"
+										>
+											{item.answer}
+										</motion.div>
+									)}
+								</AnimatePresence>
+							</motion.div>
+						)
+					})}
+				</div>
+			)}
 		</section>
 	)
 }
