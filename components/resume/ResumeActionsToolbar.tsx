@@ -148,7 +148,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, i
 				<div
 					className={cn(
 						'lg:fixed lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:z-[60]',
-						'transition-opacity duration-300',
+						'transition-opacity duration-300 lg:scale-75 xl:scale-90 2xl:scale-100',
 						isBottomSheetExpanded && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto',
 						className
 					)}
@@ -174,6 +174,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, i
 					'transition-opacity duration-300',
 					'max-w-[calc(100vw-2rem)] md:max-w-none',
 					'lg:fixed lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:z-[60]',
+					'lg:scale-75 xl:scale-80 2xl:scale-100',
 					isBottomSheetExpanded && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto',
 					className
 				)}

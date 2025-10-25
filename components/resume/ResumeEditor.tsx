@@ -90,40 +90,40 @@ const ResumeEditor = ({className, activeTabIndex, isMobile = false}: ResumeEdito
 
 	// Desktop: Render with tabs
 	return (
-		<div className={cn('p-6', className)}>
+		<div className={cn('p-4 lg:p-4 2xl:p-6', className)}>
 			{useNewTabDesign ? (
 				// New expandable tabs design
 				<>
 					<ExpandableTabs
 						tabs={tabs}
 						onChange={handleTabChange}
-						className="mb-6"
+						className="mb-4 lg:mb-4 2xl:mb-6"
 						collapseOnOutsideClick={false}
 					/>
-					<div className="mt-6">
+					<div className="mt-4 lg:mt-4 2xl:mt-6">
 						{renderEditorContent()}
 					</div>
 				</>
 			) : (
 				// Traditional tabs design
 				<Tabs value={activeTabId} onValueChange={setActiveTabId} className="w-full">
-					<TabsList className="grid w-full grid-cols-6 h-12 p-1 rounded-xl">
+					<TabsList className="grid w-full grid-cols-6 h-10 lg:h-10 2xl:h-12 p-0.5 lg:p-0.5 2xl:p-1 rounded-xl">
 						{tabs.map((tab) => {
 							const IconComponent = tab.icon
 							return (
 								<TabsTrigger
 									key={tab.id}
 									value={tab.id}
-									className="relative font-medium text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-2"
+									className="relative font-medium text-xs lg:text-xs 2xl:text-sm text-neutral-600 hover:text-neutral-800 data-[state=active]:bg-white data-[state=active]:text-flame-700 data-[state=active]:shadow-md data-[state=active]:shadow-neutral-200/50 data-[state=active]:border-0 rounded-lg transition-all duration-300 ease-in-out hover:bg-white/60 flex items-center gap-1.5 lg:gap-1.5 2xl:gap-2"
 								>
-									<IconComponent className="h-4 w-4 shrink-0" />
+									<IconComponent className="h-3.5 w-3.5 lg:h-3.5 lg:w-3.5 2xl:h-4 2xl:w-4 shrink-0" />
 									<span className="hidden sm:inline truncate">{tab.title}</span>
 								</TabsTrigger>
 							)
 						})}
 					</TabsList>
 					{tabs.map((tab) => (
-						<TabsContent key={tab.id} value={tab.id} className="mt-6">
+						<TabsContent key={tab.id} value={tab.id} className="mt-4 lg:mt-4 2xl:mt-6">
 							{renderEditorContent()}
 						</TabsContent>
 					))}
