@@ -12,6 +12,7 @@ import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
 import useDidTransition from '@/components/resume/hooks/useDidTransition'
 import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
 import ResumeViewMobile from '@/components/resume/mobile/ResumeViewMobile'
+import DesktopResumeScaler from '@/components/resume/DesktopResumeScaler'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
@@ -66,30 +67,34 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	}, [resume, status])
 
 
-	// Initial load or transient errors: show neutral placeholders without the processing overlay
-	if (!resume && (isLoading || isError)) {
-		// Mobile loading state
-		if (isMobile) {
-			return (
-				<ResumeHighlightProvider>
-					<ResumeViewMobile>
-						<div className="bg-neutral-50 w-full animate-pulse shadow-none" style={{aspectRatio: '210/297'}} />
-					</ResumeViewMobile>
-				</ResumeHighlightProvider>
-			)
-		}
-		// Desktop loading state
-		return (
-			<ResumeHighlightProvider>
-				<div className="flex h-screen w-full" role="main">
-					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative overflow-hidden shrink-0" />
-					<div className="flex-1 min-w-0">
-						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
-					</div>
-				</div>
-			</ResumeHighlightProvider>
-		)
-	}
+	/*
+	 * Initial load or transient errors: show neutral placeholders without the processing overlay
+	 * if (!resume && (isLoading || isError)) {
+	 * 	// Mobile loading state
+	 * 	if (isMobile) {
+	 * 		return (
+	 * 			<ResumeHighlightProvider>
+	 * 				<ResumeViewMobile>
+	 * 					<div className="bg-neutral-50 w-full animate-pulse shadow-none" style={{aspectRatio: '210/297'}} />
+	 * 				</ResumeViewMobile>
+	 * 			</ResumeHighlightProvider>
+	 * 		)
+	 * 	}
+	 * 	// Desktop loading state
+	 * 	return (
+	 * 		<ResumeHighlightProvider>
+	 * 			<div className="flex h-screen w-full" role="main">
+	 * 				<DesktopResumeScaler>
+	 * 					<div className="shadow-2xl bg-neutral-50 relative overflow-hidden" />
+	 * 				</DesktopResumeScaler>
+	 * 				<div className="flex-1 min-w-0">
+	 * 					<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
+	 * 				</div>
+	 * 			</div>
+	 * 		</ResumeHighlightProvider>
+	 * 	)
+	 * }
+	 */
 
 	if (processing) {
 		// Mobile processing state
@@ -108,9 +113,11 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 		return (
 			<ResumeHighlightProvider>
 				<div className="flex h-screen w-full" role="main">
-					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative overflow-hidden shrink-0">
-						{processing && <ResumeAiLoading />}
-					</div>
+					<DesktopResumeScaler>
+						<div className="shadow-2xl bg-neutral-50 relative overflow-hidden">
+							{processing && <ResumeAiLoading />}
+						</div>
+					</DesktopResumeScaler>
 					<div className="flex-1 min-w-0">
 						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
 					</div>
@@ -153,9 +160,9 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	return (
 		<ResumeHighlightProvider>
 			<div className="flex h-screen w-full" role="main">
-				<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
-					<ResumeViewer resume={resume} className="max-h-screen" showToolbar showAnimation={showReveal} />
-				</div>
+				<DesktopResumeScaler>
+					<ResumeViewer resume={resume} className="shadow-2xl bg-neutral-50" showToolbar showAnimation={showReveal} />
+				</DesktopResumeScaler>
 				<div className="size-full">
 					<ResumeEditor className="size-full bg-neutral-50 p-12" />
 				</div>

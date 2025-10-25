@@ -73,3 +73,4 @@ const ResumeProcessingPage = async ({params}: PageProps) => {
 }
 
 export default ResumeProcessingPage
+

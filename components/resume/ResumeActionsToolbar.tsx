@@ -1,6 +1,7 @@
 'use client'
 
 import {useRef, useState} from 'react'
+import {createPortal} from 'react-dom'
 import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
 import {Briefcase, ChevronDownIcon, Download, Loader2, Trash2} from 'lucide-react'
@@ -14,6 +15,7 @@ import {useResumeById} from '@/lib/resume/queries'
 import {Job} from '@/lib/job/types'
 import {cn} from '@/lib/utils'
 import {useAnalytics} from '@/lib/analytics'
+import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
 
 interface ResumeActionsToolbarProps {
 	resumeId: string
@@ -32,6 +34,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, i
 	const [buttonRect, setButtonRect] = useState<DOMRect | null>(null)
 	const jobButtonRef = useRef<HTMLButtonElement>(null)
 	const {track} = useAnalytics()
+	const isMobile = useIsMobile(1024)
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
 		try {
@@ -140,7 +143,7 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, i
 
 	// For base resume, only show download button
 	if (isBaseResume) {
-		return (
+		const content = (
 			<TooltipProvider>
 				<div
 					className={cn(
@@ -154,10 +157,15 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, i
 				</div>
 			</TooltipProvider>
 		)
+		// On desktop, render in a portal to avoid transformed ancestor context
+		if (!isMobile && typeof document !== 'undefined') {
+			return createPortal(content, document.body)
+		}
+		return content
 	}
 
 	// For non-base resumes, show all buttons
-	return (
+	const content = (
 		<TooltipProvider>
 			<div
 				className={cn(
@@ -262,6 +270,13 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, i
 			</div>
 		</TooltipProvider>
 	)
+
+	// On desktop, render in a portal to avoid transformed ancestor context
+	if (!isMobile && typeof document !== 'undefined') {
+		return createPortal(content, document.body)
+	}
+
+	return content
 }
 
 export default ResumeActionsToolbar

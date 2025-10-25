@@ -128,3 +128,5 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 }
 
 export default ResumeView
+
+
