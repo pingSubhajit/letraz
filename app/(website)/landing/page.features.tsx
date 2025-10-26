@@ -216,7 +216,7 @@ const LandingPageFeatures = () => {
 
 				{/* Card 6 - Apply with Confidence */}
 				<Card
-					className="bg-[#F54A22] rounded-2xl relative overflow-hidden p-8 pb-32 lg:pb-8 border-none order-1 lg:order-none"
+					className="bg-[#F54A22] rounded-2xl relative overflow-hidden p-8 pb-32 xs:pb-64 sm:pb-72 md:pb-[28rem] lg:pb-8 border-none order-1 lg:order-none"
 					style={{gridArea: '1 / 1 / 4 / 6'}}
 				>
 					<div className="z-10 relative text-neutral-50 text-center">

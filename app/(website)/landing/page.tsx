@@ -32,7 +32,7 @@ const LandingPage = () => {
 
 				{/* Canvas sequence */}
 				<HeroVideoSequence
-					className="mt-32 sm:mt-0 w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[75vw] aspect-[5.3/3.4] max-h-[40vh] sm:max-h-[55vh] lg:max-h-[75vh] xl:max-h-[80vh] 3xl:max-h-[85vh] absolute top-[330px] sm:top-[400px] lg:top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
+					className="mt-32 sm:mt-28 w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[75vw] aspect-[5.3/3.4] max-h-[40vh] sm:max-h-[55vh] lg:max-h-[75vh] xl:max-h-[80vh] 3xl:max-h-[85vh] absolute top-[330px] sm:top-[400px] lg:top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
 				/>
 
 				<HeroHeader />

@@ -7,7 +7,7 @@ import Image from 'next/image'
 
 const WebsiteFooter = () => {
 	return (
-		<section className="relative sm:px-6 lg:px-0">
+		<section className="relative sm:px-0 lg:px-0">
 			<div className="relative max-w-7xl mx-auto">
 				<video
 					autoPlay
@@ -15,7 +15,7 @@ const WebsiteFooter = () => {
 					loop
 					playsInline
 					preload="auto"
-					className="hidden lg:block absolute -bottom-[100%] left-1/2 -translate-x-1/2 w-full max-w-7xl pointer-events-none">
+					className="hidden lg:block absolute lg:-bottom-[85%] xl:-bottom-[100%] lg:scale-100 opacity-100 left-1/2 -translate-x-1/2  w-full max-w-7xl pointer-events-none">
 					<source src="/brain-pulse.webm" type="video/webm"/>
 				</video>
 				<div className="bg-gradient-to-br from-flame-500 to-flame-700 px-6 sm:px-10 lg:px-16 py-12 sm:py-16 lg:py-24 relative sm:rounded-2xl z-20 flex flex-col justify-center items-center gap-3 sm:gap-4 text-center">
@@ -33,7 +33,7 @@ const WebsiteFooter = () => {
 				<div className="absolute inset-0 z-10 top-0 -translate-y-full h-32 bg-neutral-950" />
 
 				<div className="relative z-10 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 h-full gap-10 sm:gap-12 lg:gap-8 bg-neutral-950/70 backdrop-blur rounded-t-3xl sm:rounded-t-[32px] pb-16 sm:pb-20 lg:pb-24">
-					<div className="lg:col-span-5 flex flex-col gap-3">
+					<div className="sm:col-span-3 lg:col-span-5 flex flex-col gap-3">
 						<LandingPageLogo className="mb-1" size="3xl" type="dark" />
 						<p className="text-neutral-400 text-sm leading-relaxed max-w-sm">© 2025 Letraz. All rights reserved.</p>
 					</div>
