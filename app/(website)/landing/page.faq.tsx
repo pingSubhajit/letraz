@@ -110,7 +110,7 @@ const LandingPageFaq = ({
 
 	return (
 		<section className="w-full space-y-12 sm:space-y-16 px-4 sm:px-6 lg:px-0 antialiased">
-			<div className="space-y-3 sm:space-y-4">
+			<div className="space-y-3 sm:space-y-4 px-4">
 				<h2 className="text-4xl sm:text-5xl flex flex-col leading-tight font-medium">
 					<span>Frequently</span>
 					<span>asked <span className="text-flame-500">questions</span></span>
@@ -130,7 +130,7 @@ const LandingPageFaq = ({
 						duration: 0.3,
 						delay: 0.5
 					}}
-					className={cn('relative w-full', className)}
+					className={cn('relative w-full px-4', className)}
 				>
 					<motion.div
 						initial={{opacity: 0}}
@@ -138,7 +138,7 @@ const LandingPageFaq = ({
 						transition={{duration: 0.3}}
 						className="w-full"
 					>
-						<div ref={containerRef} className="flex w-full items-stretch gap-1">
+						<div ref={containerRef} className="flex w-full  items-stretch gap-1">
 							{faqItems.map((item, index) => {
 								const isActive = activeIndex === index
 								return (

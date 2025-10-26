@@ -72,6 +72,9 @@ const config: Config = {
 					'5': 'hsl(var(--chart-5))'
 				}
 			},
+			screens: {
+					'xs': '450px',  // Extra small devices
+			},
 			fontFamily: {
 				sans: [
 					'var(--font-geist-sans)'
