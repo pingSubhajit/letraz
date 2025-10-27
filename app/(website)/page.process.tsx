@@ -103,10 +103,10 @@ const StickyCard = ({
 
 	return (
 		<div className={cn('relative h-full w-full', className)} ref={container}>
-			<div className="sticky-cards relative flex min-h-screen w-full items-center justify-center overflow-hidden p-3 lg:p-8">
+			<div className="sticky-cards relative flex min-h-screen w-full items-center justify-center overflow-hidden p-4 sm:p-2 lg:p-8">
 				<div
 					className={cn(
-						'relative h-[90%] w-full max-w-sm overflow-hidden rounded-2xl sm:max-w-md md:max-w-lg lg:max-w-4xl xl:max-w-5xl 2xl:max-w-7xl',
+						'relative min-h-[500px] sm:h-[75%] lg:h-[85%] w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-7xl overflow-hidden rounded-2xl',
 						containerClassName,
 					)}
 				>
@@ -132,14 +132,14 @@ const StickyCard = ({
 
 // Demo components to showcase composability in the sticky cards
 const StepOne = () => (
-	<div className="h-full w-full rounded-2xl bg-[#DDE9D3] flex flex-col justify-between items-center pt-32 px-24">
-		<div className="text-center max-w-2xl">
-			<p className="uppercase tracking-wider text-sm">Step 1</p>
-			<h2 className="mt-2 text-5xl font-medium leading-tight">Upload your resume once</h2>
-			<p className="mt-5 text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
+	<div className="min-h-fit sm:h-full w-full rounded-2xl bg-[#DDE9D3] flex flex-col justify-between items-center pt-12 sm:pt-20 lg:pt-32 px-4 sm:px-8 lg:px-24 pb-0">
+		<div className="text-center max-w-2xl mb-4 sm:mb-6 lg:mb-8">
+			<p className="uppercase tracking-wider text-xs sm:text-sm">Step 1</p>
+			<h2 className="mt-1 sm:mt-2 text-2xl sm:text-3xl lg:text-5xl font-medium leading-tight">Upload your resume once</h2>
+			<p className="mt-3 sm:mt-4 lg:mt-5 text-sm sm:text-base lg:text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
 		</div>
 
-		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
+		<div className="bg-white aspect-video w-[90%] sm:w-[85%] lg:w-3/4 rounded-t-xl sm:rounded-t-2xl overflow-hidden">
 			<video preload="none" loop autoPlay muted playsInline className="w-full">
 				<source src="/upload-resume.av1.webm" type="video/webm; codecs=av01" />
 				<source src="/upload-resume.webm" type="video/webm; codecs=vp9" />
@@ -149,28 +149,28 @@ const StepOne = () => (
 )
 
 const StepTwo = () => (
-	<div className="h-full w-full rounded-2xl bg-[#E5EAF3] flex flex-col justify-between items-center pt-32 px-24">
-		<div className="text-center max-w-2xl">
-			<p className="uppercase tracking-wider text-sm">Step 2</p>
-			<h2 className="mt-2 text-5xl font-medium leading-tight">Find a job you like</h2>
-			<p className="mt-5 text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
+	<div className="min-h-fit sm:h-full w-full rounded-2xl bg-[#E5EAF3] flex flex-col justify-between items-center pt-12 sm:pt-20 lg:pt-32 px-4 sm:px-8 lg:px-24 pb-0">
+		<div className="text-center max-w-2xl mb-4 sm:mb-6 lg:mb-8">
+			<p className="uppercase tracking-wider text-xs sm:text-sm">Step 2</p>
+			<h2 className="mt-1 sm:mt-2 text-2xl sm:text-3xl lg:text-5xl font-medium leading-tight">Find a job you like</h2>
+			<p className="mt-3 sm:mt-4 lg:mt-5 text-sm sm:text-base lg:text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
 		</div>
 
-		<div className="bg-white aspect-video w-3/4 rounded-t-2xl">
+		<div className="bg-white aspect-video w-[90%] sm:w-[85%] lg:w-3/4 rounded-t-xl sm:rounded-t-2xl">
 
 		</div>
 	</div>
 )
 
 const StepThree = () => (
-	<div className="h-full w-full rounded-2xl bg-[#F4F0E7] flex flex-col justify-between items-center pt-32 px-24">
-		<div className="text-center max-w-2xl">
-			<p className="uppercase tracking-wider text-sm">Step 3</p>
-			<h2 className="mt-2 text-5xl font-medium leading-tight">Download, apply with confidence</h2>
-			<p className="mt-5 text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
+	<div className="min-h-fit sm:h-full w-full rounded-2xl bg-[#F4F0E7] flex flex-col justify-between items-center pt-12 sm:pt-20 lg:pt-32 px-4 sm:px-8 lg:px-24 pb-0">
+		<div className="text-center max-w-2xl mb-4 sm:mb-6 lg:mb-8">
+			<p className="uppercase tracking-wider text-xs sm:text-sm">Step 3</p>
+			<h2 className="mt-1 sm:mt-2 text-2xl sm:text-3xl lg:text-5xl font-medium leading-tight">Download, apply with confidence</h2>
+			<p className="mt-3 sm:mt-4 lg:mt-5 text-sm sm:text-base lg:text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
 		</div>
 
-		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
+		<div className="bg-white aspect-video w-[90%] sm:w-[85%] lg:w-3/4 rounded-t-xl sm:rounded-t-2xl overflow-hidden">
 			<video preload="none" loop autoPlay muted playsInline className="w-full">
 				<source src="/download-and-apply.av1.webm" type="video/webm; codecs=av01" />
 				<source src="/download-and-apply.webm" type="video/webm; codecs=vp9" />
@@ -180,17 +180,17 @@ const StepThree = () => (
 )
 
 const RizeCard = () => (
-	<div className="h-full w-full rounded-2xl bg-[#fff4c3] flex flex-col justify-between items-center pt-16 px-24 gap-8">
-		<div className="text-center max-w-2xl">
-			<Image src={rizeLogo} alt="Infosys logo" className="w-28" />
-			<h2 className="mt-2 text-5xl font-bold leading-tight">Why stick to just resumes? Build your portfolio</h2>
-			<p className="mt-5 text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
+	<div className="min-h-fit sm:h-full w-full rounded-2xl bg-[#fff4c3] flex flex-col justify-between items-center pt-12 sm:pt-16 lg:pt-16 px-4 sm:px-8 lg:px-24 pb-0">
+		<div className="text-center max-w-2xl mb-4 sm:mb-6 lg:mb-8">
+			<Image src={rizeLogo} alt="Rize logo" className="w-16 sm:w-20 lg:w-28 mx-auto" />
+			<h2 className="mt-1 sm:mt-2 text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight">Why stick to just resumes? Build your portfolio</h2>
+			<p className="mt-3 sm:mt-4 lg:mt-5 text-sm sm:text-base lg:text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
 			<a href={rizeUrl} target="_blank">
-				<Button size="lg" className="mt-5 bg-[#FFD936] hover:bg-[#e0bf2f] rounded-full text-foreground">Try Rize out</Button>
+				<Button size="lg" className="mt-3 sm:mt-4 lg:mt-5 bg-[#FFD936] hover:bg-[#e0bf2f] rounded-full text-foreground text-sm sm:text-base">Try Rize out</Button>
 			</a>
 		</div>
 
-		<div className="bg-white aspect-video w-3/4 rounded-t-2xl overflow-hidden">
+		<div className="bg-white aspect-video w-[90%] sm:w-[85%] lg:w-3/4 rounded-t-xl sm:rounded-t-2xl overflow-hidden">
 			<video loop autoPlay muted playsInline preload="none">
 				<source src="/rize-video.av1.webm" type="video/webm; codecs=av01" />
 				<source src="/rize-video.webm" type="video/webm; codecs=vp9" />

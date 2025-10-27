@@ -45,7 +45,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 									layout layoutId={indicatorId}
 									className={cn(
 										'absolute bg-flame-500',
-										mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-4 rounded-b-full -top-2'
+										mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-2 rounded-b-full -top-2'
 									)}
 								/>
 							)}
@@ -70,7 +70,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 							>
 								<Link href={link.route} onClick={() => mobile && setIsOpen(false)}>
 									<p className={cn(
-										'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-3xl flex items-center gap-4',
+										'font-semibold opacity-70 transition hover:opacity-100 focus-visible:opacity-100 mt-4 text-2xl flex items-center gap-3 pl-4',
 										currentSegment && currentSegment === link.segment && 'opacity-100'
 									)}>
 										<span className="w-2 h-2 rounded-full bg-flame-500" />
@@ -105,7 +105,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 			{/* Mobile Navigation */}
 			{mounted && (
 				<>
-					<div className="lg:hidden flex items-center h-full mt-6 w-full justify-between bg-white shadow rounded-full pr-2 pl-6 py-1.5 z-50 relative">
+					<div className="lg:hidden flex items-center h-full mt-6 w-full justify-between bg-transparent shadow-none rounded-full pr-2 pl-6 py-1.5 z-50 relative">
 						<div onClick={() => setIsOpen(false)}>
 							<LandingPageLogo className="mb-1" />
 						</div>
