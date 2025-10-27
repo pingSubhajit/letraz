@@ -11,23 +11,23 @@ const MotionChevronDown = motion(ChevronDown)
 const faqItems = [
 	{
 		question: 'How is Letraz different from other resume builders?',
-		answer: 'Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.'
+		answer: 'Letraz goes beyond just formatting resumes, it thinks about your application. Traditional builders give you templates to fill, Letraz uses AI to understand the job and your profile, then tailors your resume’s wording, structure, and tone to maximize your chances of getting shortlisted.'
 	},
 	{
 		question: 'Will my resume really be tailored to each job I apply for?',
-		answer: 'Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.'
+		answer: 'Yes, that’s the whole point of Letraz. Each time you paste a job description, Letraz analyzes it to understand what the company is looking for and then adapts your resume automatically, highlighting the most relevant skills, adjusting phrasing, and reordering sections if needed.'
 	},
 	{
 		question: 'Do I need to write everything from scratch?',
-		answer: 'Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.'
+		answer: 'Not at all. Letraz handles the heavy lifting for you. During onboarding, it collects your details once, and from there, you can generate multiple tailored resumes without re-entering anything. You can also edit or refine any part of your resume manually if you want to.'
 	},
 	{
 		question: 'Can I use Letraz with any job site or application portal?',
-		answer: 'Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.'
+		answer: 'Yes! Letraz works with any job portal. You can paste the link from anywhere, LinkedIn, Indeed, company career pages and Letraz will instantly understand it. The final resume is exported as a standard PDF, perfectly formatted and ready to upload wherever you apply.'
 	},
 	{
 		question: 'Is my personal data secure with Letraz?',
-		answer: 'Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern. Yes. It adheres to the WAI-ARIA design pattern.'
+		answer: 'Absolutely. Your data is encrypted and stored securely, and we never share it with third parties. Letraz only uses your information to generate resumes for you. You stay in full control of your data at all times, with the option to edit or delete it whenever you want.'
 	}
 ]
 
