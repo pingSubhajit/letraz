@@ -1,4 +1,5 @@
 import {ReactNode} from 'react'
+import WebsiteNavBar from '@/components/WebsiteNavBar'
 
 interface AuthLayoutProps {
 	children: ReactNode
@@ -6,7 +7,10 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({children}: AuthLayoutProps) => {
 	return (
-		<div className="h-screen overflow-hidden flex justify-center lg:justify-end items-center w-screen">
+		<>
+			<WebsiteNavBar className="absolute top-0 left-0 w-full z-50" />
+
+			<div className="h-screen overflow-hidden flex justify-center lg:justify-end items-center w-screen">
 			<div className="absolute inset-0 overflow-hidden -z-10">
 				<video autoPlay muted loop className="aspect-video absolute -z-10 w-full h-full scale-125 lg:scale-150 blur-md">
 					<source src="/brain-pulse.webm" type="video/webm"/>
@@ -16,6 +20,7 @@ const AuthLayout = ({children}: AuthLayoutProps) => {
 				{children}
 			</div>
 		</div>
+		</>
 	)
 }
 
