@@ -76,7 +76,7 @@ body {
   }
   html, body {
     @apply p-0 m-0;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   body {
     @apply bg-background text-foreground;

@@ -21,21 +21,25 @@ const LandingPage = () => {
 			{/* Hero Section */}
 			<div className="min-h-[300vh] sm:min-h-[400vh] lg:min-h-[530vh] relative">
 				{/* Background image */}
-				<Image
-					src={landingBg}
-					alt="Landing Page background image of a sunny landscape"
-					className="sticky inset-0 w-full h-screen object-cover pointer-events-none"
-					priority
-					placeholder="blur"
-					sizes="100vw"
-				/>
+				<div className="sticky top-0 w-full h-screen">
+					<Image
+						src={landingBg}
+						alt="Landing Page background image of a sunny landscape"
+						className="w-full h-full object-cover pointer-events-none block"
+						priority
+						placeholder="blur"
+						sizes="100vw"
+					/>
+				</div>
 
-				{/* Canvas sequence */}
-				<HeroVideoSequence
-					className="mt-32 sm:mt-28 2xl:mt-44 w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[75vw] aspect-[5.3/3.4] max-h-[40vh] sm:max-h-[55vh] lg:max-h-[75vh] xl:max-h-[80vh] 3xl:max-h-[85vh] absolute top-[330px] sm:top-[400px] lg:top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
-				/>
+				<div>
+					{/* Canvas sequence */}
+					<HeroVideoSequence
+						className="mt-32 sm:mt-28 2xl:mt-44 w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[75vw] aspect-[5.3/3.4] max-h-[40vh] sm:max-h-[55vh] lg:max-h-[75vh] xl:max-h-[80vh] 3xl:max-h-[85vh] absolute top-[330px] sm:top-[400px] lg:top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
+					/>
 
-				<HeroHeader />
+					<HeroHeader />
+				</div>
 			</div>
 
 			<div className="-mt-[15vh] sm:-mt-[10vh] lg:-mt-0 pb-12 sm:pb-16 lg:pb-20 bg-[#0F0202]">
@@ -55,15 +59,15 @@ const LandingPage = () => {
 			{/*	</video>*/}
 			{/* </div>*/}
 
-			<div className="mt-8 sm:mt-12 lg:mt-0">
+			<div className="overflow-x-clip mt-8 sm:mt-12 lg:mt-0">
 				<LandingPageProcess />
 			</div>
 
-			<div className="mt-6 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
+			<div className="overflow-x-clip mt-6 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
 				<LandingPageFeatures />
 			</div>
 
-			<div className="mt-12 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
+			<div className="overflow-x-clip mt-12 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
 				<LandingPageFaq />
 			</div>
 		</main>
