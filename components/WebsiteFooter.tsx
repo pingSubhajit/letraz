@@ -49,7 +49,6 @@ const WebsiteFooter = () => {
 							<li><Link href="/docs" className="hover:text-neutral-50 transition">Documentation</Link></li>
 							<li className="hidden sm:block"><Link href="/blog" className="hover:text-neutral-50 transition">Blog</Link></li>
 							<li><Link href="/changes" className="hover:text-neutral-50 transition">Changelog</Link></li>
-							<li><Link href="/support" className="hover:text-neutral-50 transition">Support</Link></li>
 						</ul>
 					</div>
 
