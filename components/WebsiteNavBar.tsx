@@ -45,7 +45,7 @@ const WebsiteNavBar = ({className}: {className?: string}) => {
 									layout layoutId={indicatorId}
 									className={cn(
 										'absolute bg-flame-500',
-										mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-4 rounded-b-full -top-2'
+										mobile ? 'w-1 h-full left-0 top-0' : 'w-full h-2 rounded-b-full -top-2'
 									)}
 								/>
 							)}
