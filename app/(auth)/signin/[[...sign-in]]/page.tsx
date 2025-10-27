@@ -20,7 +20,7 @@ const SignInPage = () => {
 		<>
 			<SignInPageTitle />
 
-			<div className="flex flex-col justify-center items-center mt-8 gap-6 w-full">
+			<div className="flex flex-col justify-center items-center mt-6 lg:mt-8 gap-4 lg:gap-6 w-full">
 				{/* Email/Password Sign In Form */}
 				<EmailPasswordSignInForm className="w-full" />
 

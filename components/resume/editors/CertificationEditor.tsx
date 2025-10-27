@@ -7,7 +7,7 @@ import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {Plus} from 'lucide-react'
+import {ArrowUpRightIcon, BadgeCheck, Plus} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {Certification, CertificationMutation, CertificationMutationSchema} from '@/lib/certification/types'
 import {useQueryClient} from '@tanstack/react-query'
@@ -36,6 +36,7 @@ import DatePicker from '@/components/ui/date-picker'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 
 
 const DEFAULT_CERTIFICATION_VALUES: CertificationMutation = {
@@ -221,8 +222,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 	if (view === 'form') {
 		return (
 			<ScrollMask
-				className={cn('space-y-6', className)}
-				style={{height: 'calc(100vh - 162px)'}}
+				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 				data-lenis-prevent
 			>
 				<div className="space-y-6 px-1">
@@ -296,8 +296,7 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 
 	return (
 		<ScrollMask
-			className={cn('flex flex-col', className)}
-			style={{height: 'calc(100vh - 162px)'}}
+			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 			data-lenis-prevent
 		>
 			<div className="space-y-6 px-1">
@@ -340,14 +339,40 @@ const CertificationEditor = ({className, isTabSwitch = false}: CertificationEdit
 									{certifications.map((certification, index) => renderCertificationItem(certification, index))}
 								</div>
 							) : (
-								<Button
-									onClick={handleAddNew}
-									className="w-full"
-									variant="outline"
-								>
-									<Plus className="h-4 w-4 mr-2" />
-									Add New Certification
-								</Button>
+								<Empty>
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<BadgeCheck />
+										</EmptyMedia>
+										<EmptyTitle>No certifications yet</EmptyTitle>
+										<EmptyDescription>
+											You haven&apos;t added any certifications yet. Get started by creating your first certification.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<div className="flex flex-col gap-2">
+											<Button
+												onClick={handleAddNew}
+												size="sm"
+												variant="outline"
+											>
+												<Plus className="h-4 w-4 mr-2" />
+												Add New Certification
+											</Button>
+
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<a href="#">
+													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+												</a>
+											</Button>
+										</div>
+									</EmptyContent>
+								</Empty>
 							)}
 						</motion.div>
 					)}

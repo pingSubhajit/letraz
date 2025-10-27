@@ -62,7 +62,7 @@ const DateRangeFields = ({
 
 	return (
 		<>
-			<div className="grid grid-cols-4 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 				<FormField
 					control={form.control}
 					name={startMonthName}
@@ -112,7 +112,7 @@ const DateRangeFields = ({
 					)}
 				/>
 
-				<div className="col-span-2 grid grid-cols-2 gap-4">
+				<div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
 					<AnimatePresence>
 						{!isCurrentLocal && (
 							<>

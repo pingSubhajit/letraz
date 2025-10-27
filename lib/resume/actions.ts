@@ -6,6 +6,8 @@ import {
 	Resume,
 	ResumeListItem,
 	ResumeListItemSchema,
+	ResumeMinimal,
+	ResumeMinimalSchema,
 	ResumeMutation,
 	ResumeMutationSchema,
 	ResumeSchema,
@@ -16,6 +18,7 @@ import {EnhancedResumeMutation, type GenericParsedResume, parseResume} from '@/l
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
 import {ACCEPTED_MIME_TYPES, isAcceptedByName} from '@/lib/resume/accept'
+import {stripNullFields} from '@/lib/utils'
 
 /**
  * Retrieves a single resume object from the database by its ID
@@ -38,10 +41,25 @@ export const getResumeFromDB = async (resumeId?: string | 'base'): Promise<Resum
  */
 export const listResumesForUser = async (): Promise<ResumeListItem[]> => {
 	try {
-		const data = await api.get<unknown[]>('/resume/')
+		const {resumes: data} = await api.get<{resumes: ResumeListItem[]}>('/resume/')
 		return (data || []).map(item => ResumeListItemSchema.parse(item))
 	} catch (error) {
 		return handleErrors(error, 'list resumes')
+	}
+}
+
+/**
+ * Retrieves minimal metadata for a single resume by its ID
+ * @param {string} resumeId - The ID of the resume to retrieve minimal metadata for
+ * @returns {Promise<ResumeMinimal>} - The minimal resume metadata object
+ * @throws {Error} If authentication or API request fails.
+ */
+export const getResumeMinimal = async (resumeId: string): Promise<ResumeMinimal> => {
+	try {
+		const data = await api.get<ResumeMinimal>(`/resume/${resumeId}/minimal`)
+		return ResumeMinimalSchema.parse(data)
+	} catch (error) {
+		return handleErrors(error, 'fetch resume minimal metadata')
 	}
 }
 
@@ -114,11 +132,13 @@ export const parseUploadedResume = async (
  */
 export const replaceResume = async (
 	payload: ResumeMutation,
-	resumeId: string = 'base'
+	resumeId: string = 'base',
+	options?: { headers?: Record<string, string>, cookie?: string }
 ): Promise<Resume> => {
 	try {
 		const parsed = ResumeMutationSchema.parse(payload)
-		const data = await api.put<Resume>(`/resume/${resumeId ?? 'base'}/`, parsed)
+		const apiParams = stripNullFields(parsed)
+		const data = await api.put<Resume>(`/resume/${resumeId ?? 'base'}/`, parsed, options)
 		return ResumeSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'replace resume')

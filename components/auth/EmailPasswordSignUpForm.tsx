@@ -117,11 +117,7 @@ const EmailPasswordSignUpForm = ({className, onVerificationStateChange}: EmailPa
 
 		const zx = zxcvbn(password)
 		const zxScore = zx.score // 0..4
-		const level =
-			zxScore === 0 ? 'weak' :
-			zxScore === 1 ? 'fair' :
-			zxScore === 2 ? 'good' :
-			zxScore === 3 ? 'strong' : 'veryStrong'
+		const level = zxScore === 0 ? 'weak' : zxScore === 1 ? 'fair' : zxScore === 2 ? 'good' : zxScore === 3 ? 'strong' : 'veryStrong'
 
 		return {zxScore, level, requirements, requirementsScore}
 	}, [password])

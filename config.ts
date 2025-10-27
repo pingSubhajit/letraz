@@ -15,42 +15,42 @@ export const modelica = localFont({
 	src: [
 		// Regular fonts
 		{
-			path: './app/fonts/BwModelicaSS01-Hairline.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-Hairline.woff2',
 			weight: '100',
 			style: 'normal'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-Thin.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-Thin.woff2',
 			weight: '200',
 			style: 'normal'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-Light.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-Light.woff2',
 			weight: '300',
 			style: 'normal'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-Regular.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-Regular.woff2',
 			weight: '400',
 			style: 'normal'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-Medium.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-Medium.woff2',
 			weight: '500',
 			style: 'normal'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-Bold.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-Bold.woff2',
 			weight: '700',
 			style: 'normal'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-ExtraBold.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-ExtraBold.woff2',
 			weight: '800',
 			style: 'normal'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-Black.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-Black.woff2',
 			weight: '900',
 			style: 'normal'
 		},
@@ -58,42 +58,42 @@ export const modelica = localFont({
 
 		// Italic fonts
 		{
-			path: './app/fonts/BwModelicaSS01-HairlineItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-HairlineItalic.woff2',
 			weight: '100',
 			style: 'italic'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-ThinItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-ThinItalic.woff2',
 			weight: '200',
 			style: 'italic'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-LightItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-LightItalic.woff2',
 			weight: '300',
 			style: 'italic'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-RegularItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-RegularItalic.woff2',
 			weight: '400',
 			style: 'italic'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-MediumItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-MediumItalic.woff2',
 			weight: '500',
 			style: 'italic'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-BoldItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-BoldItalic.woff2',
 			weight: '700',
 			style: 'italic'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-ExtraBoldItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-ExtraBoldItalic.woff2',
 			weight: '800',
 			style: 'italic'
 		},
 		{
-			path: './app/fonts/BwModelicaSS01-BlackItalic.otf',
+			path: './app/fonts/modelica/BwModelicaSS01-BlackItalic.woff2',
 			weight: '900',
 			style: 'italic'
 		}
@@ -113,6 +113,13 @@ export const discordBotUrl = 'http://64.227.146.129:4000'
 export const discordHandle = 'https://discord.gg/jTkyKCYz2M'
 export const githubHandle = 'https://github.com/pingSubhajit/letraz'
 export const twitterHandle = 'https://x.com/LetrazApp'
+export const linkedinHandle = 'https://www.linkedin.com/company/108621680'
+export const instagramHandle = 'https://www.instagram.com/letraz.app/'
+export const supportEmail = 'hello@letraz.app'
+
+// Integrations
+export const rizeUrl = 'https://rize.so'
+export const rizeAdminApiUrl = `${rizeUrl}/api/admin`
 
 // AI
 export const model = anthropic('claude-3-haiku-20240307')

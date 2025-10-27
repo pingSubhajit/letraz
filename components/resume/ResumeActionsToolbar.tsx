@@ -1,6 +1,7 @@
 'use client'
 
 import {useRef, useState} from 'react'
+import {createPortal} from 'react-dom'
 import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
 import {Briefcase, ChevronDownIcon, Download, Loader2, Trash2} from 'lucide-react'
@@ -14,15 +15,17 @@ import {useResumeById} from '@/lib/resume/queries'
 import {Job} from '@/lib/job/types'
 import {cn} from '@/lib/utils'
 import {useAnalytics} from '@/lib/analytics'
+import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
 
 interface ResumeActionsToolbarProps {
 	resumeId: string
 	className?: string
 	isBaseResume?: boolean
 	job?: Job | null
+	isBottomSheetExpanded?: boolean
 }
 
-const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: ResumeActionsToolbarProps) => {
+const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job, isBottomSheetExpanded = false}: ResumeActionsToolbarProps) => {
 	const {mutateAsync: exportResume, isPending: isExporting} = useExportResumeMutation()
 	const {mutateAsync: deleteResume, isPending: isDeleting} = useDeleteResumeMutation()
 	const {data: resume} = useResumeById(resumeId)
@@ -30,74 +33,38 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 	const [showJobDetails, setShowJobDetails] = useState(false)
 	const [buttonRect, setButtonRect] = useState<DOMRect | null>(null)
 	const jobButtonRef = useRef<HTMLButtonElement>(null)
-    const {track} = useAnalytics()
+	const {track} = useAnalytics()
+	const isMobile = useIsMobile(1024)
 
 	const handleExport = async (format: 'pdf' | 'tex') => {
-		// Open a stub window immediately to preserve user gesture
-		const win = window.open('', '_blank', 'noopener,noreferrer')
-		
 		try {
 			track('resume_export_clicked', {resume_id: resumeId, format})
-			const response = await exportResume(resumeId)
 
+			// Fetch export URLs from API
+			const response = await exportResume(resumeId)
 			const downloadUrl = format === 'pdf' ? response.pdf_url : response.latex_url
 
-			// Validate the URL exists
-			if (!downloadUrl || typeof downloadUrl !== 'string' || downloadUrl.trim() === '') {
-				if (win) win.close()
+			// Validate response
+			if (!downloadUrl?.trim()) {
 				toast.error('No download URL received from server')
 				return
 			}
 
-			// Properly construct/validate the URL
-			let fullUrl: string
-			try {
-				// Use URL constructor to handle absolute, protocol-relative, and relative URLs
-				fullUrl = new URL(downloadUrl, window.location.origin).toString()
-			} catch (urlError) {
-				// Fallback for protocol-relative URLs or other edge cases
-				try {
-					fullUrl = new URL(downloadUrl, 'https:').toString()
-				} catch (fallbackError) {
-					if (process.env.NODE_ENV !== 'production') {
-						console.warn('Failed to construct download URL:', downloadUrl, fallbackError)
-					}
-					if (win) win.close()
-					toast.error('Invalid download URL received')
-					return
-				}
-			}
+			// Construct full URL with protocol if needed
+			const fullUrl = downloadUrl.toLowerCase().startsWith('http')
+				? downloadUrl
+				: `https://${downloadUrl}`
 
-			if (win) {
-				try {
-					win.opener = null
-					win.location.replace(fullUrl)
-				} catch {
-					// Fallback if blocked
-					window.open(fullUrl, '_blank', 'noopener=yes,noreferrer=yes')
-				}
-			} else {
-				window.open(fullUrl, '_blank', 'noopener=yes,noreferrer=yes')
-			}
-			track('resume_export_succeeded', {resume_id: resumeId, format})
-		} catch (error) {
-			// Close the blank tab if we opened one and failed
-			if (win) {
-				try {
-					win.close()
-				} catch {
-					// Ignore if we can't close it
-				}
-			}
-			// Error handling is already done in the mutation
-			track('resume_export_failed', {resume_id: resumeId, format})
+			// Open PDF in new tab
+			window.open(fullUrl, '_blank', 'noopener,noreferrer')
+		} catch {
+			toast.error('Failed to download resume, please try again.')
 		}
 	}
 
 	const handleDelete = async () => {
 		try {
 			await deleteResume(resumeId)
-			track('resume_deleted', {resume_id: resumeId})
 			// Navigate to dashboard after successful deletion
 			router.push('/app')
 		} catch (error) {
@@ -176,11 +143,13 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 
 	// For base resume, only show download button
 	if (isBaseResume) {
-		return (
+		const content = (
 			<TooltipProvider>
 				<div
 					className={cn(
-						'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50',
+						'lg:fixed lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:z-[60]',
+						'transition-opacity duration-300 lg:scale-75 xl:scale-90 2xl:scale-100',
+						isBottomSheetExpanded && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto',
 						className
 					)}
 				>
@@ -188,111 +157,127 @@ const ResumeActionsToolbar = ({resumeId, className, isBaseResume = false, job}: 
 				</div>
 			</TooltipProvider>
 		)
+		// On desktop, render in a portal to avoid transformed ancestor context
+		if (!isMobile && typeof document !== 'undefined') {
+			return createPortal(content, document.body)
+		}
+		return content
 	}
 
 	// For non-base resumes, show all buttons
-	return (
+	const content = (
 		<TooltipProvider>
 			<div
 				className={cn(
-					'fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[#e5e5e5] rounded-full shadow-lg px-1 py-1',
-					'border border-gray-200',
+					'flex items-center gap-2 bg-[#e5e5e5] rounded-tl-[36px] rounded-bl-[36px] rounded-tr-[12px] rounded-br-[12px] md:rounded-full shadow-lg px-1 py-1',
+					'border border-neutral-200',
+					'transition-opacity duration-300',
 					'max-w-[calc(100vw-2rem)] md:max-w-none',
+					'lg:fixed lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:z-[60]',
+					'lg:scale-75 xl:scale-80 2xl:scale-100',
+					isBottomSheetExpanded && 'opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto',
 					className
 				)}
 			>
-			<DownloadButton />
+				<DownloadButton />
 
-			{/* Job details button */}
-			<Tooltip>
-				<TooltipTrigger asChild>
-					<Button
-						ref={jobButtonRef}
-						variant="secondary"
-						size="icon"
-						className="rounded-lg bg-[#fbfbfb]"
-						disabled={!job || job.status !== 'Success'}
-						onClick={() => {
-							if (jobButtonRef.current) {
-								setButtonRect(jobButtonRef.current.getBoundingClientRect())
-							}
-							setShowJobDetails(true)
-						}}
-					>
-						<Briefcase className="h-4 w-4" />
-					</Button>
-				</TooltipTrigger>
-				<TooltipContent>
-					{!job
-						? 'No job associated with this resume'
-						: job.status !== 'Success'
-							? 'Job is still processing'
-							: 'Job details'}
-				</TooltipContent>
-			</Tooltip>
+				{/* Job details button */}
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							ref={jobButtonRef}
+							variant="secondary"
+							size="icon"
+							className="rounded-lg bg-[#fbfbfb]"
+							disabled={!job || job.status !== 'Success'}
+							onClick={() => {
+								if (jobButtonRef.current) {
+									setButtonRect(jobButtonRef.current.getBoundingClientRect())
+								}
+								setShowJobDetails(true)
+							}}
+						>
+							<Briefcase className="h-4 w-4" />
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						{!job
+							? 'No job associated with this resume'
+							: job.status !== 'Success'
+								? 'Job is still processing'
+								: 'Job details'}
+					</TooltipContent>
+				</Tooltip>
 
-			{/* Delete button */}
-			<PopConfirm
-				triggerElement={
-					<Button
-						variant="secondary"
-						size="icon"
-						className="rounded-lg text-black bg-[#fbfbfb]"
-						disabled={isDeleting || resume?.status !== 'Success'}
-					>
-						{isDeleting ? (
-							<Loader2 className="h-4 w-4 animate-spin" />
-						) : (
-							<Trash2 className="h-4 w-4" />
-						)}
-						<span className="sr-only">Delete resume</span>
-					</Button>
-				}
-				message="Are you sure you want to delete this resume? This action cannot be undone."
-				onYes={handleDelete}
-			/>
-
-			{/* Theme selector dropdown - hidden on mobile */}
-			<Tooltip>
-				<TooltipTrigger asChild>
-					<div className="hidden md:inline-flex">
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="secondary"
-									size="default"
-									className="rounded-tl-[12px] rounded-bl-[12px] rounded-tr-[36px] rounded-br-[36px] pl-4 pr-2 gap-2 bg-[#fbfbfb]"
-									disabled
-								>
-									<span>Default theme</span>
-									<ChevronDownIcon className="h-4 w-4 fill-current" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="min-w-[180px]">
-								<DropdownMenuItem disabled>
-									Theme selection coming soon
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
-				</TooltipTrigger>
-				<TooltipContent>
-					Coming soon
-				</TooltipContent>
-			</Tooltip>
-
-			{/* Job Details Modal */}
-			{job && (
-				<JobDetailsModal
-					isOpen={showJobDetails}
-					onClose={() => setShowJobDetails(false)}
-					job={job}
-					buttonRect={buttonRect}
+				{/* Delete button */}
+				<PopConfirm
+					triggerElement={
+						<Button
+							variant="secondary"
+							size="icon"
+							className="rounded-lg text-black bg-[#fbfbfb]"
+							disabled={isDeleting || resume?.status !== 'Success'}
+						>
+							{isDeleting ? (
+								<Loader2 className="h-4 w-4 animate-spin" />
+							) : (
+								<Trash2 className="h-4 w-4" />
+							)}
+							<span className="sr-only">Delete resume</span>
+						</Button>
+					}
+					message="Are you sure you want to delete this resume? This action cannot be undone."
+					onYes={handleDelete}
 				/>
-			)}
+
+				{/* Theme selector dropdown - hidden on mobile */}
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<div className="hidden md:inline-flex">
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant="secondary"
+										size="default"
+										className="rounded-tl-[12px] rounded-bl-[12px] rounded-tr-[36px] rounded-br-[36px] pl-4 pr-2 gap-2 bg-[#fbfbfb]"
+										disabled
+									>
+										<span>Default theme</span>
+										<ChevronDownIcon className="h-4 w-4 fill-current" />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end" className="min-w-[180px]">
+									<DropdownMenuItem disabled>
+										Theme selection coming soon
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+					</TooltipTrigger>
+					<TooltipContent>
+						Coming soon
+					</TooltipContent>
+				</Tooltip>
+
+				{/* Job Details Modal */}
+				{job && (
+					<JobDetailsModal
+						isOpen={showJobDetails}
+						onClose={() => setShowJobDetails(false)}
+						job={job}
+						buttonRect={buttonRect}
+					/>
+				)}
 			</div>
 		</TooltipProvider>
 	)
+
+	// On desktop, render in a portal to avoid transformed ancestor context
+	if (!isMobile && typeof document !== 'undefined') {
+		return createPortal(content, document.body)
+	}
+
+	return content
 }
 
 export default ResumeActionsToolbar

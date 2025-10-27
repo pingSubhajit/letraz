@@ -32,13 +32,13 @@ const FormButtons = ({
 
 	return (
 		<ButtonGroup className={`justify-end mt-4 ${className || ''}`}>
-			<Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+			<Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="h-9 text-sm sm:h-10 sm:text-base">
 				{cancelLabel}
 			</Button>
-			<Button type="submit" disabled={isSubmitting || disabled}>
+			<Button type="submit" disabled={isSubmitting || disabled} className="h-9 text-sm sm:h-10 sm:text-base">
 				{isSubmitting ? (
 					<>
-						<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+						<Loader2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
 						{isEditing ? 'Updating...' : 'Adding...'}
 					</>
 				) : (

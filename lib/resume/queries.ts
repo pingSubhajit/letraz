@@ -1,8 +1,8 @@
 import {queryOptions, useQuery} from '@tanstack/react-query'
 import {BASE_RESUME_KEYS, RESUMES_KEYS} from '@/lib/resume/key'
-import {getResumeFromDB, listResumesForUser} from '@/lib/resume/actions'
-import {ResumeListItem} from '@/lib/resume/types'
+import {getResumeFromDB, getResumeMinimal, listResumesForUser} from '@/lib/resume/actions'
 import type {Resume} from '@/lib/resume/types'
+import {ResumeListItem, ResumeMinimal} from '@/lib/resume/types'
 
 export const baseResumeQueryOptions = queryOptions({
 	queryKey: BASE_RESUME_KEYS,
@@ -12,12 +12,15 @@ export const baseResumeQueryOptions = queryOptions({
 
 export const useBaseResume = () => useQuery(baseResumeQueryOptions)
 
-export const resumesListQueryOptions = queryOptions<ResumeListItem[]>({
-	queryKey: RESUMES_KEYS,
-	queryFn: () => listResumesForUser()
+export const resumesListQueryOptions = (excludeBase?: boolean) => queryOptions<ResumeListItem[]>({
+	queryKey: excludeBase ? [...RESUMES_KEYS, 'excludeBase'] : RESUMES_KEYS,
+	queryFn: async () => {
+		const resumes = await listResumesForUser()
+		return excludeBase ? resumes.filter(resume => !resume.base) : resumes
+	}
 })
 
-export const useResumes = () => useQuery(resumesListQueryOptions)
+export const useResumes = (excludeBase?: boolean) => useQuery(resumesListQueryOptions(excludeBase))
 
 export const resumeByIdQueryOptions = (resumeId: string) => queryOptions<Resume>({
 	queryKey: ['resume', resumeId],
@@ -36,3 +39,10 @@ export const resumeByIdQueryOptions = (resumeId: string) => queryOptions<Resume>
 })
 
 export const useResumeById = (resumeId: string) => useQuery(resumeByIdQueryOptions(resumeId))
+
+export const resumeMinimalQueryOptions = (resumeId: string) => queryOptions<ResumeMinimal>({
+	queryKey: ['resume', resumeId, 'minimal'],
+	queryFn: () => getResumeMinimal(resumeId)
+})
+
+export const useResumeMinimal = (resumeId: string) => useQuery(resumeMinimalQueryOptions(resumeId))

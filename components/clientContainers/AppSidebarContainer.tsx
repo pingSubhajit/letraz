@@ -5,6 +5,7 @@ import {usePathname} from 'next/navigation'
 import {ReactNode} from 'react'
 import {useSidebar} from '@/components/providers/SidebarProvider'
 import NotificationFeed from '@/components/notifications/NotificationFeed'
+import UserSupportPanel from '@/components/UserSupportPanel'
 
 const AppSidebarContainer = ({children, className}: {
 	children: ReactNode,
@@ -26,7 +27,7 @@ const AppSidebarContainer = ({children, className}: {
 
 	return (
 		<motion.aside
-			className="shadow-xl z-20"
+			className="shadow-xl z-20 hidden lg:block"
 			initial={shouldAnimate ? {width: '0px'} : {width: collapsedWidth}}
 			animate={{width: targetWidth}}
 			transition={{
@@ -66,6 +67,7 @@ const AppSidebarContainer = ({children, className}: {
 						}}
 					>
 						{currentPage === 'NOTIFICATION' && <NotificationFeed />}
+						{currentPage === 'USER_SUPPORT' && <UserSupportPanel />}
 					</motion.div>}
 				</AnimatePresence>
 			</motion.div>

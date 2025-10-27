@@ -5,7 +5,8 @@ import {Separator} from '@/components/ui/separator'
 import Link from 'next/link'
 import {ArrowLeft, ChevronLeft, ChevronRight} from 'lucide-react'
 import TableOfContents from '@/app/docs/components/table-of-contents'
-import sanitizeHtml from 'sanitize-html'
+import {Metadata} from 'next'
+import {sanitizeHtml} from '@/lib/utils'
 
 /*
  * Using BaseHub's automatic on-demand revalidation instead of ISR
@@ -31,7 +32,7 @@ export const generateStaticParams = async () => {
 }
 
 // Generate metadata for each page
-export const generateMetadata = async ({params}: DocPageProps) => {
+export const generateMetadata = async ({params}: DocPageProps): Promise<Metadata> => {
 	const {slug} = await params
 	const page = await getDocumentationPage(slug)
 
@@ -60,32 +61,7 @@ const IndividualDocumentationPage = async ({params}: DocPageProps) => {
 	}
 
 	const sanitizedBody = page.body
-		? sanitizeHtml(page.body, {
-			allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-				'img',
-				'video',
-				'h1',
-				'h2',
-				'h3',
-				'h4',
-				'h5',
-				'h6',
-				'pre',
-				'code',
-				'span'
-			]),
-			allowedAttributes: {
-				'*': ['id', 'class', 'style'],
-				a: ['href', 'name', 'target', 'rel'],
-				img: ['src', 'alt', 'title', 'width', 'height', 'loading', 'decoding'],
-				video: ['src', 'controls', 'autoplay', 'loop', 'muted', 'playsinline', 'poster', 'width', 'height'],
-				code: ['class']
-			},
-			allowedSchemesByTag: {
-				img: ['http', 'https', 'data'],
-				video: ['http', 'https']
-			}
-		})
+		? sanitizeHtml(page.body)
 		: ''
 
 	return (

@@ -72,17 +72,37 @@ body {
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
+  }
+  html, body {
+    @apply p-0 m-0;
+    overflow-x: clip;
   }
   body {
     @apply bg-background text-foreground;
   }
+  main {
+    @apply p-0 m-0 w-full;
+  }
   img {
     display: initial;
   }
+
+  /* Mobile-specific reset to ensure no padding */
+  @media (max-width: 1024px) {
+    main, body, html {
+      padding-left: 0 !important;
+      margin-left: 0 !important;
+    }
+  }
 }
 
-.size-a4 {
-  @apply h-[297mm] aspect-[210/297];
+/* Mobile PDF - let transform scale handle sizing */
+@media (max-width: 1024px) {
+  .size-a4.resume {
+    /* Remove all overrides - transform scale handles everything */
+    margin: 0;
+  }
 }
 
 .resume {
@@ -200,6 +220,16 @@ body {
 /* Hide scrollbar for WebKit browsers */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Hide scrollbar for all browsers (utility class) */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
 }
 
 /* Animated flowing gradient ONLY on border */

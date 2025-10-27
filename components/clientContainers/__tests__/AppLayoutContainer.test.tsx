@@ -504,7 +504,7 @@ describe('AppLayoutContainer Component', () => {
 			const mainElement = screen.getByRole('main')
 			expect(mainElement).toContainElement(screen.getByText('Header'))
 			expect(mainElement).toContainElement(screen.getByText('Article Content'))
-			expect(mainElement).toContainElement(screen.getByText('Footer'))
+			expect(mainElement).toContainElement(screen.getByText('WebsiteFooter'))
 		})
 
 		it('handles deeply nested React components', () => {

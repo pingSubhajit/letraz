@@ -6,7 +6,7 @@ import {Button} from '@/components/ui/button'
 import {Form, FormField, FormItem} from '@/components/ui/form'
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import {ChevronDown, Loader2, Pencil, Plus, Trash2} from 'lucide-react'
+import {ArrowUpRightIcon, ChevronDown, Loader2, NotebookPen, Pencil, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
@@ -39,6 +39,7 @@ import {
 } from '@/components/animations/DefaultFade'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 
 type ViewState = 'list' | 'form'
 
@@ -238,9 +239,9 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	// Filter global skills based on search query and exclude already added skills
 	const filteredSkills = globalSkills
 		.filter(skill => (skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             skill.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             skill.alias.some(alias => alias.name.toLowerCase().includes(searchQuery.toLowerCase()))) &&
-            !resumeSkills.some(rs => rs.skill.id === skill.id))
+            skill.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            skill.alias?.some(alias => alias.name.toLowerCase().includes(searchQuery.toLowerCase()))) &&
+           !resumeSkills.some(rs => rs.skill.id === skill.id))
 		.sort((a, b) => {
 			// Sort by exact match first, then by preferred status
 			const aNameMatch = a.name.toLowerCase() === searchQuery.toLowerCase()
@@ -372,8 +373,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	if (view === 'form') {
 		return (
 			<ScrollMask
-				className={cn('space-y-6', className)}
-				style={{height: 'calc(100vh - 162px)'}}
+				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 				data-lenis-prevent
 			>
 				<div className="space-y-6 px-1">
@@ -414,10 +414,6 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 															// For existing skills, populate the category
 															form.setValue('category', category || '')
 														}
-														/*
-														 * Don't update category when skillId is empty (user is typing/clearing)
-														 * This preserves the existing category when editing
-														 */
 													}}
 												/>
 												<div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
@@ -440,12 +436,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 												disabled={isSubmitting || isLoadingCategories}
 												showLabel
 												defaultValue={field.value || ''}
-												onCategorySelect={(category) => {
-												/*
-												 * CategoryAutocomplete already updates the form value
-												 * This callback can be used for additional logic if needed
-												 */
-												}}
+												onCategorySelect={(category) => {}}
 											/>
 										)}
 									/>
@@ -490,8 +481,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	return (
 		<ScrollMask
-			className={cn('flex flex-col', className)}
-			style={{height: 'calc(100vh - 162px)'}}
+			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 			data-lenis-prevent
 		>
 			<div className="space-y-6 px-1">
@@ -601,16 +591,40 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 									))}
 								</div>
 							) : (
-								<div className="text-center py-8 px-4 border border-dashed rounded-lg bg-neutral-50">
-									<div className="mb-3 text-muted-foreground">No skills added yet</div>
-									<Button
-										onClick={handleAddNew}
-										className="bg-flame-500 hover:bg-flame-600 text-white"
-									>
-										<Plus className="h-4 w-4 mr-2" />
-										Add Your First Skill
-									</Button>
-								</div>
+								<Empty>
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<NotebookPen />
+										</EmptyMedia>
+										<EmptyTitle>No skills yet</EmptyTitle>
+										<EmptyDescription>
+											You haven&apos;t added any skills yet. Get started by creating your first skill.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<div className="flex flex-col gap-2">
+											<Button
+												onClick={handleAddNew}
+												size="sm"
+												variant="outline"
+											>
+												<Plus className="h-4 w-4 mr-2" />
+												Add New Skill
+											</Button>
+
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<a href="#">
+													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+												</a>
+											</Button>
+										</div>
+									</EmptyContent>
+								</Empty>
 							)}
 						</motion.div>
 					)}

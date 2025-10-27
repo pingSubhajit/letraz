@@ -9,7 +9,6 @@ import {ViewTransitions} from 'next-view-transitions'
 import PosthogProvider from '@/components/providers/PosthogProvider'
 import {TooltipProvider} from '@/components/ui/tooltip'
 import APIProvider from '@/components/providers/ApiProvider'
-import {KnockProvider} from '@/components/providers/KnockProvider'
 import SentryUserProvider from '@/components/providers/SentryUserProvider'
 import {ReactNode} from 'react'
 
@@ -39,10 +38,6 @@ export const metadata: Metadata = {
 		canonical: defaultUrl
 	},
 	generator: 'Next.js',
-	icons: [
-		{rel: 'apple-touch-icon', url: 'logo.png'},
-		{rel: 'icon', url: 'logo.png'}
-	],
 	authors: [{name: 'Subhajit Kundu', url: portfolio}]
 }
 
@@ -55,12 +50,10 @@ const RootLayout = ({children}: Readonly<{ children: ReactNode }>) => <ClerkProv
 				<body className={`${modelica.className} ${plusJakartaSans.variable}`}>
 					<SentryUserProvider>
 						<APIProvider>
-							<KnockProvider>
-								<TooltipProvider>
-									{children}
-								</TooltipProvider>
-								<Toaster richColors/>
-							</KnockProvider>
+							<TooltipProvider>
+								{children}
+							</TooltipProvider>
+							<Toaster richColors/>
 						</APIProvider>
 					</SentryUserProvider>
 				</body>

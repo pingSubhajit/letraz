@@ -6,57 +6,118 @@ import ResumeEditor from '@/components/resume/ResumeEditor'
 import dynamic from 'next/dynamic'
 import ResumeAiLoading from '@/components/utilities/ResumeAiLoading'
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
-import {useEffect, useRef} from 'react'
+import {useEffect} from 'react'
 import {useAnalytics} from '@/lib/analytics'
+import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
+import useDidTransition from '@/components/resume/hooks/useDidTransition'
+import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
+import ResumeViewMobile from '@/components/resume/mobile/ResumeViewMobile'
+import DesktopResumeScaler from '@/components/resume/DesktopResumeScaler'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
 const ProcessingView = ({resumeId}: {resumeId: string}) => {
 	const {data: resume, isLoading, isError} = useResumeById(resumeId)
 	const {track} = useAnalytics()
-	const didTrackRef = useRef(false)
+	const isMobile = useIsMobile(1024)
 
 	// Normalize status for consistent checks
 	const status = (resume?.status || '').toLowerCase()
 	// Show the processing overlay ONLY when backend reports processing.
 	const processing = status === 'processing'
 
-	// Track transitions once
+	// Reveal animation only when transitioning from processing -> success
+	const transitionedToSuccess = useDidTransition(status, 'processing', 'success')
+	const showReveal = useRevealOnReady(Boolean(transitionedToSuccess && resume))
+
+	// Track resume_opened - re-fires when status changes
 	useEffect(() => {
-		if (didTrackRef.current) return
-		if (status === 'failed') {
-			track('tailor_resume_failed', {})
-			didTrackRef.current = true
+		if (!resume) return
+
+		track('resume_opened', {
+			resume_id: resume.id,
+			base: Boolean(resume.base),
+			status: status
+		})
+	}, [resume?.id, status, resume?.base, track])
+
+	// Update document title dynamically based on status changes
+	useEffect(() => {
+		if (!resume) return
+
+		if (resume.base) {
+			document.title = 'Base Resume - Letraz'
 			return
 		}
-		if (status === 'success') {
-			track('tailor_resume_ready', {resume_id: resume!.id, thumbnail: Boolean(resume!.thumbnail)})
-			didTrackRef.current = true
+
+		if (status === 'failed') {
+			document.title = 'Resume Processing Failed - Letraz'
+			return
 		}
-	}, [status, track, resume])
+
+		if (status === 'processing') {
+			document.title = 'Crafting Resume - Letraz'
+			return
+		}
+
+		if (status === 'success' && resume.job?.title && resume.job.company_name) {
+			document.title = `${resume.job.title} at ${resume.job.company_name} - Letraz`
+			return
+		}
+	}, [resume, status])
 
 
-	// Initial load or transient errors: show neutral placeholders without the processing overlay
-	if (!resume && (isLoading || isError)) {
-		return (
-			<ResumeHighlightProvider>
-				<div className="flex h-screen w-full" role="main">
-					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative overflow-hidden shrink-0" />
-					<div className="flex-1 min-w-0">
-						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
-					</div>
-				</div>
-			</ResumeHighlightProvider>
-		)
-	}
+	/*
+	 * Initial load or transient errors: show neutral placeholders without the processing overlay
+	 * if (!resume && (isLoading || isError)) {
+	 * 	// Mobile loading state
+	 * 	if (isMobile) {
+	 * 		return (
+	 * 			<ResumeHighlightProvider>
+	 * 				<ResumeViewMobile>
+	 * 					<div className="bg-neutral-50 w-full animate-pulse shadow-none" style={{aspectRatio: '210/297'}} />
+	 * 				</ResumeViewMobile>
+	 * 			</ResumeHighlightProvider>
+	 * 		)
+	 * 	}
+	 * 	// Desktop loading state
+	 * 	return (
+	 * 		<ResumeHighlightProvider>
+	 * 			<div className="flex h-screen w-full" role="main">
+	 * 				<DesktopResumeScaler>
+	 * 					<div className="shadow-2xl bg-neutral-50 relative overflow-hidden" />
+	 * 				</DesktopResumeScaler>
+	 * 				<div className="flex-1 min-w-0">
+	 * 					<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
+	 * 				</div>
+	 * 			</div>
+	 * 		</ResumeHighlightProvider>
+	 * 	)
+	 * }
+	 */
 
 	if (processing) {
+		// Mobile processing state
+		if (isMobile) {
+			return (
+				<ResumeHighlightProvider>
+					<ResumeViewMobile>
+						<div className="bg-neutral-50 w-full relative shadow-none" style={{aspectRatio: '210/297'}}>
+							<ResumeAiLoading />
+						</div>
+					</ResumeViewMobile>
+				</ResumeHighlightProvider>
+			)
+		}
+		// Desktop processing state
 		return (
 			<ResumeHighlightProvider>
 				<div className="flex h-screen w-full" role="main">
-					<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative overflow-hidden shrink-0">
-						{processing && <ResumeAiLoading />}
-					</div>
+					<DesktopResumeScaler>
+						<div className="shadow-2xl bg-neutral-50 relative overflow-hidden">
+							{processing && <ResumeAiLoading />}
+						</div>
+					</DesktopResumeScaler>
 					<div className="flex-1 min-w-0">
 						<ResumeEditorSkeleton className="size-full bg-neutral-50 p-12" />
 					</div>
@@ -79,13 +140,29 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 
 	if (!resume) return null
 
+	// Mobile layout - Use ResumeViewMobile wrapper
+	if (isMobile) {
+		return (
+			<ResumeHighlightProvider>
+				<ResumeViewMobile resume={resume} showToolbar={true}>
+					<ResumeViewer
+						resume={resume}
+						className="shadow-none"
+						showToolbar={false}
+						showAnimation={showReveal}
+					/>
+				</ResumeViewMobile>
+			</ResumeHighlightProvider>
+		)
+	}
 
+	// Desktop layout - Original side-by-side layout
 	return (
 		<ResumeHighlightProvider>
 			<div className="flex h-screen w-full" role="main">
-				<div className="shadow-2xl bg-neutral-50 size-a4 max-h-screen relative">
-					<ResumeViewer resume={resume} className="max-h-screen" showToolbar />
-				</div>
+				<DesktopResumeScaler>
+					<ResumeViewer resume={resume} className="shadow-2xl bg-neutral-50" showToolbar showAnimation={showReveal} />
+				</DesktopResumeScaler>
 				<div className="size-full">
 					<ResumeEditor className="size-full bg-neutral-50 p-12" />
 				</div>

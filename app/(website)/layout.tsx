@@ -1,13 +1,22 @@
 import {ReactNode} from 'react'
 import WebsiteNavBar from '@/components/WebsiteNavBar'
 import AcquisitionTracker from '@/components/analytics/AcquisitionTracker'
+import WebsiteFooter from '@/components/WebsiteFooter'
+import {SpeedInsights} from '@vercel/speed-insights/next'
 
 const WebsiteLayout = ({children}: {children: ReactNode}) => {
 	return (
-		<div className="relative">
-			<WebsiteNavBar className="fixed top-0 right-7 lg:right-16 z-30 w-[calc(100vw-56px)] lg:w-[calc(100vw-128px)]" />
-			<AcquisitionTracker />
+		<div className="relative [&>*]:font-jakarta">
+			<WebsiteNavBar className="fixed top-0 z-30 w-full" />
+
 			{children}
+
+			<div className="mt-16 sm:mt-20 lg:mt-[500px]">
+				<WebsiteFooter />
+			</div>
+
+			<SpeedInsights />
+			<AcquisitionTracker />
 		</div>
 	)
 }

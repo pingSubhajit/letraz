@@ -6,14 +6,14 @@ import EmailPasswordSignUpForm from '@/components/auth/EmailPasswordSignUpForm'
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 import GithubAuthButton from '@/components/auth/GithubAuthButton'
 
-const SignUpContent = () => {
+const SignUpContent = ({preselectedProvider, isRizeFlow = false}: { preselectedProvider?: 'google' | 'github', isRizeFlow?: boolean }) => {
 	const [isVerificationMode, setIsVerificationMode] = useState(false)
 
 	return (
 		<>
-			<SignUpPageTitle isVerification={isVerificationMode} />
+			<SignUpPageTitle isVerification={isVerificationMode} isRizeFlow={isRizeFlow} />
 
-			<div className="flex flex-col justify-center items-center mt-8 gap-6 w-full">
+			<div className="flex flex-col justify-center items-center mt-6 lg:mt-8 gap-4 lg:gap-6 w-full">
 				{/* Email/Password Sign Up Form */}
 				<EmailPasswordSignUpForm
 					className="w-full"
@@ -32,8 +32,8 @@ const SignUpContent = () => {
 
 						{/* OAuth Providers */}
 						<div className="flex flex-col gap-4 w-full">
-							<GoogleAuthButton className="w-full" />
-							<GithubAuthButton className="w-full" />
+							<GoogleAuthButton className="w-full" highlighted={preselectedProvider === 'google'} />
+							<GithubAuthButton className="w-full" highlighted={preselectedProvider === 'github'} />
 						</div>
 					</>
 				)}

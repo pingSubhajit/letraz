@@ -13,6 +13,12 @@ const routes: Record<'website' | 'app', Record<string, Route>> = {
 			route: '/',
 			mainNav: false
 		},
+		docs: {
+			title: 'Docs',
+			segment: 'docs',
+			route: '/docs',
+			mainNav: true
+		},
 		story: {
 			title: 'Our Story',
 			segment: 'story',
@@ -20,9 +26,15 @@ const routes: Record<'website' | 'app', Record<string, Route>> = {
 			mainNav: true
 		},
 		changes: {
-			title: 'Progress Updates',
+			title: 'Changelog',
 			segment: 'changes',
 			route: '/changes',
+			mainNav: true
+		},
+		signin: {
+			title: 'Sign in',
+			segment: 'signin',
+			route: '/signin',
 			mainNav: true
 		},
 		privacy: {

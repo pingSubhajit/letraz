@@ -1,7 +1,7 @@
 import '../fontawesome'
 import {charter} from '@/components/resume/themes/DEFAULT_THEME/fonts'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faEnvelope, faGlobe, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
+import {faCalendarDay, faEnvelope, faGlobe, faPhoneFlip} from '@fortawesome/free-solid-svg-icons'
 import {PersonalInfoData} from '@/components/resume/controllers/PersonalInfoController'
 import {cn} from '@/lib/utils'
 
@@ -47,6 +47,14 @@ const PersonalInfoSection = ({data}: { data: PersonalInfoData }) => {
 							contactItems.push(
 								<span key="phone">
 									<FontAwesomeIcon icon={faPhoneFlip} /> {data.contact.phone}
+								</span>
+							)
+						}
+
+						if (data.dateOfBirth.hasDate) {
+							contactItems.push(
+								<span key="dob">
+									<FontAwesomeIcon icon={faCalendarDay} /> {data.dateOfBirth.formatted}
 								</span>
 							)
 						}

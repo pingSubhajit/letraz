@@ -1,7 +1,7 @@
 'use client'
 
 import {Button} from '@/components/ui/button'
-import {Loader2, Pencil, X} from 'lucide-react'
+import {Loader2, Pencil, Trash2} from 'lucide-react'
 import PopConfirm from '@/components/ui/pop-confirm'
 import {ReactNode} from 'react'
 
@@ -27,7 +27,7 @@ const ItemCard = ({
 	const isThisItemDeleting = isDeleting && deletingId === id
 
 	return (
-		<div className={`flex items-start justify-between p-4 rounded-lg border bg-card ${className}`}>
+		<div className={`flex items-start justify-between p-3 sm:p-4 rounded-lg border bg-card ${className}`}>
 			<div className="space-y-1">
 				{children}
 			</div>
@@ -47,7 +47,7 @@ const ItemCard = ({
 							{isThisItemDeleting ? (
 								<Loader2 className="h-4 w-4 animate-spin" />
 							) : (
-								<X className="h-4 w-4" />
+								<Trash2 className="h-4 w-4" />
 							)}
 							<span className="sr-only">Delete item</span>
 						</Button>

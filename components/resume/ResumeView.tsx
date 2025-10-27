@@ -10,6 +10,9 @@ import ResumeViewerSkeleton from '@/components/skeletons/ResumeViewerSkeleton'
 import ResumeEditorSkeleton from '@/components/skeletons/ResumeEditorSkeleton'
 import ErrorView from '@/components/utilities/ErrorView'
 import {ResumeHighlightProvider} from '@/components/resume/contexts/ResumeHighlightContext'
+import useRevealOnReady from '@/components/resume/hooks/useRevealOnReady'
+import {useIsMobile} from '@/components/resume/hooks/useIsMobile'
+import ResumeViewMobile from '@/components/resume/mobile/ResumeViewMobile'
 
 const ResumeViewer = dynamic(() => import('@/components/resume/ResumeViewer'), {ssr: false})
 
@@ -19,9 +22,51 @@ interface ResumeViewProps {
 
 const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 	const resumeRef = useRef<HTMLDivElement>(null)
+	const isMobile = useIsMobile(1024)
 
 	const {data: resume, isLoading, isError} = useBaseResume()
+	const showReveal = useRevealOnReady(Boolean(resume && !isLoading && !isError))
 
+
+	// Mobile layout
+	if (isMobile) {
+		return (
+			<ResumeHighlightProvider>
+				<ResumeViewMobile resume={resume} showToolbar={showToolbar}>
+					<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+						{isLoading && !resume && (
+							<motion.div {...DEFAULT_FADE_ANIMATION} key="skeleton">
+								<ResumeViewerSkeleton className="max-h-screen" />
+							</motion.div>
+						)}
+						{isError && (
+							<motion.div {...DEFAULT_FADE_ANIMATION} key="error">
+								<ErrorView
+									title="Unable to load resume"
+									description="There was an error loading your resume preview. Please try refreshing the page."
+									buttonText="Refresh"
+									className="scale-75"
+								/>
+							</motion.div>
+						)}
+						{resume && (
+							<motion.div {...DEFAULT_FADE_ANIMATION} key="content">
+								<ResumeViewer
+									resumeRef={resumeRef}
+									resume={resume}
+									className="shadow-none"
+									showToolbar={false}
+									showAnimation={showReveal}
+								/>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</ResumeViewMobile>
+			</ResumeHighlightProvider>
+		)
+	}
+
+	// Desktop layout
 	return (
 		<ResumeHighlightProvider>
 			<div className="flex h-screen" role="main">
@@ -48,7 +93,7 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 							)}
 							{resume && (
 								<motion.div {...DEFAULT_FADE_ANIMATION} key="content">
-									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" showToolbar={showToolbar} />
+									<ResumeViewer resumeRef={resumeRef} resume={resume} className="max-h-screen" showToolbar={showToolbar} showAnimation={showReveal} />
 								</motion.div>
 							)}
 						</AnimatePresence>
@@ -83,3 +128,5 @@ const ResumeView = ({showToolbar = true}: ResumeViewProps) => {
 }
 
 export default ResumeView
+
+

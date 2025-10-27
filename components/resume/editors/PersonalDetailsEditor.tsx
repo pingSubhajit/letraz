@@ -42,20 +42,17 @@ interface Props {
 type ViewState = 'list' | 'form';
 
 // Helper to consistently convert user data to form values
-function toFormValuesFromUser(user: any) {
-	return {
-		...user,
-		country: typeof user?.country === 'string' ? user.country : user?.country?.code ?? null,
-	}
-}
+const toFormValuesFromUser = (user: any) => ({
+	...user,
+	country: typeof user?.country === 'string' ? user.country : user?.country?.code ?? null
+})
 
 // Helper to maintain consistent country object shape in caches
-const shapeCountry = (old: any, countryCode: string | null | undefined) =>
-	countryCode == null ? null : {
-		code: countryCode,
-		// Reuse previous name or fallback to code
-		name: (typeof old?.country === 'object' && old?.country?.name) || countryCode,
-	}
+const shapeCountry = (old: any, countryCode: string | null | undefined) => countryCode == null ? null : {
+	code: countryCode,
+	// Reuse previous name or fallback to code
+	name: (typeof old?.country === 'object' && old?.country?.name) || countryCode
+}
 
 const DEFAULT_DETAILS_VALUES: UserInfoMutation = {
 	title: '',
@@ -102,7 +99,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 				queryClient.setQueryData(userInfoQueryOptions.queryKey, (oldData: any) => ({
 					...oldData,
 					...newData,
-					country: shapeCountry(oldData, newData.country),
+					country: shapeCountry(oldData, newData.country)
 				}))
 
 				// Update resume cache with proper country object shape
@@ -111,7 +108,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 					user: {
 						...oldData?.user,
 						...newData,
-						country: shapeCountry(oldData?.user, newData.country),
+						country: shapeCountry(oldData?.user, newData.country)
 					}
 				}))
 
@@ -190,10 +187,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 		<div ref={scrollRef} className={cn('space-y-6', className)}>
 			{view === 'form' ? (
 				<ScrollMask
-					className="space-y-6"
-					style={{
-						height: 'calc(100vh - 162px)'
-					}}
+					className="space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none"
 					data-lenis-prevent
 				>
 					<div className="space-y-6 px-1">
@@ -202,16 +196,16 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							description="Ensure that the details are correct and reflect your previous personal information"
 						/>
 
-						<div className="rounded-xl p-6 mb-6 shadow-md bg-neutral-100">
-							<div className="flex items-start gap-4">
+						<div className="rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-md bg-neutral-100">
+							<div className="flex items-start gap-3 sm:gap-4">
 								<div className="flex-shrink-0">
-									<div className="w-10 h-10 bg-flame-500 rounded-lg flex items-center justify-center">
-										<FileText className="h-5 w-5 text-white" />
+									<div className="w-8 h-8 sm:w-10 sm:h-10 bg-flame-500 rounded-lg flex items-center justify-center">
+										<FileText className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
 									</div>
 								</div>
 								<div className="flex-1">
-									<h3 className="text-base font-semibold text-flame-950 leading-none mb-1">Global Information</h3>
-									<p className="text-sm text-flame-900 leading-relaxed">
+									<h3 className="text-sm sm:text-base font-semibold text-flame-950 leading-none mb-1">Global Information</h3>
+									<p className="text-xs sm:text-sm text-flame-900 leading-relaxed">
 										Changes made to your personal information will be applied across all of your resumes.
 										This ensures your details stay consistent throughout your profile.
 									</p>
@@ -224,7 +218,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 								onSubmit={form.handleSubmit(onSubmit)}
 								className="flex flex-col gap-4"
 							>
-								<div className="grid grid-cols-3 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 									<FormField
 										control={form.control}
 										name="title"
@@ -237,7 +231,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 													disabled={isSubmitting}
 												>
 													<FormControl>
-														<SelectTrigger className="h-12">
+														<SelectTrigger className="h-10 sm:h-12">
 															<SelectValue placeholder="e.g., Mr., Mrs., Dr." />
 														</SelectTrigger>
 													</FormControl>
@@ -266,13 +260,13 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 										disabled={isSubmitting}
 									/>
 								</div>
-								<div className="grid grid-cols-3 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 									<TextFormField
 										form={form}
 										name="email"
 										label="Email"
 										placeholder="e.g. john.smith@email.com"
-										disabled={isSubmitting}
+										disabled={true}
 									/>
 
 									<TextFormField
@@ -313,7 +307,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 									disabled={isSubmitting}
 								/>
 
-								<div className="grid grid-cols-3 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 									<TextFormField
 										form={form}
 										name="city"
@@ -365,7 +359,10 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 					</div>
 				</ScrollMask>
 			) : (
-				<>
+				<ScrollMask
+					className="space-y-6 h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none"
+					data-lenis-prevent
+				>
 					<EditorHeader
 						title="Personal Information"
 						showAddButton={isMounted && !isLoading}
@@ -404,10 +401,10 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 										onEdit={handleUpdate}
 										id={userInfo.id}
 									>
-										<div className="space-y-6 p-4">
+										<div className="space-y-3 sm:space-y-4 lg:space-y-3 2xl:space-y-6 p-2 sm:p-3 lg:p-3 2xl:p-4">
 											{/* Header Section */}
-											<div className="flex items-center space-x-3">
-												<div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full overflow-hidden">
+											<div className="flex items-center space-x-2 sm:space-x-3">
+												<div className="flex items-center justify-center w-10 h-10 lg:w-10 lg:h-10 2xl:w-12 2xl:h-12 bg-primary/10 rounded-full overflow-hidden">
 													{clerkUser?.hasImage && clerkUser.imageUrl && clerkUser.imageUrl.length > 0 ? (
 														<Image
 															src={clerkUser.imageUrl}
@@ -419,76 +416,76 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 															unoptimized={false}
 														/>
 													) : (
-														<User className="w-6 h-6 text-primary" />
+														<User className="w-5 h-5 lg:w-5 lg:h-5 2xl:w-6 2xl:h-6 text-primary" />
 													)}
 												</div>
 												<div>
-													<h3 className="text-lg font-semibold text-foreground">
+													<h3 className="text-sm sm:text-base lg:text-base 2xl:text-lg font-semibold text-foreground">
 														{userInfo?.title && `${userInfo.title} `}
 														{userInfo.first_name} {userInfo.last_name}
 													</h3>
-													<p className="text-sm text-muted-foreground">Personal Information</p>
+													<p className="text-xs lg:text-xs 2xl:text-sm text-muted-foreground">Personal Information</p>
 												</div>
 											</div>
 
 											{/* Contact Information */}
-											<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div className="grid grid-cols-1 gap-3 lg:gap-2.5 2xl:gap-4">
 												{/* Email */}
-												<div className="flex items-center space-x-3">
-													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-														<Mail className="w-4 h-4 text-flame-600" />
+												<div className="flex items-center space-x-2 sm:space-x-3">
+													<div className="flex items-center justify-center w-7 h-7 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 bg-orange-50 rounded-lg mb-1">
+														<Mail className="w-3.5 h-3.5 lg:w-3.5 lg:h-3.5 2xl:w-4 2xl:h-4 text-flame-600" />
 													</div>
 													<div className="min-w-0 flex-1">
-														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
-														<p className="text-sm text-foreground truncate">{userInfo.email || 'Not provided'}</p>
+														<p className="text-[10px] lg:text-[10px] 2xl:text-xs font-medium text-muted-foreground uppercase tracking-wide">Email</p>
+														<p className="text-xs lg:text-xs 2xl:text-sm text-foreground truncate">{userInfo.email || 'Not provided'}</p>
 													</div>
 												</div>
 
 												{/* Phone */}
-												<div className="flex items-center space-x-3">
-													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-														<Phone className="w-4 h-4 text-flame-600" />
+												<div className="flex items-center space-x-2 sm:space-x-3">
+													<div className="flex items-center justify-center w-7 h-7 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 bg-orange-50 rounded-lg mb-1">
+														<Phone className="w-3.5 h-3.5 lg:w-3.5 lg:h-3.5 2xl:w-4 2xl:h-4 text-flame-600" />
 													</div>
 													<div className="min-w-0 flex-1">
-														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
-														<p className="text-sm text-foreground">{userInfo.phone || 'Not provided'}</p>
+														<p className="text-[10px] lg:text-[10px] 2xl:text-xs font-medium text-muted-foreground uppercase tracking-wide">Phone</p>
+														<p className="text-xs lg:text-xs 2xl:text-sm text-foreground">{userInfo.phone || 'Not provided'}</p>
 													</div>
 												</div>
 
 												{/* Date of Birth */}
-												<div className="flex items-center space-x-3">
-													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-														<Calendar className="w-4 h-4 text-flame-600" />
+												<div className="flex items-center space-x-2 sm:space-x-3">
+													<div className="flex items-center justify-center w-7 h-7 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 bg-orange-50 rounded-lg mb-1">
+														<Calendar className="w-3.5 h-3.5 lg:w-3.5 lg:h-3.5 2xl:w-4 2xl:h-4 text-flame-600" />
 													</div>
 													<div className="min-w-0 flex-1">
-														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</p>
-														<p className="text-sm text-foreground">
+														<p className="text-[10px] lg:text-[10px] 2xl:text-xs font-medium text-muted-foreground uppercase tracking-wide">Date of Birth</p>
+														<p className="text-xs lg:text-xs 2xl:text-sm text-foreground">
 															{userInfo.dob ? userInfo.dob.toLocaleDateString() : 'Not provided'}
 														</p>
 													</div>
 												</div>
 
 												{/* Website */}
-												<div className="flex items-center space-x-3">
-													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mb-1">
-														<Globe className="w-4 h-4 text-flame-600" />
+												<div className="flex items-center space-x-2 sm:space-x-3">
+													<div className="flex items-center justify-center w-7 h-7 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 bg-orange-50 rounded-lg mb-1">
+														<Globe className="w-3.5 h-3.5 lg:w-3.5 lg:h-3.5 2xl:w-4 2xl:h-4 text-flame-600" />
 													</div>
 													<div className="min-w-0 flex-1">
-														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</p>
-														<p className="text-sm text-foreground truncate">{userInfo.website || 'Not provided'}</p>
+														<p className="text-[10px] lg:text-[10px] 2xl:text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</p>
+														<p className="text-xs lg:text-xs 2xl:text-sm text-foreground truncate">{userInfo.website || 'Not provided'}</p>
 													</div>
 												</div>
 											</div>
 
 											{/* Address Section */}
 											{(userInfo.address || userInfo.city || userInfo.postal || userInfo.country?.name) && (
-												<div className="flex items-start space-x-3">
-													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg my-1">
-														<MapPin className="w-4 h-4 text-flame-600" />
+												<div className="flex items-start space-x-2 sm:space-x-3">
+													<div className="flex items-center justify-center w-7 h-7 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 bg-orange-50 rounded-lg my-1">
+														<MapPin className="w-3.5 h-3.5 lg:w-3.5 lg:h-3.5 2xl:w-4 2xl:h-4 text-flame-600" />
 													</div>
 													<div className="min-w-0 flex-1">
-														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
-														<div className="text-sm text-foreground space-y-1">
+														<p className="text-[10px] lg:text-[10px] 2xl:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Address</p>
+														<div className="text-xs lg:text-xs 2xl:text-sm text-foreground space-y-0.5 lg:space-y-0.5 2xl:space-y-1">
 															{userInfo.address && <p>{userInfo.address}</p>}
 															<p>
 																{[userInfo.city, userInfo.postal, userInfo.country?.name]
@@ -502,14 +499,14 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 
 											{/* Bio Section */}
 											{userInfo.profile_text && (
-												<div className="flex items-start space-x-3">
-													<div className="flex items-center justify-center w-8 h-8 bg-orange-50 rounded-lg mt-1">
-														<FileText className="w-4 h-4 text-flame-600" />
+												<div className="flex items-start space-x-2 sm:space-x-3">
+													<div className="flex items-center justify-center w-7 h-7 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 bg-orange-50 rounded-lg mt-1">
+														<FileText className="w-3.5 h-3.5 lg:w-3.5 lg:h-3.5 2xl:w-4 2xl:h-4 text-flame-600" />
 													</div>
 													<div className="min-w-0 flex-1">
-														<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
+														<p className="text-[10px] lg:text-[10px] 2xl:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Professional Summary</p>
 														<div
-															className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
+															className="text-xs lg:text-xs 2xl:text-sm text-foreground leading-relaxed prose prose-sm lg:prose-xs 2xl:prose-sm max-w-none"
 															dangerouslySetInnerHTML={{__html: sanitizeHtml(userInfo.profile_text)}}
 														/>
 													</div>
@@ -526,7 +523,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							</motion.div>
 						)}
 					</AnimatePresence>
-				</>
+				</ScrollMask>
 			)}
 		</div>
 	)

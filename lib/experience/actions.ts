@@ -4,6 +4,7 @@ import {z} from 'zod'
 import {Experience, ExperienceMutation, ExperienceMutationSchema, ExperienceSchema} from '@/lib/experience/types'
 import {api} from '@/lib/config/api-client'
 import {handleErrors} from '@/lib/misc/error-handler'
+import {stripNullFields} from '@/lib/utils'
 
 /**
  * Adds new experience information in the database
@@ -16,7 +17,8 @@ export const addExperienceToDB = async (
 	resumeId: string = 'base'
 ): Promise<Experience> => {
 	try {
-		const params = ExperienceMutationSchema.parse(experienceValues)
+		const parsed = ExperienceMutationSchema.parse(experienceValues)
+		const params = stripNullFields(parsed)
 		const data = await api.post<Experience>(`/resume/${resumeId}/experience/`, params)
 		return ExperienceSchema.parse(data)
 	} catch (error) {
@@ -34,8 +36,8 @@ export const getExperiencesFromDB = async (
 	resumeId: string = 'base'
 ): Promise<Experience[]> => {
 	try {
-		const data = await api.get<Experience[]>(`/resume/${resumeId}/experience/`)
-		return z.array(ExperienceSchema).parse(data)
+		const data = await api.get<{experiences: Experience[]}>(`/resume/${resumeId}/experience/`)
+		return z.array(ExperienceSchema).parse(data.experiences)
 	} catch (error) {
 		return handleErrors(error, 'fetch experiences')
 	}
@@ -55,7 +57,9 @@ export const updateExperienceInDB = async (
 	resumeId: string = 'base'
 ): Promise<Experience> => {
 	try {
-		const data = await api.patch<Experience>(`/resume/${resumeId}/experience/${experienceId}/`, experienceValues)
+		const parsed = ExperienceMutationSchema.parse(experienceValues)
+		const params = stripNullFields(parsed)
+		const data = await api.patch<Experience>(`/resume/${resumeId}/experience/${experienceId}/`, params)
 		return ExperienceSchema.parse(data)
 	} catch (error) {
 		return handleErrors(error, 'update experience')

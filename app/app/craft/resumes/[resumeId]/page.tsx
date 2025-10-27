@@ -2,7 +2,7 @@ import {Suspense} from 'react'
 import type {Metadata} from 'next'
 import ProcessingView from './processing.client'
 import {notFound} from 'next/navigation'
-import {getResumeFromDB} from '@/lib/resume/actions'
+import {getResumeFromDB, getResumeMinimal} from '@/lib/resume/actions'
 
 type PageProps = {
   params: Promise<{ resumeId: string }>
@@ -11,10 +11,41 @@ type PageProps = {
 export const generateMetadata = async (
 	props: { params: Promise<{ resumeId: string }> }
 ): Promise<Metadata> => {
-	const {resumeId} = await props.params
-	return {
-		title: `Processing — ${resumeId}`,
-		description: 'We are processing your resume. This can take a few moments.'
+	try {
+		const {resumeId} = await props.params
+		const resume = await getResumeMinimal(resumeId)
+
+		if (!resume) {
+			notFound()
+		}
+
+		if (resume.base) {
+			return {
+				title: 'Base Resume - Letraz',
+				description: 'This is the base resume. This is the master resume for tailoring.'
+			}
+		}
+
+		if (resume.status === 'Failed') {
+			return {
+				title: 'Resume Processing Failed - Letraz',
+				description: 'We couldn\'t process your resume. Please try again.'
+			}
+		}
+
+		if (resume.status === 'Processing') {
+			return {
+				title: 'Crafting Resume - Letraz',
+				description: 'We are processing your resume. This can take a few moments.'
+			}
+		}
+
+		return {
+			title: `${resume.job_title} at ${resume.company_name} - Letraz`,
+			description: `Here is your tailored resume for the ${resume.job_title} role at ${resume.company_name}. Happy applying!`
+		}
+	} catch {
+		notFound()
 	}
 }
 
@@ -42,3 +73,4 @@ const ResumeProcessingPage = async ({params}: PageProps) => {
 }
 
 export default ResumeProcessingPage
+

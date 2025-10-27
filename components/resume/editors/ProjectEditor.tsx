@@ -10,7 +10,7 @@ import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {z} from 'zod'
 import {months} from '@/constants'
-import {ExternalLink, Github, Plus, Trash2} from 'lucide-react'
+import {ArrowUpRightIcon, ExternalLink, Github, Lightbulb, Plus, Trash2} from 'lucide-react'
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {toast} from 'sonner'
@@ -37,6 +37,7 @@ import {Badge} from '@/components/ui/badge'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
 import ScrollMask from '@/components/ui/scroll-mask'
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
@@ -303,10 +304,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 	if (view === 'form') {
 		return (
 			<ScrollMask
-				className={cn('space-y-6', className)}
-				style={{
-					height: 'calc(100vh - 162px)'
-				}}
+				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 				data-lenis-prevent
 			>
 				<div className="space-y-6 px-1">
@@ -323,7 +321,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 							onSubmit={form.handleSubmit(onSubmit)}
 							className="flex flex-col gap-4"
 						>
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<TextFormField
 									form={form}
 									name="name"
@@ -340,7 +338,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 								/>
 							</div>
 
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<TextFormField
 									form={form}
 									name="role"
@@ -348,7 +346,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 									placeholder="e.g. Frontend Developer"
 									disabled={isSubmitting}
 								/>
-								<div className="grid grid-cols-2 gap-4">
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<TextFormField
 										form={form}
 										name="github_url"
@@ -647,10 +645,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 
 	return (
 		<ScrollMask
-			className={cn('flex flex-col', className)}
-			style={{
-				height: 'calc(100vh - 162px)'
-			}}
+			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
 			data-lenis-prevent
 		>
 			<div className="space-y-6 px-1">
@@ -701,7 +696,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 										deletingId={deletingId}
 									>
 										<div className="flex items-center gap-2">
-											<h3 className="font-medium">{project.name}</h3>
+											<h3 className="text-sm sm:text-base font-medium">{project.name}</h3>
 											<div className="flex items-center gap-1.5">
 												{project.github_url && (
 													<button
@@ -729,10 +724,10 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 												)}
 											</div>
 										</div>
-										<p className="text-sm text-muted-foreground">
+										<p className="text-xs sm:text-sm text-muted-foreground">
 											{[project.role, project.category].filter(Boolean).join(' | ')}
 										</p>
-										<p className="text-sm">
+										<p className="text-xs sm:text-sm">
 											{project.started_from_month &&
                                             months.find(
                                             	(m) => m.value === project.started_from_month?.toString(),
@@ -774,14 +769,40 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 									</ItemCard>
 								))
 							) : (
-								<Button
-									onClick={handleAddNew}
-									className="w-full"
-									variant="outline"
-								>
-									<Plus className="h-4 w-4 mr-2" />
-									Add New Project
-								</Button>
+								<Empty>
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<Lightbulb />
+										</EmptyMedia>
+										<EmptyTitle>No projects yet</EmptyTitle>
+										<EmptyDescription>
+											You haven&apos;t added any projects yet. Get started by creating your first project.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<div className="flex flex-col gap-2">
+											<Button
+												onClick={handleAddNew}
+												size="sm"
+												variant="outline"
+											>
+												<Plus className="h-4 w-4 mr-2" />
+												Add New Project
+											</Button>
+
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<a href="#">
+													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+												</a>
+											</Button>
+										</div>
+									</EmptyContent>
+								</Empty>
 							)}
 						</motion.div>
 					)}

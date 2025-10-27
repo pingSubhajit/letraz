@@ -1,54 +1,74 @@
-import {Suspense} from 'react'
-import Waitlist from '@/components/Waitlist'
-import LandingPageHeading from '@/app/(website)/page.heading'
-import LandingPageLogo from '@/app/(website)/page.logo'
-import LandingPageDescription from '@/app/(website)/page.description'
-import LandingPageFooter from '@/app/(website)/page-footer'
-import LandingPageVideo from '@/app/(website)/page.video'
-import LandingPageGradientShadows from '@/app/(website)/page.gradientShadows'
-import {Button} from '@/components/ui/button'
-import {Link} from 'next-view-transitions'
+import NextDynamic from 'next/dynamic'
+import landingBg from '@/public/landing-bg.avif'
+import Image from 'next/image'
+import stacksLogo from '@/public/stacks-logo.svg'
+import infosysLogo from '@/public/infosys-logo.svg'
+import rizeLogo from '@/public/rize-logo-dark.svg'
+import HeroHeader from './page.heroHeader'
 
-const LandingPage = async (
-	props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
-) => {
-	const searchParams = await props.searchParams
-	const referrer = searchParams.ref as string | undefined
+const HeroVideoSequence = NextDynamic(() => import('@/app/(website)/page.canvas'))
+const LandingPageFeatures = NextDynamic(() => import('@/app/(website)/page.features'))
+const LandingPageProcess = NextDynamic(() => import('@/app/(website)/page.process'))
+const LandingPageFaq = NextDynamic(() => import('@/app/(website)/page.faq'))
+
+export const dynamic = 'force-static'
+export const revalidate = 3600
+
+const LandingPage = () => {
 
 	return (
-		<main className="h-svh overflow-hidden flex flex-col lg:flex-row justify-stretch lg:justify-center items-stretch bg-white">
-			<div className="flex flex-col justify-center items-start gap-8 p-8 lg:p-16 relative z-10">
-				<LandingPageLogo className="relative z-30 mt-8 lg:mt-0" hideOnMobile={true} />
-				<LandingPageHeading className="relative z-30" />
-				<LandingPageDescription className="lg:py-2 relative z-30" />
-				<Waitlist className="relative z-30" referrer={referrer} />
+		<main className="relative overflow-x-clip">
+			{/* Hero Section */}
+			<div className="min-h-[300vh] sm:min-h-[400vh] lg:min-h-[530vh] relative">
+				{/* Background image */}
+				<div className="sticky top-0 w-full h-screen">
+					<Image
+						src={landingBg}
+						alt="Landing Page background image of a sunny landscape"
+						className="w-full h-full object-cover pointer-events-none block"
+						priority
+						placeholder="blur"
+						sizes="100vw"
+					/>
+				</div>
 
-				<LandingPageFooter className="lg:absolute lg:bottom-16 z-30 lg:w-[calc(100%-128px)]" />
+				<div>
+					{/* Canvas sequence */}
+					<HeroVideoSequence
+						className="mt-32 sm:mt-28 2xl:mt-44 w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[75vw] aspect-[5.3/3.4] max-h-[40vh] sm:max-h-[55vh] lg:max-h-[75vh] xl:max-h-[80vh] 3xl:max-h-[85vh] absolute top-[330px] sm:top-[400px] lg:top-[500px] left-1/2 -translate-x-1/2 z-10 shadow-2xl"
+					/>
 
-				<div className="absolute w-full h-full inset-0 bg-neutral-100 z-20 shadow-2xl" />
-
-				{/* SIDEBAR GRADIENT SHADOWS */}
-				<LandingPageGradientShadows />
+					<HeroHeader />
+				</div>
 			</div>
 
-			<div className="w-full lg:w-[80%] h-svh flex justify-center items-center overflow-hidden relative">
-				<Suspense fallback={<div className="w-full h-full bg-neutral-100 animate-pulse"/>}>
-					<LandingPageVideo />
-				</Suspense>
+			<div className="-mt-[15vh] sm:-mt-[10vh] lg:-mt-0 pb-12 sm:pb-16 lg:pb-20 bg-[#0F0202]">
+				<p className="text-center text-neutral-50 pt-8 sm:pt-12 text-sm sm:text-base px-4">Trusted by people in</p>
 
-				<div className="lg:absolute lg:bottom-16 right-8 lg:right-16 z-30 lg:w-[calc(100%-128px)] flex justify-between items-center">
-					<p>Closed beta starting soon</p>
-
-					<nav>
-						<Link href="/terms">
-							<Button variant="link" className="pl-0  font-semibold">Terms of use</Button>
-						</Link>
-
-						<Link href="/privacy">
-							<Button variant="link" className="pl-0  font-semibold">Privacy policy</Button>
-						</Link>
-					</nav>
+				<div className="mt-4 sm:mt-6 flex justify-center items-center gap-4 sm:gap-6 lg:gap-8 mx-auto px-4">
+					<Image src={stacksLogo} alt="Stacks logo" className="w-16 sm:w-20 lg:w-28" />
+					<Image src={infosysLogo} alt="Infosys logo" className="w-16 sm:w-20 lg:w-28" />
+					<Image src={rizeLogo} alt="Infosys logo" className="w-16 sm:w-20 lg:w-28" />
 				</div>
+			</div>
+
+			{/* <div className="max-w-7xl mx-auto mt-3 lg:mt-8">*/}
+			{/*	<video preload="auto" loop autoPlay muted playsInline className="w-full">*/}
+			{/*		<source src="/letraz-engine.webm" type="video/webm" />*/}
+			{/*		<source src="/letraz-engine.mp4" type="video/mp4" />*/}
+			{/*	</video>*/}
+			{/* </div>*/}
+
+			<div className="overflow-x-clip mt-8 sm:mt-12 lg:mt-0">
+				<LandingPageProcess />
+			</div>
+
+			<div className="overflow-x-clip mt-6 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
+				<LandingPageFeatures />
+			</div>
+
+			<div className="overflow-x-clip mt-12 sm:mt-20 lg:mt-32 max-w-7xl mx-auto">
+				<LandingPageFaq />
 			</div>
 		</main>
 	)

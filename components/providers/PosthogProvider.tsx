@@ -10,17 +10,11 @@ if (typeof window !== 'undefined') {
 	if (!process.env.NEXT_PUBLIC_POSTHOG_KEY || !process.env.NEXT_PUBLIC_POSTHOG_HOST) {
 		// Missing configuration – skip PostHog initialization
 	} else {
-		// Respect Do Not Track (DNT) and Global Privacy Control (GPC) BEFORE init
-		const dnt = (navigator as any)?.doNotTrack === '1' || (navigator as any)?.doNotTrack === 'yes' || (window as any)?.doNotTrack === '1'
-		const gpc = (navigator as any)?.globalPrivacyControl === true
-		const trackingBlocked = dnt || gpc
-
 		posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
 			api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
 			person_profiles: 'identified_only',
-			opt_out_capturing_by_default: trackingBlocked,
-			capture_pageview: !trackingBlocked,
-			capture_pageleave: !trackingBlocked,
+			capture_pageview: true,
+			capture_pageleave: true,
 			persistence: 'localStorage', // Removed secure_cookie since it's irrelevant for localStorage
 			before_send: (event) => {
 				if (!event) return null
@@ -54,11 +48,6 @@ if (typeof window !== 'undefined') {
 			}
 		})
 
-		// Apply opt-out state after init if needed (redundant safety check)
-		if (trackingBlocked) {
-			posthog.opt_out_capturing()
-		}
-
 		// Super properties for environment and build metadata
 		try {
 			posthog.register({
@@ -91,8 +80,10 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 
 		// If user is authenticated, identify user in PostHog
 		if (userId && user) {
+			const userEmail = user.emailAddresses[0]?.emailAddress
 			const userProperties = {
-				email: user.emailAddresses[0]?.emailAddress,
+				email: userEmail,
+				userId: userId, // Store Clerk user ID as a property for reference
 				username: user.username || user.fullName || 'Unknown User',
 				fullName: user.fullName,
 				firstName: user.firstName,
@@ -114,8 +105,13 @@ const PosthogUserIdentifier = ({children}: {children: ReactNode}) => {
 				)
 			}
 
-			// Identify user in PostHog with Clerk user ID as the distinct ID
-			posthog.identify(userId, userProperties)
+			/*
+			 * Identify user in PostHog with email address as the distinct ID
+			 * Only identify if we have an email address
+			 */
+			if (userEmail) {
+				posthog.identify(userEmail, userProperties)
+			}
 
 			// Set additional properties for group analysis
 			posthog.group('user_segment', 'authenticated')

@@ -49,11 +49,6 @@ const envSchema = z.object({
 		message: 'Resend API key must start with "re_"'
 	}),
 
-	// Required Anthropic API key, must start with "sk-ant-api03-"
-	ANTHROPIC_API_KEY: z.string().startsWith('sk-ant-api03-', {
-		message: 'Anthropic API key must start with "sk-ant-api03-"'
-	}),
-
 	// Required Ghost CMS API key
 	GHOST_API_KEY: z.string({
 		message: 'Ghost API key must be a string'
@@ -128,6 +123,12 @@ const envSchema = z.object({
 	BRIGHTDATA_DATASET_ID: z.string({
 		required_error: 'BrightData dataset id is required',
 		invalid_type_error: 'BrightData dataset id must be a string'
+	}),
+
+	// Rize admin API key for server-to-server calls
+	RIZE_ADMIN_API_KEY: z.string({
+		required_error: 'Rize admin API key is required',
+		invalid_type_error: 'Rize admin API key must be a string'
 	}),
 
 	// Optional feature flag for Resume Editor tabs new design

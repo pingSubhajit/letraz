@@ -14,10 +14,6 @@ const LandingPageVideo = () => {
 				src="/letraz-intro.webm"
 				type="video/webm"
 			/>
-			<source
-				src="/letraz-intro.mp4"
-				type="video/mp4"
-			/>
 		</video>
 	)
 }
