@@ -24,14 +24,14 @@ const HeroHeader = () => {
 
 	return (
 		<div
-			className="fixed top-24 sm:top-1/4 left-1/2 -translate-x-1/2 -translate-y-0 sm:-translate-y-2/4 py-2 px-4 sm:px-6 lg:px-2 w-full lg:w-auto max-w-[95vw] lg:max-w-none"
+			className="fixed top-24 sm:top-1/4 lg:top-[30%] left-1/2 -translate-x-1/2 -translate-y-0 sm:-translate-y-2/4 py-2 px-4 sm:px-6 lg:px-2 w-full lg:w-auto max-w-[95vw] lg:max-w-none"
 			style={{
 				transformStyle: 'preserve-3d',
 				perspective: '1000px'
 			}}
 		>
 			<motion.div style={{scale, opacity, y, filter}} className="flex flex-col justify-center items-center gap-3 sm:gap-6 lg:gap-8">
-				<h1 className="text-[1.75rem] leading-[2rem] sm:text-3xl sm:leading-tight lg:text-4xl lg:leading-tight 2xl:text-7xl max-w-[90vw] sm:max-w-2xl md:max-w-2xl lg:max-w-3xl text-center font-semibold mt-16 lg:mt-0">
+				<h1 className="text-[1.75rem] leading-[2rem] sm:text-3xl sm:leading-tight lg:text-4xl lg:leading-tight 2xl:text-5xl max-w-[90vw] sm:max-w-2xl md:max-w-2xl lg:max-w-3xl text-center font-semibold mt-16 lg:mt-0">
 					Craft unique resumes tailored for each job you apply for
 				</h1>
 				<p className="text-xs sm:text-base text-center max-w-[85vw] sm:max-w-md lg:max-w-lg leading-relaxed sm:leading-snug">

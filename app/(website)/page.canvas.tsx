@@ -110,13 +110,17 @@ const HeroVideoSequence = ({className}: {className?: string}) => {
 			const isLargeScreen = window.innerWidth >= 1024
 			const isMediumScreen = window.innerWidth >= 640
 
-			// Calculate scroll length to match exactly with the parent container height
-			// The canvas is absolutely positioned, so we need to account for its starting position
+			/*
+			 * Calculate scroll length to match exactly with the parent container height
+			 * The canvas is absolutely positioned, so we need to account for its starting position
+			 */
 			const canvasTopOffset = isLargeScreen ? 500 : isMediumScreen ? 400 : 330
 			const containerHeight = isLargeScreen ? 530 : isMediumScreen ? 400 : 300
 
-			// Scroll length should be: (containerHeight * vh - canvasTopOffset - viewport height)
-			// This ensures the pin duration matches exactly with when the canvas should release
+			/*
+			 * Scroll length should be: (containerHeight * vh - canvasTopOffset - viewport height)
+			 * This ensures the pin duration matches exactly with when the canvas should release
+			 */
 			const scrollLength = Math.max(
 				(containerHeight * window.innerHeight / 100) - canvasTopOffset - window.innerHeight,
 				isLargeScreen ? 2000 : isMediumScreen ? 1500 : 1000
