@@ -156,8 +156,11 @@ const StepTwo = () => (
 			<p className="mt-3 sm:mt-4 lg:mt-5 text-sm sm:text-base lg:text-lg">We ask you to enter your details or upload your resume once when you get started. That's our way of getting to know you. Once you do it, applying for jobs become 10x easier</p>
 		</div>
 
-		<div className="bg-white aspect-video w-[90%] sm:w-[85%] lg:w-3/4 rounded-t-xl sm:rounded-t-2xl">
-
+		<div className="bg-white aspect-video w-[90%] sm:w-[85%] lg:w-3/4 rounded-t-xl sm:rounded-t-2xl overflow-hidden">
+			<video preload="none" loop autoPlay muted playsInline className="w-full">
+				<source src="/find-a-job.av1.webm" type="video/webm; codecs=av01" />
+				<source src="/find-a-job.webm" type="video/webm; codecs=vp9" />
+			</video>
 		</div>
 	</div>
 )
