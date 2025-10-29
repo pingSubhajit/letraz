@@ -114,7 +114,7 @@ const ProcessingView = ({resumeId}: {resumeId: string}) => {
 			<ResumeHighlightProvider>
 				<div className="flex h-screen w-full" role="main">
 					<DesktopResumeScaler>
-						<div className="shadow-2xl bg-neutral-50 relative overflow-hidden">
+						<div className="shadow-2xl bg-neutral-50 relative overflow-hidden h-full w-full">
 							{processing && <ResumeAiLoading />}
 						</div>
 					</DesktopResumeScaler>
