@@ -7,7 +7,7 @@ import {z} from 'zod'
 const stringOrStringArray = z.union([z.string(), z.array(z.string())]).transform((val) => Array.isArray(val) ? val.join('\n') : val)
 
 export const JobSchema = z.object({
-	job_url: z.string().describe('The URL of the job posting.'),
+	job_url: z.string().nullable().describe('The URL of the job posting. Nullable if not specified.'),
 	title: z.string().describe('The title of the job position.'),
 	company_name: z.string().describe('The name of the company offering the job.'),
 	location: z.string().nullable().describe('The location where the job is based.'),
