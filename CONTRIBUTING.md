@@ -29,3 +29,4 @@ We appreciate your interest in contributing to Letraz! While we can't accept ext
 ---
 
 *Last updated: August 2025*
+
