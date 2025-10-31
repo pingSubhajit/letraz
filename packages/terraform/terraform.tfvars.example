@@ -1,0 +1,33 @@
+# Common configuration
+do_token                 = "dop_v1_YOUR_DIGITALOCEAN_TOKEN_HERE"
+ssh_keys                 = []  # Will be populated with uploaded key fingerprints
+ssh_key_public_keys      = [
+    "ssh-ed25519 YOUR_SSH_PUBLIC_KEY_HERE user@hostname",
+    # Add more SSH public keys as needed
+]
+admin_email              = "your-email@example.com"
+manage_dns               = false  # Set to true if you want to manage DNS records
+root_domain              = "yourdomain.com"
+
+# Server module configuration
+server_hostname          = "letraz-server"
+api_fqdn                 = "api.yourdomain.com"
+api_grpc_fqdn            = "api-grpc.yourdomain.com"
+server_app_env_content   = <<EOF
+ENV=PROD
+ALLOWED_HOSTS=*
+# Add your server environment variables here
+EOF
+
+# Utils module configuration
+utils_hostname           = "letraz-utils"
+utils_fqdn               = "utils.yourdomain.com"
+# Spaces configuration with your credentials
+create_cdn_endpoint      = true
+spaces_access_key_id     = "YOUR_SPACES_ACCESS_KEY_ID"
+spaces_access_key_secret = "YOUR_SPACES_ACCESS_KEY_SECRET"
+github_username          = "your-github-username"
+github_token             = "your-github-token"
+utils_app_env_content    = <<EOF
+# Add your utils environment variables here
+EOF

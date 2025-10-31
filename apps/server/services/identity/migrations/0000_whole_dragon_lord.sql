@@ -1,0 +1,22 @@
+CREATE TABLE "users" (
+	"id" varchar(32) PRIMARY KEY NOT NULL,
+	"title" varchar(10),
+	"first_name" varchar(50) NOT NULL,
+	"last_name" varchar(50),
+	"email" varchar(255) NOT NULL,
+	"phone" varchar(25),
+	"dob" date,
+	"nationality" varchar(50),
+	"address" text,
+	"city" varchar(50),
+	"postal" varchar(50),
+	"country_id" integer,
+	"website" varchar(50),
+	"profile_text" text,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"is_staff" boolean DEFAULT false NOT NULL,
+	"last_login" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "users_email_unique" UNIQUE("email")
+);

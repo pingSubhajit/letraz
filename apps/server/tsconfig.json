@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    /* Basic Options */
+    "lib": ["ES2022"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "~encore/*": ["./encore.gen/*"]
+    },
+
+    /* Workspace Settings */
+    "composite": true,
+
+    /* Module Resolution Options */
+    "sourceMap": true,
+    "declaration": true
+  }
+}

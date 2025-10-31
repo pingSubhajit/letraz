@@ -1,0 +1,16 @@
+.encore
+encore.gen.go
+encore.gen.cue
+/.encore
+node_modules
+/encore.gen
+
+# IDE Configurations
+/.idea
+/.vscode
+/.cursor
+/.zed
+/.cursorrules
+
+# Deprecated folders
+/[DEPRECATED] RESUME/

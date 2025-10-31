@@ -1,0 +1,15 @@
+{
+  "name": "@letraz/terraform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Terraform infrastructure configurations for Letraz",
+  "scripts": {
+    "init": "terraform init",
+    "plan": "terraform plan",
+    "apply": "terraform apply",
+    "destroy": "terraform destroy",
+    "fmt": "terraform fmt -recursive",
+    "validate": "terraform validate"
+  }
+}
+

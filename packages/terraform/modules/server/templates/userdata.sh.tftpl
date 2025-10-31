@@ -1,0 +1,233 @@
+#!/usr/bin/env bash
+set -eox pipefail
+
+# Inputs from Terraform template
+HOSTNAME_TF="${hostname}"
+ADMIN_EMAIL_TF="${admin_email}"
+APP_DIR_TF="${app_dir}"
+ENV_PATH_TF="${env_path}"
+ENV_CONTENT_B64_TF='${env_content_b64}'
+AUTHORIZED_KEYS_B64_TF='${letraz_authorized_keys_b64}'
+API_FQDN_TF="${api_fqdn}"
+API_GRPC_FQDN_TF="${api_grpc_fqdn}"
+GITHUB_USER_TF='${github_username}'
+GITHUB_TOKEN_TF='${github_token}'
+
+USER_NAME=letraz
+USER_HOME=/home/$USER_NAME
+CONTAINER_UID=1001
+CONTAINER_GID=1001
+
+# Hostname
+hostnamectl set-hostname "$HOSTNAME_TF" || true
+
+# Ensure user and basic groups
+if ! id -u "$USER_NAME" >/dev/null 2>&1; then
+  adduser --disabled-password --gecos "" "$USER_NAME"
+fi
+usermod -aG sudo "$USER_NAME" || true
+# Passwordless sudo for letraz
+printf '%s\n' 'letraz ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/90-letraz
+chmod 440 /etc/sudoers.d/90-letraz
+
+# Prepare home, history
+install -d -m 0755 -o "$USER_NAME" -g "$USER_NAME" "$USER_HOME"
+install -m 0600 -o "$USER_NAME" -g "$USER_NAME" /dev/null "$USER_HOME/.bash_history" || true
+
+# SSH authorized keys (root-injected + provided)
+install -d -m 0700 -o "$USER_NAME" -g "$USER_NAME" "$USER_HOME/.ssh"
+: > /tmp/ak.tmp
+if [ -f "$USER_HOME/.ssh/authorized_keys" ]; then
+  cat "$USER_HOME/.ssh/authorized_keys" >> /tmp/ak.tmp
+fi
+if [ -f /root/.ssh/authorized_keys ]; then
+  cat /root/.ssh/authorized_keys >> /tmp/ak.tmp
+fi
+if [ -n "$AUTHORIZED_KEYS_B64_TF" ]; then
+  echo "$AUTHORIZED_KEYS_B64_TF" | base64 -d >> /tmp/ak.tmp || true
+fi
+sort -u /tmp/ak.tmp -o "$USER_HOME/.ssh/authorized_keys"
+chown -R "$USER_NAME:$USER_NAME" "$USER_HOME/.ssh"
+chmod 700 "$USER_HOME/.ssh"
+chmod 600 "$USER_HOME/.ssh/authorized_keys"
+rm -f /tmp/ak.tmp || true
+
+# App directories (media, static, data, logs)
+install -d -o "$USER_NAME" -g "$USER_NAME" "$APP_DIR_TF" "$APP_DIR_TF/media" "$APP_DIR_TF/static" "$APP_DIR_TF/data" "$APP_DIR_TF/logs"
+# Ensure container UID/GID can write to mounted dirs
+chown -R "$CONTAINER_UID:$CONTAINER_GID" "$APP_DIR_TF/data" "$APP_DIR_TF/logs"
+chmod -R 0775 "$APP_DIR_TF/data" "$APP_DIR_TF/logs"
+
+# .env (decode from TF input if provided)
+if [ -n "$ENV_CONTENT_B64_TF" ]; then
+  echo "$ENV_CONTENT_B64_TF" | base64 -d > "$ENV_PATH_TF"
+  chown "$USER_NAME:$USER_NAME" "$ENV_PATH_TF"
+  chmod 600 "$ENV_PATH_TF"
+else
+  # ensure file exists
+  touch "$ENV_PATH_TF"
+  chown "$USER_NAME:$USER_NAME" "$ENV_PATH_TF"
+  chmod 600 "$ENV_PATH_TF"
+fi
+
+# Install prerequisites and Docker (engine + compose plugin)
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnupg lsb-release software-properties-common
+
+# Ensure nginx 1.26 from PPA (keeps Debian layout with sites-available)
+if ! nginx -v 2>/dev/null | grep -q "1.26"; then
+  add-apt-repository -y ppa:ondrej/nginx || true
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y nginx python3-certbot-nginx
+fi
+
+# Docker repo and install
+if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  chmod a+r /etc/apt/keyrings/docker.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list
+  apt-get update
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+fi
+usermod -aG docker "$USER_NAME" || true
+
+# Persist GHCR credentials for all shells (non-login included)
+if [ -n "$GITHUB_USER_TF" ] && [ -n "$GITHUB_TOKEN_TF" ]; then
+  # Global profile for login shells
+  printf 'export GITHUB_USERNAME=%q\nexport GITHUB_TOKEN=%q\n' "$GITHUB_USER_TF" "$GITHUB_TOKEN_TF" > /etc/profile.d/ghcr.sh
+  chmod 644 /etc/profile.d/ghcr.sh
+  # System-wide environment for PAM sessions (SSH)
+  grep -q '^GITHUB_USERNAME=' /etc/environment 2>/dev/null || printf 'GITHUB_USERNAME="%s"\n' "$GITHUB_USER_TF" >> /etc/environment
+  grep -q '^GITHUB_TOKEN=' /etc/environment 2>/dev/null || printf 'GITHUB_TOKEN="%s"\n' "$GITHUB_TOKEN_TF" >> /etc/environment
+  # Pre-login to ghcr.io for letraz so docker pull works without envs
+  sudo -H -u "$USER_NAME" bash -lc "echo '$GITHUB_TOKEN_TF' | docker login ghcr.io -u '$GITHUB_USER_TF' --password-stdin" || true
+fi
+
+# Ensure nginx directories exist
+install -d -m 0755 /etc/nginx/sites-available /etc/nginx/sites-enabled
+# Remove default nginx site and symlink if present
+rm -f /etc/nginx/sites-enabled/default || true
+rm -f /etc/nginx/sites-available/default || true
+
+# nginx config for api-grpc.letraz.app (HTTPS gRPC + port 80 server)
+cat > "/etc/nginx/sites-available/$API_GRPC_FQDN_TF" <<'NGINXEOF'
+server {
+    server_name api-grpc.letraz.app;
+
+    # Enable HTTP/2 (new syntax)
+    http2 on;
+
+    # Use modern directive for header buffers instead of deprecated http2_max_*
+    large_client_header_buffers 4 16k;
+
+    # gRPC configuration for HTTPS
+    location / {
+        grpc_pass grpc://127.0.0.1:50051;
+        grpc_set_header Host $host;
+        grpc_set_header X-Real-IP $remote_addr;
+        grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        grpc_set_header X-Forwarded-Proto $scheme;
+        
+        # gRPC specific settings
+        grpc_read_timeout 300s;
+        grpc_send_timeout 300s;
+        grpc_connect_timeout 60s;
+        client_max_body_size 0;
+        
+        # Additional gRPC settings for better compatibility
+        grpc_socket_keepalive on;
+        
+        # CORS headers for gRPC-Web if needed
+        add_header 'Access-Control-Allow-Origin' '*' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,x-grpc-web,grpc-timeout,content-type' always;
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range,grpc-status,grpc-message,grpc-status-details-bin' always;
+        
+        # Handle preflight requests
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,x-grpc-web,grpc-timeout,content-type';
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain; charset=utf-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+    }
+
+    # Health check endpoint (optional)
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+
+    # Logging
+    access_log /var/log/nginx/api-grpc.letraz.app.access.log;
+    error_log /var/log/nginx/api-grpc.letraz.app.error.log;
+}
+
+server {
+    listen 80;
+    server_name api-grpc.letraz.app;
+}
+NGINXEOF
+
+# nginx config for api.letraz.app (HTTP reverse proxy + port 80 server)
+cat > "/etc/nginx/sites-available/$API_FQDN_TF" <<'NGINXEOF2'
+server {
+    server_name api.letraz.app;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000; # Forward requests to port 8000
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # Optional: Set timeout limits
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    # Optional: Add basic logging
+    access_log /var/log/nginx/api.letraz.app.access.log;
+    error_log /var/log/nginx/api.letraz.app.error.log;
+}
+
+server {
+    listen 80;
+    server_name api.letraz.app;
+}
+NGINXEOF2
+
+# Provide next steps for TLS and enabling sites
+cat > /root/LETRAZ_CERTBOT_SETUP.sh <<NEXT
+#!/usr/bin/env bash
+set -e
+
+echo "Enabling nginx sites..."
+# Enable both sites first
+ln -sf "/etc/nginx/sites-available/$API_FQDN_TF" "/etc/nginx/sites-enabled/$API_FQDN_TF"
+ln -sf "/etc/nginx/sites-available/$API_GRPC_FQDN_TF" "/etc/nginx/sites-enabled/$API_GRPC_FQDN_TF"
+
+# Test and reload nginx to make sites active
+nginx -t
+systemctl reload nginx
+
+echo "Getting SSL certificates..."
+# Get certificates for both domains (now that sites are active)
+certbot --nginx -n --agree-tos -m "$ADMIN_EMAIL_TF" -d "$API_FQDN_TF"
+certbot --nginx -n --agree-tos -m "$ADMIN_EMAIL_TF" -d "$API_GRPC_FQDN_TF"
+
+echo "SSL setup complete!"
+NEXT
+chmod +x /root/LETRAZ_CERTBOT_SETUP.sh
+
+echo "Next step to enable TLS and both sites: sudo /root/LETRAZ_CERTBOT_SETUP.sh"
