@@ -1,0 +1,208 @@
+#!/usr/bin/env bash
+set -eox pipefail
+
+# Inputs from Terraform template
+HOSTNAME_TF="${hostname}"
+FQDN_TF="${fqdn}"
+ADMIN_EMAIL_TF="${admin_email}"
+APP_DIR_TF="${app_dir}"
+ENV_PATH_TF="${env_path}"
+NGINX_CONF_PATH_TF="${nginx_conf_path}"
+UPSTREAM_TF="${nginx_upstream_port}"
+ENV_CONTENT_B64_TF='${env_content_b64}'
+AUTHORIZED_KEYS_B64_TF='${letraz_authorized_keys_b64}'
+BUCKET_URL_TF='${bucket_url}'
+BUCKET_CDN_TF='${bucket_cdn_endpoint}'
+BUCKET_AKID_TF='${bucket_access_key_id}'
+BUCKET_AKSEC_TF='${bucket_access_key_secret}'
+BUCKET_NAME_TF='${bucket_name}'
+BUCKET_REGION_TF='${bucket_region}'
+GITHUB_USER_TF='${github_username}'
+GITHUB_TOKEN_TF='${github_token}'
+
+USER_NAME=letraz
+USER_HOME=/home/$USER_NAME
+CONTAINER_UID=1001
+CONTAINER_GID=1001
+
+# Hostname
+hostnamectl set-hostname "$HOSTNAME_TF" || true
+
+# Ensure user and basic groups
+if ! id -u "$USER_NAME" >/dev/null 2>&1; then
+  adduser --disabled-password --gecos "" "$USER_NAME"
+fi
+usermod -aG sudo "$USER_NAME" || true
+# Passwordless sudo for letraz
+printf '%s\n' 'letraz ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/90-letraz
+chmod 440 /etc/sudoers.d/90-letraz
+
+# Prepare home, history
+install -d -m 0755 -o "$USER_NAME" -g "$USER_NAME" "$USER_HOME"
+install -m 0600 -o "$USER_NAME" -g "$USER_NAME" /dev/null "$USER_HOME/.bash_history" || true
+
+# SSH authorized keys (root-injected + provided)
+install -d -m 0700 -o "$USER_NAME" -g "$USER_NAME" "$USER_HOME/.ssh"
+: > /tmp/ak.tmp
+if [ -f "$USER_HOME/.ssh/authorized_keys" ]; then
+  cat "$USER_HOME/.ssh/authorized_keys" >> /tmp/ak.tmp
+fi
+if [ -f /root/.ssh/authorized_keys ]; then
+  cat /root/.ssh/authorized_keys >> /tmp/ak.tmp
+fi
+if [ -n "$AUTHORIZED_KEYS_B64_TF" ]; then
+  echo "$AUTHORIZED_KEYS_B64_TF" | base64 -d >> /tmp/ak.tmp || true
+fi
+sort -u /tmp/ak.tmp -o "$USER_HOME/.ssh/authorized_keys"
+chown -R "$USER_NAME:$USER_NAME" "$USER_HOME/.ssh"
+chmod 700 "$USER_HOME/.ssh"
+chmod 600 "$USER_HOME/.ssh/authorized_keys"
+rm -f /tmp/ak.tmp || true
+
+# App directories
+install -d -o "$USER_NAME" -g "$USER_NAME" "$APP_DIR_TF" "$APP_DIR_TF/data" "$APP_DIR_TF/logs" "$APP_DIR_TF/tmp"
+# Ensure container UID/GID can write to mounted dirs
+chown -R "$CONTAINER_UID:$CONTAINER_GID" "$APP_DIR_TF/data" "$APP_DIR_TF/logs" "$APP_DIR_TF/tmp"
+chmod -R 0775 "$APP_DIR_TF/data" "$APP_DIR_TF/logs" "$APP_DIR_TF/tmp"
+# Pre-create log file path expected by app
+install -m 0664 -o "$CONTAINER_UID" -g "$CONTAINER_GID" /dev/null "$APP_DIR_TF/logs/app.log" || true
+
+# .env (decode from TF input if provided)
+if [ -n "$ENV_CONTENT_B64_TF" ]; then
+  echo "$ENV_CONTENT_B64_TF" | base64 -d > "$ENV_PATH_TF"
+  chown "$USER_NAME:$USER_NAME" "$ENV_PATH_TF"
+  chmod 600 "$ENV_PATH_TF"
+else
+  # ensure file exists
+  touch "$ENV_PATH_TF"
+  chown "$USER_NAME:$USER_NAME" "$ENV_PATH_TF"
+  chmod 600 "$ENV_PATH_TF"
+fi
+
+# Append bucket env vars if provided
+{
+  [ -n "$BUCKET_URL_TF" ]  && echo "BUCKET_URL=$BUCKET_URL_TF"
+  [ -n "$BUCKET_CDN_TF" ]  && echo "BUCKET_CDN_ENDPOINT=$BUCKET_CDN_TF"
+  [ -n "$BUCKET_AKID_TF" ] && echo "BUCKET_ACCESS_KEY_ID=$BUCKET_AKID_TF"
+  [ -n "$BUCKET_AKSEC_TF" ] && echo "BUCKET_ACCESS_KEY_SECRET=$BUCKET_AKSEC_TF"
+  [ -n "$BUCKET_NAME_TF" ] && echo "BUCKET_NAME=$BUCKET_NAME_TF"
+  [ -n "$BUCKET_REGION_TF" ] && echo "BUCKET_REGION=$BUCKET_REGION_TF"
+} >> "$ENV_PATH_TF"
+chown "$USER_NAME:$USER_NAME" "$ENV_PATH_TF"
+chmod 600 "$ENV_PATH_TF"
+
+# Install prerequisites and Docker (engine + compose plugin)
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnupg lsb-release software-properties-common
+
+# Ensure nginx 1.26 from PPA (keeps Debian layout with sites-available)
+if ! nginx -v 2>/dev/null | grep -q "1.26"; then
+  add-apt-repository -y ppa:ondrej/nginx || true
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y nginx python3-certbot-nginx
+fi
+
+# Docker repo and install
+if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  chmod a+r /etc/apt/keyrings/docker.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list
+  apt-get update
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+fi
+usermod -aG docker "$USER_NAME" || true
+
+# Persist GHCR credentials for all shells (non-login included)
+if [ -n "$GITHUB_USER_TF" ] && [ -n "$GITHUB_TOKEN_TF" ]; then
+  # Global profile for login shells
+  printf 'export GITHUB_USERNAME=%q\nexport GITHUB_TOKEN=%q\n' "$GITHUB_USER_TF" "$GITHUB_TOKEN_TF" > /etc/profile.d/ghcr.sh
+  chmod 644 /etc/profile.d/ghcr.sh
+  # System-wide environment for PAM sessions (SSH)
+  grep -q '^GITHUB_USERNAME=' /etc/environment 2>/dev/null || printf 'GITHUB_USERNAME="%s"\n' "$GITHUB_USER_TF" >> /etc/environment
+  grep -q '^GITHUB_TOKEN=' /etc/environment 2>/dev/null || printf 'GITHUB_TOKEN="%s"\n' "$GITHUB_TOKEN_TF" >> /etc/environment
+  # Pre-login to ghcr.io for letraz so docker pull works without envs
+  sudo -H -u "$USER_NAME" bash -lc "echo '$GITHUB_TOKEN_TF' | docker login ghcr.io -u '$GITHUB_USER_TF' --password-stdin" || true
+fi
+
+# Ensure nginx directories exist
+install -d -m 0755 /etc/nginx/sites-available /etc/nginx/sites-enabled
+# Remove default nginx site and symlink if present
+rm -f /etc/nginx/sites-enabled/default || true
+rm -f /etc/nginx/sites-available/default || true
+
+# Write single nginx site file as requested
+cat > "$NGINX_CONF_PATH_TF" <<EOF
+server {
+    server_name $FQDN_TF;
+
+    # Enable HTTP/2 (new syntax)
+    http2 on;
+    
+    # Use modern directive for header buffers instead of deprecated http2_max_*
+    large_client_header_buffers 4 16k;
+
+    # gRPC-specific locations (recommended approach)
+    location /letraz.v1.ScraperService/ {
+        grpc_pass grpc://127.0.0.1:$UPSTREAM_TF;
+        grpc_read_timeout 300s;
+        grpc_send_timeout 300s;
+    }
+    
+    location /letraz.v1.ResumeService/ {
+        grpc_pass grpc://127.0.0.1:$UPSTREAM_TF;
+        grpc_read_timeout 300s;
+        grpc_send_timeout 300s;
+    }
+
+    # All other traffic (REST API, health checks, etc.)
+    location / {
+        proxy_pass http://127.0.0.1:$UPSTREAM_TF;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        # Timeout settings
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+}
+
+server {
+    listen 80;
+    server_name $FQDN_TF;
+}
+EOF
+
+# Provide next steps for TLS and enabling site
+cat > /root/LETRAZ_CERTBOT_SETUP.sh <<NEXT
+#!/usr/bin/env bash
+set -e
+
+echo "Enabling nginx site..."
+# Enable the site first
+ln -sf "$NGINX_CONF_PATH_TF" "/etc/nginx/sites-enabled/$FQDN_TF"
+
+# Test and reload nginx to make site active
+nginx -t
+systemctl reload nginx
+
+echo "Getting SSL certificate..."
+# Get certificate for the domain (now that site is active)
+certbot --nginx -n --agree-tos -m "$ADMIN_EMAIL_TF" -d "$FQDN_TF"
+
+echo "SSL setup complete!"
+NEXT
+chmod +x /root/LETRAZ_CERTBOT_SETUP.sh
+
+echo "Next step to enable TLS and site: sudo /root/LETRAZ_CERTBOT_SETUP.sh"

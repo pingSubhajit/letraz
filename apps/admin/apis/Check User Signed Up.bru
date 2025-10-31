@@ -1,0 +1,19 @@
+meta {
+  name: Check User Signed Up
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/api/admin/check-signup?email=subhajit@letraz.app
+  body: none
+  auth: inherit
+}
+
+params:query {
+  email: subhajit@letraz.app
+}
+
+headers {
+  x-admin-api-key: {{api-key}}
+}

@@ -1,0 +1,46 @@
+{
+  "name": "@letraz/server",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "encore run",
+    "clean": "rm -rf .encore node_modules .turbo",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "license": "MPL-2.0",
+  "type": "module",
+  "devDependencies": {
+    "@eslint/compat": "^1.4.0",
+    "@stylistic/eslint-plugin": "^5.4.0",
+    "@types/node": "^20.5.7",
+    "dotenv": "^17.2.2",
+    "drizzle-kit": "^0.31.5",
+    "eslint": "^9.36.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@knocklabs/node": "^1.18.0",
+    "@mendable/firecrawl-js": "^4.3.7",
+    "@sentry/node": "^10.16.0",
+    "@sparticuz/chromium": "^140.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.15.5",
+    "@typescript-eslint/parser": "^8.44.1",
+    "ai": "^5.0.60",
+    "algoliasearch": "^5.39.0",
+    "drizzle-orm": "^0.44.5",
+    "encore.dev": "^1.50.7",
+    "jose": "^6.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.1.6",
+    "pg": "^8.16.3",
+    "posthog-node": "^5.9.1",
+    "puppeteer": "^24.23.0",
+    "puppeteer-core": "^24.23.0",
+    "uuid": "^13.0.0",
+    "zod": "^4.1.12"
+  }
+}

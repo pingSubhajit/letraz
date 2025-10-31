@@ -1,0 +1,1 @@
+ALTER TABLE "jobs" ADD CONSTRAINT "jobs_job_url_unique" UNIQUE("job_url");

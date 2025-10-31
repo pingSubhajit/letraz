@@ -1,0 +1,1 @@
+ALTER TABLE "jobs" ALTER COLUMN "status" SET DATA TYPE varchar(20);
