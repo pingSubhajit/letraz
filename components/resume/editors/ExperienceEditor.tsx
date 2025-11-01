@@ -127,9 +127,9 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 		}
 	}, [experiencesData])
 
-useEffect(() => {
-	setIsMounted(true)
-}, [])
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const form = useForm<ExperienceMutation>({
 		resolver: zodResolver(ExperienceMutationSchema),

@@ -377,16 +377,16 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 				deps={[view, editingIndex]}
 			>
 				<div className="space-y-6 px-1">
-						<EditorHeader
-							title={editingIndex !== null ? 'Update Skill' : 'Add New Skill'}
-							description={editingIndex !== null
-								? 'Update your skill proficiency level'
-								: 'Skills are critical for getting through ATS filters. Add skills relevant to your target job.'}
-							className="mb-10"
-						/>
+					<EditorHeader
+						title={editingIndex !== null ? 'Update Skill' : 'Add New Skill'}
+						description={editingIndex !== null
+							? 'Update your skill proficiency level'
+							: 'Skills are critical for getting through ATS filters. Add skills relevant to your target job.'}
+						className="mb-10"
+					/>
 
-						<Form {...form}>
-							<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
 							<div className="p-5 bg-white rounded-lg border shadow-sm">
 								<h3 className="text-base font-medium mb-4">{editingIndex !== null ? 'Edit skill' : 'Select a skill'}</h3>
 								<div className="flex flex-col gap-4">
@@ -472,7 +472,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 								className="mt-2"
 								disabled={!form.watch('skill_id')}
 							/>
-							</form>
+						</form>
 					</Form>
 				</div>
 			</EditorScrollContainer>
@@ -485,13 +485,13 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 			deps={[view, resumeSkills.length, isLoadingResumeSkills, isLoadingGlobalSkills]}
 		>
 			<div className="space-y-6 px-1">
-					<EditorHeader
-						title="Skills"
-						showAddButton={isMounted && !isLoadingResumeSkills}
-						onAddNew={handleAddNew}
-						isDisabled={isDeleting}
-						addButtonText="Add New Skill"
-						className="flex-shrink-0"
+				<EditorHeader
+					title="Skills"
+					showAddButton={isMounted && !isLoadingResumeSkills}
+					onAddNew={handleAddNew}
+					isDisabled={isDeleting}
+					addButtonText="Add New Skill"
+					className="flex-shrink-0"
 				/>
 
 				<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
@@ -629,7 +629,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 						</motion.div>
 					)}
 				</AnimatePresence>
-				</div>
+			</div>
 		</EditorScrollContainer>
 	)
 }

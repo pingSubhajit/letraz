@@ -159,9 +159,9 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 		}
 	})
 
-useEffect(() => {
-	setIsMounted(true)
-}, [])
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const form = useForm<ProjectMutation>({
 		resolver: zodResolver(ProjectMutationSchema),
