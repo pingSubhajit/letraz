@@ -22,7 +22,6 @@ import {toast} from 'sonner'
 import {useUpdateUserInfoMutation} from '@/lib/user-info/mutations'
 import {useQueryClient} from '@tanstack/react-query'
 import {CountryDropdown} from '@/components/ui/country-dropdown'
-import ScrollMask from '@/components/ui/scroll-mask'
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import PersonalDetailsEditorSkeleton from '@/components/skeletons/PersonalDetailsEditorSkeleton'
 import {AnimatePresence, motion} from 'motion/react'
@@ -33,6 +32,7 @@ import {
 	NO_ANIMATION
 } from '@/components/animations/DefaultFade'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
+import EditorScrollContainer from '@/components/resume/editors/shared/EditorScrollContainer'
 
 interface Props {
   className?: string;
@@ -184,11 +184,12 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 	}
 
 	return (
-		<div ref={scrollRef} className={cn('space-y-6', className)}>
+		<div className={cn('space-y-6', className)}>
 			{view === 'form' ? (
-				<ScrollMask
-					className="space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none"
-					data-lenis-prevent
+				<EditorScrollContainer
+					className="space-y-6 lg:max-h-none"
+					deps={[view]}
+					scrollRef={scrollRef}
 				>
 					<div className="space-y-6 px-1">
 						<EditorHeader
@@ -357,11 +358,12 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							</form>
 						</Form>
 					</div>
-				</ScrollMask>
+				</EditorScrollContainer>
 			) : (
-				<ScrollMask
-					className="space-y-6 h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none"
-					data-lenis-prevent
+				<EditorScrollContainer
+					className="space-y-6"
+					scrollRef={scrollRef}
+					deps={[view, isLoading, Boolean(userInfo)]}
 				>
 					<EditorHeader
 						title="Personal Information"
@@ -523,7 +525,7 @@ const PersonalDetailsEditor: React.FC<Props> = ({className, isTabSwitch = false}
 							</motion.div>
 						)}
 					</AnimatePresence>
-				</ScrollMask>
+				</EditorScrollContainer>
 			)}
 		</div>
 	)
