@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useMemo, useState} from 'react'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {Form, FormField, FormItem} from '@/components/ui/form'
@@ -67,6 +67,8 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 	const [openSkillSearch, setOpenSkillSearch] = useState(false)
 	const [isMounted, setIsMounted] = useState(false)
 	const [deletingId, setDeletingId] = useState<string | null>(null)
+	const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+	const [dynamicHeight, setDynamicHeight] = useState<number | null>(null)
 	const queryClient = useQueryClient()
 	const {scrollToItem, clearHighlight} = useResumeHighlight()
 
@@ -236,6 +238,34 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 		setIsMounted(true)
 	}, [])
 
+	const updateScrollableHeight = useCallback(() => {
+		if (typeof window === 'undefined') return
+		const node = scrollContainerRef.current
+		if (!node) return
+
+		const rect = node.getBoundingClientRect()
+		const bottomPadding = 60 
+		const availableHeight = window.innerHeight - rect.top - bottomPadding
+
+		setDynamicHeight(availableHeight > 0 ? availableHeight : null)
+	}, [])
+
+	useEffect(() => {
+		updateScrollableHeight()
+		const handleResize = () => {
+			updateScrollableHeight()
+		}
+		window.addEventListener('resize', handleResize)
+
+		return () => {
+			window.removeEventListener('resize', handleResize)
+		}
+	}, [updateScrollableHeight])
+
+	useEffect(() => {
+		updateScrollableHeight()
+	}, [updateScrollableHeight, view])
+
 	// Filter global skills based on search query and exclude already added skills
 	const filteredSkills = globalSkills
 		.filter(skill => (skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -372,21 +402,26 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	if (view === 'form') {
 		return (
-			<ScrollMask
-				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-				data-lenis-prevent
-			>
-				<div className="space-y-6 px-1">
-					<EditorHeader
-						title={editingIndex !== null ? 'Update Skill' : 'Add New Skill'}
-						description={editingIndex !== null
-							? 'Update your skill proficiency level'
-							: 'Skills are critical for getting through ATS filters. Add skills relevant to your target job.'}
-						className="mb-10"
-					/>
+			<div ref={scrollContainerRef} className="flex flex-col min-h-0">
+				<ScrollMask
+					className={cn(
+						'space-y-6 h-[calc(100vh-280px)] lg:h-[calc(100vh-180px)] max-h-[calc(100vh-280px)] lg:max-h-none',
+						className
+					)}
+					style={dynamicHeight ? {height: dynamicHeight, maxHeight: dynamicHeight} : undefined}
+					data-lenis-prevent
+				>
+					<div className="space-y-6 px-1">
+						<EditorHeader
+							title={editingIndex !== null ? 'Update Skill' : 'Add New Skill'}
+							description={editingIndex !== null
+								? 'Update your skill proficiency level'
+								: 'Skills are critical for getting through ATS filters. Add skills relevant to your target job.'}
+							className="mb-10"
+						/>
 
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+						<Form {...form}>
+							<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
 							<div className="p-5 bg-white rounded-lg border shadow-sm">
 								<h3 className="text-base font-medium mb-4">{editingIndex !== null ? 'Edit skill' : 'Select a skill'}</h3>
 								<div className="flex flex-col gap-4">
@@ -472,24 +507,30 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 								className="mt-2"
 								disabled={!form.watch('skill_id')}
 							/>
-						</form>
-					</Form>
-				</div>
-			</ScrollMask>
+							</form>
+						</Form>
+					</div>
+				</ScrollMask>
+			</div>
 		)
 	}
 
 	return (
-		<ScrollMask
-			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-			data-lenis-prevent
-		>
-			<div className="space-y-6 px-1">
-				<EditorHeader
-					title="Skills"
-					showAddButton={isMounted && !isLoadingResumeSkills}
-					onAddNew={handleAddNew}
-					isDisabled={isDeleting}
+		<div ref={scrollContainerRef} className="flex flex-col min-h-0">
+			<ScrollMask
+				className={cn(
+					'flex flex-col h-[calc(100vh-280px)] lg:h-[calc(100vh-180px)] max-h-[calc(100vh-280px)] lg:max-h-[calc(100vh-180px)]',
+					className
+				)}
+				style={dynamicHeight ? {height: dynamicHeight, maxHeight: dynamicHeight} : undefined}
+				data-lenis-prevent
+			>
+				<div className="space-y-6 px-1">
+					<EditorHeader
+						title="Skills"
+						showAddButton={isMounted && !isLoadingResumeSkills}
+						onAddNew={handleAddNew}
+						isDisabled={isDeleting}
 					addButtonText="Add New Skill"
 					className="flex-shrink-0"
 				/>
@@ -629,8 +670,9 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 						</motion.div>
 					)}
 				</AnimatePresence>
-			</div>
-		</ScrollMask>
+				</div>
+			</ScrollMask>
+		</div>
 	)
 }
 
