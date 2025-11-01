@@ -37,8 +37,8 @@ import FormButtons from '@/components/resume/editors/shared/FormButtons'
 import ItemCard from '@/components/resume/editors/shared/ItemCard'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
-import ScrollMask from '@/components/ui/scroll-mask'
 import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
+import EditorScrollContainer from '@/components/resume/editors/shared/EditorScrollContainer'
 
 
 const DEFAULT_EDUCATION_VALUES: EducationMutation = {
@@ -131,9 +131,9 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 		}
 	}, [educationsData])
 
-	useEffect(() => {
-		setIsMounted(true)
-	}, [])
+useEffect(() => {
+	setIsMounted(true)
+}, [])
 
 
 	const renderEducationItem = (education: Education, index: number) => (
@@ -236,170 +236,169 @@ const EducationEditor = ({className, isTabSwitch = false}: EducationEditorProps)
 
 	if (view === 'form') {
 		return (
-			<ScrollMask
-				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-				data-lenis-prevent
+			<EditorScrollContainer
+				className={cn('space-y-4 sm:space-y-6 lg:max-h-none', className)}
+				deps={[view, editingIndex]}
 			>
 				<div className="space-y-4 sm:space-y-6 px-1">
-					<EditorHeader
-						title={editingIndex !== null ? 'Update Education' : 'Add New Education'}
-						description={editingIndex !== null
-							? 'Ensure that the details are correct and reflect your educational background'
-							: 'Having 2 or more educational details can increase the chance of your résumé getting selected upto 15%'
-						}
-						className="mb-6 sm:mb-10"
-					/>
+						<EditorHeader
+							title={editingIndex !== null ? 'Update Education' : 'Add New Education'}
+							description={editingIndex !== null
+								? 'Ensure that the details are correct and reflect your educational background'
+								: 'Having 2 or more educational details can increase the chance of your résumé getting selected upto 15%'
+							}
+							className="mb-6 sm:mb-10"
+						/>
 
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 sm:gap-4">
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-								<TextFormField
+						<Form {...form}>
+							<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 sm:gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+									<TextFormField
+										form={form}
+										name="institution_name"
+										label="Institution Name"
+										placeholder="e.g. Harvard University"
+										disabled={isSubmitting}
+									/>
+									<CountrySelect
+										form={form}
+										name="country"
+										disabled={isSubmitting}
+									/>
+								</div>
+
+								<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+									<TextFormField
+										form={form}
+										name="degree"
+										label="Degree"
+										placeholder="e.g. Bachelor of Science"
+										disabled={isSubmitting}
+									/>
+									<TextFormField
+										form={form}
+										name="field_of_study"
+										label="Field of Study"
+										placeholder="e.g. Computer Science"
+										disabled={isSubmitting}
+									/>
+								</div>
+
+								<DateRangeFields
 									form={form}
-									name="institution_name"
-									label="Institution Name"
-									placeholder="e.g. Harvard University"
+									isSubmitting={isSubmitting}
+									currentLabel="I currently study here"
+								/>
+
+								<RichTextFormField
+									form={form}
+									name="description"
+									label="Description"
+									placeholder="Describe your academic achievements, relevant coursework, thesis, or any notable projects completed during your studies..."
 									disabled={isSubmitting}
 								/>
-								<CountrySelect
-									form={form}
-									name="country"
-									disabled={isSubmitting}
+
+								<FormButtons
+									onCancel={handleCancel}
+									isSubmitting={isSubmitting}
+									isEditing={editingIndex !== null}
+									editingSubmitLabel="Update Education"
+									addingSubmitLabel="Add Education"
 								/>
-							</div>
-
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-								<TextFormField
-									form={form}
-									name="degree"
-									label="Degree"
-									placeholder="e.g. Bachelor of Science"
-									disabled={isSubmitting}
-								/>
-								<TextFormField
-									form={form}
-									name="field_of_study"
-									label="Field of Study"
-									placeholder="e.g. Computer Science"
-									disabled={isSubmitting}
-								/>
-							</div>
-
-							<DateRangeFields
-								form={form}
-								isSubmitting={isSubmitting}
-								currentLabel="I currently study here"
-							/>
-
-							<RichTextFormField
-								form={form}
-								name="description"
-								label="Description"
-								placeholder="Describe your academic achievements, relevant coursework, thesis, or any notable projects completed during your studies..."
-								disabled={isSubmitting}
-							/>
-
-							<FormButtons
-								onCancel={handleCancel}
-								isSubmitting={isSubmitting}
-								isEditing={editingIndex !== null}
-								editingSubmitLabel="Update Education"
-								addingSubmitLabel="Add Education"
-							/>
-						</form>
-					</Form>
+							</form>
+						</Form>
 				</div>
-			</ScrollMask>
+			</EditorScrollContainer>
 		)
 	}
 
 	return (
-		<ScrollMask
-			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-			data-lenis-prevent
+		<EditorScrollContainer
+			className={cn('flex flex-col', className)}
+			deps={[view, localEducations.length, isLoading]}
 		>
 			<div className="space-y-4 sm:space-y-6 px-1">
-				<EditorHeader
-					title="Education"
-					showAddButton={isMounted && !isLoading}
-					onAddNew={handleAddNew}
-					isDisabled={isDeleting}
-					addButtonText="Add New Education"
-					className="flex-shrink-0"
-				/>
+					<EditorHeader
+						title="Education"
+						showAddButton={isMounted && !isLoading}
+						onAddNew={handleAddNew}
+						isDisabled={isDeleting}
+						addButtonText="Add New Education"
+						className="flex-shrink-0"
+					/>
 
-				<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
-					{isLoading && (
-						<motion.div
-							key="skeleton"
-							{...DEFAULT_FADE_ANIMATION}
-						>
-							<EducationEditorSkeleton />
-						</motion.div>
-					)}
+					<AnimatePresence mode={ANIMATE_PRESENCE_MODE}>
+						{isLoading && (
+							<motion.div
+								key="skeleton"
+								{...DEFAULT_FADE_ANIMATION}
+							>
+								<EducationEditorSkeleton />
+							</motion.div>
+						)}
 
-					{error && (
-						<motion.div
-							key="error"
-							{...DEFAULT_FADE_ANIMATION}
-							className="text-center py-10 text-red-500"
-						>
-							Error loading education details. Please try again later.
-						</motion.div>
-					)}
+						{error && (
+							<motion.div
+								key="error"
+								{...DEFAULT_FADE_ANIMATION}
+								className="text-center py-10 text-red-500"
+							>
+								Error loading education details. Please try again later.
+							</motion.div>
+						)}
 
-					{!isLoading && !error && (
-						<motion.div
-							key="content"
-							{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
-						>
-							{localEducations.length > 0 ? (
-								<div className="space-y-4" ref={parent}>
-									{localEducations.map((education, index) => renderEducationItem(education, index))}
-								</div>
-							) : (
-								<Empty>
-									<EmptyHeader>
-										<EmptyMedia variant="icon">
-											<GraduationCap />
-										</EmptyMedia>
-										<EmptyTitle>No educations yet</EmptyTitle>
-										<EmptyDescription>
-											You haven&apos;t created any educations yet. Get started by creating
-											your first education.
-										</EmptyDescription>
-									</EmptyHeader>
-									<EmptyContent>
-										<div className="flex flex-col gap-2">
-											<Button
-												onClick={handleAddNew}
-												size="sm"
-												variant="outline"
-											>
-												<Plus className="h-4 w-4 mr-2" />
-												Add New Education
-											</Button>
+						{!isLoading && !error && (
+							<motion.div
+								key="content"
+								{...(isTabSwitch ? NO_ANIMATION : DEFAULT_FADE_CONTENT_ANIMATION)}
+							>
+								{localEducations.length > 0 ? (
+									<div className="space-y-4" ref={parent}>
+										{localEducations.map((education, index) => renderEducationItem(education, index))}
+									</div>
+								) : (
+									<Empty>
+										<EmptyHeader>
+											<EmptyMedia variant="icon">
+												<GraduationCap />
+											</EmptyMedia>
+											<EmptyTitle>No educations yet</EmptyTitle>
+											<EmptyDescription>
+												You haven&apos;t created any educations yet. Get started by creating
+												your first education.
+											</EmptyDescription>
+										</EmptyHeader>
+										<EmptyContent>
+											<div className="flex flex-col gap-2">
+												<Button
+													onClick={handleAddNew}
+													size="sm"
+													variant="outline"
+												>
+													<Plus className="h-4 w-4 mr-2" />
+													Add New Education
+												</Button>
 
-											<Button
-												variant="link"
-												asChild
-												className="text-muted-foreground"
-												size="sm"
-											>
-												<a href="#">
-													Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
-												</a>
-											</Button>
-										</div>
-									</EmptyContent>
-								</Empty>
-							)}
-						</motion.div>
-					)}
-				</AnimatePresence>
+												<Button
+													variant="link"
+													asChild
+													className="text-muted-foreground"
+													size="sm"
+												>
+													<a href="#">
+														Learn More <ArrowUpRightIcon className="w-4 h-4 ml-1" />
+													</a>
+												</Button>
+											</div>
+										</EmptyContent>
+									</Empty>
+								)}
+							</motion.div>
+						)}
+					</AnimatePresence>
 			</div>
-		</ScrollMask>
+		</EditorScrollContainer>
 	)
 }
 
 export default EducationEditor
-
