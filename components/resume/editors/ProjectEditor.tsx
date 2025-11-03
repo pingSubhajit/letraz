@@ -36,11 +36,11 @@ import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {Badge} from '@/components/ui/badge'
 import SkillAutocomplete from '@/components/ui/skill-autocomplete'
 import CategoryAutocomplete from '@/components/ui/category-autocomplete'
-import ScrollMask from '@/components/ui/scroll-mask'
 import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
 import DEFAULT_SLIDE_ANIMATION from '@/components/animations/DefaultSlide'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
+import EditorScrollContainer from '@/components/resume/editors/shared/EditorScrollContainer'
 
 type ViewState = 'list' | 'form';
 
@@ -303,9 +303,9 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 
 	if (view === 'form') {
 		return (
-			<ScrollMask
-				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-				data-lenis-prevent
+			<EditorScrollContainer
+				className={cn('space-y-6 lg:max-h-none', className)}
+				deps={[view, editingIndex]}
 			>
 				<div className="space-y-6 px-1">
 					<EditorHeader
@@ -639,14 +639,14 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 						</form>
 					</Form>
 				</div>
-			</ScrollMask>
+			</EditorScrollContainer>
 		)
 	}
 
 	return (
-		<ScrollMask
-			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-			data-lenis-prevent
+		<EditorScrollContainer
+			className={cn('flex flex-col', className)}
+			deps={[view, projects.length, isLoading]}
 		>
 			<div className="space-y-6 px-1">
 				<EditorHeader
@@ -808,7 +808,7 @@ const ProjectEditor = ({className, isTabSwitch = false}: ProjectEditorProps) => 
 					)}
 				</AnimatePresence>
 			</div>
-		</ScrollMask>
+		</EditorScrollContainer>
 	)
 }
 

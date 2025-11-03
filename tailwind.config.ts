@@ -73,7 +73,7 @@ const config: Config = {
 				}
 			},
 			screens: {
-					'xs': '450px',  // Extra small devices
+				'xs': '450px' // Extra small devices
 			},
 			fontFamily: {
 				sans: [

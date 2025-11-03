@@ -38,8 +38,8 @@ import {
 	NO_ANIMATION
 } from '@/components/animations/DefaultFade'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
-import ScrollMask from '@/components/ui/scroll-mask'
 import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
+import EditorScrollContainer from '@/components/resume/editors/shared/EditorScrollContainer'
 
 type ViewState = 'list' | 'form'
 
@@ -372,9 +372,9 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 
 	if (view === 'form') {
 		return (
-			<ScrollMask
-				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-				data-lenis-prevent
+			<EditorScrollContainer
+				className={cn('space-y-6 lg:max-h-none', className)}
+				deps={[view, editingIndex]}
 			>
 				<div className="space-y-6 px-1">
 					<EditorHeader
@@ -475,14 +475,14 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 						</form>
 					</Form>
 				</div>
-			</ScrollMask>
+			</EditorScrollContainer>
 		)
 	}
 
 	return (
-		<ScrollMask
-			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-			data-lenis-prevent
+		<EditorScrollContainer
+			className={cn('flex flex-col', className)}
+			deps={[view, resumeSkills.length, isLoadingResumeSkills, isLoadingGlobalSkills]}
 		>
 			<div className="space-y-6 px-1">
 				<EditorHeader
@@ -630,7 +630,7 @@ const SkillsEditor = ({className, isTabSwitch = false}: SkillsEditorProps) => {
 					)}
 				</AnimatePresence>
 			</div>
-		</ScrollMask>
+		</EditorScrollContainer>
 	)
 }
 

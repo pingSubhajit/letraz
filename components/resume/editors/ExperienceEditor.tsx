@@ -39,8 +39,8 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {baseResumeQueryOptions} from '@/lib/resume/queries'
 import {useAutoFocusField} from '@/components/resume/hooks/useAutoFocus'
 import {useResumeHighlight} from '@/components/resume/contexts/ResumeHighlightContext'
-import ScrollMask from '@/components/ui/scroll-mask'
 import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle} from '@/components/ui/empty'
+import EditorScrollContainer from '@/components/resume/editors/shared/EditorScrollContainer'
 
 type ViewState = 'list' | 'form'
 
@@ -252,9 +252,9 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 
 	if (view === 'form') {
 		return (
-			<ScrollMask
-				className={cn('space-y-6 h-[calc(100vh-300px)] lg:h-[calc(100vh-162px)] max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-				data-lenis-prevent
+			<EditorScrollContainer
+				className={cn('space-y-4 sm:space-y-6 lg:max-h-none', className)}
+				deps={[view, editingIndex]}
 			>
 				<div className="space-y-4 sm:space-y-6 px-1">
 					<EditorHeader
@@ -349,14 +349,14 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 						</form>
 					</Form>
 				</div>
-			</ScrollMask>
+			</EditorScrollContainer>
 		)
 	}
 
 	return (
-		<ScrollMask
-			className={cn('flex flex-col h-[calc(100vh-300px)] lg:h-auto max-h-[calc(100vh-300px)] lg:max-h-none', className)}
-			data-lenis-prevent
+		<EditorScrollContainer
+			className={cn('flex flex-col', className)}
+			deps={[view, localExperiences.length, isLoading]}
 		>
 			<div className="space-y-4 sm:space-y-6 px-1">
 				<EditorHeader
@@ -403,10 +403,9 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 										<EmptyMedia variant="icon">
 											<Briefcase />
 										</EmptyMedia>
-										<EmptyTitle>No experiences yet</EmptyTitle>
+										<EmptyTitle>No experience yet</EmptyTitle>
 										<EmptyDescription>
-											You haven&apos;t added any work experiences yet. Get started by creating
-											your first experience.
+											You haven&apos;t created any experience entries yet. Get started by adding your first experience.
 										</EmptyDescription>
 									</EmptyHeader>
 									<EmptyContent>
@@ -438,7 +437,7 @@ const ExperienceEditor = ({className, isTabSwitch = false}: ExperienceEditorProp
 					)}
 				</AnimatePresence>
 			</div>
-		</ScrollMask>
+		</EditorScrollContainer>
 	)
 }
 
